@@ -1,11 +1,11 @@
 # Flow - Linear Clone
 
-A pixel-perfect Linear clone built with the MERN stack (MongoDB, Express, React, Node.js).
+A Linear clone built with the MERN stack (MongoDB, Express, React, Node.js).
 
 ## Features
 
 - **Authentication**: JWT-based secure authentication
-- **Issue Management**: Create, read, update, and delete issues
+- **Issue Management**: Create, read and update issues
 - **Team Organization**: Multiple teams with dedicated issue boards
 - **Issue Board**: Kanban-style board with customizable columns (Backlog, Todo, In Progress, In Review, Done, Cancelled, Duplicate)
 - **Issue Details**: Comprehensive issue detail page with:
@@ -124,28 +124,28 @@ flow/
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user
+- `GET /api/auth/me` - Get current user (requires authentication)
+
+### Users
+- `GET /api/users` - Get all users (requires authentication)
 
 ### Teams
-- `GET /api/teams` - Get all teams
-- `GET /api/teams/:id` - Get team by ID
-- `POST /api/teams` - Create new team
+- `GET /api/teams` - Get all teams (requires authentication)
 
 ### Issues
-- `GET /api/issues/team/:teamId` - Get issues by team
-- `GET /api/issues/:identifier` - Get issue by identifier
-- `POST /api/issues` - Create new issue
-- `PUT /api/issues/:identifier` - Update issue
-- `DELETE /api/issues/:identifier` - Delete issue
+- `GET /api/issues/team/:teamId` - Get issues by team (requires authentication)
+- `GET /api/issues/:identifier` - Get issue by identifier (requires authentication)
+- `POST /api/issues` - Create new issue (requires authentication)
+- `PUT /api/issues/:identifier` - Update issue (requires authentication)
 
 ### Comments
-- `GET /api/comments/issue/:issueId` - Get comments for issue
-- `POST /api/comments/issue/:issueId` - Add comment
-- `PUT /api/comments/:id` - Update comment
-- `DELETE /api/comments/:id` - Delete comment
+- `GET /api/comments/issue/:issueId` - Get comments for issue (requires authentication)
+- `POST /api/comments/issue/:issueId` - Add comment (requires authentication)
+- `PUT /api/comments/:id` - Update comment (requires authentication)
+- `DELETE /api/comments/:id` - Delete comment (requires authentication)
 
 ### Activities
-- `GET /api/activities/issue/:issueId` - Get activities for issue
+- `GET /api/activities/issue/:issueId` - Get activities for issue (requires authentication)
 
 ## Features in Detail
 
@@ -180,24 +180,7 @@ The application comes with pre-seeded data including:
 - Comments on selected issues
 - Activity history for all changes
 
-## Feature Ideas for Extensions
-
-1. **Smart Notifications & Activity Feed** - Build a real-time notification system that tracks issue mentions, assignments, status changes, and comments. Include filtering by type and marking as read/unread.
-
-2. **Issue Dependencies & Blocking** - Implement the ability to mark issues as "blocked by" or "blocking" other issues, with visual indicators on the board and detail pages.
-
 ## Development
-
-### Running Tests
-```bash
-# Frontend tests
-cd frontend
-npm test
-
-# Backend tests
-cd backend
-npm test
-```
 
 ### Seeding Database
 ```bash
@@ -234,12 +217,3 @@ This resets the database to initial state with fresh seed data.
    - Efficient database queries with population
    - Optimized re-renders
    - Lazy loading where applicable
-
-## License
-
-MIT
-
-## Credits
-
-Built as a Linear clone demonstration project using the MERN stack.
-
