@@ -1,0 +1,26 @@
+import { Settings, Briefcase, Megaphone, Rocket } from 'lucide-react';
+
+export const teamIcons = {
+  '⚙️': Settings,
+  '🎨': Briefcase,
+  '📢': Megaphone,
+  '🚀': Rocket,
+};
+
+export const teamColors = {
+  Engineering: 'bg-blue-600',
+  Design: 'bg-purple-600',
+  Marketing: 'bg-pink-600',
+  Product: 'bg-green-600',
+};
+
+export const getTeamIconDisplay = (team) => {
+  const IconComponent = teamIcons[team.icon];
+  const colorClass = teamColors[team.name] || 'bg-gray-600';
+
+  return {
+    IconComponent,
+    colorClass,
+    icon: team.icon,
+  };
+};

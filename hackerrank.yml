@@ -1,0 +1,16 @@
+version: 1.0
+configuration:
+    has_webserver: true
+    readonly_paths:
+        - backend/test/*
+        - backend/utils/movies.js
+        - backend/config/database.js
+        - README.md
+        - setup.sh
+    ide_config:
+        default_open_files:
+            - README.md
+        project_menu:
+            run: npm start
+            install: npm run prestart
+            test: echo "No test command configured"
