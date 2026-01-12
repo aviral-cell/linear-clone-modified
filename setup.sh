@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Setting up Flow..."
+echo "Setting up Workflow..."
 
 # Start MongoDB if not already running
 echo "Checking MongoDB status..."

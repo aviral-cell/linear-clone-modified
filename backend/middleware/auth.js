@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const JWT_SECRET =
-  process.env.JWT_SECRET || 'flow-secret-key-change-in-production';
+  process.env.JWT_SECRET || 'workflow-secret-key-change-in-production';
 
 export const authenticate = async (req, res, next) => {
   try {

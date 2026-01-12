@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.send('Flow Backend API is running successfully!');
+  res.send('Workflow Backend API is running successfully!');
 });
 
 app.use('/api/auth', authRoutes);
@@ -56,7 +56,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Flow Backend server is running on port: ${PORT}`);
+  console.log(`Workflow Backend server is running on port: ${PORT}`);
 });
 
 export default app;

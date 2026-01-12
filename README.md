@@ -1,6 +1,6 @@
-# Flow - Linear Clone
+# Workflow
 
-A Linear clone built with the MERN stack (MongoDB, Express, React, Node.js).
+A workflow management application built with the MERN stack (MongoDB, Express, React, Node.js).
 
 ## Features
 
@@ -14,7 +14,7 @@ A Linear clone built with the MERN stack (MongoDB, Express, React, Node.js).
   - Sub-issues support
   - Comments system
   - Activity tracking
-- **Dark Theme**: Beautiful dark theme matching Linear's design
+- **Dark Theme**: Beautiful dark theme
 - **Responsive Design**: Works seamlessly on desktop and mobile
 
 ## Tech Stack
@@ -45,7 +45,7 @@ A Linear clone built with the MERN stack (MongoDB, Express, React, Node.js).
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd flow
+cd workflow
 ```
 
 2. Run the setup script:
@@ -91,14 +91,14 @@ npm start
 ## Default Credentials
 
 ```
-Email: alice@flow.dev
+Email: alice@workflow.dev
 Password: Password@123
 ```
 
 ## Project Structure
 
 ```
-flow/
+workflow/
 ├── backend/
 │   ├── config/          # Database configuration
 │   ├── controllers/     # Route controllers
@@ -208,7 +208,7 @@ This resets the database to initial state with fresh seed data.
 
 4. **UI/UX**
    - Responsive design
-   - Dark theme matching Linear
+   - Dark theme
    - Loading states
    - Error handling with toast notifications
    - Keyboard shortcuts support

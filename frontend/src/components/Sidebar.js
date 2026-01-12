@@ -65,7 +65,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           </div>
           {!isCollapsed && (
             <span className="text-xl font-semibold text-text-primary whitespace-nowrap">
-              Flow
+              Workflow
             </span>
           )}
         </div>

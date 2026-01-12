@@ -56,7 +56,7 @@ const LoginPage = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent to-purple-600 rounded-2xl mb-4 shadow-lg shadow-accent/20">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Flow</h1>
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Workflow</h1>
           <p className="text-text-secondary">
             {isLogin ? 'Welcome back' : 'Create your account'}
           </p>
@@ -125,7 +125,7 @@ const LoginPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-                  placeholder="alex@flow.dev"
+                  placeholder="alex@workflow.dev"
                   required
                 />
               </div>
