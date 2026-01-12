@@ -6,13 +6,9 @@ import { getTeamIconDisplay } from '../utils/teamIcons';
 import {
   Inbox,
   Zap,
-  Target,
-  MoreHorizontal,
   ChevronDown,
   ChevronRight,
   Users,
-  Box,
-  Layers,
   User,
   LogOut,
 } from 'lucide-react';
@@ -22,7 +18,6 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   const { teamId } = useParams();
   const { user, logout } = useAuth();
   const [expandedSections, setExpandedSections] = useState({
-    workspace: true,
     teams: true,
   });
   const [expandedTeams, setExpandedTeams] = useState(() => {
@@ -88,54 +83,6 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           {!isCollapsed && <span>My Issues</span>}
         </button>
 
-        {!isCollapsed && (
-          <div className="mt-4">
-            <button
-              onClick={() => toggleSection('workspace')}
-              className="w-full px-6 py-2 hover:bg-background-hover flex items-center justify-between text-text-primary text-sm group transition-colors"
-            >
-              <span className="font-medium">Workspace</span>
-              {expandedSections.workspace ? (
-                <ChevronDown className="w-4 h-4" />
-              ) : (
-                <ChevronRight className="w-4 h-4" />
-              )}
-            </button>
-            {expandedSections.workspace && (
-              <div className="ml-3">
-                <button
-                  className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                  title="Initiatives"
-                >
-                  <Target className="w-4 h-4 flex-shrink-0" />
-                  <span>Initiatives</span>
-                </button>
-                <button
-                  className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                  title="Projects"
-                >
-                  <Box className="w-4 h-4 flex-shrink-0" />
-                  <span>Projects</span>
-                </button>
-                <button
-                  className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                  title="Views"
-                >
-                  <Layers className="w-4 h-4 flex-shrink-0" />
-                  <span>Views</span>
-                </button>
-                <button
-                  className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                  title="More"
-                >
-                  <MoreHorizontal className="w-4 h-4 flex-shrink-0" />
-                  <span>More</span>
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="mt-4">
           <button
             onClick={() => !isCollapsed && toggleSection('teams')}
@@ -143,7 +90,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             title="Your teams"
           >
             <span className={`font-medium ${isCollapsed ? 'hidden' : ''}`}>
-              Your teams
+              Your Teams
             </span>
             {!isCollapsed &&
               (expandedSections.teams ? (
@@ -202,20 +149,6 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                         >
                           <Users className="w-4 h-4 flex-shrink-0" />
                           <span>Issues</span>
-                        </button>
-                        <button
-                          className="w-full px-6 py-2 hover:bg-background-hover hover:rounded-md flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                          title="Projects"
-                        >
-                          <Box className="w-4 h-4 flex-shrink-0" />
-                          <span>Projects</span>
-                        </button>
-                        <button
-                          className="w-full px-6 py-2 hover:bg-background-hover hover:rounded-md flex items-center gap-3 text-text-secondary text-sm transition-colors"
-                          title="Views"
-                        >
-                          <Layers className="w-4 h-4 flex-shrink-0" />
-                          <span>Views</span>
                         </button>
                       </div>
                     )}
