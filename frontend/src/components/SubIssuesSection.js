@@ -125,6 +125,9 @@ const SubIssuesSection = ({
         setAssignee('');
         setShowForm(false);
         onCreateSubIssue();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || 'Failed to create sub-issue');
       }
     } catch (error) {
       console.error('Error creating sub-issue:', error);
@@ -167,16 +170,18 @@ const SubIssuesSection = ({
                 {subIssues.length}
               </span>
             </button>
-            <Plus
-              className="w-4 h-4 text-text-tertiary hover:text-text-primary cursor-pointer"
-              onClick={() => {
-                setShowForm(true);
-                setShowList(true);
-              }}
-            />
+            {!issue.parentIssue && (
+              <Plus
+                className="w-4 h-4 text-text-tertiary hover:text-text-primary cursor-pointer"
+                onClick={() => {
+                  setShowForm(true);
+                  setShowList(true);
+                }}
+              />
+            )}
           </div>
 
-          {showForm && (
+          {showForm && !issue.parentIssue && (
             <div className="px-6 py-4 space-y-4 text-base bg-background-secondary rounded-md border border-border">
               <input
                 type="text"
@@ -440,13 +445,15 @@ const SubIssuesSection = ({
           )}
         </div>
       ) : (
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add sub-issue</span>
-        </button>
+        !issue.parentIssue ? (
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add sub-issue</span>
+          </button>
+        ) : null
       )}
     </div>
   );
