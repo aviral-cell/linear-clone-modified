@@ -14,7 +14,7 @@ describe('Task 1: Issue Management API', () => {
       .request(app)
       .post('/api/auth/login')
       .send({
-        email: 'alice@flow.dev',
+        email: 'alice@workflow.dev',
         password: 'Password@123',
       });
     authToken = res.body.token;

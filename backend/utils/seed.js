@@ -322,48 +322,48 @@ async function seed() {
 
     const usersData = [
       {
-        email: 'alex@flow.dev',
+        email: 'alex@workflow.dev',
         name: 'Alex Rivers',
         password: await bcrypt.hash('Password@123', salt),
         role: 'admin',
       },
       {
-        email: 'jordan@flow.dev',
+        email: 'jordan@workflow.dev',
         name: 'Jordan Chen',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'taylor@flow.dev',
+        email: 'taylor@workflow.dev',
         name: 'Taylor Morgan',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'casey@flow.dev',
+        email: 'casey@workflow.dev',
         name: 'Casey Martinez',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'riley@flow.dev',
+        email: 'riley@workflow.dev',
         name: 'Riley Parker',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'avery@flow.dev',
+        email: 'avery@workflow.dev',
         name: 'Avery Brooks',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'quinn@flow.dev',
+        email: 'quinn@workflow.dev',
         name: 'Quinn Hayes',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'morgan@flow.dev',
+        email: 'morgan@workflow.dev',
         name: 'Morgan Lee',
         password: await bcrypt.hash('Password@123', salt),
       },
       {
-        email: 'dakota@flow.dev',
+        email: 'dakota@workflow.dev',
         name: 'Dakota Wells',
         password: await bcrypt.hash('Password@123', salt),
       },
@@ -469,7 +469,7 @@ async function seed() {
     console.log('Data seeding completed successfully!');
     console.log('=================================');
     console.log('\nLogin credentials:');
-    console.log('Email: alex@flow.dev');
+    console.log('Email: alex@workflow.dev');
     console.log('Password: Password@123');
     console.log('=================================\n');
   } catch (error) {

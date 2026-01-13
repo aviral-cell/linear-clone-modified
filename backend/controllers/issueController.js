@@ -75,6 +75,19 @@ export const createIssue = async (req, res) => {
       return res.status(404).json({ message: 'Team not found' });
     }
 
+    if (parentIssue) {
+      const parent = await Issue.findById(parentIssue);
+      if (!parent) {
+        return res.status(404).json({ message: 'Parent issue not found' });
+      }
+
+      if (parent.parentIssue) {
+        return res.status(400).json({
+          message: 'Sub-issues cannot have another sub-issue',
+        });
+      }
+    }
+
     const count = await Issue.countDocuments({ team: teamId });
     const identifier = `${team.key}-${count + 1}`;
 
