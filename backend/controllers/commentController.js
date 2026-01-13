@@ -9,7 +9,14 @@ export const getCommentsByIssue = async (req, res) => {
       .populate('user', 'name email avatar')
       .sort({ createdAt: 1 });
 
-    res.json({ comments });
+    const currentUserId = req.user?._id?.toString();
+    const commentsWithOwner = comments.map((comment) => {
+      const commentObj = comment.toObject();
+      commentObj.isOwner = currentUserId && comment.user._id.toString() === currentUserId;
+      return commentObj;
+    });
+
+    res.json({ comments: commentsWithOwner });
   } catch (error) {
     console.error('Get comments error:', error);
     res.status(500).json({ message: 'Server error' });

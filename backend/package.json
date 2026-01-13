@@ -7,7 +7,7 @@
     "prestart": "npm install && node utils/seed.js",
     "start": "nodemon --delay 2500ms --exec babel-node app.js",
     "seed": "node utils/seed.js",
-    "test:task1": "(node utils/seed.js) && (cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task1.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task1/*.js --exit)",
+    "test:task1": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task1.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task1/*.js --exit",
     "test:task2": "(node utils/seed.js) && (cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task2.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task2/*.js --exit)"
   },
   "dependencies": {

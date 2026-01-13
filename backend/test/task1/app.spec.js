@@ -1,0 +1,269 @@
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import mongoose from 'mongoose';
+import app from '../../app.js';
+import connectDatabase from '../../config/database.js';
+import User from '../../models/User.js';
+import Team from '../../models/Team.js';
+import Issue from '../../models/Issue.js';
+import Comment from '../../models/Comment.js';
+import Activity from '../../models/Activity.js';
+import { generateToken } from '../../middleware/auth.js';
+
+chai.use(chaiHttp);
+const { expect } = chai;
+
+const cleanupModels = async (models = [User, Team, Issue, Comment, Activity]) => {
+  await Promise.all(models.map((Model) => Model.deleteMany({})));
+};
+
+describe('Issue Comments Functionality Testing', () => {
+  let ownerUser;
+  let otherUser;
+  let ownerToken;
+  let otherToken;
+  let team;
+  let issue;
+  let comment1;
+
+  before(async () => {
+    process.env.NODE_ENV = 'test';
+    await connectDatabase();
+    
+    const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name;
+    if (dbName && !dbName.includes('Test')) {
+      throw new Error(`Not connected to test database! Connected to: ${dbName}`);
+    }
+    
+    await cleanupModels();
+
+    const bcrypt = await import('bcrypt');
+    const hashedPassword = await bcrypt.default.hash('password123', 12);
+    
+    ownerUser = new User({
+      email: 'owner@test.com',
+      password: hashedPassword,
+      name: 'Owner User',
+    });
+    await ownerUser.save();
+    ownerToken = generateToken(ownerUser._id);
+
+    otherUser = new User({
+      email: 'other@test.com',
+      password: hashedPassword,
+      name: 'Other User',
+    });
+    await otherUser.save();
+    otherToken = generateToken(otherUser._id);
+
+    team = new Team({
+      name: 'Test Team',
+      key: 'TEST',
+      members: [ownerUser._id, otherUser._id],
+    });
+    await team.save();
+
+    issue = new Issue({
+      identifier: 'TEST-1',
+      title: 'Test Issue',
+      description: 'Test Description',
+      team: team._id,
+      creator: ownerUser._id,
+      status: 'todo',
+    });
+    await issue.save();
+  });
+
+  afterEach(async () => {
+    await cleanupModels([Comment, Activity]);
+  });
+
+  after(async () => {
+    await cleanupModels();
+    await mongoose.connection.close();
+  });
+
+  it('should return isOwner field correctly for all comments', async () => {
+    const comments = [
+      new Comment({
+        issue: issue._id,
+        user: ownerUser._id,
+        content: 'Comment 1 by owner',
+      }),
+      new Comment({
+        issue: issue._id,
+        user: otherUser._id,
+        content: 'Comment 2 by other user',
+      }),
+      new Comment({
+        issue: issue._id,
+        user: ownerUser._id,
+        content: 'Comment 3 by owner',
+      }),
+      new Comment({
+        issue: issue._id,
+        user: otherUser._id,
+        content: 'Comment 4 by other user',
+      }),
+    ];
+    await Promise.all(comments.map((c) => c.save()));
+
+    const resAsOwner = await chai
+      .request(app)
+      .get(`/api/comments/issue/${issue._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`);
+
+    expect(resAsOwner).to.have.status(200);
+    expect(resAsOwner.body.comments).to.be.an('array').with.length(4);
+
+    resAsOwner.body.comments.forEach((comment) => {
+      expect(comment).to.have.property('isOwner').that.is.a('boolean');
+    });
+
+    const ownerComments = resAsOwner.body.comments.filter(
+      (c) => c.content.includes('by owner')
+    );
+    const otherUserComments = resAsOwner.body.comments.filter(
+      (c) => c.content.includes('by other user')
+    );
+
+    ownerComments.forEach((comment) => {
+      expect(comment.isOwner).to.be.true;
+    });
+
+    otherUserComments.forEach((comment) => {
+      expect(comment.isOwner).to.be.false;
+    });
+
+    const resAsOtherUser = await chai
+      .request(app)
+      .get(`/api/comments/issue/${issue._id}`)
+      .set('Authorization', `Bearer ${otherToken}`);
+
+    expect(resAsOtherUser).to.have.status(200);
+    expect(resAsOtherUser.body.comments).to.have.length(4);
+
+    resAsOtherUser.body.comments.forEach((comment) => {
+      expect(comment).to.have.property('isOwner').that.is.a('boolean');
+    });
+
+    const ownerCommentsForOtherUser = resAsOtherUser.body.comments.filter(
+      (c) => c.content.includes('by owner')
+    );
+    const otherUserCommentsForOtherUser = resAsOtherUser.body.comments.filter(
+      (c) => c.content.includes('by other user')
+    );
+
+    ownerCommentsForOtherUser.forEach((comment) => {
+      expect(comment.isOwner).to.be.false;
+    });
+
+    otherUserCommentsForOtherUser.forEach((comment) => {
+      expect(comment.isOwner).to.be.true;
+    });
+  });
+
+  it('should update a comment successfully when user is owner', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Original comment',
+    });
+    await comment1.save();
+
+    const res = await chai
+      .request(app)
+      .put(`/api/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ content: 'Updated comment' });
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('comment');
+    expect(res.body.comment).to.have.property('content', 'Updated comment');
+    expect(res.body.comment).to.have.property('isEdited', true);
+  });
+
+  it('should set isEdited to true when a comment is updated', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Original comment content',
+    });
+    await comment1.save();
+
+    const commentBeforeUpdate = await Comment.findById(comment1._id);
+    expect(commentBeforeUpdate.isEdited).to.be.false;
+
+    const res = await chai
+      .request(app)
+      .put(`/api/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ content: 'Updated comment content' });
+
+    expect(res).to.have.status(200);
+    expect(res.body.comment).to.have.property('isEdited', true);
+
+    const commentAfterUpdate = await Comment.findById(comment1._id);
+    expect(commentAfterUpdate.isEdited).to.be.true;
+    expect(commentAfterUpdate.content).to.equal('Updated comment content');
+  });
+
+  it('should return 403 when non-owner tries to update comment', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Original comment',
+    });
+    await comment1.save();
+
+    const res = await chai
+      .request(app)
+      .put(`/api/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${otherToken}`)
+      .send({ content: 'Updated comment' });
+
+    expect(res).to.have.status(403);
+    expect(res.body).to.have.property('message', 'Not authorized');
+  });
+
+  it('should delete a comment successfully when user is owner', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Comment to delete',
+    });
+    await comment1.save();
+
+    const res = await chai
+      .request(app)
+      .delete(`/api/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('message', 'Comment deleted successfully');
+
+    const deletedComment = await Comment.findById(comment1._id);
+    expect(deletedComment).to.be.null;
+  });
+
+  it('should return 403 when non-owner tries to delete comment', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Comment to delete',
+    });
+    await comment1.save();
+
+    const res = await chai
+      .request(app)
+      .delete(`/api/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${otherToken}`);
+
+    expect(res).to.have.status(403);
+    expect(res.body).to.have.property('message', 'Not authorized');
+
+    const existingComment = await Comment.findById(comment1._id);
+    expect(existingComment).to.exist;
+  });
+});
+
