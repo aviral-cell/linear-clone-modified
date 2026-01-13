@@ -16,11 +16,6 @@ const app = express();
 
 dotenv.config();
 
-connectDatabase().catch((err) => {
-  console.error('Database connection failed:', err);
-  process.exit(1);
-});
-
 app.use(express.json());
 app.use(cors());
 
@@ -55,8 +50,15 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).send(err.message || 'Internal Server Error');
 });
 
-app.listen(PORT, () => {
-  console.log(`Workflow Backend server is running on port: ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  connectDatabase().catch((err) => {
+    console.error('Database connection failed:', err);
+    process.exit(1);
+  });
+
+  app.listen(PORT, () => {
+    console.log(`Workflow Backend server is running on port: ${PORT}`);
+  });
+}
 
 export default app;
