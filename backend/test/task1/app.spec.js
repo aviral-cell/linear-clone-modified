@@ -181,31 +181,10 @@ describe('Issue Comments Functionality Testing', () => {
     expect(res.body).to.have.property('comment');
     expect(res.body.comment).to.have.property('content', 'Updated comment');
     expect(res.body.comment).to.have.property('isEdited', true);
-  });
-
-  it('should set isEdited to true when a comment is updated', async () => {
-    comment1 = new Comment({
-      issue: issue._id,
-      user: ownerUser._id,
-      content: 'Original comment content',
-    });
-    await comment1.save();
-
-    const commentBeforeUpdate = await Comment.findById(comment1._id);
-    expect(commentBeforeUpdate.isEdited).to.be.false;
-
-    const res = await chai
-      .request(app)
-      .put(`/api/comments/${comment1._id}`)
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ content: 'Updated comment content' });
-
-    expect(res).to.have.status(200);
-    expect(res.body.comment).to.have.property('isEdited', true);
 
     const commentAfterUpdate = await Comment.findById(comment1._id);
     expect(commentAfterUpdate.isEdited).to.be.true;
-    expect(commentAfterUpdate.content).to.equal('Updated comment content');
+    expect(commentAfterUpdate.content).to.equal('Updated comment');
   });
 
   it('should return 403 when non-owner tries to update comment', async () => {
@@ -261,6 +240,31 @@ describe('Issue Comments Functionality Testing', () => {
 
     expect(res).to.have.status(403);
     expect(res.body).to.have.property('message', 'Not authorized');
+
+    const existingComment = await Comment.findById(comment1._id);
+    expect(existingComment).to.exist;
+  });
+
+  it('should return 401 when update and delete are called without authentication', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Test comment',
+    });
+    await comment1.save();
+
+    const updateRes = await chai
+      .request(app)
+      .put(`/api/comments/${comment1._id}`)
+      .send({ content: 'Updated comment' });
+
+    expect(updateRes).to.have.status(401);
+
+    const deleteRes = await chai
+      .request(app)
+      .delete(`/api/comments/${comment1._id}`);
+
+    expect(deleteRes).to.have.status(401);
 
     const existingComment = await Comment.findById(comment1._id);
     expect(existingComment).to.exist;
