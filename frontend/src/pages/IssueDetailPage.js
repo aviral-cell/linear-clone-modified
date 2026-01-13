@@ -393,7 +393,6 @@ const IssueDetailPage = () => {
 
               <CommentsSection
                 comments={comments}
-                currentUser={currentUser}
                 onEditComment={fetchComments}
                 onDeleteComment={() => {
                   fetchComments();

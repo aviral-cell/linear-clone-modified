@@ -9,7 +9,14 @@ export const getCommentsByIssue = async (req, res) => {
       .populate('user', 'name email avatar')
       .sort({ createdAt: 1 });
 
-    res.json({ comments });
+    const currentUserId = req.user?._id?.toString();
+    const commentsWithOwner = comments.map((comment) => {
+      const commentObj = comment.toObject();
+      commentObj.isOwner = currentUserId && comment.user._id.toString() === currentUserId;
+      return commentObj;
+    });
+
+    res.json({ comments: commentsWithOwner });
   } catch (error) {
     console.error('Get comments error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -68,8 +75,8 @@ export const updateComment = async (req, res) => {
 
     comment.content = content.trim();
     comment.isEdited = true;
-    await comment.save();
 
+    await comment.save();
     await comment.populate('user', 'name email avatar');
 
     res.json({ comment });
@@ -92,14 +99,14 @@ export const deleteComment = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    await comment.deleteOne();
+
     const activity = new Activity({
       issue: comment.issue,
       user: req.user._id,
       action: 'deleted_comment',
     });
     await activity.save();
-
-    await comment.deleteOne();
 
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {

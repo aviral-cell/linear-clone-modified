@@ -305,6 +305,7 @@ const issuesData = [
 ];
 
 async function seed() {
+  console.log('========= SEEDING DATA ==========');
   try {
     await connectDatabase();
     console.log('Connected to the database');
