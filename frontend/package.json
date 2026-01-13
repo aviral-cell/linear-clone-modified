@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "PORT=8000 BROWSER=none DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start": "cross-env PORT=8000 BROWSER=none DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
@@ -22,6 +22,7 @@
     "web-vitals": "2.1.4"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "@testing-library/user-event": "^14.6.1",
     "jest-junit": "15.0.0",
     "prettier": "^3.0.0"
