@@ -42,15 +42,13 @@ Success Response (200):
 ```
 
 The `isOwner` field should be:
-- `true` if the comment's `user._id` matches the authenticated user's ID
+- `true` if the comment belongs to an authenticated user
 - `false` if the comment belongs to a different user
-- A boolean value (not null or undefined) for all comments
-
-Comments should be sorted by `createdAt` in ascending order (oldest first).
 
 Error Responses:
 - 401 - Unauthorized (missing or invalid token)
 - 500 - Server error
+---
 
 **2. PUT /api/comments/:id**
 
@@ -90,7 +88,6 @@ Success Response (200):
 }
 ```
 
-The `isEdited` field must be set to `true` when a comment is updated, even if it's the first update.
 
 Error Responses:
 - 400 - Validation errors:
@@ -119,6 +116,7 @@ Error Responses:
 ```
 
 - 500 - Server error
+---
 
 **3. DELETE /api/comments/:id**
 
@@ -158,7 +156,7 @@ Error Responses:
 ```
 
 - 500 - Server error
-
+---
 
 ## Additional Information
 
