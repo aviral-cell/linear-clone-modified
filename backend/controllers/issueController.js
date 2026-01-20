@@ -145,16 +145,17 @@ export const updateIssue = async (req, res) => {
     ];
 
     fieldsToTrack.forEach((field) => {
-      if (
-        updates[field] !== undefined &&
-        String(issue[field]) !== String(updates[field])
-      ) {
-        changes.push({
-          field,
-          oldValue: issue[field],
-          newValue: updates[field],
-        });
+      if (updates[field] === undefined) {
+        return;
       }
+      if (String(issue[field]) == String(updates[field])) {
+        return;
+      }
+      changes.push({
+        field,
+        oldValue: issue[field],
+        newValue: updates[field],
+      });
     });
 
     Object.assign(issue, updates);

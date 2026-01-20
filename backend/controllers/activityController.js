@@ -6,7 +6,7 @@ export const getActivitiesByIssue = async (req, res) => {
 
     const activities = await Activity.find({ issue: issueId })
       .populate('user', 'name email avatar')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1, _id: -1 });
 
     res.json({ activities });
   } catch (error) {
