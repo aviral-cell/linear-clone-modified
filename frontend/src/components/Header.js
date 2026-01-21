@@ -13,7 +13,7 @@ const Header = ({ fallbackText, primaryActionLabel, PrimaryActionIcon, onPrimary
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors"
+          className="md:hidden p-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors"
           aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
         >
           {isOpen ? (

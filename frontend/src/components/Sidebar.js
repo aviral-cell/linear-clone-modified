@@ -63,6 +63,15 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     }
   }, [teamKey]);
 
+  useEffect(() => {
+    if (isCollapsed) {
+      setExpandedSections((prev) => ({
+        ...prev,
+        teams: true,
+      }));
+    }
+  }, [isCollapsed]);
+
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };

@@ -22,7 +22,7 @@ export const SidebarProvider = ({ children }) => {
       setIsMobile(mobile);
       if (!mobile) {
         setIsDrawerOpen(false);
-        if (width < 1024) {
+        if (width <= 768) {
           setIsCollapsed(true);
         } else {
           setIsCollapsed(false);
