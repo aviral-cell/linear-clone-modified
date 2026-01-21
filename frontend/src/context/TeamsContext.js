@@ -53,4 +53,3 @@ export const TeamsProvider = ({ children }) => {
     </TeamsContext.Provider>
   );
 };
-

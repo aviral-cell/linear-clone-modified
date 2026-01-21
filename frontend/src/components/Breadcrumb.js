@@ -44,4 +44,3 @@ const Breadcrumb = ({ fallbackText = null }) => {
 };
 
 export default Breadcrumb;
-

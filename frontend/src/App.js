@@ -31,80 +31,80 @@ function App() {
       <TeamsProvider>
         <SidebarProvider>
           <Router>
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: '#232329',
-              color: '#e5e5e6',
-              border: '1px solid #2d2d33',
-            },
-          }}
-        />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <IssuesPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/projects/all"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <ProjectsPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/team/:teamKey/projects/all"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <ProjectsPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/projects/:projectId"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <ProjectDetailPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/team/:teamKey/:issuesFilter"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <IssuesPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/issue/:identifier"
-            element={
-              <PrivateRoute>
-                <Layout>
-                  <IssueDetailPage />
-                </Layout>
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: '#232329',
+                  color: '#e5e5e6',
+                  border: '1px solid #2d2d33',
+                },
+              }}
+            />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <IssuesPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/projects/all"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <ProjectsPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/team/:teamKey/projects/all"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <ProjectsPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/projects/:projectId"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <ProjectDetailPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/team/:teamKey/:issuesFilter"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <IssuesPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/issue/:identifier"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <IssueDetailPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </Router>
         </SidebarProvider>
       </TeamsProvider>
     </AuthProvider>

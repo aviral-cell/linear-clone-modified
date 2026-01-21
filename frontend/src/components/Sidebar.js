@@ -120,13 +120,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       ${isCollapsed ? 'w-16' : 'w-64'}
     `}
     >
-      <div className="px-4 md:px-6 py-4 border-b border-border">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-accent to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Zap className="w-5 h-5 text-white" />
+      <div className={`px-4 md:px-6 py-3 border-b border-border ${isCollapsed ? 'px-4' : ''}`}>
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
+          <div className="w-7 h-7 bg-gradient-to-br from-accent to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Zap className="w-4 h-4 text-white" />
           </div>
           {!isCollapsed && (
-            <span className="text-xl font-semibold text-text-primary whitespace-nowrap">
+            <span className="text-lg font-semibold text-text-primary whitespace-nowrap">
               Workflow
             </span>
           )}
@@ -134,55 +134,65 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto py-2">
-        <button
-          onClick={(e) => e.preventDefault()}
-          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60"
-          title="Inbox (Coming soon)"
-          disabled
-        >
-          <Inbox className="w-4 h-4 flex-shrink-0" />
-          {!isCollapsed && <span>Inbox</span>}
-        </button>
+        <div className="space-y-0.5">
+          <button
+            onClick={(e) => e.preventDefault()}
+            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60 ${
+              isCollapsed ? 'justify-center px-2' : 'px-6'
+            }`}
+            title="Inbox (Coming soon)"
+            disabled
+          >
+            <Inbox className="w-4 h-4 flex-shrink-0" />
+            {!isCollapsed && <span>Inbox</span>}
+          </button>
 
-        <button
-          onClick={(e) => e.preventDefault()}
-          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60"
-          title="My Issues (Coming soon)"
-          disabled
-        >
-          <List className="w-4 h-4 flex-shrink-0" />
-          {!isCollapsed && <span>My Issues</span>}
-        </button>
+          <button
+            onClick={(e) => e.preventDefault()}
+            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60 ${
+              isCollapsed ? 'justify-center px-2' : 'px-6'
+            }`}
+            title="My Issues (Coming soon)"
+            disabled
+          >
+            <List className="w-4 h-4 flex-shrink-0" />
+            {!isCollapsed && <span>My Issues</span>}
+          </button>
 
-        <button
-          onClick={handleProjectsClick}
-          className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-            isGlobalProjectsPage
-              ? 'text-text-primary bg-background-tertiary rounded-md'
-              : 'text-text-secondary'
-          }`}
-          title="Projects"
-        >
-          <FolderKanban className="w-4 h-4 flex-shrink-0" />
-          {!isCollapsed && <span>Projects</span>}
-        </button>
+          <button
+            onClick={handleProjectsClick}
+            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+              isCollapsed ? 'justify-center px-2' : 'px-6'
+            } ${
+              isGlobalProjectsPage
+                ? 'text-text-primary bg-background-tertiary rounded-md'
+                : 'text-text-secondary'
+            }`}
+            title="Projects"
+          >
+            <FolderKanban className="w-4 h-4 flex-shrink-0" />
+            {!isCollapsed && <span>Projects</span>}
+          </button>
+        </div>
 
-        <div className="mt-4">
+        <div className="mt-2">
           <button
             onClick={() => !isCollapsed && toggleSection('teams')}
-            className="w-full px-6 py-2 hover:bg-background-hover flex items-center justify-between text-text-primary text-sm group transition-colors"
+            className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
+              isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
+            }`}
             title="Your teams"
           >
             <span className={`font-medium ${isCollapsed ? 'hidden' : ''}`}>Your Teams</span>
             {!isCollapsed &&
               (expandedSections.teams ? (
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4 flex-shrink-0" />
               ) : (
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 flex-shrink-0" />
               ))}
           </button>
           {expandedSections.teams && (
-            <div className={isCollapsed ? 'ml-0' : 'ml-2'}>
+            <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
               {teams.map((team) => {
                 const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
 
@@ -197,10 +207,12 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                           toggleTeam(team._id);
                         }
                       }}
-                      className="w-full px-6 py-2 hover:bg-background-hover flex items-center justify-between text-text-primary text-sm group transition-colors"
+                      className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
+                        isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
+                      }`}
                       title={team.name}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <div
                           className={`w-6 h-6 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
                         >
@@ -214,13 +226,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                       </div>
                       {!isCollapsed &&
                         (expandedTeams[team._id] ? (
-                          <ChevronDown className="w-3 h-3" />
+                          <ChevronDown className="w-4 h-4 flex-shrink-0" />
                         ) : (
-                          <ChevronRight className="w-3 h-3" />
+                          <ChevronRight className="w-4 h-4 flex-shrink-0" />
                         ))}
                     </button>
                     {expandedTeams[team._id] && !isCollapsed && (
-                      <div className="ml-6 mr-2 mt-1 space-y-1">
+                      <div className="ml-6 mr-2 mt-0.5 space-y-0.5">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -259,24 +271,41 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
         </div>
       </div>
 
-      <div className="px-2 md:px-4 py-3 border-t border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-text-primary text-sm">
+      <div className={`border-t border-border py-3 ${isCollapsed ? 'px-2' : 'px-4 md:px-6'}`}>
+        {isCollapsed ? (
+          <div className="flex flex-col items-center gap-2">
             <div
               className={`w-6 h-6 ${user ? getAvatarColor(user._id) : 'bg-purple-600'} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
             >
               {user ? user.name.charAt(0) : 'A'}
             </div>
-            {!isCollapsed && <span className="text-sm">{user ? user.name : 'User'}</span>}
+            <button
+              onClick={handleLogout}
+              className="p-1.5 hover:bg-background-tertiary rounded text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0 flex items-center justify-center"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-background-tertiary rounded text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0"
-            title="Logout"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 text-text-primary text-sm min-w-0">
+              <div
+                className={`w-6 h-6 ${user ? getAvatarColor(user._id) : 'bg-purple-600'} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+              >
+                {user ? user.name.charAt(0) : 'A'}
+              </div>
+              <span className="text-sm truncate">{user ? user.name : 'User'}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-1.5 hover:bg-background-tertiary rounded text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0 flex items-center justify-center"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

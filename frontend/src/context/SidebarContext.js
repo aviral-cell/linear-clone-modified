@@ -74,4 +74,3 @@ export const SidebarProvider = ({ children }) => {
     </SidebarContext.Provider>
   );
 };
-

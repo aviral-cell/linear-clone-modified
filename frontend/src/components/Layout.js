@@ -17,9 +17,7 @@ const Layout = ({ children }) => {
 
   return (
     <div className="h-screen flex bg-background relative">
-      {!isMobile && (
-        <Sidebar teams={teams} isCollapsed={isCollapsed} onToggle={toggleSidebar} />
-      )}
+      {!isMobile && <Sidebar teams={teams} isCollapsed={isCollapsed} onToggle={toggleSidebar} />}
 
       {isMobile && (
         <>

@@ -32,9 +32,7 @@ const Header = ({ fallbackText, primaryActionLabel, PrimaryActionIcon, onPrimary
             className="px-2 py-1 rounded-md border border-border text-xs text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5"
           >
             <PrimaryActionIcon className="w-3.5 h-3.5" />
-            {primaryActionLabel && (
-              <span className="hidden sm:inline">{primaryActionLabel}</span>
-            )}
+            {primaryActionLabel && <span className="hidden sm:inline">{primaryActionLabel}</span>}
           </button>
         </div>
       )}
@@ -43,5 +41,3 @@ const Header = ({ fallbackText, primaryActionLabel, PrimaryActionIcon, onPrimary
 };
 
 export default Header;
-
-
