@@ -74,14 +74,7 @@ const priorityOptions = [
   { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
 ];
 
-const SubIssuesSection = ({
-  issue,
-  subIssues,
-  onCreateSubIssue,
-  token,
-  baseURL,
-  users = [],
-}) => {
+const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, users = [] }) => {
   const [showList, setShowList] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
@@ -166,8 +159,7 @@ const SubIssuesSection = ({
               )}
               <span className="font-medium">Sub-issues</span>
               <span className="text-text-tertiary">
-                {subIssues.filter((s) => s.status === 'done').length}/
-                {subIssues.length}
+                {subIssues.filter((s) => s.status === 'done').length}/{subIssues.length}
               </span>
             </button>
             {!issue.parentIssue && (
@@ -201,9 +193,7 @@ const SubIssuesSection = ({
               <div className="flex items-center flex-wrap gap-3">
                 <div className="px-3 py-1.5 bg-background-tertiary rounded text-sm text-text-secondary flex items-center gap-2">
                   {(() => {
-                    const { IconComponent, icon } = getTeamIconDisplay(
-                      issue.team
-                    );
+                    const { IconComponent, icon } = getTeamIconDisplay(issue.team);
                     return (
                       <div className="w-4 h-4 flex items-center justify-center text-text-secondary flex-shrink-0">
                         {IconComponent ? (
@@ -228,12 +218,8 @@ const SubIssuesSection = ({
                     }}
                     className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
                   >
-                    <selectedStatus.Icon
-                      className={`w-4 h-4 ${selectedStatus.color}`}
-                    />
-                    <span className="text-text-primary">
-                      {selectedStatus.label}
-                    </span>
+                    <selectedStatus.Icon className={`w-4 h-4 ${selectedStatus.color}`} />
+                    <span className="text-text-primary">{selectedStatus.label}</span>
                   </button>
                   {showStatusDropdown && (
                     <div
@@ -254,9 +240,7 @@ const SubIssuesSection = ({
                           }`}
                         >
                           <option.Icon className={`w-4 h-4 ${option.color}`} />
-                          <span className="text-text-primary">
-                            {option.label}
-                          </span>
+                          <span className="text-text-primary">{option.label}</span>
                         </button>
                       ))}
                     </div>
@@ -274,12 +258,8 @@ const SubIssuesSection = ({
                     }}
                     className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
                   >
-                    <selectedPriority.Icon
-                      className={`w-4 h-4 ${selectedPriority.color}`}
-                    />
-                    <span className="text-text-primary">
-                      {selectedPriority.label}
-                    </span>
+                    <selectedPriority.Icon className={`w-4 h-4 ${selectedPriority.color}`} />
+                    <span className="text-text-primary">{selectedPriority.label}</span>
                   </button>
                   {showPriorityDropdown && (
                     <div
@@ -296,15 +276,11 @@ const SubIssuesSection = ({
                             setShowPriorityDropdown(false);
                           }}
                           className={`w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                            priority === option.value
-                              ? 'bg-background-hover'
-                              : ''
+                            priority === option.value ? 'bg-background-hover' : ''
                           }`}
                         >
                           <option.Icon className={`w-4 h-4 ${option.color}`} />
-                          <span className="text-text-primary">
-                            {option.label}
-                          </span>
+                          <span className="text-text-primary">{option.label}</span>
                         </button>
                       ))}
                     </div>
@@ -329,9 +305,7 @@ const SubIssuesSection = ({
                         >
                           {selectedUser.name.charAt(0)}
                         </div>
-                        <span className="text-text-primary">
-                          {selectedUser.name}
-                        </span>
+                        <span className="text-text-primary">{selectedUser.name}</span>
                       </>
                     ) : (
                       <>
@@ -415,8 +389,7 @@ const SubIssuesSection = ({
           {showList && (
             <div className="space-y-2">
               {subIssues.map((subIssue) => {
-                const statusConfig =
-                  statusIcons[subIssue.status] || statusIcons.todo;
+                const statusConfig = statusIcons[subIssue.status] || statusIcons.todo;
                 const StatusIcon = statusConfig.Icon;
 
                 return (
@@ -427,9 +400,7 @@ const SubIssuesSection = ({
                   >
                     <div className="flex items-center gap-2 flex-1">
                       <StatusIcon className={`w-4 h-4 ${statusConfig.color}`} />
-                      <span className="text-sm text-text-primary">
-                        {subIssue.title}
-                      </span>
+                      <span className="text-sm text-text-primary">{subIssue.title}</span>
                     </div>
                     {subIssue.assignee && (
                       <div
@@ -444,17 +415,15 @@ const SubIssuesSection = ({
             </div>
           )}
         </div>
-      ) : (
-        !issue.parentIssue ? (
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add sub-issue</span>
-          </button>
-        ) : null
-      )}
+      ) : !issue.parentIssue ? (
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add sub-issue</span>
+        </button>
+      ) : null}
     </div>
   );
 };

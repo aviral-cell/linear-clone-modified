@@ -3,15 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import {
-  Inbox,
-  Zap,
-  ChevronDown,
-  ChevronRight,
-  List,
-  LogOut,
-  FolderKanban,
-} from 'lucide-react';
+import { Inbox, Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   const navigate = useNavigate();
@@ -157,9 +149,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             className="w-full px-6 py-2 hover:bg-background-hover flex items-center justify-between text-text-primary text-sm group transition-colors"
             title="Your teams"
           >
-            <span className={`font-medium ${isCollapsed ? 'hidden' : ''}`}>
-              Your Teams
-            </span>
+            <span className={`font-medium ${isCollapsed ? 'hidden' : ''}`}>Your Teams</span>
             {!isCollapsed &&
               (expandedSections.teams ? (
                 <ChevronDown className="w-4 h-4" />
@@ -170,8 +160,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           {expandedSections.teams && (
             <div className={isCollapsed ? 'ml-0' : 'ml-2'}>
               {teams.map((team) => {
-                const { IconComponent, colorClass, icon } =
-                  getTeamIconDisplay(team);
+                const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
 
                 return (
                   <div key={team._id}>
@@ -254,9 +243,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             >
               {user ? user.name.charAt(0) : 'A'}
             </div>
-            {!isCollapsed && (
-              <span className="text-sm">{user ? user.name : 'User'}</span>
-            )}
+            {!isCollapsed && <span className="text-sm">{user ? user.name : 'User'}</span>}
           </div>
           <button
             onClick={handleLogout}

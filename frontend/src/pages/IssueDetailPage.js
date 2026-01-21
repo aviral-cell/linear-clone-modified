@@ -131,12 +131,9 @@ const IssueDetailPage = () => {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(
-        `${baseURL}/api/comments/issue/${issue._id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await fetch(`${baseURL}/api/comments/issue/${issue._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments);
@@ -151,12 +148,9 @@ const IssueDetailPage = () => {
       const targetIssueId = issueId || issue?._id;
       if (!targetIssueId) return;
 
-      const response = await fetch(
-        `${baseURL}/api/activities/issue/${targetIssueId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await fetch(`${baseURL}/api/activities/issue/${targetIssueId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.ok) {
         const data = await response.json();
         setActivities(data.activities);
@@ -194,17 +188,14 @@ const IssueDetailPage = () => {
   const handleAddComment = async (content) => {
     setCommentLoading(true);
     try {
-      const response = await fetch(
-        `${baseURL}/api/comments/issue/${issue._id}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content }),
-        }
-      );
+      const response = await fetch(`${baseURL}/api/comments/issue/${issue._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content }),
+      });
 
       if (response.ok) {
         fetchComments();
@@ -246,160 +237,142 @@ const IssueDetailPage = () => {
   if (!issue) return null;
 
   return (
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="border-b border-border bg-background">
-          <div className="px-4 md:px-6 py-3.5 lg:py-5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/team/${issue.team._id}`)}
-                className="text-text-secondary hover:text-text-primary transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <span className="text-text-secondary font-mono">
-                {issue.identifier}
-              </span>
-            </div>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="border-b border-border bg-background">
+        <div className="px-4 md:px-6 py-3.5 lg:py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-              className="lg:hidden p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md"
-              title={isRightSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+              onClick={() => navigate(`/team/${issue.team._id}`)}
+              className="text-text-secondary hover:text-text-primary transition-colors"
             >
-              <PanelRight
-                className={`w-5 h-5 ${isRightSidebarOpen ? 'text-text-primary' : ''}`}
-              />
+              <X className="w-5 h-5" />
             </button>
+            <span className="text-text-secondary font-mono">{issue.identifier}</span>
+          </div>
+          <button
+            onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+            className="lg:hidden p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md"
+            title={isRightSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            <PanelRight className={`w-5 h-5 ${isRightSidebarOpen ? 'text-text-primary' : ''}`} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
+            <div>
+              {editingTitle ? (
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onBlur={saveTitle}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveTitle();
+                    if (e.key === 'Escape') {
+                      setTitle(issue.title);
+                      setEditingTitle(false);
+                    }
+                  }}
+                  className="w-full text-2xl font-semibold bg-transparent border-b border-border text-text-primary focus:outline-none pb-2"
+                  autoFocus
+                />
+              ) : (
+                <h1
+                  onClick={() => setEditingTitle(true)}
+                  className="text-2xl font-semibold text-text-primary cursor-text hover:opacity-70 transition-opacity"
+                >
+                  {issue.title}
+                </h1>
+              )}
+            </div>
+
+            {issue.parentIssue &&
+              (() => {
+                const parentStatus = issue.parentIssue.status || 'todo';
+                const statusConfig = statusIcons[parentStatus] || statusIcons.todo;
+                const StatusIcon = statusConfig.Icon;
+                return (
+                  <div className="py-2 text-sm">
+                    <div className="flex items-center text-text-tertiary">
+                      <span>Sub-issue of</span>
+                      <button
+                        onClick={() => navigate(`/issue/${issue.parentIssue.identifier}`)}
+                        className="flex items-center gap-1.5 px-2 py-1 ml-1 text-text-primary rounded-md transition-colors group relative hover:bg-background-secondary"
+                      >
+                        <StatusIcon
+                          className={`w-4 h-4 ${statusConfig.color} flex-shrink-0 relative z-10`}
+                        />
+                        <span className="font-mono text-text-tertiary relative z-10">
+                          {issue.parentIssue.identifier}
+                        </span>
+                        <span className="relative z-10">{issue.parentIssue.title}</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+
+            <div className="mb-4 mt-6">
+              {editingDescription ? (
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  onBlur={saveDescription}
+                  placeholder="Add description..."
+                  className="w-full min-h-[100px] px-0 py-2 bg-background text-text-primary focus:outline-none resize-none placeholder-text-tertiary"
+                  autoFocus
+                />
+              ) : (
+                <div
+                  onClick={() => setEditingDescription(true)}
+                  className="px-0 py-2 text-text-primary cursor-text hover:opacity-70 min-h-[60px] transition-opacity"
+                >
+                  {issue.description || (
+                    <span className="text-text-tertiary">Add description...</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <SubIssuesSection
+              issue={issue}
+              subIssues={subIssues}
+              onCreateSubIssue={() => fetchIssue(true)}
+              token={token}
+              baseURL={baseURL}
+              users={users}
+            />
+
+            <ActivityTimeline activities={activities} users={users} />
+
+            <CommentsSection
+              comments={comments}
+              onEditComment={fetchComments}
+              onDeleteComment={() => {
+                fetchComments();
+                fetchActivities();
+              }}
+              baseURL={baseURL}
+              token={token}
+            />
+
+            <CommentInput onSubmit={handleAddComment} loading={commentLoading} />
           </div>
         </div>
 
-        <div className="flex-1 flex overflow-hidden relative">
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
-              <div>
-                {editingTitle ? (
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    onBlur={saveTitle}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveTitle();
-                      if (e.key === 'Escape') {
-                        setTitle(issue.title);
-                        setEditingTitle(false);
-                      }
-                    }}
-                    className="w-full text-2xl font-semibold bg-transparent border-b border-border text-text-primary focus:outline-none pb-2"
-                    autoFocus
-                  />
-                ) : (
-                  <h1
-                    onClick={() => setEditingTitle(true)}
-                    className="text-2xl font-semibold text-text-primary cursor-text hover:opacity-70 transition-opacity"
-                  >
-                    {issue.title}
-                  </h1>
-                )}
-              </div>
-
-              {issue.parentIssue &&
-                (() => {
-                  const parentStatus = issue.parentIssue.status || 'todo';
-                  const statusConfig =
-                    statusIcons[parentStatus] || statusIcons.todo;
-                  const StatusIcon = statusConfig.Icon;
-                  return (
-                    <div className="py-2 text-sm">
-                      <div className="flex items-center text-text-tertiary">
-                        <span>Sub-issue of</span>
-                        <button
-                          onClick={() =>
-                            navigate(`/issue/${issue.parentIssue.identifier}`)
-                          }
-                          className="flex items-center gap-1.5 px-2 py-1 ml-1 text-text-primary rounded-md transition-colors group relative hover:bg-background-secondary"
-                        >
-                          <StatusIcon
-                            className={`w-4 h-4 ${statusConfig.color} flex-shrink-0 relative z-10`}
-                          />
-                          <span className="font-mono text-text-tertiary relative z-10">
-                            {issue.parentIssue.identifier}
-                          </span>
-                          <span className="relative z-10">
-                            {issue.parentIssue.title}
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-              <div className="mb-4 mt-6">
-                {editingDescription ? (
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    onBlur={saveDescription}
-                    placeholder="Add description..."
-                    className="w-full min-h-[100px] px-0 py-2 bg-background text-text-primary focus:outline-none resize-none placeholder-text-tertiary"
-                    autoFocus
-                  />
-                ) : (
-                  <div
-                    onClick={() => setEditingDescription(true)}
-                    className="px-0 py-2 text-text-primary cursor-text hover:opacity-70 min-h-[60px] transition-opacity"
-                  >
-                    {issue.description || (
-                      <span className="text-text-tertiary">
-                        Add description...
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <SubIssuesSection
-                issue={issue}
-                subIssues={subIssues}
-                onCreateSubIssue={() => fetchIssue(true)}
-                token={token}
-                baseURL={baseURL}
-                users={users}
-              />
-
-              <ActivityTimeline activities={activities} users={users} />
-
-              <CommentsSection
-                comments={comments}
-                onEditComment={fetchComments}
-                onDeleteComment={() => {
-                  fetchComments();
-                  fetchActivities();
-                }}
-                baseURL={baseURL}
-                token={token}
-              />
-
-              <CommentInput
-                onSubmit={handleAddComment}
-                loading={commentLoading}
-              />
-            </div>
-          </div>
-
-          <div
-            className={`
+        <div
+          className={`
             border-l border-border bg-background overflow-y-auto transition-all duration-300
             ${isRightSidebarOpen ? 'w-80' : 'w-0 overflow-hidden'}
             lg:w-80 lg:block
           `}
-          >
-            {isRightSidebarOpen && (
-              <IssueSidebar
-                issue={issue}
-                users={users}
-                onUpdate={updateIssue}
-              />
-            )}
+        >
+          {isRightSidebarOpen && (
+            <IssueSidebar issue={issue} users={users} onUpdate={updateIssue} />
+          )}
         </div>
       </div>
     </div>

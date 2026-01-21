@@ -222,8 +222,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (statusButtonRef.current) {
-                      const rect =
-                        statusButtonRef.current.getBoundingClientRect();
+                      const rect = statusButtonRef.current.getBoundingClientRect();
                       setDropdownPosition({
                         top: rect.bottom + 8,
                         left: rect.left,
@@ -235,12 +234,8 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                   }}
                   className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
                 >
-                  <selectedStatus.Icon
-                    className={`w-4 h-4 ${selectedStatus.color}`}
-                  />
-                  <span className="text-text-primary">
-                    {selectedStatus.label}
-                  </span>
+                  <selectedStatus.Icon className={`w-4 h-4 ${selectedStatus.color}`} />
+                  <span className="text-text-primary">{selectedStatus.label}</span>
                 </button>
                 {showStatusDropdown && (
                   <div
@@ -265,9 +260,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                         }`}
                       >
                         <option.Icon className={`w-4 h-4 ${option.color}`} />
-                        <span className="text-text-primary">
-                          {option.label}
-                        </span>
+                        <span className="text-text-primary">{option.label}</span>
                       </button>
                     ))}
                   </div>
@@ -281,8 +274,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (priorityButtonRef.current) {
-                      const rect =
-                        priorityButtonRef.current.getBoundingClientRect();
+                      const rect = priorityButtonRef.current.getBoundingClientRect();
                       setDropdownPosition({
                         top: rect.bottom + 8,
                         left: rect.left,
@@ -294,12 +286,8 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                   }}
                   className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
                 >
-                  <selectedPriority.Icon
-                    className={`w-4 h-4 ${selectedPriority.color}`}
-                  />
-                  <span className="text-text-primary">
-                    {selectedPriority.label}
-                  </span>
+                  <selectedPriority.Icon className={`w-4 h-4 ${selectedPriority.color}`} />
+                  <span className="text-text-primary">{selectedPriority.label}</span>
                 </button>
                 {showPriorityDropdown && (
                   <div
@@ -324,9 +312,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                         }`}
                       >
                         <option.Icon className={`w-4 h-4 ${option.color}`} />
-                        <span className="text-text-primary">
-                          {option.label}
-                        </span>
+                        <span className="text-text-primary">{option.label}</span>
                       </button>
                     ))}
                   </div>
@@ -340,8 +326,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     if (assigneeButtonRef.current) {
-                      const rect =
-                        assigneeButtonRef.current.getBoundingClientRect();
+                      const rect = assigneeButtonRef.current.getBoundingClientRect();
                       setDropdownPosition({
                         top: rect.bottom + 8,
                         left: rect.left,
@@ -360,9 +345,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
                       >
                         {selectedUser.name.charAt(0)}
                       </div>
-                      <span className="text-text-primary">
-                        {selectedUser.name}
-                      </span>
+                      <span className="text-text-primary">{selectedUser.name}</span>
                     </>
                   ) : (
                     <>

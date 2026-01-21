@@ -5,13 +5,7 @@ import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
-import {
-  Search,
-  Plus,
-  CircleDashed,
-  CircleDot,
-  List,
-} from 'lucide-react';
+import { Search, Plus, CircleDashed, CircleDot, List } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
@@ -84,11 +78,11 @@ const Dashboard = () => {
   return (
     <>
       <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border bg-background">
-        <div className="px-4 md:px-8 py-4">
-          <div className="md:hidden">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
+        <div className="border-b border-border bg-background">
+          <div className="px-4 md:px-8 py-4">
+            <div className="md:hidden">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
                   {selectedTeam && (
                     <>
                       {(() => {
@@ -117,10 +111,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
                   <button
-                    onClick={() =>
-                      selectedTeam &&
-                      navigate(`/team/${selectedTeam.key}/all`)
-                    }
+                    onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/all`)}
                     className={`px-2 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
                       filter === 'all'
                         ? 'bg-background-tertiary text-text-primary'
@@ -131,10 +122,7 @@ const Dashboard = () => {
                     All issues
                   </button>
                   <button
-                    onClick={() =>
-                      selectedTeam &&
-                      navigate(`/team/${selectedTeam.key}/active`)
-                    }
+                    onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/active`)}
                     className={`px-2 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
                       filter === 'active'
                         ? 'bg-background-tertiary text-text-primary'
@@ -145,10 +133,7 @@ const Dashboard = () => {
                     Active
                   </button>
                   <button
-                    onClick={() =>
-                      selectedTeam &&
-                      navigate(`/team/${selectedTeam.key}/backlog`)
-                    }
+                    onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/backlog`)}
                     className={`px-2 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 ${
                       filter === 'backlog'
                         ? 'bg-background-tertiary text-text-primary'
@@ -185,8 +170,7 @@ const Dashboard = () => {
                 {selectedTeam && (
                   <>
                     {(() => {
-                      const { IconComponent, colorClass, icon } =
-                        getTeamIconDisplay(selectedTeam);
+                      const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeam);
                       return (
                         <div
                           className={`w-8 h-8 ${colorClass} rounded-md flex items-center justify-center text-white`}
@@ -199,19 +183,14 @@ const Dashboard = () => {
                         </div>
                       );
                     })()}
-                    <h1 className="text-xl font-semibold text-text-primary">
-                      {selectedTeam.name}
-                    </h1>
+                    <h1 className="text-xl font-semibold text-text-primary">{selectedTeam.name}</h1>
                   </>
                 )}
               </div>
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() =>
-                    selectedTeam &&
-                    navigate(`/team/${selectedTeam.key}/all`)
-                  }
+                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/all`)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
                     filter === 'all'
                       ? 'bg-background-tertiary text-text-primary'
@@ -222,10 +201,7 @@ const Dashboard = () => {
                   All issues
                 </button>
                 <button
-                  onClick={() =>
-                    selectedTeam &&
-                    navigate(`/team/${selectedTeam.key}/active`)
-                  }
+                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/active`)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
                     filter === 'active'
                       ? 'bg-background-tertiary text-text-primary'
@@ -236,10 +212,7 @@ const Dashboard = () => {
                   Active
                 </button>
                 <button
-                  onClick={() =>
-                    selectedTeam &&
-                    navigate(`/team/${selectedTeam.key}/backlog`)
-                  }
+                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/backlog`)}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
                     filter === 'backlog'
                       ? 'bg-background-tertiary text-text-primary'
@@ -273,16 +246,10 @@ const Dashboard = () => {
         </div>
 
         {selectedTeam ? (
-          <IssuesBoard
-            team={selectedTeam}
-            filter={filter}
-            refreshTrigger={issuesRefreshTrigger}
-          />
+          <IssuesBoard team={selectedTeam} filter={filter} refreshTrigger={issuesRefreshTrigger} />
         ) : (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-text-secondary">
-              Select a team to view issues
-            </div>
+            <div className="text-text-secondary">Select a team to view issues</div>
           </div>
         )}
       </div>

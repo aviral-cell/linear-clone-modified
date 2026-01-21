@@ -57,9 +57,7 @@ const LoginPage = () => {
             <Zap className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-text-primary mb-2">Workflow</h1>
-          <p className="text-text-secondary">
-            {isLogin ? 'Welcome back' : 'Create your account'}
-          </p>
+          <p className="text-text-secondary">{isLogin ? 'Welcome back' : 'Create your account'}</p>
         </div>
 
         <div className="bg-background-secondary border border-border rounded-xl p-8 shadow-xl">
@@ -111,10 +109,7 @@ const LoginPage = () => {
             )}
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-text-secondary mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
                 Email
               </label>
               <div className="relative">
@@ -188,9 +183,7 @@ const LoginPage = () => {
           </form>
         </div>
 
-        <p className="text-center text-xs text-text-tertiary mt-8">
-          Issue tracking made simple
-        </p>
+        <p className="text-center text-xs text-text-tertiary mt-8">Issue tracking made simple</p>
       </div>
     </div>
   );

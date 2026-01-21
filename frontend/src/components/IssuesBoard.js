@@ -123,15 +123,7 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
     } else if (filter === 'backlog') {
       return ['backlog'];
     }
-    return [
-      'backlog',
-      'todo',
-      'in_progress',
-      'in_review',
-      'done',
-      'cancelled',
-      'duplicate',
-    ];
+    return ['backlog', 'todo', 'in_progress', 'in_review', 'done', 'cancelled', 'duplicate'];
   };
 
   const getIssuesByStatus = (status) => {
@@ -200,12 +192,8 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
               <div className="px-3 py-2 flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <StatusIcon className={`w-4 h-4 ${config.color}`} />
-                  <h3 className="text-sm font-medium text-text-primary">
-                    {config.label}
-                  </h3>
-                  <span className="text-xs text-text-tertiary">
-                    {statusIssues.length}
-                  </span>
+                  <h3 className="text-sm font-medium text-text-primary">{config.label}</h3>
+                  <span className="text-xs text-text-tertiary">{statusIssues.length}</span>
                 </div>
               </div>
 
@@ -247,12 +235,8 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                           </div>
 
                           <div className="flex items-center gap-1.5">
-                            <PriorityIcon
-                              className={`w-3.5 h-3.5 ${priorityInfo.color}`}
-                            />
-                            <span className="text-xs text-text-tertiary">
-                              {priorityInfo.label}
-                            </span>
+                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
+                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
                           </div>
                         </>
                       ) : (
@@ -280,12 +264,8 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                           </div>
 
                           <div className="flex items-center gap-1.5">
-                            <PriorityIcon
-                              className={`w-3.5 h-3.5 ${priorityInfo.color}`}
-                            />
-                            <span className="text-xs text-text-tertiary">
-                              {priorityInfo.label}
-                            </span>
+                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
+                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
                           </div>
                         </>
                       )}
@@ -294,9 +274,7 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                 })}
 
                 {statusIssues.length === 0 && (
-                  <div className="text-center py-8 text-text-tertiary text-sm">
-                    No issues
-                  </div>
+                  <div className="text-center py-8 text-text-tertiary text-sm">No issues</div>
                 )}
               </div>
             </div>

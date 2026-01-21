@@ -76,9 +76,7 @@ const IssueSidebar = ({ issue, users, onUpdate }) => {
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
 
-  const currentPriority = priorityOptions.find(
-    (p) => p.value === issue.priority
-  );
+  const currentPriority = priorityOptions.find((p) => p.value === issue.priority);
   const currentStatus = statusOptions.find((s) => s.value === issue.status);
   const CurrentPriorityIcon = currentPriority?.icon;
   const CurrentStatusIcon = currentStatus?.icon;
@@ -114,9 +112,7 @@ const IssueSidebar = ({ issue, users, onUpdate }) => {
           >
             <div className="flex items-center gap-2">
               {CurrentStatusIcon && (
-                <CurrentStatusIcon
-                  className={`w-4 h-4 ${currentStatus?.color}`}
-                />
+                <CurrentStatusIcon className={`w-4 h-4 ${currentStatus?.color}`} />
               )}
               <span>{currentStatus?.label}</span>
             </div>
@@ -154,9 +150,7 @@ const IssueSidebar = ({ issue, users, onUpdate }) => {
           >
             <div className="flex items-center gap-2">
               {CurrentPriorityIcon && (
-                <CurrentPriorityIcon
-                  className={`w-4 h-4 ${currentPriority.color}`}
-                />
+                <CurrentPriorityIcon className={`w-4 h-4 ${currentPriority.color}`} />
               )}
               <span>{currentPriority?.label}</span>
             </div>
