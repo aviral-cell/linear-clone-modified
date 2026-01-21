@@ -1,55 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { baseURL } from '../utils';
+import React from 'react';
+import { useTeams } from '../context/TeamsContext';
+import { useSidebar } from '../context/SidebarContext';
 import Sidebar from './Sidebar';
-import toast from 'react-hot-toast';
 
 const Layout = ({ children }) => {
-  const [teams, setTeams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { token } = useAuth();
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsSidebarCollapsed(true);
-      } else {
-        setIsSidebarCollapsed(false);
-      }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    fetchTeams();
-  }, [token]);
-
-  const fetchTeams = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${baseURL}/api/teams`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data.teams);
-      } else {
-        toast.error('Failed to fetch teams');
-      }
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-      toast.error('Failed to fetch teams');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { teams, loading } = useTeams();
+  const { isCollapsed, isMobile, isDrawerOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   if (loading) {
     return (
@@ -60,12 +16,29 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="h-screen flex bg-background">
-      <Sidebar
-        teams={teams}
-        isCollapsed={isSidebarCollapsed}
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-      />
+    <div className="h-screen flex bg-background relative">
+      {!isMobile && (
+        <Sidebar teams={teams} isCollapsed={isCollapsed} onToggle={toggleSidebar} />
+      )}
+
+      {isMobile && (
+        <>
+          <div
+            className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+              isDrawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={closeSidebar}
+          />
+          <div
+            className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out ${
+              isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            <Sidebar teams={teams} isCollapsed={false} onToggle={closeSidebar} />
+          </div>
+        </>
+      )}
+
       <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
     </div>
   );

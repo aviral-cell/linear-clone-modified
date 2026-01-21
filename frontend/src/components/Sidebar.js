@@ -4,12 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { Inbox, Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
+import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   const navigate = useNavigate();
   const { teamKey, issuesFilter } = useParams();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { isMobile, closeSidebar } = useSidebar();
 
   const isGlobalProjectsPage = location.pathname === '/projects/all';
   const isTeamProjectsPage =
@@ -35,13 +37,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     return initial;
   });
 
-  // Auto-expand the current team when route changes
   useEffect(() => {
     if (teamKey && teams.length > 0) {
       const currentTeam = teams.find((t) => t.key === teamKey);
       if (currentTeam) {
         setExpandedTeams((prev) => {
-          // Only update if not already expanded to avoid unnecessary re-renders
           if (prev[currentTeam._id]) {
             return prev;
           }
@@ -54,7 +54,6 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     }
   }, [teamKey, teams]);
 
-  // Ensure teams section is open when navigating directly to a team URL
   useEffect(() => {
     if (teamKey) {
       setExpandedSections((prev) => ({
@@ -77,19 +76,31 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
   const handleTeamIssuesClick = (team) => {
     navigate(`/team/${team.key}/all`);
+    if (isMobile) {
+      closeSidebar();
+    }
   };
 
   const handleTeamProjectsClick = (team) => {
     navigate(`/team/${team.key}/projects/all`);
+    if (isMobile) {
+      closeSidebar();
+    }
   };
 
   const handleProjectsClick = () => {
     navigate('/projects/all');
+    if (isMobile) {
+      closeSidebar();
+    }
   };
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+    if (isMobile) {
+      closeSidebar();
+    }
   };
 
   return (

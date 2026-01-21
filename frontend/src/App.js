@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { TeamsProvider } from './context/TeamsContext';
+import { SidebarProvider } from './context/SidebarContext';
 import LoginPage from './pages/LoginPage';
 import IssuesPage from './pages/IssuesPage';
 import IssueDetailPage from './pages/IssueDetailPage';
@@ -26,7 +28,9 @@ const PrivateRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <TeamsProvider>
+        <SidebarProvider>
+          <Router>
         <Toaster
           position="bottom-right"
           toastOptions={{
@@ -101,6 +105,8 @@ function App() {
           />
         </Routes>
       </Router>
+        </SidebarProvider>
+      </TeamsProvider>
     </AuthProvider>
   );
 }
