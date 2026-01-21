@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
-import Dashboard from './pages/Dashboard';
+import IssuesPage from './pages/IssuesPage';
 import IssueDetailPage from './pages/IssueDetailPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
@@ -44,7 +44,7 @@ function App() {
             element={
               <PrivateRoute>
                 <Layout>
-                  <Dashboard />
+                  <IssuesPage />
                 </Layout>
               </PrivateRoute>
             }
@@ -84,7 +84,7 @@ function App() {
             element={
               <PrivateRoute>
                 <Layout>
-                  <Dashboard />
+                  <IssuesPage />
                 </Layout>
               </PrivateRoute>
             }

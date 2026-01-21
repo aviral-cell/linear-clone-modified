@@ -8,7 +8,7 @@ import CreateIssueModal from '../components/CreateIssueModal';
 import { Search, Plus, CircleDashed, CircleDot, List } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const Dashboard = () => {
+const IssuesPage = () => {
   const [teams, setTeams] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [filter, setFilter] = useState('active');
@@ -268,4 +268,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default IssuesPage;

@@ -22,16 +22,10 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     teamKey &&
     issuesFilter;
   const [expandedSections, setExpandedSections] = useState({
-    teams: true,
+    teams: !!teamKey,
   });
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
-    // Always expand ENG team by default
-    const eng = teams.find((t) => t.key === 'ENG');
-    if (eng) {
-      initial[eng._id] = true;
-    }
-    // Also expand current team if on a team page
     if (teamKey && teams.length > 0) {
       const currentTeam = teams.find((t) => t.key === teamKey);
       if (currentTeam) {
@@ -59,6 +53,16 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       }
     }
   }, [teamKey, teams]);
+
+  // Ensure teams section is open when navigating directly to a team URL
+  useEffect(() => {
+    if (teamKey) {
+      setExpandedSections((prev) => ({
+        ...prev,
+        teams: true,
+      }));
+    }
+  }, [teamKey]);
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
