@@ -10,6 +10,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import IssueDetailPage from './pages/IssueDetailPage';
+import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
+import Layout from './components/Layout';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -45,15 +48,49 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <Layout>
+                  <Dashboard />
+                </Layout>
               </PrivateRoute>
             }
           />
           <Route
-            path="/team/:teamId"
+            path="/projects/all"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <Layout>
+                  <ProjectsPage />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/team/:teamKey/projects/all"
+            element={
+              <PrivateRoute>
+                <Layout>
+                  <ProjectsPage />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/projects/:projectId"
+            element={
+              <PrivateRoute>
+                <Layout>
+                  <ProjectDetailPage />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/team/:teamKey/:issuesFilter"
+            element={
+              <PrivateRoute>
+                <Layout>
+                  <Dashboard />
+                </Layout>
               </PrivateRoute>
             }
           />
@@ -61,7 +98,9 @@ function App() {
             path="/issue/:identifier"
             element={
               <PrivateRoute>
-                <IssueDetailPage />
+                <Layout>
+                  <IssueDetailPage />
+                </Layout>
               </PrivateRoute>
             }
           />

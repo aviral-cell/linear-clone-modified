@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { baseURL } from '../utils';
-import Sidebar from '../components/Sidebar';
 import SubIssuesSection from '../components/SubIssuesSection';
 import ActivityTimeline from '../components/ActivityTimeline';
 import CommentsSection from '../components/CommentsSection';
@@ -10,7 +9,6 @@ import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
 import {
   X,
-  Menu,
   PanelRight,
   CircleDashed,
   Circle,
@@ -43,7 +41,6 @@ const IssueDetailPage = () => {
   const [editingDescription, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   const { identifier } = useParams();
   const { token, user: currentUser } = useAuth();
@@ -52,14 +49,9 @@ const IssueDetailPage = () => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 768) {
-        setIsLeftSidebarCollapsed(true);
-        setIsRightSidebarOpen(false);
-      } else if (width < 1024) {
-        setIsLeftSidebarCollapsed(false);
+      if (width < 1024) {
         setIsRightSidebarOpen(false);
       } else {
-        setIsLeftSidebarCollapsed(false);
         setIsRightSidebarOpen(true);
       }
     };
@@ -254,25 +246,10 @@ const IssueDetailPage = () => {
   if (!issue) return null;
 
   return (
-    <div className="h-screen flex bg-background">
-      <Sidebar
-        teams={teams}
-        isCollapsed={isLeftSidebarCollapsed}
-        onToggle={() => setIsLeftSidebarCollapsed(!isLeftSidebarCollapsed)}
-      />
-
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="border-b border-border bg-background">
           <div className="px-4 md:px-6 py-3.5 lg:py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button
-                onClick={() =>
-                  setIsLeftSidebarCollapsed(!isLeftSidebarCollapsed)
-                }
-                className="md:hidden p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
               <button
                 onClick={() => navigate(`/team/${issue.team._id}`)}
                 className="text-text-secondary hover:text-text-primary transition-colors"
@@ -423,7 +400,6 @@ const IssueDetailPage = () => {
                 onUpdate={updateIssue}
               />
             )}
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
@@ -8,22 +8,65 @@ import {
   Zap,
   ChevronDown,
   ChevronRight,
-  Users,
-  User,
+  List,
   LogOut,
+  FolderKanban,
 } from 'lucide-react';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   const navigate = useNavigate();
-  const { teamId } = useParams();
+  const { teamKey, issuesFilter } = useParams();
+  const location = useLocation();
   const { user, logout } = useAuth();
+
+  const isGlobalProjectsPage = location.pathname === '/projects/all';
+  const isTeamProjectsPage =
+    location.pathname.startsWith('/team/') &&
+    location.pathname.endsWith('/projects/all') &&
+    !isGlobalProjectsPage;
+  const isTeamIssuesPage =
+    location.pathname.startsWith('/team/') &&
+    !location.pathname.includes('/projects/') &&
+    teamKey &&
+    issuesFilter;
   const [expandedSections, setExpandedSections] = useState({
     teams: true,
   });
   const [expandedTeams, setExpandedTeams] = useState(() => {
+    const initial = {};
+    // Always expand ENG team by default
     const eng = teams.find((t) => t.key === 'ENG');
-    return eng ? { [eng._id]: true } : {};
+    if (eng) {
+      initial[eng._id] = true;
+    }
+    // Also expand current team if on a team page
+    if (teamKey && teams.length > 0) {
+      const currentTeam = teams.find((t) => t.key === teamKey);
+      if (currentTeam) {
+        initial[currentTeam._id] = true;
+      }
+    }
+    return initial;
   });
+
+  // Auto-expand the current team when route changes
+  useEffect(() => {
+    if (teamKey && teams.length > 0) {
+      const currentTeam = teams.find((t) => t.key === teamKey);
+      if (currentTeam) {
+        setExpandedTeams((prev) => {
+          // Only update if not already expanded to avoid unnecessary re-renders
+          if (prev[currentTeam._id]) {
+            return prev;
+          }
+          return {
+            ...prev,
+            [currentTeam._id]: true,
+          };
+        });
+      }
+    }
+  }, [teamKey, teams]);
 
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -37,7 +80,15 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   };
 
   const handleTeamIssuesClick = (team) => {
-    navigate(`/team/${team._id}`);
+    navigate(`/team/${team.key}/all`);
+  };
+
+  const handleTeamProjectsClick = (team) => {
+    navigate(`/team/${team.key}/projects/all`);
+  };
+
+  const handleProjectsClick = () => {
+    navigate('/projects/all');
   };
 
   const handleLogout = () => {
@@ -68,19 +119,36 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
       <div className="flex-1 overflow-y-auto py-2">
         <button
-          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-primary text-sm transition-colors"
-          title="Inbox"
+          onClick={(e) => e.preventDefault()}
+          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60"
+          title="Inbox (Coming soon)"
+          disabled
         >
           <Inbox className="w-4 h-4 flex-shrink-0" />
           {!isCollapsed && <span>Inbox</span>}
         </button>
 
         <button
-          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-primary text-sm transition-colors"
-          title="My Issues"
+          onClick={(e) => e.preventDefault()}
+          className="w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60"
+          title="My Issues (Coming soon)"
+          disabled
         >
-          <User className="w-4 h-4 flex-shrink-0" />
+          <List className="w-4 h-4 flex-shrink-0" />
           {!isCollapsed && <span>My Issues</span>}
+        </button>
+
+        <button
+          onClick={handleProjectsClick}
+          className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+            isGlobalProjectsPage
+              ? 'text-text-primary bg-background-tertiary rounded-md'
+              : 'text-text-secondary'
+          }`}
+          title="Projects"
+        >
+          <FolderKanban className="w-4 h-4 flex-shrink-0" />
+          {!isCollapsed && <span>Projects</span>}
         </button>
 
         <div className="mt-4">
@@ -108,7 +176,8 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                 return (
                   <div key={team._id}>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (isCollapsed) {
                           handleTeamIssuesClick(team);
                         } else {
@@ -138,17 +207,34 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                         ))}
                     </button>
                     {expandedTeams[team._id] && !isCollapsed && (
-                      <div className="ml-6 mr-2 mt-1">
+                      <div className="ml-6 mr-2 mt-1 space-y-1">
                         <button
-                          onClick={() => handleTeamIssuesClick(team)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTeamIssuesClick(team);
+                          }}
                           className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                            teamId === team._id
+                            isTeamIssuesPage && teamKey === team.key
                               ? 'text-text-primary bg-background-tertiary rounded-md'
                               : 'text-text-secondary'
                           }`}
                         >
-                          <Users className="w-4 h-4 flex-shrink-0" />
+                          <List className="w-4 h-4 flex-shrink-0" />
                           <span>Issues</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTeamProjectsClick(team);
+                          }}
+                          className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                            isTeamProjectsPage && teamKey === team.key
+                              ? 'text-text-primary bg-background-tertiary rounded-md'
+                              : 'text-text-secondary'
+                          }`}
+                        >
+                          <FolderKanban className="w-4 h-4 flex-shrink-0" />
+                          <span>Projects</span>
                         </button>
                       </div>
                     )}
