@@ -39,6 +39,11 @@ const issueSchema = new mongoose.Schema(
       ref: 'Team',
       required: true,
     },
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Project',
+      default: null,
+    },
     assignee: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -72,5 +77,6 @@ const issueSchema = new mongoose.Schema(
 
 issueSchema.index({ team: 1, status: 1 });
 issueSchema.index({ identifier: 1 });
+issueSchema.index({ project: 1, status: 1 });
 
 export default mongoose.model('Issue', issueSchema);
