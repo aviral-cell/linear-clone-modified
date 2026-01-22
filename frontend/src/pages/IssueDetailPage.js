@@ -7,15 +7,8 @@ import ActivityTimeline from '../components/ActivityTimeline';
 import CommentsSection from '../components/CommentsSection';
 import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
-import {
-  X,
-  PanelRight,
-  CircleDashed,
-  Circle,
-  CircleDot,
-  CheckCircle2,
-  XCircle,
-} from 'lucide-react';
+import Header from '../components/Header';
+import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const statusIcons = {
@@ -238,25 +231,15 @@ const IssueDetailPage = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border bg-background">
-        <div className="px-4 md:px-6 py-3.5 lg:py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(`/team/${issue.team._id}`)}
-              className="text-text-secondary hover:text-text-primary transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <span className="text-text-secondary font-mono">{issue.identifier}</span>
-          </div>
-          <button
-            onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-            className="lg:hidden p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md"
-            title={isRightSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-          >
-            <PanelRight className={`w-5 h-5 ${isRightSidebarOpen ? 'text-text-primary' : ''}`} />
-          </button>
-        </div>
+      <div className="bg-background">
+        <Header
+          team={issue.team}
+          issueKey={issue.identifier}
+          onTeamClick={() => navigate(`/team/${issue.team.key}/all`)}
+          panelOpenerIcon={PanelRight}
+          onPanelOpenerClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+          isPanelOpen={isRightSidebarOpen}
+        />
       </div>
 
       <div className="flex-1 flex overflow-hidden relative">
@@ -363,16 +346,24 @@ const IssueDetailPage = () => {
           </div>
         </div>
 
+        {/* Backdrop overlay for mobile */}
+        {isRightSidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+            onClick={() => setIsRightSidebarOpen(false)}
+          />
+        )}
+
+        {/* Right sidebar overlay */}
         <div
           className={`
-            border-l border-border bg-background overflow-y-auto transition-all duration-300
-            ${isRightSidebarOpen ? 'w-80' : 'w-0 overflow-hidden'}
-            lg:w-80 lg:block
+            fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out
+            ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+            lg:translate-x-0
+            w-80
           `}
         >
-          {isRightSidebarOpen && (
-            <IssueSidebar issue={issue} users={users} onUpdate={updateIssue} />
-          )}
+          <IssueSidebar issue={issue} users={users} onUpdate={updateIssue} />
         </div>
       </div>
     </div>

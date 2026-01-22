@@ -1,18 +1,24 @@
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTeams } from '../context/TeamsContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 
-const Breadcrumb = ({ fallbackText = null }) => {
+const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, onTeamClick = null }) => {
   const { teams, loading } = useTeams();
   const { teamKey } = useParams();
+  const navigate = useNavigate();
 
   const selectedTeam = useMemo(() => {
+    // If team is provided as prop, use it
+    if (team) {
+      return team;
+    }
+    // Otherwise, try to find from URL params
     if (teamKey && teams.length > 0) {
       return teams.find((t) => t.key === teamKey) || null;
     }
     return null;
-  }, [teamKey, teams]);
+  }, [team, teamKey, teams]);
 
   if (loading) {
     return null;
@@ -27,8 +33,16 @@ const Breadcrumb = ({ fallbackText = null }) => {
 
   const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeam);
 
+  const handleTeamClick = () => {
+    if (onTeamClick) {
+      onTeamClick();
+    } else if (selectedTeam.key) {
+      navigate(`/team/${selectedTeam.key}/all`);
+    }
+  };
+
   return (
-    <>
+    <div className="flex items-center justify-center gap-2">
       <div
         className={`w-6 h-6 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
       >
@@ -38,8 +52,21 @@ const Breadcrumb = ({ fallbackText = null }) => {
           <span className="text-sm">{icon}</span>
         )}
       </div>
-      <h2 className="text-base font-medium text-text-primary">{selectedTeam.name}</h2>
-    </>
+      <div className="flex items-baseline gap-2">
+        <button
+          onClick={handleTeamClick}
+          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-none"
+        >
+          {selectedTeam.name}
+        </button>
+        {issueKey && (
+          <>
+            <span className="text-text-tertiary text-base leading-none">›</span>
+            <span className="text-text-secondary font-mono text-sm leading-none">{issueKey}</span>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

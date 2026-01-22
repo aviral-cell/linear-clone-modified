@@ -120,7 +120,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       ${isCollapsed ? 'w-16' : 'w-64'}
     `}
     >
-      <div className={`px-4 md:px-6 py-3 border-b border-border ${isCollapsed ? 'px-4' : ''}`}>
+      <div
+        className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : ''}`}
+      >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
           <div className="w-7 h-7 bg-gradient-to-br from-accent to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
             <Zap className="w-4 h-4 text-white" />
