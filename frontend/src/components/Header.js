@@ -10,10 +10,12 @@ const Header = ({
   onPrimaryActionClick,
   team,
   issueKey,
+  projectName,
   onTeamClick,
   panelOpenerIcon: PanelOpenerIcon,
   onPanelOpenerClick,
   isPanelOpen,
+  hidePanelIconOnLarge = false,
 }) => {
   const { isCollapsed, isMobile, isDrawerOpen, toggleSidebar } = useSidebar();
 
@@ -37,6 +39,7 @@ const Header = ({
           fallbackText={fallbackText}
           team={team}
           issueKey={issueKey}
+          projectName={projectName}
           onTeamClick={onTeamClick}
         />
       </div>
@@ -54,7 +57,7 @@ const Header = ({
         {PanelOpenerIcon && onPanelOpenerClick && (
           <button
             onClick={onPanelOpenerClick}
-            className="lg:hidden p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md"
+            className={`${hidePanelIconOnLarge ? 'lg:hidden' : ''} p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md`}
             title={isPanelOpen ? 'Close panel' : 'Open panel'}
           >
             <PanelOpenerIcon className={`w-5 h-5 ${isPanelOpen ? 'text-text-primary' : ''}`} />

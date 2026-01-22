@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTeams } from '../context/TeamsContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 
-const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, onTeamClick = null }) => {
+const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, projectName = null, onTeamClick = null }) => {
   const { teams, loading } = useTeams();
   const { teamKey } = useParams();
   const navigate = useNavigate();
@@ -19,6 +19,14 @@ const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, onTeamC
     }
     return null;
   }, [team, teamKey, teams]);
+
+  // Truncate project name to avoid overflow (max 40 characters)
+  const truncateProjectName = (name) => {
+    if (!name) return '';
+    const maxLength = 40;
+    if (name.length <= maxLength) return name;
+    return name.substring(0, maxLength) + '...';
+  };
 
   if (loading) {
     return null;
@@ -52,17 +60,25 @@ const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, onTeamC
           <span className="text-sm">{icon}</span>
         )}
       </div>
-      <div className="flex items-baseline gap-2">
+      <div className="flex items-baseline gap-2 min-w-0">
         <button
           onClick={handleTeamClick}
-          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-none"
+          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-none flex-shrink-0"
         >
           {selectedTeam.name}
         </button>
+        {projectName && (
+          <>
+            <span className="text-text-tertiary text-base leading-none flex-shrink-0">›</span>
+            <span className="text-text-secondary text-sm leading-none truncate" title={projectName}>
+              {truncateProjectName(projectName)}
+            </span>
+          </>
+        )}
         {issueKey && (
           <>
-            <span className="text-text-tertiary text-base leading-none">›</span>
-            <span className="text-text-secondary font-mono text-sm leading-none">{issueKey}</span>
+            <span className="text-text-tertiary text-base leading-none flex-shrink-0">›</span>
+            <span className="text-text-secondary font-mono text-sm leading-none flex-shrink-0">{issueKey}</span>
           </>
         )}
       </div>
