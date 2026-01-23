@@ -239,6 +239,7 @@ const IssueDetailPage = () => {
           panelOpenerIcon={PanelRight}
           onPanelOpenerClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
           isPanelOpen={isRightSidebarOpen}
+          hidePanelIconOnLarge={true}
         />
       </div>
 

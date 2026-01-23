@@ -58,7 +58,7 @@ const priorityOptions = [
   { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
 ];
 
-const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
+const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('todo');
@@ -130,7 +130,8 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
         body: JSON.stringify({
           title,
           description,
-          teamId: team._id,
+          teamId: team?._id || project?.team?._id,
+          projectId: project?._id,
           status,
           priority,
           assignee: assignee || null,
@@ -172,18 +173,22 @@ const CreateIssueModal = ({ isOpen, onClose, team, onSuccess }) => {
           <div className="flex items-center gap-3">
             <div className="px-2 py-1 bg-background-tertiary rounded flex items-center gap-2 text-md">
               {(() => {
-                const { IconComponent, icon } = getTeamIconDisplay(team);
+                const displayTeam = team || project?.team;
+                if (!displayTeam) return null;
+                const { IconComponent, icon } = getTeamIconDisplay(displayTeam);
                 return (
-                  <div className="w-6 h-6 flex items-center justify-center text-text-secondary flex-shrink-0">
-                    {IconComponent ? (
-                      <IconComponent className="w-4 h-4" />
-                    ) : (
-                      <span className="text-sm">{icon}</span>
-                    )}
-                  </div>
+                  <>
+                    <div className="w-6 h-6 flex items-center justify-center text-text-secondary flex-shrink-0">
+                      {IconComponent ? (
+                        <IconComponent className="w-4 h-4" />
+                      ) : (
+                        <span className="text-sm">{icon}</span>
+                      )}
+                    </div>
+                    <span className="text-text-secondary">{displayTeam.key}</span>
+                  </>
                 );
               })()}
-              <span className="text-text-secondary">{team.key}</span>
             </div>
           </div>
           <button

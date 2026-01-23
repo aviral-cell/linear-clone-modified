@@ -82,19 +82,26 @@ const priorityConfig = {
   },
 };
 
-const IssuesBoard = ({ team, filter, refreshTrigger }) => {
+const IssuesBoard = ({ team, project, filter, refreshTrigger }) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
   const navigate = useNavigate();
 
   const fetchIssues = React.useCallback(async () => {
-    if (!team) return;
+    if (!team && !project) return;
 
     try {
       setLoading(true);
 
-      const response = await fetch(`${baseURL}/api/issues/team/${team._id}`, {
+      let url;
+      if (project) {
+        url = `${baseURL}/api/projects/${project.identifier}/issues`;
+      } else {
+        url = `${baseURL}/api/issues/team/${team._id}`;
+      }
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -111,7 +118,7 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
     } finally {
       setLoading(false);
     }
-  }, [team, token]);
+  }, [team, project, token]);
 
   useEffect(() => {
     fetchIssues();
@@ -139,17 +146,27 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
     if (!title) return;
 
     try {
+      const body = {
+        title,
+        status,
+      };
+
+      if (project) {
+        body.projectId = project._id;
+        if (project.team) {
+          body.teamId = project.team._id;
+        }
+      } else {
+        body.teamId = team._id;
+      }
+
       const response = await fetch(`${baseURL}/api/issues`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          title,
-          teamId: team._id,
-          status,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (response.ok) {
@@ -177,18 +194,14 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
 
   return (
     <div className="flex-1 overflow-hidden bg-background">
-      <div className="h-full flex gap-3 px-4 md:px-8 py-4 overflow-x-auto">
+      <div className="h-full flex gap-3 px-4 md:px-8 py-2 overflow-x-auto">
         {filteredStatuses.map((status) => {
           const statusIssues = getIssuesByStatus(status);
           const config = statusConfig[status];
           const StatusIcon = config.icon;
 
           return (
-            <div
-              key={status}
-              className="flex-shrink-0 w-80 flex flex-col"
-              style={{ maxHeight: 'calc(100vh - 140px)' }}
-            >
+            <div key={status} className="flex-shrink-0 w-80 flex flex-col h-full">
               <div className="px-3 py-2 flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <StatusIcon className={`w-4 h-4 ${config.color}`} />
@@ -197,7 +210,7 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-2">
+              <div className="flex-1 overflow-y-auto space-y-2 py-2">
                 {statusIssues.map((issue) => {
                   const priorityInfo = priorityConfig[issue.priority];
                   const PriorityIcon = priorityInfo.icon;
