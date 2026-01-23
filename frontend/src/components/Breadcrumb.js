@@ -3,7 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTeams } from '../context/TeamsContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 
-const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, projectName = null, onTeamClick = null }) => {
+const Breadcrumb = ({
+  fallbackText = null,
+  team = null,
+  issueKey = null,
+  projectName = null,
+  onTeamClick = null,
+}) => {
   const { teams, loading } = useTeams();
   const { teamKey } = useParams();
   const navigate = useNavigate();
@@ -78,7 +84,9 @@ const Breadcrumb = ({ fallbackText = null, team = null, issueKey = null, project
         {issueKey && (
           <>
             <span className="text-text-tertiary text-base leading-none flex-shrink-0">›</span>
-            <span className="text-text-secondary font-mono text-sm leading-none flex-shrink-0">{issueKey}</span>
+            <span className="text-text-secondary font-mono text-sm leading-none flex-shrink-0">
+              {issueKey}
+            </span>
           </>
         )}
       </div>
