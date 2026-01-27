@@ -9,6 +9,7 @@ import ProjectProperties from '../components/ProjectProperties';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import UpdateCard from '../components/UpdateCard';
+import UpdateActivityList from '../components/UpdateActivityList';
 import {
   FolderKanban,
   FileText,
@@ -87,6 +88,7 @@ const ProjectDetailPage = () => {
   const [metrics, setMetrics] = useState(null);
   const [issues, setIssues] = useState([]);
   const [updates, setUpdates] = useState([]);
+  const [pendingActivities, setPendingActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
@@ -256,12 +258,16 @@ const ProjectDetailPage = () => {
   const fetchUpdates = React.useCallback(async () => {
     if (!projectIdentifier) return;
     try {
-      const response = await fetch(`${baseURL}/api/projects/${projectIdentifier}/updates`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `${baseURL}/api/projects/${projectIdentifier}/updates?includeActivities=true`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         setUpdates(data.updates || []);
+        setPendingActivities(data.pendingActivities || []);
       }
     } catch (error) {
       console.error('Error fetching project updates:', error);
@@ -649,6 +655,7 @@ const ProjectDetailPage = () => {
                       onPostUpdate={handleCreateUpdate}
                       showPostButton={true}
                     />
+                    <UpdateActivityList activities={pendingActivities} />
                   </div>
 
                   {updates.length === 0 ? (
@@ -661,13 +668,18 @@ const ProjectDetailPage = () => {
                         const statusConfig = getStatusConfig(update.status);
                         const StatusIcon = statusConfig.icon;
                         return (
-                          <UpdateCard
-                            key={update._id}
-                            update={update}
-                            statusConfig={statusConfig}
-                            StatusIcon={StatusIcon}
-                            formatDate={formatUpdateDate}
-                          />
+                          <div key={update._id}>
+                            <UpdateCard
+                              update={update}
+                              statusConfig={statusConfig}
+                              StatusIcon={StatusIcon}
+                              formatDate={formatUpdateDate}
+                            />
+                            <UpdateActivityList
+                              activities={update.activities}
+                              updateStatus={update.status}
+                            />
+                          </div>
                         );
                       })}
                     </div>
@@ -732,6 +744,10 @@ const ProjectDetailPage = () => {
               onMembersChange={setSelectedMembers}
               token={token}
               activitiesRefreshTrigger={activitiesRefreshTrigger}
+              onSeeAllActivities={() => {
+                setIsRightSidebarOpen(false);
+                setActiveTab('updates');
+              }}
             />
           </div>
         </div>

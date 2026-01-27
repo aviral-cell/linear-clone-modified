@@ -1,59 +1,62 @@
 import React, { useEffect, useState } from 'react';
-import { CircleDot, CheckCircle2, BarChart4, Calendar, ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { baseURL } from '../utils';
-import { formatDate } from '../utils';
+import UpdateActivityList from './UpdateActivityList';
 
-const getActivityIcon = (actionType) => {
-  switch (actionType) {
-    case 'status_changed':
-      return { Icon: CircleDot, color: 'text-yellow-400' };
-    case 'priority_changed':
-      return { Icon: BarChart4, color: 'text-text-tertiary' };
-    case 'target_date_set':
-    case 'target_date_cleared':
-    case 'start_date_set':
-    case 'start_date_cleared':
-      return { Icon: Calendar, color: 'text-text-tertiary' };
-    case 'update_posted':
-      return { Icon: CheckCircle2, color: 'text-yellow-400' };
-    default:
-      return { Icon: CircleDot, color: 'text-yellow-400' };
-  }
-};
-
-const formatActivityDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const month = date.toLocaleDateString('en-US', { month: 'short' });
-  const day = date.getDate();
-  return `${month} ${day}`;
-};
-
-const ProjectActivity = ({ projectIdentifier, token, refreshTrigger }) => {
+const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll }) => {
   const [activities, setActivities] = useState([]);
+  const [updateStatusMap, setUpdateStatusMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchData = async () => {
       if (!projectIdentifier || !token) return;
 
       try {
-        const response = await fetch(`${baseURL}/api/projects/${projectIdentifier}/activities`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const [activitiesRes, updatesRes] = await Promise.all([
+          fetch(`${baseURL}/api/projects/${projectIdentifier}/activities`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${baseURL}/api/projects/${projectIdentifier}/updates`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setActivities(data.activities || []);
+        let fetchedActivities = [];
+        if (activitiesRes.ok) {
+          const activitiesData = await activitiesRes.json();
+          fetchedActivities = activitiesData.activities || [];
+          setActivities(fetchedActivities);
+        }
+
+        if (updatesRes.ok) {
+          const updatesData = await updatesRes.json();
+          const updates = updatesData.updates || [];
+
+          const statusMap = {};
+          updates.forEach((update) => {
+            const updateTime = new Date(update.createdAt).getTime();
+            fetchedActivities.forEach((activity) => {
+              if (activity.actionType === 'update_posted' && activity.createdAt) {
+                const activityTime = new Date(activity.createdAt).getTime();
+                const timeDiff = Math.abs(activityTime - updateTime);
+                if (timeDiff < 10000) {
+                  statusMap[activity._id] = update.status;
+                }
+              }
+            });
+          });
+          setUpdateStatusMap(statusMap);
         }
       } catch (error) {
-        console.error('Error fetching activities:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchActivities();
+    fetchData();
   }, [projectIdentifier, token, refreshTrigger]);
 
   if (loading) {
@@ -67,36 +70,28 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-text-primary flex items-center gap-1">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-sm font-medium text-text-primary flex items-center gap-1 hover:opacity-80 transition-opacity"
+        >
           Activity
-          <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
-        </h3>
-        <button className="text-xs text-text-secondary hover:text-text-primary">See all</button>
+          {isExpanded ? (
+            <ChevronUp className="w-3.5 h-3.5 text-text-tertiary" />
+          ) : (
+            <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
+          )}
+        </button>
+        <button onClick={onSeeAll} className="text-xs text-text-secondary hover:text-text-primary">
+          See all
+        </button>
       </div>
-      <div className="space-y-3">
-        {activities.slice(0, 5).map((activity) => {
-          const { Icon, color } = getActivityIcon(activity.actionType);
-          return (
-            <div key={activity._id} className="flex items-start gap-2">
-              <div className={`w-4 h-4 ${color} flex-shrink-0 mt-0.5`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-text-secondary">
-                  <span className="text-text-primary font-medium">
-                    {activity.user?.name || 'Unknown'}
-                  </span>{' '}
-                  {activity.description}
-                  <span className="text-text-tertiary">
-                    {' '}
-                    · {formatActivityDate(activity.createdAt)}
-                  </span>
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {isExpanded && (
+        <UpdateActivityList
+          activities={activities.slice(0, 5)}
+          updateStatusMap={updateStatusMap}
+          variant="sidebar"
+        />
+      )}
     </div>
   );
 };

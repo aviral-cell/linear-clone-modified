@@ -12,6 +12,7 @@ const ProjectSidebar = ({
   onMembersChange,
   token,
   activitiesRefreshTrigger,
+  onSeeAllActivities,
 }) => {
   return (
     <div className="w-full h-full p-6">
@@ -40,6 +41,7 @@ const ProjectSidebar = ({
             projectIdentifier={project.identifier}
             token={token}
             refreshTrigger={activitiesRefreshTrigger}
+            onSeeAll={onSeeAllActivities}
           />
         )}
 
