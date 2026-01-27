@@ -90,6 +90,7 @@ const ProjectDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [focusUpdateInput, setFocusUpdateInput] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [membersInitialized, setMembersInitialized] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -106,6 +107,12 @@ const ProjectDetailPage = () => {
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const statusMenuRef = useRef(null);
   const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    if (focusUpdateInput) {
+      setFocusUpdateInput(false);
+    }
+  }, [focusUpdateInput]);
 
   useEffect(() => {
     const urlTab = tab || 'overview';
@@ -476,7 +483,10 @@ const ProjectDetailPage = () => {
                 Overview
               </button>
               <button
-                onClick={() => setActiveTab('updates')}
+                onClick={() => {
+                  setActiveTab('updates');
+                  setFocusUpdateInput(false);
+                }}
                 className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   activeTab === 'updates'
                     ? 'bg-background-tertiary text-text-primary border-accent'
@@ -590,7 +600,10 @@ const ProjectDetailPage = () => {
                     <div className="flex items-center justify-between mb-3">
                       <h2 className="text-xs font-medium text-text-tertiary">Latest update</h2>
                       <button
-                        onClick={() => setActiveTab('updates')}
+                        onClick={() => {
+                          setActiveTab('updates');
+                          setFocusUpdateInput(true);
+                        }}
                         className="px-3 py-1.5 rounded-md bg-background-secondary border border-border text-xs text-text-primary hover:bg-background-tertiary transition-colors flex items-center gap-2"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -620,6 +633,7 @@ const ProjectDetailPage = () => {
                       isEditable={true}
                       statusConfig={getStatusConfig(updateStatus)}
                       StatusIcon={getStatusConfig(updateStatus).icon}
+                      autoFocus={focusUpdateInput}
                       statusMenuRef={statusMenuRef}
                       showStatusMenu={showStatusMenu}
                       onStatusMenuToggle={() => setShowStatusMenu(!showStatusMenu)}
