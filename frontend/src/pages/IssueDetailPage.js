@@ -397,7 +397,6 @@ const IssueDetailPage = () => {
             </div>
 
             <div className="mb-6">
-              <h2 className="text-xs font-medium text-text-tertiary mb-3">Properties</h2>
               <IssueProperties
                 issue={issue}
                 users={users}

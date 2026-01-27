@@ -214,15 +214,15 @@ const IssuesBoard = ({
                       <div
                         key={issue._id}
                         onClick={() => handleIssueClick(issue)}
-                        className="px-4 py-2 flex items-center gap-3 text-sm hover:bg-background-secondary cursor-pointer transition-colors"
+                        className="px-4 py-2 flex items-center gap-2 text-sm hover:bg-background-secondary cursor-pointer transition-colors"
                       >
                         <PriorityIcon
                           className={`w-3.5 h-3.5 flex-shrink-0 ${priorityInfo.color}`}
                         />
-                        <span className="w-24 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
+                        <span className="w-14 md:w-20 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
                           {identifier}
                         </span>
-                        <span className="flex-1 text-text-primary truncate">{issue.title}</span>
+                        <span className="flex-1 text-text-primary truncate ml-1">{issue.title}</span>
                         {issue.project && (
                           <span className="ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0">
                             {issue.project.name}

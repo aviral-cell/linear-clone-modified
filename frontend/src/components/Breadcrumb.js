@@ -37,7 +37,7 @@ const Breadcrumb = ({
 
   if (!selectedTeam) {
     if (fallbackText) {
-      return <h2 className="text-base font-medium text-text-primary">{fallbackText}</h2>;
+      return <h2 className="text-base font-medium text-text-primary truncate">{fallbackText}</h2>;
     }
     return null;
   }
@@ -53,7 +53,7 @@ const Breadcrumb = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center gap-2 min-w-0">
       <div
         className={`w-6 h-6 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
       >
@@ -63,25 +63,26 @@ const Breadcrumb = ({
           <span className="text-sm">{icon}</span>
         )}
       </div>
-      <div className="flex items-baseline gap-2 min-w-0">
+      <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
         <button
           onClick={handleTeamClick}
-          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-none flex-shrink-0"
+          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-normal truncate max-w-[120px] sm:max-w-none"
+          title={selectedTeam.name}
         >
           {selectedTeam.name}
         </button>
         {projectName && (
           <>
-            <span className="text-text-tertiary text-base leading-none flex-shrink-0">›</span>
-            <span className="text-text-secondary text-sm leading-none truncate" title={projectName}>
+            <span className="text-text-tertiary text-base leading-normal flex-shrink-0">›</span>
+            <span className="text-text-secondary text-sm leading-normal truncate min-w-0" title={projectName}>
               {truncateProjectName(projectName)}
             </span>
           </>
         )}
         {issueKey && (
           <>
-            <span className="text-text-tertiary text-base leading-none flex-shrink-0">›</span>
-            <span className="text-text-secondary font-mono text-sm leading-none flex-shrink-0">
+            <span className="text-text-tertiary text-base leading-normal flex-shrink-0">›</span>
+            <span className="text-text-secondary font-mono text-sm leading-normal flex-shrink-0">
               {issueKey}
             </span>
           </>
