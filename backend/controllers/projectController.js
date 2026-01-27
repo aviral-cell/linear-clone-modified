@@ -171,8 +171,11 @@ export const updateProject = async (req, res) => {
     if (updates.leadId) {
       project.lead = updates.leadId;
     }
+    if (updates.teamId) {
+      project.team = updates.teamId;
+    }
 
-    const { memberIds, leadId, ...otherUpdates } = updates;
+    const { memberIds, leadId, teamId, ...otherUpdates } = updates;
 
     Object.assign(project, otherUpdates);
     await project.save();
