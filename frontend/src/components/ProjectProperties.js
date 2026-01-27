@@ -297,7 +297,8 @@ const ProjectProperties = ({
   useEffect(() => {
     const handleResize = () => {
       if (showStatusMenu) calculateMenuAlignment(statusRef, statusMenuRef, setStatusMenuAlign);
-      if (showPriorityMenu) calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
+      if (showPriorityMenu)
+        calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
       if (showLeadMenu) calculateMenuAlignment(leadRef, leadMenuRef, setLeadMenuAlign);
       if (showTeamMenu) calculateMenuAlignment(teamRef, teamMenuRef, setTeamMenuAlign);
       if (showMembersMenu) calculateMenuAlignment(membersRef, membersMenuRef, setMembersMenuAlign);
@@ -308,21 +309,22 @@ const ProjectProperties = ({
   }, [showStatusMenu, showPriorityMenu, showLeadMenu, showTeamMenu, showMembersMenu]);
 
   const getMenuClasses = (isVertical, options = {}) => {
-    const { minWidth, alignRight = false, align = 'left' } = options;
-    const baseClasses = 'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
+    const { minWidth, align = 'left' } = options;
+    const baseClasses =
+      'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
     if (isVertical) {
       const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
       return `${baseClasses} top-full left-0 rounded-md shadow-lg ${finalMinWidth}`;
     }
-    const alignment = alignRight || align === 'right' ? 'right-0' : 'left-0';
+    const alignment = align === 'right' ? 'right-0' : 'left-0';
     const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
     const maxWidth = 'max-w-[calc(100vw-2rem)]';
     return `${baseClasses} top-full ${alignment} rounded-md shadow-lg ${finalMinWidth || ''} ${maxWidth}`.trim();
   };
 
-  const getMenuItemClasses = (isVertical, isCurrent = false) =>
-    `w-full text-left text-xs text-text-primary hover:bg-background-tertiary flex items-center gap-2 transition-colors ${
-      isVertical ? 'px-3 py-1' : `px-3 py-2 ${isCurrent ? 'bg-background-tertiary' : ''}`
+  const getMenuItemClasses = (isCurrent = false) =>
+    `w-full text-left text-xs text-text-primary hover:bg-background-tertiary flex items-center gap-2 transition-colors px-3 py-2 ${
+      isCurrent ? 'bg-background-tertiary' : ''
     }`;
 
   const labelClasses = `text-xs font-medium text-text-tertiary tracking-wide ${!isVertical && 'hidden'} ${isVertical ? 'w-20 mr-2 flex-shrink-0' : 'block mb-2'}`;
@@ -405,23 +407,10 @@ const ProjectProperties = ({
     }
   };
 
-  const closeAllMenus = () => {
-    setShowStatusMenu(false);
-    setShowPriorityMenu(false);
-    setShowLeadMenu(false);
-    setShowTeamMenu(false);
-    setShowMembersMenu(false);
-    setShowStartDatePicker(false);
-    setShowTargetDatePicker(false);
-  };
-
   return (
     <div className={containerClasses}>
       {showStatus && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={statusRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={statusRef}>
           <label className={labelClasses}>Status</label>
           <div className="relative">
             <button
@@ -445,7 +434,7 @@ const ProjectProperties = ({
               >
                 {projectStatusOptions.map((option) => {
                   const OptionIcon = option.Icon;
-                  const isCurrent = !isVertical && option.value === currentStatus.value;
+                  const isCurrent = option.value === currentStatus.value;
                   return (
                     <button
                       key={option.value}
@@ -454,7 +443,7 @@ const ProjectProperties = ({
                         if (onUpdate) onUpdate({ status: option.value });
                         setShowStatusMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, isCurrent)}
+                      className={getMenuItemClasses(isCurrent)}
                     >
                       <OptionIcon className={`w-4 h-4 ${option.iconColor}`} />
                       <span>{option.label}</span>
@@ -470,7 +459,6 @@ const ProjectProperties = ({
             >
               {projectStatusOptions.map((option) => {
                 const OptionIcon = option.Icon;
-                const isCurrent = !isVertical && option.value === currentStatus.value;
                 return (
                   <button
                     key={option.value}
@@ -479,7 +467,7 @@ const ProjectProperties = ({
                       if (onUpdate) onUpdate({ status: option.value });
                       setShowStatusMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, isCurrent)}
+                    className={getMenuItemClasses()}
                   >
                     <OptionIcon className={`w-4 h-4 ${option.iconColor}`} />
                     <span>{option.label}</span>
@@ -492,10 +480,7 @@ const ProjectProperties = ({
       )}
 
       {showPriority && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={priorityRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={priorityRef}>
           <label className={labelClasses}>Priority</label>
           <div className="relative">
             <button
@@ -513,10 +498,13 @@ const ProjectProperties = ({
               <ChevronDown className={chevronClasses} />
             </button>
             {showPriorityMenu && !isVertical && (
-              <div ref={priorityMenuRef} className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: priorityMenuAlign })}`}>
+              <div
+                ref={priorityMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: priorityMenuAlign })}`}
+              >
                 {priorityOptions.map((option) => {
                   const OptionIcon = option.Icon;
-                  const isCurrent = !isVertical && option.value === currentPriority.value;
+                  const isCurrent = option.value === currentPriority.value;
                   return (
                     <button
                       key={option.value}
@@ -525,7 +513,7 @@ const ProjectProperties = ({
                         if (onUpdate) onUpdate({ priority: option.value });
                         setShowPriorityMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, isCurrent)}
+                      className={getMenuItemClasses(isCurrent)}
                     >
                       <OptionIcon className={`w-4 h-4 ${option.color}`} />
                       <span>{option.label}</span>
@@ -539,7 +527,6 @@ const ProjectProperties = ({
             <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]' })}`}>
               {priorityOptions.map((option) => {
                 const OptionIcon = option.Icon;
-                const isCurrent = !isVertical && option.value === currentPriority.value;
                 return (
                   <button
                     key={option.value}
@@ -548,7 +535,7 @@ const ProjectProperties = ({
                       if (onUpdate) onUpdate({ priority: option.value });
                       setShowPriorityMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, isCurrent)}
+                    className={getMenuItemClasses()}
                   >
                     <OptionIcon className={`w-4 h-4 ${option.color}`} />
                     <span>{option.label}</span>
@@ -561,10 +548,7 @@ const ProjectProperties = ({
       )}
 
       {showLead && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={leadRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={leadRef}>
           <label className={labelClasses}>Lead</label>
           <div className="relative">
             <button
@@ -579,15 +563,15 @@ const ProjectProperties = ({
             {showLeadMenu && !isVertical && (
               <div
                 ref={leadMenuRef}
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: leadMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: leadMenuAlign })} max-h-60 overflow-y-auto`}
               >
                 <button
                   type="button"
                   onClick={() => {
-                    if (onUpdate) onUpdate({ leadId: isVertical ? null : '' });
+                    if (onUpdate) onUpdate({ leadId: null });
                     setShowLeadMenu(false);
                   }}
-                  className={`${getMenuItemClasses(isVertical, !project?.lead)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                  className={`${getMenuItemClasses(!project?.lead)} ${isVertical ? 'flex items-center gap-2' : ''}`}
                 >
                   {isVertical && <User className="w-4 h-4 text-text-primary" />}
                   <span>Unassigned</span>
@@ -600,7 +584,7 @@ const ProjectProperties = ({
                       if (onUpdate) onUpdate({ leadId: user._id });
                       setShowLeadMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, project?.lead?._id === user._id)}
+                    className={getMenuItemClasses(project?.lead?._id === user._id)}
                   >
                     <div
                       className={`w-5 h-5 ${isVertical ? 'font-medium' : ''} rounded-full ${getAvatarColor(user._id)} flex items-center justify-center text-xs text-white`}
@@ -615,15 +599,15 @@ const ProjectProperties = ({
           </div>
           {showLeadMenu && isVertical && (
             <div
-              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto`}
             >
               <button
                 type="button"
                 onClick={() => {
-                  if (onUpdate) onUpdate({ leadId: isVertical ? null : '' });
+                  if (onUpdate) onUpdate({ leadId: null });
                   setShowLeadMenu(false);
                 }}
-                className={`${getMenuItemClasses(isVertical, !project?.lead)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                className={`${getMenuItemClasses(!project?.lead)} ${isVertical ? 'flex items-center gap-2' : ''}`}
               >
                 {isVertical && <User className="w-4 h-4 text-text-primary" />}
                 <span>Unassigned</span>
@@ -636,7 +620,7 @@ const ProjectProperties = ({
                     if (onUpdate) onUpdate({ leadId: user._id });
                     setShowLeadMenu(false);
                   }}
-                  className={getMenuItemClasses(isVertical, project?.lead?._id === user._id)}
+                  className={getMenuItemClasses(project?.lead?._id === user._id)}
                 >
                   <div
                     className={`w-5 h-5 ${isVertical ? 'font-medium' : ''} rounded-full ${getAvatarColor(user._id)} flex items-center justify-center text-xs text-white`}
@@ -652,10 +636,7 @@ const ProjectProperties = ({
       )}
 
       {showMembers && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={membersRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={membersRef}>
           <label className={labelClasses}>Members</label>
           <div className="relative">
             <button
@@ -688,7 +669,7 @@ const ProjectProperties = ({
                     onClick={() => {
                       toggleMember(user._id);
                     }}
-                    className={`${getMenuItemClasses(isVertical)} ${selectedMembers.includes(user._id) ? 'bg-background-tertiary' : ''}`}
+                    className={`${getMenuItemClasses()} ${selectedMembers.includes(user._id) ? 'bg-background-tertiary' : ''}`}
                   >
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs ${
@@ -723,7 +704,7 @@ const ProjectProperties = ({
                   onClick={() => {
                     toggleMember(user._id);
                   }}
-                  className={`${getMenuItemClasses(isVertical)} ${selectedMembers.includes(user._id) ? 'bg-background-tertiary' : ''}`}
+                  className={`${getMenuItemClasses()} ${selectedMembers.includes(user._id) ? 'bg-background-tertiary' : ''}`}
                 >
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs ${
@@ -750,10 +731,7 @@ const ProjectProperties = ({
       )}
 
       {showStartDate && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={startDateRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={startDateRef}>
           <label className={labelClasses}>Start date</label>
           <div className="relative">
             <button
@@ -763,7 +741,7 @@ const ProjectProperties = ({
               }
               disabled={disabled}
               className={getDateButtonClasses(!!startDate)}
-              title={!isVertical ? 'Start date' : undefined}
+              title={isVertical ? undefined : 'Start date'}
             >
               <div className="flex items-center gap-2">
                 <CalendarClock className={`w-4 h-4 ${startDate ? '' : 'text-text-tertiary'}`} />
@@ -775,9 +753,7 @@ const ProjectProperties = ({
               </div>
             </button>
             {showStartDatePicker && !isVertical && (
-              <div
-                className={`${getMenuClasses(isVertical, { alignRight: !isVertical, minWidth: isVertical ? 'min-w-[280px]' : undefined })}`}
-              >
+              <div className={`${getMenuClasses(isVertical, {})}`}>
                 <DatePickerHeader
                   title="Select Start Date"
                   description={
@@ -799,9 +775,7 @@ const ProjectProperties = ({
             )}
           </div>
           {showStartDatePicker && isVertical && (
-            <div
-              className={`${getMenuClasses(isVertical, { alignRight: !isVertical, minWidth: isVertical ? 'min-w-[280px]' : undefined })}`}
-            >
+            <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[280px]' })}`}>
               <DatePickerHeader
                 title="Select Start Date"
                 description={
@@ -825,10 +799,7 @@ const ProjectProperties = ({
       )}
 
       {showTargetDate && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={targetDateRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={targetDateRef}>
           <label className={labelClasses}>Target date</label>
           <div className="relative">
             <button
@@ -838,7 +809,7 @@ const ProjectProperties = ({
               }
               disabled={disabled}
               className={getDateButtonClasses(!!targetDate)}
-              title={!isVertical ? 'Target date' : undefined}
+              title={isVertical ? undefined : 'Target date'}
             >
               <div className="flex items-center gap-2">
                 <CalendarCheck2 className={`w-4 h-4 ${targetDate ? '' : 'text-text-tertiary'}`} />
@@ -850,9 +821,7 @@ const ProjectProperties = ({
               </div>
             </button>
             {showTargetDatePicker && !isVertical && (
-              <div
-                className={`${getMenuClasses(isVertical, { alignRight: !isVertical, minWidth: isVertical ? 'min-w-[280px]' : undefined })}`}
-              >
+              <div className={`${getMenuClasses(isVertical, {})}`}>
                 <DatePickerHeader
                   title="Select Target Date"
                   description={
@@ -873,9 +842,7 @@ const ProjectProperties = ({
             )}
           </div>
           {showTargetDatePicker && isVertical && (
-            <div
-              className={`${getMenuClasses(isVertical, { alignRight: !isVertical, minWidth: isVertical ? 'min-w-[280px]' : undefined })}`}
-            >
+            <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[280px]' })}`}>
               <DatePickerHeader
                 title="Select Target Date"
                 description={
@@ -906,10 +873,7 @@ const ProjectProperties = ({
       )}
 
       {showTeam && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={teamRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={teamRef}>
           <label className={labelClasses}>Team</label>
           <div className="relative">
             <button
@@ -924,7 +888,7 @@ const ProjectProperties = ({
             {showTeamMenu && !isVertical && (
               <div
                 ref={teamMenuRef}
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: teamMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: teamMenuAlign })} max-h-60 overflow-y-auto`}
               >
                 {teams.map((team) => {
                   const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
@@ -936,7 +900,7 @@ const ProjectProperties = ({
                         if (onUpdate) onUpdate({ teamId: team._id });
                         setShowTeamMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, project?.team?._id === team._id)}
+                      className={getMenuItemClasses(project?.team?._id === team._id)}
                     >
                       <div
                         className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
@@ -956,7 +920,7 @@ const ProjectProperties = ({
           </div>
           {showTeamMenu && isVertical && (
             <div
-              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto`}
             >
               {teams.map((team) => {
                 const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
@@ -968,7 +932,7 @@ const ProjectProperties = ({
                       if (onUpdate) onUpdate({ teamId: team._id });
                       setShowTeamMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, project?.team?._id === team._id)}
+                    className={getMenuItemClasses(project?.team?._id === team._id)}
                   >
                     <div
                       className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}

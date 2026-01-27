@@ -162,8 +162,10 @@ const IssueProperties = ({
   useEffect(() => {
     const handleResize = () => {
       if (showStatusMenu) calculateMenuAlignment(statusRef, statusMenuRef, setStatusMenuAlign);
-      if (showPriorityMenu) calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
-      if (showAssigneeMenu) calculateMenuAlignment(assigneeRef, assigneeMenuRef, setAssigneeMenuAlign);
+      if (showPriorityMenu)
+        calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
+      if (showAssigneeMenu)
+        calculateMenuAlignment(assigneeRef, assigneeMenuRef, setAssigneeMenuAlign);
       if (showProjectMenu) calculateMenuAlignment(projectRef, projectMenuRef, setProjectMenuAlign);
     };
 
@@ -172,21 +174,22 @@ const IssueProperties = ({
   }, [showStatusMenu, showPriorityMenu, showAssigneeMenu, showProjectMenu]);
 
   const getMenuClasses = (isVertical, options = {}) => {
-    const { minWidth, alignRight = false, align = 'left' } = options;
-    const baseClasses = 'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
+    const { minWidth, align = 'left' } = options;
+    const baseClasses =
+      'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
     if (isVertical) {
       const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
       return `${baseClasses} top-full left-0 rounded-md shadow-lg ${finalMinWidth}`;
     }
-    const alignment = alignRight || align === 'right' ? 'right-0' : 'left-0';
+    const alignment = align === 'right' ? 'right-0' : 'left-0';
     const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
     const maxWidth = 'max-w-[calc(100vw-2rem)]';
     return `${baseClasses} top-full ${alignment} rounded-md shadow-lg ${finalMinWidth || ''} ${maxWidth}`.trim();
   };
 
-  const getMenuItemClasses = (isVertical, isCurrent = false) =>
-    `w-full text-left text-xs text-text-primary hover:bg-background-tertiary flex items-center gap-2 transition-colors ${
-      isVertical ? 'px-3 py-1' : `px-3 py-2 ${isCurrent ? 'bg-background-tertiary' : ''}`
+  const getMenuItemClasses = (isCurrent = false) =>
+    `w-full text-left text-xs text-text-primary hover:bg-background-tertiary flex items-center gap-2 transition-colors px-3 py-2 ${
+      isCurrent ? 'bg-background-tertiary' : ''
     }`;
 
   const labelClasses = `text-xs font-medium text-text-tertiary tracking-wide ${!isVertical && 'hidden'} ${isVertical ? 'w-20 mr-2 flex-shrink-0' : 'block mb-2'}`;
@@ -280,10 +283,7 @@ const IssueProperties = ({
   return (
     <div className={containerClasses}>
       {showStatus && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={statusRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={statusRef}>
           <label className={labelClasses}>Status</label>
           <div className="relative">
             <button
@@ -307,7 +307,7 @@ const IssueProperties = ({
               >
                 {statusOptions.map((option) => {
                   const OptionIcon = option.Icon;
-                  const isCurrent = !isVertical && option.value === currentStatus.value;
+                  const isCurrent = option.value === currentStatus.value;
                   return (
                     <button
                       key={option.value}
@@ -316,7 +316,7 @@ const IssueProperties = ({
                         if (onUpdate) onUpdate({ status: option.value });
                         setShowStatusMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, isCurrent)}
+                      className={getMenuItemClasses(isCurrent)}
                     >
                       <OptionIcon className={`w-4 h-4 ${option.iconColor}`} />
                       <span>{option.label}</span>
@@ -332,7 +332,6 @@ const IssueProperties = ({
             >
               {statusOptions.map((option) => {
                 const OptionIcon = option.Icon;
-                const isCurrent = !isVertical && option.value === currentStatus.value;
                 return (
                   <button
                     key={option.value}
@@ -341,7 +340,7 @@ const IssueProperties = ({
                       if (onUpdate) onUpdate({ status: option.value });
                       setShowStatusMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, isCurrent)}
+                    className={getMenuItemClasses()}
                   >
                     <OptionIcon className={`w-4 h-4 ${option.iconColor}`} />
                     <span>{option.label}</span>
@@ -354,10 +353,7 @@ const IssueProperties = ({
       )}
 
       {showPriority && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={priorityRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={priorityRef}>
           <label className={labelClasses}>Priority</label>
           <div className="relative">
             <button
@@ -375,10 +371,13 @@ const IssueProperties = ({
               <ChevronDown className={chevronClasses} />
             </button>
             {showPriorityMenu && !isVertical && (
-              <div ref={priorityMenuRef} className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: priorityMenuAlign })}`}>
+              <div
+                ref={priorityMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: priorityMenuAlign })}`}
+              >
                 {priorityOptions.map((option) => {
                   const OptionIcon = option.Icon;
-                  const isCurrent = !isVertical && option.value === currentPriority.value;
+                  const isCurrent = option.value === currentPriority.value;
                   return (
                     <button
                       key={option.value}
@@ -387,7 +386,7 @@ const IssueProperties = ({
                         if (onUpdate) onUpdate({ priority: option.value });
                         setShowPriorityMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, isCurrent)}
+                      className={getMenuItemClasses(isCurrent)}
                     >
                       <OptionIcon className={`w-4 h-4 ${option.color}`} />
                       <span>{option.label}</span>
@@ -401,7 +400,6 @@ const IssueProperties = ({
             <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]' })}`}>
               {priorityOptions.map((option) => {
                 const OptionIcon = option.Icon;
-                const isCurrent = !isVertical && option.value === currentPriority.value;
                 return (
                   <button
                     key={option.value}
@@ -410,7 +408,7 @@ const IssueProperties = ({
                       if (onUpdate) onUpdate({ priority: option.value });
                       setShowPriorityMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, isCurrent)}
+                    className={getMenuItemClasses()}
                   >
                     <OptionIcon className={`w-4 h-4 ${option.color}`} />
                     <span>{option.label}</span>
@@ -423,10 +421,7 @@ const IssueProperties = ({
       )}
 
       {showAssignee && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={assigneeRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={assigneeRef}>
           <label className={labelClasses}>Assignee</label>
           <div className="relative">
             <button
@@ -441,7 +436,7 @@ const IssueProperties = ({
             {showAssigneeMenu && !isVertical && (
               <div
                 ref={assigneeMenuRef}
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: assigneeMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: assigneeMenuAlign })} max-h-60 overflow-y-auto`}
               >
                 <button
                   type="button"
@@ -449,7 +444,7 @@ const IssueProperties = ({
                     if (onUpdate) onUpdate({ assignee: null });
                     setShowAssigneeMenu(false);
                   }}
-                  className={`${getMenuItemClasses(isVertical, !issue?.assignee)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                  className={`${getMenuItemClasses(!issue?.assignee)} ${isVertical ? 'flex items-center gap-2' : ''}`}
                 >
                   {isVertical && <User className="w-4 h-4 text-text-primary" />}
                   <span>Unassigned</span>
@@ -462,7 +457,7 @@ const IssueProperties = ({
                       if (onUpdate) onUpdate({ assignee: user._id });
                       setShowAssigneeMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, issue?.assignee?._id === user._id)}
+                    className={getMenuItemClasses(issue?.assignee?._id === user._id)}
                   >
                     <div
                       className={`w-5 h-5 ${isVertical ? 'font-medium' : ''} rounded-full ${getAvatarColor(user._id)} flex items-center justify-center text-xs text-white`}
@@ -477,7 +472,7 @@ const IssueProperties = ({
           </div>
           {showAssigneeMenu && isVertical && (
             <div
-              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto`}
             >
               <button
                 type="button"
@@ -485,7 +480,7 @@ const IssueProperties = ({
                   if (onUpdate) onUpdate({ assignee: null });
                   setShowAssigneeMenu(false);
                 }}
-                className={`${getMenuItemClasses(isVertical, !issue?.assignee)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                className={`${getMenuItemClasses(!issue?.assignee)} ${isVertical ? 'flex items-center gap-2' : ''}`}
               >
                 {isVertical && <User className="w-4 h-4 text-text-primary" />}
                 <span>Unassigned</span>
@@ -498,7 +493,7 @@ const IssueProperties = ({
                     if (onUpdate) onUpdate({ assignee: user._id });
                     setShowAssigneeMenu(false);
                   }}
-                  className={getMenuItemClasses(isVertical, issue?.assignee?._id === user._id)}
+                  className={getMenuItemClasses(issue?.assignee?._id === user._id)}
                 >
                   <div
                     className={`w-5 h-5 ${isVertical ? 'font-medium' : ''} rounded-full ${getAvatarColor(user._id)} flex items-center justify-center text-xs text-white`}
@@ -514,10 +509,7 @@ const IssueProperties = ({
       )}
 
       {showProject && (
-        <div
-          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
-          ref={projectRef}
-        >
+        <div className={isVertical ? 'flex items-center relative' : ''} ref={projectRef}>
           <label className={labelClasses}>Project</label>
           <div className="relative">
             <button
@@ -532,7 +524,7 @@ const IssueProperties = ({
             {showProjectMenu && !isVertical && (
               <div
                 ref={projectMenuRef}
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: projectMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: projectMenuAlign })} max-h-60 overflow-y-auto`}
               >
                 <button
                   type="button"
@@ -540,7 +532,7 @@ const IssueProperties = ({
                     if (onUpdate) onUpdate({ projectId: null });
                     setShowProjectMenu(false);
                   }}
-                  className={`${getMenuItemClasses(isVertical, !issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                  className={`${getMenuItemClasses(!issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
                 >
                   {isVertical && <FolderKanban className="w-4 h-4 text-text-primary" />}
                   <span>No project</span>
@@ -554,7 +546,7 @@ const IssueProperties = ({
                         if (onUpdate) onUpdate({ projectId: project._id });
                         setShowProjectMenu(false);
                       }}
-                      className={getMenuItemClasses(isVertical, issue?.project?._id === project._id)}
+                      className={getMenuItemClasses(issue?.project?._id === project._id)}
                     >
                       <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
                         {project.icon ? (
@@ -572,7 +564,7 @@ const IssueProperties = ({
           </div>
           {showProjectMenu && isVertical && (
             <div
-              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto`}
             >
               <button
                 type="button"
@@ -580,7 +572,7 @@ const IssueProperties = ({
                   if (onUpdate) onUpdate({ projectId: null });
                   setShowProjectMenu(false);
                 }}
-                className={`${getMenuItemClasses(isVertical, !issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                className={`${getMenuItemClasses(!issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
               >
                 {isVertical && <FolderKanban className="w-4 h-4 text-text-primary" />}
                 <span>No project</span>
@@ -594,7 +586,7 @@ const IssueProperties = ({
                       if (onUpdate) onUpdate({ projectId: project._id });
                       setShowProjectMenu(false);
                     }}
-                    className={getMenuItemClasses(isVertical, issue?.project?._id === project._id)}
+                    className={getMenuItemClasses(issue?.project?._id === project._id)}
                   >
                     <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
                       {project.icon ? (

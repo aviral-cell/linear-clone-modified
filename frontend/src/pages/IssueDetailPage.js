@@ -221,7 +221,9 @@ const IssueDetailPage = () => {
         setIssue((prev) => ({ ...prev, assignee: assignee || null }));
       }
       if (updates.projectId !== undefined) {
-        const project = updates.projectId ? projects.find((p) => p._id === updates.projectId) : null;
+        const project = updates.projectId
+          ? projects.find((p) => p._id === updates.projectId)
+          : null;
         setIssue((prev) => ({ ...prev, project: project || null }));
       }
 
