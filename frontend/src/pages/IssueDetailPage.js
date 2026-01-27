@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { baseURL } from '../utils';
@@ -7,6 +7,7 @@ import ActivityTimeline from '../components/ActivityTimeline';
 import CommentsSection from '../components/CommentsSection';
 import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
+import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
 import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -35,24 +36,57 @@ const IssueDetailPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const sidebarRef = useRef(null);
   const { identifier } = useParams();
   const { token, user: currentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (window.innerWidth < 640) {
+      setIsRightSidebarOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let previousWidth = window.innerWidth;
+
     const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 1024) {
+      const currentWidth = window.innerWidth;
+      if (previousWidth >= 640 && currentWidth < 640) {
         setIsRightSidebarOpen(false);
-      } else {
-        setIsRightSidebarOpen(true);
+      }
+      previousWidth = currentWidth;
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isRightSidebarOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        const clickedButton = event.target.closest('button');
+        const isPanelButton =
+          clickedButton &&
+          (clickedButton.querySelector('svg[class*="lucide-panel-right"]') ||
+            clickedButton.querySelector('svg[class*="lucide-panel-right-close"]') ||
+            clickedButton.title === 'Close panel' ||
+            clickedButton.title === 'Open panel');
+
+        if (!isPanelButton) {
+          setIsRightSidebarOpen(false);
+        }
       }
     };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isRightSidebarOpen]);
 
   useEffect(() => {
     fetchIssue();
@@ -154,7 +188,21 @@ const IssueDetailPage = () => {
   };
 
   const updateIssue = async (updates) => {
+    if (!issue) return;
     try {
+      setSaving(true);
+
+      if (updates.status !== undefined) {
+        setIssue((prev) => ({ ...prev, status: updates.status }));
+      }
+      if (updates.priority !== undefined) {
+        setIssue((prev) => ({ ...prev, priority: updates.priority }));
+      }
+      if (updates.assignee !== undefined) {
+        const assignee = updates.assignee ? users.find((u) => u._id === updates.assignee) : null;
+        setIssue((prev) => ({ ...prev, assignee: assignee || null }));
+      }
+
       const response = await fetch(`${baseURL}/api/issues/${identifier}`, {
         method: 'PUT',
         headers: {
@@ -165,16 +213,20 @@ const IssueDetailPage = () => {
       });
 
       if (response.ok) {
-        toast.success('Issue updated');
         const data = await response.json();
-        await fetchIssue(true);
+        setIssue((prev) => ({ ...prev, ...data.issue }));
+        toast.success('Issue updated');
         await fetchActivities(data.issue._id);
       } else {
+        await fetchIssue();
         toast.error('Failed to update issue');
       }
     } catch (error) {
       console.error('Error updating issue:', error);
+      await fetchIssue();
       toast.error('Failed to update issue');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -239,7 +291,6 @@ const IssueDetailPage = () => {
           panelOpenerIcon={PanelRight}
           onPanelOpenerClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
           isPanelOpen={isRightSidebarOpen}
-          hidePanelIconOnLarge={true}
         />
       </div>
 
@@ -321,6 +372,20 @@ const IssueDetailPage = () => {
               )}
             </div>
 
+            <div className="mb-6">
+              <h2 className="text-xs font-medium text-text-tertiary mb-3">Properties</h2>
+              <IssueProperties
+                issue={issue}
+                users={users}
+                onUpdate={updateIssue}
+                disabled={saving}
+                variant="horizontal"
+                showStatus={true}
+                showPriority={true}
+                showAssignee={true}
+              />
+            </div>
+
             <SubIssuesSection
               issue={issue}
               subIssues={subIssues}
@@ -355,10 +420,10 @@ const IssueDetailPage = () => {
         )}
 
         <div
+          ref={sidebarRef}
           className={`
             fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out
             ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
-            lg:translate-x-0
             w-80
           `}
         >

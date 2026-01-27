@@ -224,9 +224,9 @@ const ProjectProperties = ({
     : 'flex items-center gap-2 flex-wrap';
 
   const verticalButtonClasses =
-    'w-full px-3 py-1 bg-background border border-border rounded-md text-xs text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-2 disabled:opacity-50';
+    'w-full px-3 py-1 bg-background border border-border rounded-md text-xs font-medium text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5 disabled:opacity-50';
   const horizontalButtonClasses =
-    'px-3 py-1 bg-background border border-border rounded-md text-xs text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-2 disabled:opacity-50';
+    'px-3 py-1 bg-background border border-border rounded-md text-xs font-medium text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5 disabled:opacity-50';
 
   const getMenuClasses = (isVertical, options = {}) => {
     const { minWidth, alignRight = false } = options;
