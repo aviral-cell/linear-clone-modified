@@ -21,12 +21,19 @@ const UpdateCard = ({
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const textareaRef = React.useRef(null);
+  const initialStatusRef = React.useRef(currentStatus);
 
   React.useEffect(() => {
     if (isEditable && autoFocus && textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [isEditable, autoFocus]);
+
+  React.useEffect(() => {
+    if (isEditable && !isExpanded) {
+      initialStatusRef.current = currentStatus;
+    }
+  }, [isEditable, isExpanded, currentStatus]);
 
   return (
     <div className="bg-background-secondary border border-border rounded-md p-4">
@@ -84,12 +91,32 @@ const UpdateCard = ({
             rows={4}
           />
           <div
-            className={`flex justify-end mt-3 overflow-hidden transition-all duration-200 ease-out ${
+            className={`flex justify-end gap-2 mt-3 overflow-hidden transition-all duration-200 ease-out ${
               showPostButton && isExpanded
                 ? 'max-h-10 opacity-100 translate-y-0'
                 : 'max-h-0 opacity-0 -translate-y-1 pointer-events-none'
             }`}
           >
+            <button
+              onClick={() => {
+                if (onContentChange) {
+                  onContentChange('');
+                }
+                if (onStatusChange && initialStatusRef.current !== currentStatus) {
+                  onStatusChange(initialStatusRef.current);
+                }
+                if (textareaRef.current) {
+                  textareaRef.current.blur();
+                }
+                setIsExpanded(false);
+                if (showStatusMenu && onStatusMenuToggle) {
+                  onStatusMenuToggle();
+                }
+              }}
+              className="btn-secondary-header text-text-secondary hover:text-text-primary"
+            >
+              Cancel
+            </button>
             <button
               onClick={onPostUpdate}
               className="btn-secondary-header bg-accent hover:bg-accent-hover text-white border-transparent"
