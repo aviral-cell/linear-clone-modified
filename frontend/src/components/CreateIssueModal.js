@@ -10,14 +10,23 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
   const [status, setStatus] = useState('todo');
   const [priority, setPriority] = useState('no_priority');
   const [assignee, setAssignee] = useState('');
+  const [projectId, setProjectId] = useState('');
   const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     if (isOpen) {
       fetchUsers();
+      const teamId = team?._id || project?.team?._id;
+      if (teamId) {
+        fetchProjects(teamId);
+        if (project?._id) {
+          setProjectId(project._id);
+        }
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, team, project]);
 
   const fetchUsers = async () => {
     try {
@@ -32,6 +41,22 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
       }
     } catch (error) {
       console.error('Error fetching users:', error);
+    }
+  };
+
+  const fetchProjects = async (teamId) => {
+    try {
+      const response = await fetch(`${baseURL}/api/projects?teamId=${teamId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.projects || []);
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error);
     }
   };
 
@@ -51,7 +76,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
           title,
           description,
           teamId: team?._id || project?.team?._id,
-          projectId: project?._id,
+          projectId: projectId || undefined,
           status,
           priority,
           assignee: assignee || undefined,
@@ -61,9 +86,10 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
       if (response.ok) {
         setTitle('');
         setDescription('');
-        setStatus('backlog');
+        setStatus('todo');
         setPriority('no_priority');
         setAssignee('');
+        setProjectId('');
         onSuccess();
         onClose();
       }
@@ -80,6 +106,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
     status,
     priority,
     assignee: assignee ? users.find((u) => u._id === assignee) : null,
+    project: projectId ? projects.find((p) => p._id === projectId) : null,
   };
 
   const handlePropertyUpdate = (updates) => {
@@ -87,6 +114,9 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
     if (updates.priority !== undefined) setPriority(updates.priority);
     if (updates.assignee !== undefined) {
       setAssignee(updates.assignee || null);
+    }
+    if (updates.projectId !== undefined) {
+      setProjectId(updates.projectId || '');
     }
   };
 
@@ -153,12 +183,14 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
               <IssueProperties
                 issue={tempIssue}
                 users={users}
+                projects={projects}
                 onUpdate={handlePropertyUpdate}
                 disabled={loading}
                 variant="horizontal"
                 showStatus={true}
                 showPriority={true}
                 showAssignee={true}
+                showProject={true}
               />
             </div>
 

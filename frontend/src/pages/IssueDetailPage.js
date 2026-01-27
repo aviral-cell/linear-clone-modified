@@ -29,6 +29,7 @@ const IssueDetailPage = () => {
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
@@ -98,6 +99,9 @@ const IssueDetailPage = () => {
     if (issue) {
       fetchComments();
       fetchActivities();
+      if (issue.team) {
+        fetchProjects(issue.team._id);
+      }
     }
   }, [issue]);
 
@@ -112,6 +116,20 @@ const IssueDetailPage = () => {
       }
     } catch (error) {
       console.error('Error fetching teams:', error);
+    }
+  };
+
+  const fetchProjects = async (teamId) => {
+    try {
+      const response = await fetch(`${baseURL}/api/projects?teamId=${teamId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.projects || []);
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error);
     }
   };
 
@@ -201,6 +219,10 @@ const IssueDetailPage = () => {
       if (updates.assignee !== undefined) {
         const assignee = updates.assignee ? users.find((u) => u._id === updates.assignee) : null;
         setIssue((prev) => ({ ...prev, assignee: assignee || null }));
+      }
+      if (updates.projectId !== undefined) {
+        const project = updates.projectId ? projects.find((p) => p._id === updates.projectId) : null;
+        setIssue((prev) => ({ ...prev, project: project || null }));
       }
 
       const response = await fetch(`${baseURL}/api/issues/${identifier}`, {
@@ -377,12 +399,14 @@ const IssueDetailPage = () => {
               <IssueProperties
                 issue={issue}
                 users={users}
+                projects={projects}
                 onUpdate={updateIssue}
                 disabled={saving}
                 variant="horizontal"
                 showStatus={true}
                 showPriority={true}
                 showAssignee={true}
+                showProject={true}
               />
             </div>
 
@@ -427,7 +451,7 @@ const IssueDetailPage = () => {
             w-80
           `}
         >
-          <IssueSidebar issue={issue} users={users} onUpdate={updateIssue} />
+          <IssueSidebar issue={issue} users={users} projects={projects} onUpdate={updateIssue} />
         </div>
       </div>
     </div>

@@ -2,18 +2,20 @@ import React from 'react';
 import { getAvatarColor, formatDate } from '../utils';
 import IssueProperties from './IssueProperties';
 
-const IssueSidebar = ({ issue, users, onUpdate }) => {
+const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
   return (
     <div className="w-full h-full p-6">
       <div className="space-y-6">
         <IssueProperties
           issue={issue}
           users={users}
+          projects={projects}
           onUpdate={onUpdate}
           variant="vertical"
           showStatus={true}
           showPriority={true}
           showAssignee={true}
+          showProject={true}
         />
 
         <div className="h-px bg-border my-4" />

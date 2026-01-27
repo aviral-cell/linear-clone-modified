@@ -12,6 +12,7 @@ import {
   BarChart3,
   BarChart4,
   AlertCircle,
+  FolderKanban,
 } from 'lucide-react';
 import { getAvatarColor } from '../utils';
 
@@ -71,20 +72,24 @@ const priorityOptions = [
 const IssueProperties = ({
   issue,
   users = [],
+  projects = [],
   onUpdate,
   disabled = false,
   variant = 'horizontal',
   showStatus = true,
   showPriority = true,
   showAssignee = true,
+  showProject = true,
 }) => {
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showPriorityMenu, setShowPriorityMenu] = useState(false);
   const [showAssigneeMenu, setShowAssigneeMenu] = useState(false);
+  const [showProjectMenu, setShowProjectMenu] = useState(false);
 
   const statusRef = useRef(null);
   const priorityRef = useRef(null);
   const assigneeRef = useRef(null);
+  const projectRef = useRef(null);
 
   const isVertical = variant === 'vertical';
   const containerClasses = isVertical
@@ -128,6 +133,9 @@ const IssueProperties = ({
       if (assigneeRef.current && !assigneeRef.current.contains(event.target)) {
         setShowAssigneeMenu(false);
       }
+      if (projectRef.current && !projectRef.current.contains(event.target)) {
+        setShowProjectMenu(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -150,6 +158,7 @@ const IssueProperties = ({
       if (excludeMenu !== 'status') setShowStatusMenu(false);
       if (excludeMenu !== 'priority') setShowPriorityMenu(false);
       if (excludeMenu !== 'assignee') setShowAssigneeMenu(false);
+      if (excludeMenu !== 'project') setShowProjectMenu(false);
     }
   };
 
@@ -170,6 +179,29 @@ const IssueProperties = ({
       <>
         <User className="w-4 h-4 text-text-tertiary" />
         <span>{isVertical ? 'Unassigned' : 'Assignee'}</span>
+      </>
+    );
+  };
+
+  const renderProjectContent = () => {
+    if (issue?.project) {
+      return (
+        <>
+          <div className="w-4 h-4 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+            {issue.project.icon ? (
+              <span className="text-xs">{issue.project.icon}</span>
+            ) : (
+              <FolderKanban className="w-3 h-3" />
+            )}
+          </div>
+          <span>{issue.project.name}</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <FolderKanban className="w-4 h-4 text-text-tertiary" />
+        <span>{isVertical ? 'No project' : 'Project'}</span>
       </>
     );
   };
@@ -377,7 +409,7 @@ const IssueProperties = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (onUpdate) onUpdate({ assignee: isVertical ? null : '' });
+                  if (onUpdate) onUpdate({ assignee: null });
                   setShowAssigneeMenu(false);
                 }}
                 className={`${getMenuItemClasses(isVertical, !issue?.assignee)} ${isVertical ? 'flex items-center gap-2' : ''}`}
@@ -403,6 +435,104 @@ const IssueProperties = ({
                   <span>{user.name}</span>
                 </button>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {showProject && (
+        <div
+          className={`${isVertical ? 'flex items-center' : ''} ${isVertical ? 'relative' : ''}`}
+          ref={projectRef}
+        >
+          <label className={labelClasses}>Project</label>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => handleMenuToggle(setShowProjectMenu, showProjectMenu, 'project')}
+              disabled={disabled}
+              className={isVertical ? verticalButtonClasses : horizontalButtonClasses}
+            >
+              <div className="flex items-center gap-2">{renderProjectContent()}</div>
+              <ChevronDown className={chevronClasses} />
+            </button>
+            {showProjectMenu && !isVertical && (
+              <div
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onUpdate) onUpdate({ projectId: null });
+                    setShowProjectMenu(false);
+                  }}
+                  className={`${getMenuItemClasses(isVertical, !issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+                >
+                  {isVertical && <FolderKanban className="w-4 h-4 text-text-primary" />}
+                  <span>No project</span>
+                </button>
+                {projects.map((project) => {
+                  return (
+                    <button
+                      key={project._id}
+                      type="button"
+                      onClick={() => {
+                        if (onUpdate) onUpdate({ projectId: project._id });
+                        setShowProjectMenu(false);
+                      }}
+                      className={getMenuItemClasses(isVertical, issue?.project?._id === project._id)}
+                    >
+                      <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+                        {project.icon ? (
+                          <span className="text-xs">{project.icon}</span>
+                        ) : (
+                          <FolderKanban className="w-3 h-3" />
+                        )}
+                      </div>
+                      <span>{project.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {showProjectMenu && isVertical && (
+            <div
+              className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  if (onUpdate) onUpdate({ projectId: null });
+                  setShowProjectMenu(false);
+                }}
+                className={`${getMenuItemClasses(isVertical, !issue?.project)} ${isVertical ? 'flex items-center gap-2' : ''}`}
+              >
+                {isVertical && <FolderKanban className="w-4 h-4 text-text-primary" />}
+                <span>No project</span>
+              </button>
+              {projects.map((project) => {
+                return (
+                  <button
+                    key={project._id}
+                    type="button"
+                    onClick={() => {
+                      if (onUpdate) onUpdate({ projectId: project._id });
+                      setShowProjectMenu(false);
+                    }}
+                    className={getMenuItemClasses(isVertical, issue?.project?._id === project._id)}
+                  >
+                    <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+                      {project.icon ? (
+                        <span className="text-xs">{project.icon}</span>
+                      ) : (
+                        <FolderKanban className="w-3 h-3" />
+                      )}
+                    </div>
+                    <span>{project.name}</span>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

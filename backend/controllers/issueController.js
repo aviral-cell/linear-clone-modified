@@ -35,6 +35,7 @@ export const getIssueByIdentifier = async (req, res) => {
       .populate('assignee', 'name email avatar')
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
+      .populate('project', 'name identifier icon')
       .populate('parentIssue', 'identifier title status');
 
     if (!issue) {
@@ -61,6 +62,7 @@ export const createIssue = async (req, res) => {
       status,
       priority,
       teamId,
+      projectId,
       assignee,
       parentIssue,
       labels,
@@ -98,6 +100,7 @@ export const createIssue = async (req, res) => {
       status: status || 'todo',
       priority: priority || 'no_priority',
       team: teamId,
+      project: projectId || null,
       assignee: assignee || null,
       creator: req.user._id,
       parentIssue: parentIssue || null,
@@ -109,6 +112,7 @@ export const createIssue = async (req, res) => {
       { path: 'assignee', select: 'name email avatar' },
       { path: 'creator', select: 'name email avatar' },
       { path: 'team', select: 'name key icon' },
+      { path: 'project', select: 'name identifier icon' },
     ]);
 
     const activity = new Activity({
@@ -142,7 +146,13 @@ export const updateIssue = async (req, res) => {
       'assignee',
       'title',
       'description',
+      'project',
     ];
+
+    if (updates.projectId !== undefined) {
+      updates.project = updates.projectId || null;
+      delete updates.projectId;
+    }
 
     fieldsToTrack.forEach((field) => {
       if (updates[field] === undefined) {
@@ -165,6 +175,7 @@ export const updateIssue = async (req, res) => {
       { path: 'assignee', select: 'name email avatar' },
       { path: 'creator', select: 'name email avatar' },
       { path: 'team', select: 'name key icon' },
+      { path: 'project', select: 'name identifier icon' },
     ]);
 
     for (const change of changes) {
