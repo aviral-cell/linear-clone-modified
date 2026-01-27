@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatDate } from '../utils';
 import ProjectProperties from './ProjectProperties';
+import ProjectActivity from './ProjectActivity';
 
 const ProjectSidebar = ({
   project,
@@ -9,6 +10,8 @@ const ProjectSidebar = ({
   onUpdate,
   selectedMembers = [],
   onMembersChange,
+  token,
+  activitiesRefreshTrigger,
 }) => {
   return (
     <div className="w-full h-full p-6">
@@ -29,6 +32,16 @@ const ProjectSidebar = ({
           selectedMembers={selectedMembers}
           onMembersChange={onMembersChange}
         />
+
+        <div className="h-px bg-border my-4" />
+
+        {project?.identifier && token && (
+          <ProjectActivity
+            projectIdentifier={project.identifier}
+            token={token}
+            refreshTrigger={activitiesRefreshTrigger}
+          />
+        )}
 
         <div className="h-px bg-border my-4" />
 

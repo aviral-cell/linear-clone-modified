@@ -1,7 +1,9 @@
 import Project from '../models/Project.js';
 import Issue from '../models/Issue.js';
 import ProjectUpdate from '../models/ProjectUpdate.js';
+import ProjectActivity from '../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
+import { createProjectActivity } from '../utils/activityTracker.js';
 
 const getIssueStats = async (projectIdOrIds) => {
   const isArray = Array.isArray(projectIdOrIds);
@@ -165,17 +167,110 @@ export const updateProject = async (req, res) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    if (updates.memberIds) {
-      project.members = updates.memberIds;
+    const oldProject = { ...project.toObject() };
+
+    if (updates.memberIds !== undefined) {
+      const oldMemberIds = (project.members || []).map((m) => m.toString()).sort();
+      const newMemberIds = (updates.memberIds || []).map((id) => id.toString()).sort();
+      if (JSON.stringify(oldMemberIds) !== JSON.stringify(newMemberIds)) {
+        project.members = updates.memberIds;
+        await createProjectActivity(
+          project._id,
+          req.user._id,
+          'members_changed',
+          oldMemberIds,
+          newMemberIds
+        );
+      }
     }
-    if (updates.leadId) {
-      project.lead = updates.leadId;
+    if (updates.leadId !== undefined) {
+      const oldLeadId = project.lead ? project.lead.toString() : null;
+      const newLeadId = updates.leadId || null;
+      if (oldLeadId !== newLeadId) {
+        project.lead = updates.leadId;
+        await project.populate('lead', 'name email avatar');
+        if (newLeadId) {
+          await createProjectActivity(project._id, req.user._id, 'lead_changed', null, project.lead);
+        } else {
+          await createProjectActivity(project._id, req.user._id, 'lead_cleared', oldLeadId, null);
+        }
+      }
     }
-    if (updates.teamId) {
-      project.team = updates.teamId;
+    if (updates.teamId !== undefined) {
+      const oldTeamId = project.team ? project.team.toString() : null;
+      const newTeamId = updates.teamId || null;
+      if (oldTeamId !== newTeamId) {
+        project.team = updates.teamId;
+        await project.populate('team', 'name key icon');
+        await createProjectActivity(project._id, req.user._id, 'team_changed', null, project.team);
+      }
     }
 
     const { memberIds, leadId, teamId, ...otherUpdates } = updates;
+
+    if (otherUpdates.status !== undefined && otherUpdates.status !== project.status) {
+      await createProjectActivity(
+        project._id,
+        req.user._id,
+        'status_changed',
+        project.status,
+        otherUpdates.status
+      );
+    }
+
+    if (otherUpdates.priority !== undefined && otherUpdates.priority !== project.priority) {
+      await createProjectActivity(
+        project._id,
+        req.user._id,
+        'priority_changed',
+        project.priority,
+        otherUpdates.priority
+      );
+    }
+
+    if (otherUpdates.targetDate !== undefined) {
+      const oldTargetDate = project.targetDate ? project.targetDate.toISOString() : null;
+      const newTargetDate = otherUpdates.targetDate || null;
+      if (oldTargetDate !== newTargetDate) {
+        if (newTargetDate) {
+          await createProjectActivity(
+            project._id,
+            req.user._id,
+            'target_date_set',
+            null,
+            newTargetDate
+          );
+        } else {
+          await createProjectActivity(project._id, req.user._id, 'target_date_cleared', oldTargetDate, null);
+        }
+      }
+    }
+
+    if (otherUpdates.startDate !== undefined) {
+      const oldStartDate = project.startDate ? project.startDate.toISOString() : null;
+      const newStartDate = otherUpdates.startDate || null;
+      if (oldStartDate !== newStartDate) {
+        if (newStartDate) {
+          await createProjectActivity(
+            project._id,
+            req.user._id,
+            'start_date_set',
+            null,
+            newStartDate
+          );
+        } else {
+          await createProjectActivity(project._id, req.user._id, 'start_date_cleared', oldStartDate, null);
+        }
+      }
+    }
+
+    if (otherUpdates.name !== undefined && otherUpdates.name !== project.name) {
+      await createProjectActivity(project._id, req.user._id, 'name_changed', project.name, otherUpdates.name);
+    }
+
+    if (otherUpdates.summary !== undefined && otherUpdates.summary !== (project.summary || '')) {
+      await createProjectActivity(project._id, req.user._id, 'summary_changed', project.summary, otherUpdates.summary);
+    }
 
     Object.assign(project, otherUpdates);
     await project.save();
@@ -267,12 +362,36 @@ export const createProjectUpdate = async (req, res) => {
     await update.save();
     await update.populate('author', 'name email avatar');
 
+    await createProjectActivity(project._id, req.user._id, 'update_posted', null, null);
+
     res.status(201).json({ update });
   } catch (error) {
     console.error('Create project update error:', error);
     if (error.name === 'ValidationError') {
       return res.status(400).json({ message: 'Invalid status value' });
     }
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getProjectActivities = async (req, res) => {
+  try {
+    const { identifier } = req.params;
+    const { limit = 50 } = req.query;
+
+    const project = await Project.findOne({ identifier });
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const activities = await ProjectActivity.find({ project: project._id })
+      .populate('user', 'name email avatar')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit));
+
+    res.json({ activities });
+  } catch (error) {
+    console.error('Get project activities error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

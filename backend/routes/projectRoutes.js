@@ -7,6 +7,7 @@ import {
   getProjectIssues,
   getProjectUpdates,
   createProjectUpdate,
+  getProjectActivities,
 } from '../controllers/projectController.js';
 import { authenticate } from '../middleware/auth.js';
 
@@ -19,6 +20,7 @@ router.put('/:identifier', authenticate, updateProject);
 router.get('/:identifier/issues', authenticate, getProjectIssues);
 router.get('/:identifier/updates', authenticate, getProjectUpdates);
 router.post('/:identifier/updates', authenticate, createProjectUpdate);
+router.get('/:identifier/activities', authenticate, getProjectActivities);
 
 export default router;
 

@@ -94,6 +94,7 @@ const ProjectDetailPage = () => {
   const [membersInitialized, setMembersInitialized] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
+  const [activitiesRefreshTrigger, setActivitiesRefreshTrigger] = useState(0);
 
   const [activeTab, setActiveTab] = useState(tab || 'overview');
   const [editingName, setEditingName] = useState(false);
@@ -332,6 +333,7 @@ const ProjectDetailPage = () => {
       if (response.ok) {
         const data = await response.json();
         setProject((prev) => ({ ...prev, ...data.project }));
+        setActivitiesRefreshTrigger((prev) => prev + 1);
         toast.success('Project updated');
       } else {
         await fetchProject();
@@ -369,6 +371,7 @@ const ProjectDetailPage = () => {
         toast.success('Update created');
         setUpdateContent('');
         setUpdateStatus('at_risk');
+        setActivitiesRefreshTrigger((prev) => prev + 1);
         await fetchUpdates();
         await fetchProject();
       } else {
@@ -703,6 +706,8 @@ const ProjectDetailPage = () => {
               onUpdate={handleUpdateProject}
               selectedMembers={selectedMembers}
               onMembersChange={setSelectedMembers}
+              token={token}
+              activitiesRefreshTrigger={activitiesRefreshTrigger}
             />
           </div>
         </div>
