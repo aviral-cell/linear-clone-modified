@@ -23,9 +23,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     !location.pathname.includes('/projects/') &&
     teamKey &&
     issuesFilter;
-  const [expandedSections, setExpandedSections] = useState({
-    teams: !!teamKey,
-  });
+  const [isTeamsSectionExpanded, setIsTeamsSectionExpanded] = useState(true);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
     if (teamKey && teams.length > 0) {
@@ -54,26 +52,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     }
   }, [teamKey, teams]);
 
-  useEffect(() => {
-    if (teamKey) {
-      setExpandedSections((prev) => ({
-        ...prev,
-        teams: true,
-      }));
-    }
-  }, [teamKey]);
-
-  useEffect(() => {
+  const toggleTeamsSection = () => {
     if (isCollapsed) {
-      setExpandedSections((prev) => ({
-        ...prev,
-        teams: true,
-      }));
+      return;
     }
-  }, [isCollapsed]);
-
-  const toggleSection = (section) => {
-    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+    setIsTeamsSectionExpanded((prev) => !prev);
   };
 
   const toggleTeam = (teamIdToToggle) => {
@@ -115,7 +98,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   return (
     <div
       className={`
-      bg-background-secondary border-r border-border flex flex-col h-screen
+      bg-background-secondary border-r border-border flex flex-col h-screen overflow-hidden
       transition-all duration-300
       ${isCollapsed ? 'w-16' : 'w-64'}
     `}
@@ -179,7 +162,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
         <div className="mt-2">
           <button
-            onClick={() => !isCollapsed && toggleSection('teams')}
+            onClick={toggleTeamsSection}
             className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
             }`}
@@ -187,13 +170,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           >
             <span className={`font-medium ${isCollapsed ? 'hidden' : ''}`}>Your Teams</span>
             {!isCollapsed &&
-              (expandedSections.teams ? (
+              (isTeamsSectionExpanded ? (
                 <ChevronDown className="w-4 h-4 flex-shrink-0" />
               ) : (
                 <ChevronRight className="w-4 h-4 flex-shrink-0" />
               ))}
           </button>
-          {expandedSections.teams && (
+          {isTeamsSectionExpanded && (
             <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
               {teams.map((team) => {
                 const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);

@@ -24,17 +24,19 @@ const Header = ({
   return (
     <div className="h-14 border-b border-border px-4 md:px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <button
-          onClick={toggleSidebar}
-          className="md:hidden p-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors"
-          aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
-        >
-          {isOpen ? (
-            <PanelLeftClose className="w-5 h-5" />
-          ) : (
-            <PanelRightClose className="w-5 h-5" />
-          )}
-        </button>
+        {(isMobile || isCollapsed) && (
+          <button
+            onClick={toggleSidebar}
+            className="p-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors"
+            aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
+          >
+            {isOpen ? (
+              <PanelLeftClose className="w-5 h-5" />
+            ) : (
+              <PanelRightClose className="w-5 h-5" />
+            )}
+          </button>
+        )}
         <Breadcrumb
           fallbackText={fallbackText}
           team={team}
