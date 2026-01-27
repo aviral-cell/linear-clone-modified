@@ -165,11 +165,14 @@ export const updateProject = async (req, res) => {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    if (updates.memberIds !== undefined) {
+    if (updates.memberIds) {
       project.members = updates.memberIds;
     }
+    if (updates.leadId) {
+      project.lead = updates.leadId;
+    }
 
-    const { memberIds, ...otherUpdates } = updates;
+    const { memberIds, leadId, ...otherUpdates } = updates;
 
     Object.assign(project, otherUpdates);
     await project.save();
