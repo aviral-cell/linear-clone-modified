@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  CircleDot,
-  CheckCircle2,
-  BarChart4,
-  Calendar,
-  ChevronDown,
-} from 'lucide-react';
+import { CircleDot, CheckCircle2, BarChart4, Calendar, ChevronDown } from 'lucide-react';
 import { baseURL } from '../utils';
 import { formatDate } from '../utils';
 
@@ -63,9 +57,7 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger }) => {
   }, [projectIdentifier, token, refreshTrigger]);
 
   if (loading) {
-    return (
-      <div className="text-xs text-text-tertiary">Loading activities...</div>
-    );
+    return <div className="text-xs text-text-tertiary">Loading activities...</div>;
   }
 
   if (activities.length === 0) {
@@ -79,9 +71,7 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger }) => {
           Activity
           <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
         </h3>
-        <button className="text-xs text-text-secondary hover:text-text-primary">
-          See all
-        </button>
+        <button className="text-xs text-text-secondary hover:text-text-primary">See all</button>
       </div>
       <div className="space-y-3">
         {activities.slice(0, 5).map((activity) => {
@@ -97,7 +87,10 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger }) => {
                     {activity.user?.name || 'Unknown'}
                   </span>{' '}
                   {activity.description}
-                  <span className="text-text-tertiary"> · {formatActivityDate(activity.createdAt)}</span>
+                  <span className="text-text-tertiary">
+                    {' '}
+                    · {formatActivityDate(activity.createdAt)}
+                  </span>
                 </p>
               </div>
             </div>

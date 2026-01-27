@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { baseURL, getAvatarColor } from '../utils';
@@ -7,29 +7,18 @@ import Header from '../components/Header';
 import {
   Plus,
   FolderKanban,
-  CircleDot,
-  Calendar,
-  CheckCircle2,
-  CheckCircle,
   AlertCircle,
-  Clock,
   Ban,
   CircleDashed,
-  Check,
   TrendingUp,
   TrendingDown,
+  Minus,
+  BarChart2,
+  BarChart3,
+  BarChart4,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
-
-const statusFilterOptions = [
-  { value: 'all', label: 'All statuses' },
-  { value: 'backlog', label: 'Backlog' },
-  { value: 'planned', label: 'Planned' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-];
 
 const ProjectsPage = () => {
   const { token } = useAuth();
@@ -37,7 +26,6 @@ const ProjectsPage = () => {
   const { teamKey } = useParams();
   const [teams, setTeams] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [users, setUsers] = useState([]);
   const [projectsWithUpdates, setProjectsWithUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
@@ -48,31 +36,21 @@ const ProjectsPage = () => {
   const [creatorFilter, setCreatorFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const teamsRef = useRef([]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [teamsRes, usersRes] = await Promise.all([
-          fetch(`${baseURL}/api/teams`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${baseURL}/api/users`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+        const teamsRes = await fetch(`${baseURL}/api/teams`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (teamsRes.ok) {
           const data = await teamsRes.json();
           setTeams(data.teams);
+          teamsRef.current = data.teams;
         } else {
           toast.error('Failed to fetch teams');
-        }
-
-        if (usersRes.ok) {
-          const data = await usersRes.json();
-          setUsers(data.users);
-        } else {
-          toast.error('Failed to fetch users');
         }
       } catch (error) {
         console.error('Error fetching initial data:', error);
@@ -85,7 +63,7 @@ const ProjectsPage = () => {
     fetchInitialData();
   }, [token]);
 
-  const fetchProjects = React.useCallback(
+  const fetchProjects = useCallback(
     async (opts = {}) => {
       try {
         setProjectsLoading(true);
@@ -94,7 +72,7 @@ const ProjectsPage = () => {
           params.append('status', opts.status);
         }
         if (opts.teamKey && opts.teamKey !== 'all') {
-          const team = teams.find((t) => t.key === opts.teamKey);
+          const team = teamsRef.current.find((t) => t.key === opts.teamKey);
           if (team) {
             params.append('teamId', team._id);
           }
@@ -147,16 +125,20 @@ const ProjectsPage = () => {
         setProjectsLoading(false);
       }
     },
-    [token, teams]
+    [token]
   );
 
   useEffect(() => {
+    if (teamFilter !== 'all' && teams.length === 0) {
+      return;
+    }
+
     fetchProjects({
       status: statusFilter,
       teamKey: teamFilter,
       creatorId: creatorFilter,
     });
-  }, [fetchProjects, statusFilter, teamFilter, creatorFilter]);
+  }, [fetchProjects, statusFilter, teamFilter, creatorFilter, teams]);
 
   useEffect(() => {
     if (teamKey) {
@@ -170,7 +152,7 @@ const ProjectsPage = () => {
     return projectsWithUpdates.length > 0 ? projectsWithUpdates : projects;
   }, [projectsWithUpdates, projects]);
 
-  const getStatusIndicator = (project) => {
+  const getStatusIndicator = useCallback((project) => {
     const latestUpdate = project.latestUpdate;
     if (!latestUpdate) {
       return {
@@ -217,7 +199,7 @@ const ProjectsPage = () => {
           icon: null,
         };
     }
-  };
+  }, []);
 
   const selectedTeam = useMemo(() => {
     if (teamFilter && teamFilter !== 'all') {
@@ -226,15 +208,92 @@ const ProjectsPage = () => {
     return null;
   }, [teamFilter, teams]);
 
-  const handleOpenNewProject = () => {
+  const handleOpenNewProject = useCallback(() => {
     setEditingProject(null);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditProject = (project) => {
+  const handleEditProject = useCallback((project) => {
     setEditingProject(project);
     setIsModalOpen(true);
-  };
+  }, []);
+
+  const handleModalSuccess = useCallback(() => {
+    fetchProjects({
+      status: statusFilter,
+      teamKey: teamFilter,
+      creatorId: creatorFilter,
+    });
+  }, [fetchProjects, statusFilter, teamFilter, creatorFilter]);
+
+  const handleModalClose = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const getPriorityColor = useCallback((priority) => {
+    switch (priority) {
+      case 'urgent':
+        return 'text-red-500';
+      case 'high':
+        return 'text-orange-500';
+      case 'medium':
+        return 'text-yellow-500';
+      case 'low':
+        return 'text-blue-500';
+      default:
+        return 'text-text-tertiary';
+    }
+  }, []);
+
+  const getPriorityMeta = useCallback((priority) => {
+    switch (priority) {
+      case 'urgent':
+        return { Icon: AlertCircle, label: 'Urgent' };
+      case 'high':
+        return { Icon: BarChart4, label: 'High' };
+      case 'medium':
+        return { Icon: BarChart3, label: 'Medium' };
+      case 'low':
+        return { Icon: BarChart2, label: 'Low' };
+      case 'no_priority':
+        return { Icon: Minus, label: 'No priority' };
+      default:
+        return { Icon: Minus, label: 'No priority' };
+    }
+  }, []);
+
+  const getStatusIcon = useCallback((status) => {
+    switch (status) {
+      case 'backlog':
+        return { Icon: CircleDashed, color: 'text-text-tertiary' };
+      case 'planned':
+        return { Icon: FolderKanban, color: 'text-blue-500' };
+      case 'in_progress':
+        return { Icon: CircleDashed, color: 'text-green-500' };
+      case 'completed':
+        return { Icon: FolderKanban, color: 'text-text-tertiary' };
+      case 'cancelled':
+        return { Icon: Ban, color: 'text-text-tertiary' };
+      default:
+        return { Icon: CircleDashed, color: 'text-text-tertiary' };
+    }
+  }, []);
+
+  const formatDate = useCallback((date) => {
+    if (!date) return '-';
+    const d = new Date(date);
+    const day = d.getDate();
+    const daySuffix =
+      day === 1 || day === 21 || day === 31
+        ? 'st'
+        : day === 2 || day === 22
+          ? 'nd'
+          : day === 3 || day === 23
+            ? 'rd'
+            : 'th';
+    const month = d.toLocaleDateString('en-US', { month: 'short' });
+    return `${month} ${day}${daySuffix}`;
+  }, []);
 
   if (loading) {
     return (
@@ -290,7 +349,7 @@ const ProjectsPage = () => {
                   style={{
                     display: 'grid',
                     gridTemplateColumns:
-                      '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px',
+                      '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px',
                     columnGap: '6px',
                     fontFamily:
                       'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -358,6 +417,17 @@ const ProjectsPage = () => {
                       lineHeight: '16px',
                     }}
                   >
+                    Start date
+                  </div>
+                  <div
+                    className="px-2 py-2 text-text-tertiary"
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      letterSpacing: '0.01em',
+                      lineHeight: '16px',
+                    }}
+                  >
                     Target date
                   </div>
                   <div
@@ -375,76 +445,8 @@ const ProjectsPage = () => {
                 </div>
 
                 {filteredProjects.map((project) => {
-                  const total = project.metrics?.totalIssues || 0;
-                  const done = project.metrics?.doneIssues || 0;
-                  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
                   const statusIndicator = getStatusIndicator(project);
                   const StatusIcon = statusIndicator.icon;
-
-                  const getPriorityColor = (priority) => {
-                    switch (priority) {
-                      case 'urgent':
-                        return 'text-red-500';
-                      case 'high':
-                        return 'text-orange-500';
-                      case 'medium':
-                        return 'text-yellow-500';
-                      case 'low':
-                        return 'text-blue-500';
-                      default:
-                        return 'text-text-tertiary';
-                    }
-                  };
-
-                  const getStatusColor = (status) => {
-                    switch (status) {
-                      case 'backlog':
-                        return 'text-text-tertiary';
-                      case 'planned':
-                        return 'text-blue-500';
-                      case 'in_progress':
-                        return 'text-green-500';
-                      case 'completed':
-                        return 'text-text-tertiary';
-                      case 'cancelled':
-                        return 'text-text-tertiary';
-                      default:
-                        return 'text-text-tertiary';
-                    }
-                  };
-
-                  const getStatusIcon = (status) => {
-                    switch (status) {
-                      case 'backlog':
-                        return { Icon: CircleDashed, color: 'text-text-tertiary' };
-                      case 'planned':
-                        return { Icon: FolderKanban, color: 'text-blue-500' };
-                      case 'in_progress':
-                        return { Icon: CircleDashed, color: 'text-green-500' };
-                      case 'completed':
-                        return { Icon: FolderKanban, color: 'text-text-tertiary' };
-                      case 'cancelled':
-                        return { Icon: Ban, color: 'text-text-tertiary' };
-                      default:
-                        return { Icon: CircleDashed, color: 'text-text-tertiary' };
-                    }
-                  };
-
-                  const formatDate = (date) => {
-                    if (!date) return '-';
-                    const d = new Date(date);
-                    const day = d.getDate();
-                    const daySuffix =
-                      day === 1 || day === 21 || day === 31
-                        ? 'st'
-                        : day === 2 || day === 22
-                          ? 'nd'
-                          : day === 3 || day === 23
-                            ? 'rd'
-                            : 'th';
-                    const month = d.toLocaleDateString('en-US', { month: 'short' });
-                    return `${month} ${day}${daySuffix}`;
-                  };
 
                   return (
                     <button
@@ -454,7 +456,7 @@ const ProjectsPage = () => {
                       style={{
                         display: 'grid',
                         gridTemplateColumns:
-                          '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px',
+                          '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px',
                         columnGap: '6px',
                         fontFamily:
                           'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -523,18 +525,29 @@ const ProjectsPage = () => {
                         className="px-2 flex items-center"
                         style={{ paddingTop: '8px', paddingBottom: '8px' }}
                       >
-                        <span
-                          className={getPriorityColor(project.priority)}
-                          style={{
-                            fontSize: '13px',
-                            fontWeight: 400,
-                            lineHeight: '20px',
-                          }}
-                        >
-                          {project.priority === 'no_priority'
-                            ? '-'
-                            : project.priority.charAt(0).toUpperCase() + project.priority.slice(1)}
-                        </span>
+                        {project.priority && project.priority !== 'no_priority' ? (
+                          <div className="flex items-center">
+                            {(() => {
+                              const { Icon, label } = getPriorityMeta(project.priority);
+                              const PriorityIcon = Icon;
+                              const colorClass = getPriorityColor(project.priority);
+                              return (
+                                <PriorityIcon
+                                  className={colorClass}
+                                  style={{ width: '14px', height: '14px' }}
+                                  title={label}
+                                />
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <span
+                            className="text-text-tertiary"
+                            style={{ fontSize: '13px', lineHeight: '20px' }}
+                          >
+                            -
+                          </span>
+                        )}
                       </div>
 
                       <div
@@ -572,6 +585,22 @@ const ProjectsPage = () => {
                             -
                           </span>
                         )}
+                      </div>
+
+                      <div
+                        className="px-2 flex items-center"
+                        style={{ paddingTop: '8px', paddingBottom: '8px' }}
+                      >
+                        <span
+                          className="text-text-secondary"
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: 400,
+                            lineHeight: '20px',
+                          }}
+                        >
+                          {formatDate(project.startDate)}
+                        </span>
                       </div>
 
                       <div
@@ -624,17 +653,11 @@ const ProjectsPage = () => {
 
       <ProjectModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
         teams={teams}
         initialProject={editingProject}
         selectedTeam={selectedTeam}
-        onSuccess={() => {
-          fetchProjects({
-            status: statusFilter,
-            teamKey: teamFilter,
-            creatorId: creatorFilter,
-          });
-        }}
+        onSuccess={handleModalSuccess}
       />
     </>
   );
