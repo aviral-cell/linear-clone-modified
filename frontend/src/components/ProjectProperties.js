@@ -112,6 +112,17 @@ const ProjectProperties = ({
   const membersRef = useRef(null);
   const startDateRef = useRef(null);
   const targetDateRef = useRef(null);
+  const statusMenuRef = useRef(null);
+  const priorityMenuRef = useRef(null);
+  const leadMenuRef = useRef(null);
+  const teamMenuRef = useRef(null);
+  const membersMenuRef = useRef(null);
+
+  const [statusMenuAlign, setStatusMenuAlign] = useState('left');
+  const [priorityMenuAlign, setPriorityMenuAlign] = useState('left');
+  const [leadMenuAlign, setLeadMenuAlign] = useState('left');
+  const [teamMenuAlign, setTeamMenuAlign] = useState('left');
+  const [membersMenuAlign, setMembersMenuAlign] = useState('left');
 
   const startDate = project?.startDate ? new Date(project.startDate) : null;
   const targetDate = project?.targetDate ? new Date(project.targetDate) : null;
@@ -228,16 +239,85 @@ const ProjectProperties = ({
   const horizontalButtonClasses =
     'px-3 py-1 bg-background border border-border rounded-md text-xs font-medium text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5 disabled:opacity-50';
 
+  const calculateMenuAlignment = (buttonRef, menuRef, setAlign) => {
+    if (!buttonRef.current || !menuRef.current || isVertical) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (!buttonRef.current || !menuRef.current) return;
+
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const menuRect = menuRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const padding = 16;
+
+      const spaceOnRight = viewportWidth - buttonRect.right;
+      const spaceOnLeft = buttonRect.left;
+      const menuWidth = menuRect.width || 180;
+
+      if (spaceOnRight < menuWidth + padding && spaceOnLeft > spaceOnRight) {
+        setAlign('right');
+      } else {
+        setAlign('left');
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (showStatusMenu && statusRef.current && statusMenuRef.current) {
+      calculateMenuAlignment(statusRef, statusMenuRef, setStatusMenuAlign);
+    }
+  }, [showStatusMenu]);
+
+  useEffect(() => {
+    if (showPriorityMenu && priorityRef.current && priorityMenuRef.current) {
+      calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
+    }
+  }, [showPriorityMenu]);
+
+  useEffect(() => {
+    if (showLeadMenu && leadRef.current && leadMenuRef.current) {
+      calculateMenuAlignment(leadRef, leadMenuRef, setLeadMenuAlign);
+    }
+  }, [showLeadMenu]);
+
+  useEffect(() => {
+    if (showTeamMenu && teamRef.current && teamMenuRef.current) {
+      calculateMenuAlignment(teamRef, teamMenuRef, setTeamMenuAlign);
+    }
+  }, [showTeamMenu]);
+
+  useEffect(() => {
+    if (showMembersMenu && membersRef.current && membersMenuRef.current) {
+      calculateMenuAlignment(membersRef, membersMenuRef, setMembersMenuAlign);
+    }
+  }, [showMembersMenu]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (showStatusMenu) calculateMenuAlignment(statusRef, statusMenuRef, setStatusMenuAlign);
+      if (showPriorityMenu) calculateMenuAlignment(priorityRef, priorityMenuRef, setPriorityMenuAlign);
+      if (showLeadMenu) calculateMenuAlignment(leadRef, leadMenuRef, setLeadMenuAlign);
+      if (showTeamMenu) calculateMenuAlignment(teamRef, teamMenuRef, setTeamMenuAlign);
+      if (showMembersMenu) calculateMenuAlignment(membersRef, membersMenuRef, setMembersMenuAlign);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showStatusMenu, showPriorityMenu, showLeadMenu, showTeamMenu, showMembersMenu]);
+
   const getMenuClasses = (isVertical, options = {}) => {
-    const { minWidth, alignRight = false } = options;
-    const baseClasses = 'absolute z-50 mt-1 bg-background-secondary border border-border shadow-xl';
+    const { minWidth, alignRight = false, align = 'left' } = options;
+    const baseClasses = 'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
     if (isVertical) {
       const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
       return `${baseClasses} top-full left-0 rounded-md shadow-lg ${finalMinWidth}`;
     }
-    const alignment = alignRight ? 'right-0' : 'left-0';
+    const alignment = alignRight || align === 'right' ? 'right-0' : 'left-0';
     const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
-    return `${baseClasses} top-full ${alignment} rounded-md shadow-lg ${finalMinWidth || ''}`.trim();
+    const maxWidth = 'max-w-[calc(100vw-2rem)]';
+    return `${baseClasses} top-full ${alignment} rounded-md shadow-lg ${finalMinWidth || ''} ${maxWidth}`.trim();
   };
 
   const getMenuItemClasses = (isVertical, isCurrent = false) =>
@@ -360,7 +440,8 @@ const ProjectProperties = ({
             </button>
             {showStatusMenu && !isVertical && (
               <div
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]' })} max-h-64 overflow-y-auto`}
+                ref={statusMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: statusMenuAlign })} max-h-64 overflow-y-auto`}
               >
                 {projectStatusOptions.map((option) => {
                   const OptionIcon = option.Icon;
@@ -432,7 +513,7 @@ const ProjectProperties = ({
               <ChevronDown className={chevronClasses} />
             </button>
             {showPriorityMenu && !isVertical && (
-              <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]' })}`}>
+              <div ref={priorityMenuRef} className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[180px]', align: priorityMenuAlign })}`}>
                 {priorityOptions.map((option) => {
                   const OptionIcon = option.Icon;
                   const isCurrent = !isVertical && option.value === currentPriority.value;
@@ -497,7 +578,8 @@ const ProjectProperties = ({
             </button>
             {showLeadMenu && !isVertical && (
               <div
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                ref={leadMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: leadMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
               >
                 <button
                   type="button"
@@ -596,7 +678,8 @@ const ProjectProperties = ({
             </button>
             {showMembersMenu && !isVertical && (
               <div
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto`}
+                ref={membersMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: membersMenuAlign })} max-h-60 overflow-y-auto`}
               >
                 {users.map((user) => (
                   <button
@@ -840,7 +923,8 @@ const ProjectProperties = ({
             </button>
             {showTeamMenu && !isVertical && (
               <div
-                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]' })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
+                ref={teamMenuRef}
+                className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[220px]', align: teamMenuAlign })} max-h-60 overflow-y-auto ${isVertical ? 'max-h-48' : ''}`}
               >
                 {teams.map((team) => {
                   const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);

@@ -223,7 +223,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   </button>
                   {showStatusDropdown && (
                     <div
-                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-50 min-w-[160px]"
+                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-[9999] min-w-[160px] max-w-[calc(100vw-2rem)]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {statusOptions.map((option) => (
@@ -263,7 +263,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   </button>
                   {showPriorityDropdown && (
                     <div
-                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-50 min-w-[160px]"
+                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-[9999] min-w-[160px] max-w-[calc(100vw-2rem)]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {priorityOptions.map((option) => (
@@ -316,7 +316,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   </button>
                   {showAssigneeDropdown && (
                     <div
-                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-50 min-w-[180px] max-h-64 overflow-y-auto"
+                      className="absolute top-full mt-2 left-0 bg-background-tertiary border border-border rounded-md shadow-xl z-[9999] min-w-[180px] max-w-[calc(100vw-2rem)] max-h-64 overflow-y-auto"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
