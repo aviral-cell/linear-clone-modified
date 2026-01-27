@@ -96,6 +96,7 @@ const ProjectDetailPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
   const [activitiesRefreshTrigger, setActivitiesRefreshTrigger] = useState(0);
+  const [initialIssueStatus, setInitialIssueStatus] = useState('todo');
 
   const [activeTab, setActiveTab] = useState(tab || 'overview');
   const [editingName, setEditingName] = useState(false);
@@ -473,7 +474,7 @@ const ProjectDetailPage = () => {
             <div className="flex items-center gap-1.5 flex-nowrap min-w-max">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
+                className={`btn-secondary-header flex-shrink-0 ${
                   activeTab === 'overview'
                     ? 'bg-background-tertiary text-text-primary border-accent'
                     : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
@@ -487,7 +488,7 @@ const ProjectDetailPage = () => {
                   setActiveTab('updates');
                   setFocusUpdateInput(false);
                 }}
-                className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
+                className={`btn-secondary-header flex-shrink-0 ${
                   activeTab === 'updates'
                     ? 'bg-background-tertiary text-text-primary border-accent'
                     : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
@@ -498,7 +499,7 @@ const ProjectDetailPage = () => {
               </button>
               <button
                 onClick={() => setActiveTab('issues')}
-                className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
+                className={`btn-secondary-header flex-shrink-0 ${
                   activeTab === 'issues'
                     ? 'bg-background-tertiary text-text-primary border-accent'
                     : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
@@ -678,7 +679,10 @@ const ProjectDetailPage = () => {
                 <div className="flex-1 flex flex-col overflow-hidden -mx-4 md:-mx-6">
                   <div className="px-4 md:px-6 flex items-center justify-end">
                     <button
-                      onClick={() => setShowCreateModal(true)}
+                      onClick={() => {
+                        setInitialIssueStatus('todo');
+                        setShowCreateModal(true);
+                      }}
                       className="px-2 py-1 rounded-md border border-border text-xs text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5"
                     >
                       <Plus className="w-3.5 h-3.5" />
@@ -691,6 +695,12 @@ const ProjectDetailPage = () => {
                       project={project}
                       filter="all"
                       refreshTrigger={issuesRefreshTrigger}
+                      view="list"
+                      hideEmptyStatuses
+                      onCreateIssueWithStatus={(status) => {
+                        setInitialIssueStatus(status);
+                        setShowCreateModal(true);
+                      }}
                     />
                   </div>
                 </div>
@@ -733,6 +743,7 @@ const ProjectDetailPage = () => {
           onClose={() => setShowCreateModal(false)}
           team={project.team}
           project={project}
+          initialStatus={initialIssueStatus}
           onSuccess={() => {
             setIssuesRefreshTrigger((prev) => prev + 1);
             fetchIssues();

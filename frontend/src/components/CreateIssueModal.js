@@ -4,10 +4,17 @@ import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';
 
-const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
+const CreateIssueModal = ({
+  isOpen,
+  onClose,
+  team,
+  project,
+  onSuccess,
+  initialStatus = 'todo',
+}) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState('todo');
+  const [status, setStatus] = useState(initialStatus || 'todo');
   const [priority, setPriority] = useState('no_priority');
   const [assignee, setAssignee] = useState('');
   const [projectId, setProjectId] = useState('');
@@ -17,6 +24,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
 
   React.useEffect(() => {
     if (isOpen) {
+      setStatus(initialStatus || 'todo');
       fetchUsers();
       const teamId = team?._id || project?.team?._id;
       if (teamId) {
@@ -26,7 +34,7 @@ const CreateIssueModal = ({ isOpen, onClose, team, project, onSuccess }) => {
         }
       }
     }
-  }, [isOpen, team, project]);
+  }, [isOpen, team, project, initialStatus]);
 
   const fetchUsers = async () => {
     try {

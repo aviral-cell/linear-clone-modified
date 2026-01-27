@@ -181,10 +181,7 @@ const ProjectRow = React.memo(({ project, onClick }) => {
     >
       <div className="px-2 pr-4 md:pr-6" style={TABLE_CELL_PADDING_Y}></div>
 
-      <div
-        className="px-2 flex items-center gap-2 min-w-0"
-        style={TABLE_CELL_PADDING_Y}
-      >
+      <div className="px-2 flex items-center gap-2 min-w-0" style={TABLE_CELL_PADDING_Y}>
         <div
           className="rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0"
           style={{ width: '20px', height: '20px' }}
@@ -207,10 +204,7 @@ const ProjectRow = React.memo(({ project, onClick }) => {
         </span>
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
         {StatusIcon ? (
           <StatusIcon
             className={statusIndicator.color}
@@ -218,19 +212,13 @@ const ProjectRow = React.memo(({ project, onClick }) => {
             title={statusIndicator.label}
           />
         ) : (
-          <span
-            className="text-text-tertiary"
-            style={{ fontSize: '13px', lineHeight: '20px' }}
-          >
+          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
             -
           </span>
         )}
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
         {project.priority && project.priority !== 'no_priority' ? (
           <div className="flex items-center">
             <PriorityIcon
@@ -240,19 +228,13 @@ const ProjectRow = React.memo(({ project, onClick }) => {
             />
           </div>
         ) : (
-          <span
-            className="text-text-tertiary"
-            style={{ fontSize: '13px', lineHeight: '20px' }}
-          >
+          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
             -
           </span>
         )}
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
         {project.creator ? (
           <div
             className={`${getAvatarColor(
@@ -277,56 +259,33 @@ const ProjectRow = React.memo(({ project, onClick }) => {
               : 'C'}
           </div>
         ) : (
-          <span
-            className="text-text-tertiary"
-            style={{ fontSize: '13px', lineHeight: '20px' }}
-          >
+          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
             -
           </span>
         )}
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
-        <span
-          className="text-text-secondary"
-          style={TABLE_DATE_TEXT_STYLE}
-        >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+        <span className="text-text-secondary" style={TABLE_DATE_TEXT_STYLE}>
           {formatDate(project.startDate)}
         </span>
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
-        <span
-          className="text-text-secondary"
-          style={TABLE_DATE_TEXT_STYLE}
-        >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+        <span className="text-text-secondary" style={TABLE_DATE_TEXT_STYLE}>
           {formatDate(project.targetDate)}
         </span>
       </div>
 
-      <div
-        className="px-2 flex items-center"
-        style={TABLE_CELL_PADDING_Y}
-      >
+      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
         <StatusIconComponent
           className={statusIcon.color}
           style={{ width: '16px', height: '16px' }}
-          title={
-            project.status.charAt(0).toUpperCase() + project.status.slice(1)
-          }
+          title={project.status.charAt(0).toUpperCase() + project.status.slice(1)}
         />
       </div>
 
-      <div
-        className="px-2"
-        style={TABLE_CELL_PADDING_Y}
-      ></div>
+      <div className="px-2" style={TABLE_CELL_PADDING_Y}></div>
     </button>
   );
 });
@@ -540,10 +499,7 @@ const ProjectsPage = () => {
               </div>
             </div>
           ) : (
-            <div
-              className="overflow-x-auto"
-              style={{ fontFamily: TABLE_FONT_FAMILY }}
-            >
+            <div className="overflow-x-auto" style={{ fontFamily: TABLE_FONT_FAMILY }}>
               <div className="min-w-full">
                 <div
                   className="sticky top-0 z-10 bg-background border-b border-border"
@@ -558,57 +514,32 @@ const ProjectsPage = () => {
                     className="px-2 py-2 pr-4 md:pr-6 text-text-tertiary"
                     style={TABLE_HEADER_TEXT_STYLE}
                   ></div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Name
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Health
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Priority
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Lead
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Start date
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Target date
                   </div>
-                  <div
-                    className="px-2 py-2 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  >
+                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Status
                   </div>
                   <div className="px-2 py-2"></div>
                 </div>
 
                 {filteredProjects.map((project) => (
-                  <ProjectRow
-                    key={project._id}
-                    project={project}
-                    onClick={handleRowClick}
-                  />
+                  <ProjectRow key={project._id} project={project} onClick={handleRowClick} />
                 ))}
               </div>
             </div>
