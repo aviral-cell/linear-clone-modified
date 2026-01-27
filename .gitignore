@@ -26,6 +26,8 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+.vscode/
+.cursor/
 
 # OS
 Thumbs.db
@@ -36,4 +38,8 @@ logs
 
 # Environment
 .env
+
+# Build
+build/
+dist/
 
