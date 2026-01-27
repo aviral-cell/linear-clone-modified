@@ -24,7 +24,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -43,7 +42,6 @@ code {
   background: #3a3a3a;
 }
 
-/* Smooth transitions */
 * {
   transition:
     background-color 0.15s ease,
@@ -56,12 +54,11 @@ a {
   transition: all 0.15s ease;
 }
 
-/* Hide scrollbar but keep functionality */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
 }

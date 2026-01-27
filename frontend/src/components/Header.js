@@ -56,11 +56,17 @@ const Header = ({
         )}
         {PanelOpenerIcon && onPanelOpenerClick && (
           <button
+            key="panel-toggle-button"
             onClick={onPanelOpenerClick}
-            className={`${hidePanelIconOnLarge ? 'lg:hidden' : ''} p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md`}
+            className={`${hidePanelIconOnLarge ? 'lg:hidden' : ''} p-2 text-text-secondary hover:text-text-primary hover:bg-background-secondary rounded-md transition-colors`}
             title={isPanelOpen ? 'Close panel' : 'Open panel'}
+            aria-label={isPanelOpen ? 'Close panel' : 'Open panel'}
           >
-            <PanelOpenerIcon className={`w-5 h-5 ${isPanelOpen ? 'text-text-primary' : ''}`} />
+            {isPanelOpen ? (
+              <PanelRightClose className="w-5 h-5 text-text-primary" />
+            ) : (
+              <PanelOpenerIcon className="w-5 h-5" />
+            )}
           </button>
         )}
       </div>

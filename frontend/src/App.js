@@ -74,7 +74,7 @@ function App() {
                 }
               />
               <Route
-                path="/projects/:projectId"
+                path="/projects/:projectIdentifier/:tab?"
                 element={
                   <PrivateRoute>
                     <Layout>

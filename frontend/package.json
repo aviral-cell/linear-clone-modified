@@ -16,6 +16,7 @@
     "lucide-react": "^0.462.0",
     "postcss": "^8.5.5",
     "react": "18.2.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.11.1",
@@ -24,8 +25,8 @@
     "web-vitals": "2.1.4"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
     "@testing-library/user-event": "^14.6.1",
+    "cross-env": "^7.0.3",
     "jest-junit": "15.0.0",
     "prettier": "^3.0.0"
   },
@@ -48,4 +49,3 @@
     ]
   }
 }
-

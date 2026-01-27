@@ -15,18 +15,15 @@ const Breadcrumb = ({
   const navigate = useNavigate();
 
   const selectedTeam = useMemo(() => {
-    // If team is provided as prop, use it
     if (team) {
       return team;
     }
-    // Otherwise, try to find from URL params
     if (teamKey && teams.length > 0) {
       return teams.find((t) => t.key === teamKey) || null;
     }
     return null;
   }, [team, teamKey, teams]);
 
-  // Truncate project name to avoid overflow (max 40 characters)
   const truncateProjectName = (name) => {
     if (!name) return '';
     const maxLength = 40;

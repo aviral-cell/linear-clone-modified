@@ -347,7 +347,6 @@ const IssueDetailPage = () => {
           </div>
         </div>
 
-        {/* Backdrop overlay for mobile */}
         {isRightSidebarOpen && (
           <div
             className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
@@ -355,7 +354,6 @@ const IssueDetailPage = () => {
           />
         )}
 
-        {/* Right sidebar overlay */}
         <div
           className={`
             fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out
