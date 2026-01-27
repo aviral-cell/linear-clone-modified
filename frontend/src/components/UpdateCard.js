@@ -154,7 +154,9 @@ const UpdateCard = ({
               </div>
             </div>
           </div>
-          <p className="text-sm text-text-primary whitespace-pre-wrap break-words">{update?.content}</p>
+          <p className="text-sm text-text-primary whitespace-pre-wrap break-words">
+            {update?.content}
+          </p>
         </>
       )}
     </div>

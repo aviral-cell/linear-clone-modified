@@ -74,7 +74,10 @@ const Breadcrumb = ({
         {projectName && (
           <>
             <span className="text-text-tertiary text-base leading-normal flex-shrink-0">›</span>
-            <span className="text-text-secondary text-sm leading-normal truncate min-w-0" title={projectName}>
+            <span
+              className="text-text-secondary text-sm leading-normal truncate min-w-0"
+              title={projectName}
+            >
               {truncateProjectName(projectName)}
             </span>
           </>

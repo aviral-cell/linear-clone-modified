@@ -222,7 +222,9 @@ const IssuesBoard = ({
                         <span className="w-14 md:w-20 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
                           {identifier}
                         </span>
-                        <span className="flex-1 text-text-primary truncate ml-1">{issue.title}</span>
+                        <span className="flex-1 text-text-primary truncate ml-1">
+                          {issue.title}
+                        </span>
                         {issue.project && (
                           <span className="ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0">
                             {issue.project.name}
