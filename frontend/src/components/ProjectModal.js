@@ -333,14 +333,14 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+              className="btn-secondary-header text-text-secondary hover:text-text-primary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !name.trim() || !teamId}
-              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-secondary-header bg-accent hover:bg-accent-hover text-white disabled:opacity-50 disabled:cursor-not-allowed border-transparent"
             >
               {loading
                 ? initialProject

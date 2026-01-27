@@ -92,7 +92,7 @@ const UpdateCard = ({
           >
             <button
               onClick={onPostUpdate}
-              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-colors"
+              className="btn-secondary-header bg-accent hover:bg-accent-hover text-white border-transparent"
             >
               Post update
             </button>

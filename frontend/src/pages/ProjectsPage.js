@@ -520,7 +520,7 @@ const ProjectsPage = () => {
 
           <div className="border-b border-border px-4 md:px-6 py-2 flex items-center justify-between gap-3 overflow-hidden">
             <div className="flex items-center gap-1.5 flex-nowrap min-w-max flex-shrink-0 overflow-x-auto scrollbar-hide">
-              <button className="px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 bg-background-tertiary text-text-primary border-accent">
+              <button className="btn-secondary-header flex-shrink-0 bg-background-tertiary text-text-primary border-accent">
                 <FolderKanban className="w-4 h-4" />
                 All projects
               </button>

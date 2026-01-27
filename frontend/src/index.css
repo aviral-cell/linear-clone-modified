@@ -8,6 +8,12 @@
   box-sizing: border-box;
 }
 
+@layer components {
+  .btn-secondary-header {
+    @apply px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5;
+  }
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 body {
