@@ -95,7 +95,7 @@ const ProjectDetailPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
 
-  const activeTab = tab || 'overview';
+  const [activeTab, setActiveTab] = useState(tab || 'overview');
   const [editingName, setEditingName] = useState(false);
   const [editingSummary, setEditingSummary] = useState(false);
   const [name, setName] = useState('');
@@ -105,6 +105,22 @@ const ProjectDetailPage = () => {
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const statusMenuRef = useRef(null);
   const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const urlTab = tab || 'overview';
+    if (urlTab !== activeTab) {
+      setActiveTab(urlTab);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (activeTab && projectIdentifier) {
+      const newPath = `/projects/${projectIdentifier}/${activeTab === 'overview' ? 'overview' : activeTab}`;
+      if (window.location.pathname !== newPath) {
+        window.history.replaceState(null, '', newPath);
+      }
+    }
+  }, [activeTab, projectIdentifier]);
 
   useEffect(() => {
     if (window.innerWidth < 640) {
@@ -269,6 +285,41 @@ const ProjectDetailPage = () => {
     try {
       setSaving(true);
 
+      if (updates.name !== undefined) {
+        setProject((prev) => ({ ...prev, name: updates.name }));
+        setName(updates.name);
+      }
+      if (updates.summary !== undefined) {
+        setProject((prev) => ({ ...prev, summary: updates.summary }));
+        setSummary(updates.summary);
+      }
+      if (updates.status !== undefined) {
+        setProject((prev) => ({ ...prev, status: updates.status }));
+      }
+      if (updates.priority !== undefined) {
+        setProject((prev) => ({ ...prev, priority: updates.priority }));
+      }
+      if (updates.leadId !== undefined) {
+        const lead = updates.leadId ? users.find((u) => u._id === updates.leadId) : null;
+        setProject((prev) => ({ ...prev, lead: lead || null }));
+      }
+      if (updates.teamId !== undefined) {
+        const team = updates.teamId ? teams.find((t) => t._id === updates.teamId) : null;
+        setProject((prev) => ({ ...prev, team: team || null }));
+      }
+      if (updates.startDate !== undefined) {
+        setProject((prev) => ({ ...prev, startDate: updates.startDate || null }));
+      }
+      if (updates.targetDate !== undefined) {
+        setProject((prev) => ({ ...prev, targetDate: updates.targetDate || null }));
+      }
+      if (updates.memberIds !== undefined) {
+        const updatedMembers = updates.memberIds
+          .map((id) => users.find((u) => u._id === id))
+          .filter(Boolean);
+        setProject((prev) => ({ ...prev, members: updatedMembers }));
+      }
+
       const response = await fetch(`${baseURL}/api/projects/${project.identifier}`, {
         method: 'PUT',
         headers: {
@@ -279,13 +330,16 @@ const ProjectDetailPage = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        setProject((prev) => ({ ...prev, ...data.project }));
         toast.success('Project updated');
-        await fetchProject();
       } else {
+        await fetchProject();
         toast.error('Failed to update project');
       }
     } catch (error) {
       console.error('Error updating project:', error);
+      await fetchProject();
       toast.error('Failed to update project');
     } finally {
       setSaving(false);
@@ -408,7 +462,7 @@ const ProjectDetailPage = () => {
           <div className="border-b border-border px-4 md:px-6 py-2 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1.5 flex-nowrap min-w-max">
               <button
-                onClick={() => navigate(`/projects/${projectIdentifier}/overview`)}
+                onClick={() => setActiveTab('overview')}
                 className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   activeTab === 'overview'
                     ? 'bg-background-tertiary text-text-primary border-accent'
@@ -419,7 +473,7 @@ const ProjectDetailPage = () => {
                 Overview
               </button>
               <button
-                onClick={() => navigate(`/projects/${projectIdentifier}/updates`)}
+                onClick={() => setActiveTab('updates')}
                 className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   activeTab === 'updates'
                     ? 'bg-background-tertiary text-text-primary border-accent'
@@ -430,7 +484,7 @@ const ProjectDetailPage = () => {
                 Updates
               </button>
               <button
-                onClick={() => navigate(`/projects/${projectIdentifier}/issues`)}
+                onClick={() => setActiveTab('issues')}
                 className={`px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5 flex-shrink-0 ${
                   activeTab === 'issues'
                     ? 'bg-background-tertiary text-text-primary border-accent'
@@ -533,7 +587,7 @@ const ProjectDetailPage = () => {
                     <div className="flex items-center justify-between mb-3">
                       <h2 className="text-xs font-medium text-text-tertiary">Latest update</h2>
                       <button
-                        onClick={() => navigate(`/projects/${projectIdentifier}/updates`)}
+                        onClick={() => setActiveTab('updates')}
                         className="px-3 py-1.5 rounded-md bg-background-secondary border border-border text-xs text-text-primary hover:bg-background-tertiary transition-colors flex items-center gap-2"
                       >
                         <Plus className="w-3.5 h-3.5" />
