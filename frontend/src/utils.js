@@ -47,10 +47,8 @@ export const formatDateTime = (dateString, options = {}) => {
 
   if (options.relative) {
     if (diffInSeconds < 60) return 'Just now';
-    if (diffInMinutes < 60)
-      return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
-    if (diffInHours < 24)
-      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
   }

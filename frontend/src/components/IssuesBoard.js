@@ -11,6 +11,8 @@ import {
   BarChart2,
   BarChart3,
   BarChart4,
+  Plus,
+  FolderKanban,
 } from 'lucide-react';
 import { baseURL, getAvatarColor } from '../utils';
 import { useAuth } from '../context/AuthContext';
@@ -82,19 +84,37 @@ const priorityConfig = {
   },
 };
 
-const IssuesBoard = ({ team, filter, refreshTrigger }) => {
+const IssuesBoard = ({
+  team,
+  project,
+  filter,
+  refreshTrigger,
+  view = 'columns',
+  hideEmptyStatuses = false,
+  onCreateIssueWithStatus,
+  userFilter,
+}) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
   const navigate = useNavigate();
 
   const fetchIssues = React.useCallback(async () => {
-    if (!team) return;
+    if (!team && !project && !userFilter) return;
 
     try {
       setLoading(true);
 
-      const response = await fetch(`${baseURL}/api/issues/team/${team._id}`, {
+      let url;
+      if (project) {
+        url = `${baseURL}/api/projects/${project.identifier}/issues`;
+      } else if (userFilter) {
+        url = `${baseURL}/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`;
+      } else {
+        url = `${baseURL}/api/issues/team/${team._id}`;
+      }
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -111,7 +131,7 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
     } finally {
       setLoading(false);
     }
-  }, [team, token]);
+  }, [team, project, token, userFilter]);
 
   useEffect(() => {
     fetchIssues();
@@ -123,54 +143,13 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
     } else if (filter === 'backlog') {
       return ['backlog'];
     }
-    return [
-      'backlog',
-      'todo',
-      'in_progress',
-      'in_review',
-      'done',
-      'cancelled',
-      'duplicate',
-    ];
+    return ['backlog', 'todo', 'in_progress', 'in_review', 'done', 'cancelled', 'duplicate'];
   };
 
-  const getIssuesByStatus = (status) => {
-    return issues.filter((issue) => issue.status === status);
-  };
+  const getIssuesByStatus = (status) => issues.filter((issue) => issue.status === status);
 
   const handleIssueClick = (issue) => {
     navigate(`/issue/${issue.identifier}`);
-  };
-
-  const handleCreateIssue = async (status) => {
-    const title = prompt('Enter issue title:');
-    if (!title) return;
-
-    try {
-      const response = await fetch(`${baseURL}/api/issues`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          teamId: team._id,
-          status,
-        }),
-      });
-
-      if (response.ok) {
-        toast.success('Issue created successfully');
-        fetchIssues();
-      } else {
-        const data = await response.json();
-        toast.error(data.message || 'Failed to create issue');
-      }
-    } catch (error) {
-      console.error('Error creating issue:', error);
-      toast.error('Failed to create issue');
-    }
   };
 
   if (loading) {
@@ -182,34 +161,138 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
   }
 
   const filteredStatuses = getFilteredStatuses();
+  const hasFilteredIssues = filteredStatuses.some((status) => getIssuesByStatus(status).length > 0);
+
+  if (issues.length === 0 || !hasFilteredIssues) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-background">
+        <div className="text-sm text-text-secondary">
+          {project
+            ? 'No issues in this project yet.'
+            : userFilter
+              ? 'No issues found.'
+              : 'No issues for this team yet.'}
+        </div>
+      </div>
+    );
+  }
+
+  if (view === 'list') {
+    return (
+      <div className="flex-1 overflow-auto bg-background">
+        <div className="max-w-5xl mx-auto py-3">
+          {filteredStatuses.map((status) => {
+            const statusIssues = getIssuesByStatus(status);
+            if (hideEmptyStatuses && statusIssues.length === 0) {
+              return null;
+            }
+
+            const config = statusConfig[status];
+            const StatusIcon = config.icon;
+
+            return (
+              <div key={status} className="border-b border-border last:border-b-0">
+                <div className="px-4 py-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <StatusIcon className={`w-4 h-4 ${config.color}`} />
+                    <span className="text-sm font-medium text-text-primary">{config.label}</span>
+                    <span className="text-xs text-text-tertiary">{statusIssues.length}</span>
+                  </div>
+                  {onCreateIssueWithStatus && (
+                    <button
+                      type="button"
+                      onClick={() => onCreateIssueWithStatus(status)}
+                      className="btn-secondary-header p-1.5"
+                      title="Add issue"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  {statusIssues.map((issue) => {
+                    const priorityInfo = priorityConfig[issue.priority];
+                    const PriorityIcon = priorityInfo.icon;
+                    const identifier = issue.parentIssue
+                      ? issue.parentIssue.identifier || issue.identifier
+                      : issue.identifier;
+
+                    return (
+                      <div
+                        key={issue._id}
+                        onClick={() => handleIssueClick(issue)}
+                        className="px-4 py-2 flex items-center gap-2 text-sm hover:bg-background-secondary cursor-pointer transition-colors"
+                      >
+                        <PriorityIcon
+                          className={`w-3.5 h-3.5 flex-shrink-0 ${priorityInfo.color}`}
+                        />
+                        <span className="w-14 md:w-20 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
+                          {identifier}
+                        </span>
+                        <span className="flex-1 text-text-primary truncate ml-1">
+                          {issue.title}
+                        </span>
+                        {issue.project && (
+                          <span className="hidden md:flex ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0 items-center gap-1">
+                            <FolderKanban className="w-3 h-3" />
+                            {issue.project.name}
+                          </span>
+                        )}
+                        {issue.assignee && (
+                          <div
+                            className={`ml-2 w-5 h-5 ${getAvatarColor(
+                              issue.assignee._id
+                            )} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+                          >
+                            {issue.assignee.name.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-hidden bg-background">
-      <div className="h-full flex gap-3 px-4 md:px-8 py-4 overflow-x-auto">
+      <div className="h-full flex gap-3 px-4 md:px-8 py-2 overflow-x-auto">
         {filteredStatuses.map((status) => {
           const statusIssues = getIssuesByStatus(status);
+          if (hideEmptyStatuses && statusIssues.length === 0) {
+            return null;
+          }
+
           const config = statusConfig[status];
           const StatusIcon = config.icon;
 
           return (
-            <div
-              key={status}
-              className="flex-shrink-0 w-80 flex flex-col"
-              style={{ maxHeight: 'calc(100vh - 140px)' }}
-            >
+            <div key={status} className="flex-shrink-0 w-80 flex flex-col h-full">
               <div className="px-3 py-2 flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <StatusIcon className={`w-4 h-4 ${config.color}`} />
-                  <h3 className="text-sm font-medium text-text-primary">
-                    {config.label}
-                  </h3>
-                  <span className="text-xs text-text-tertiary">
-                    {statusIssues.length}
-                  </span>
+                  <h3 className="text-sm font-medium text-text-primary">{config.label}</h3>
+                  <span className="text-xs text-text-tertiary">{statusIssues.length}</span>
                 </div>
+                {onCreateIssueWithStatus && (
+                  <button
+                    type="button"
+                    onClick={() => onCreateIssueWithStatus(status)}
+                    className="btn-secondary-header p-1.5"
+                    title="Add issue"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-2">
+              <div className="flex-1 overflow-y-auto space-y-2 py-2">
                 {statusIssues.map((issue) => {
                   const priorityInfo = priorityConfig[issue.priority];
                   const PriorityIcon = priorityInfo.icon;
@@ -247,12 +330,8 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                           </div>
 
                           <div className="flex items-center gap-1.5">
-                            <PriorityIcon
-                              className={`w-3.5 h-3.5 ${priorityInfo.color}`}
-                            />
-                            <span className="text-xs text-text-tertiary">
-                              {priorityInfo.label}
-                            </span>
+                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
+                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
                           </div>
                         </>
                       ) : (
@@ -280,24 +359,14 @@ const IssuesBoard = ({ team, filter, refreshTrigger }) => {
                           </div>
 
                           <div className="flex items-center gap-1.5">
-                            <PriorityIcon
-                              className={`w-3.5 h-3.5 ${priorityInfo.color}`}
-                            />
-                            <span className="text-xs text-text-tertiary">
-                              {priorityInfo.label}
-                            </span>
+                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
+                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
                           </div>
                         </>
                       )}
                     </div>
                   );
                 })}
-
-                {statusIssues.length === 0 && (
-                  <div className="text-center py-8 text-text-tertiary text-sm">
-                    No issues
-                  </div>
-                )}
               </div>
             </div>
           );

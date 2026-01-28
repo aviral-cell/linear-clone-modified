@@ -3,13 +3,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
 import toast from 'react-hot-toast';
 
-const CommentsSection = ({
-  comments,
-  onEditComment,
-  onDeleteComment,
-  baseURL,
-  token,
-}) => {
+const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, token }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState('');
 
@@ -105,9 +99,7 @@ const CommentsSection = ({
                       {formatDateTime(comment.createdAt, { relative: true })}
                     </span>
                     {comment.isEdited && (
-                      <span className="text-xs text-text-tertiary italic">
-                        (edited)
-                      </span>
+                      <span className="text-xs text-text-tertiary italic">(edited)</span>
                     )}
                   </div>
                 </div>

@@ -35,9 +35,7 @@ const priorityIcons = {
 const getActivityIcon = (action, changes, users = []) => {
   if (action.includes('priority')) {
     const newPriority =
-      changes?.newValue || changes?.field === 'priority'
-        ? changes?.newValue
-        : null;
+      changes?.newValue || changes?.field === 'priority' ? changes?.newValue : null;
     if (newPriority && priorityIcons[newPriority]) {
       return { ...priorityIcons[newPriority], type: 'icon' };
     }
@@ -78,11 +76,7 @@ const getActivityIcon = (action, changes, users = []) => {
 };
 
 const formatChange = (action, changes, users = []) => {
-  const simpleActions = [
-    'updated description',
-    'updated title',
-    'added comment',
-  ];
+  const simpleActions = ['updated description', 'updated title', 'added comment'];
 
   if (simpleActions.some((a) => action.includes(a.replace(' ', '_')))) {
     return null;
@@ -90,8 +84,7 @@ const formatChange = (action, changes, users = []) => {
 
   if (!changes) return null;
 
-  const isAssigneeChange =
-    action.includes('assignee') || action.includes('assigned');
+  const isAssigneeChange = action.includes('assignee') || action.includes('assigned');
 
   const formatValue = (value) => {
     if (!value || value === 'null' || value === null) {
@@ -117,9 +110,7 @@ const formatChange = (action, changes, users = []) => {
   return (
     <>
       {' '}
-      from <span className="text-text-primary font-medium">
-        {oldValue}
-      </span> to{' '}
+      from <span className="text-text-primary font-medium">{oldValue}</span> to{' '}
       <span className="text-text-primary font-medium">{newValue}</span>
     </>
   );
@@ -137,11 +128,7 @@ const ActivityTimeline = ({ activities, users = [] }) => {
         <div className="absolute left-3 top-0 bottom-0 w-px bg-border" />
 
         {activities.map((activity, idx) => {
-          const iconData = getActivityIcon(
-            activity.action,
-            activity.changes,
-            users
-          );
+          const iconData = getActivityIcon(activity.action, activity.changes, users);
 
           return (
             <div
@@ -152,20 +139,14 @@ const ActivityTimeline = ({ activities, users = [] }) => {
                 ? (() => {
                     const assigneeId = activity.changes?.newValue;
 
-                    if (
-                      !assigneeId ||
-                      assigneeId === 'null' ||
-                      assigneeId === null
-                    ) {
+                    if (!assigneeId || assigneeId === 'null' || assigneeId === null) {
                       return (
                         <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2">
                           <Circle className="w-4 h-4 text-text-primary" />
                         </div>
                       );
                     }
-                    const assigneeUser = users.find(
-                      (u) => u._id === assigneeId
-                    );
+                    const assigneeUser = users.find((u) => u._id === assigneeId);
                     if (assigneeUser) {
                       const avatarColors = getAvatarColor(assigneeUser._id);
                       return (
@@ -187,17 +168,13 @@ const ActivityTimeline = ({ activities, users = [] }) => {
                     const IconComponent = iconData.Icon;
                     return (
                       <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2">
-                        <IconComponent
-                          className={`w-4 h-4 ${iconData.color}`}
-                        />
+                        <IconComponent className={`w-4 h-4 ${iconData.color}`} />
                       </div>
                     );
                   })()}
               <div className="flex-1 pt-0.5 ml-8">
                 <p className="text-sm text-text-secondary">
-                  <span className="text-text-primary font-medium">
-                    {activity.user.name}
-                  </span>{' '}
+                  <span className="text-text-primary font-medium">{activity.user.name}</span>{' '}
                   {activity.action.replace(/_/g, ' ')}
                   {formatChange(activity.action, activity.changes, users)}
                 </p>
