@@ -9,6 +9,7 @@ import IssuesPage from './pages/IssuesPage';
 import IssueDetailPage from './pages/IssueDetailPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
+import MyIssuesPage from './pages/MyIssuesPage';
 import Layout from './components/Layout';
 
 const PrivateRoute = ({ children }) => {
@@ -49,6 +50,16 @@ function App() {
                   <PrivateRoute>
                     <Layout>
                       <IssuesPage />
+                    </Layout>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/my-issues/:issuesFilter?"
+                element={
+                  <PrivateRoute>
+                    <Layout>
+                      <MyIssuesPage />
                     </Layout>
                   </PrivateRoute>
                 }

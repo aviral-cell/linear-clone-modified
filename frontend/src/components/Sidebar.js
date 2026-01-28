@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { Inbox, Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
+import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
@@ -23,6 +23,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     !location.pathname.includes('/projects/') &&
     teamKey &&
     issuesFilter;
+  const isMyIssuesPage = location.pathname.startsWith('/my-issues');
   const [isTeamsSectionExpanded, setIsTeamsSectionExpanded] = useState(true);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
@@ -87,6 +88,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     }
   };
 
+  const handleMyIssuesClick = () => {
+    navigate('/my-issues/assigned');
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -121,24 +129,15 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       <div className="flex-1 overflow-y-auto py-2">
         <div className="space-y-0.5">
           <button
-            onClick={(e) => e.preventDefault()}
-            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60 ${
+            onClick={handleMyIssuesClick}
+            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'px-6'
+            } ${
+              isMyIssuesPage
+                ? 'text-text-primary bg-background-tertiary rounded-md'
+                : 'text-text-secondary'
             }`}
-            title="Inbox (Coming soon)"
-            disabled
-          >
-            <Inbox className="w-4 h-4 flex-shrink-0" />
-            {!isCollapsed && <span>Inbox</span>}
-          </button>
-
-          <button
-            onClick={(e) => e.preventDefault()}
-            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-secondary text-sm transition-colors cursor-not-allowed opacity-60 ${
-              isCollapsed ? 'justify-center px-2' : 'px-6'
-            }`}
-            title="My Issues (Coming soon)"
-            disabled
+            title="My Issues"
           >
             <List className="w-4 h-4 flex-shrink-0" />
             {!isCollapsed && <span>My Issues</span>}

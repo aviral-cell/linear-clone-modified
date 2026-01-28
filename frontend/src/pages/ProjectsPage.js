@@ -213,23 +213,23 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
         <div className="px-2 flex items-center min-w-0" style={TABLE_CELL_PADDING_Y}>
           {project.team ? (
             <div className="flex items-center gap-1.5 min-w-0">
-              {typeof project.team === 'object' ? (
-                (() => {
-                  const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
-                  return (
-                    <div
-                      className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-                      title={project.team.name || 'Team'}
-                    >
-                      {IconComponent ? (
-                        <IconComponent className="w-3 h-3" />
-                      ) : (
-                        <span className="text-xs">{icon}</span>
-                      )}
-                    </div>
-                  );
-                })()
-              ) : null}
+              {typeof project.team === 'object'
+                ? (() => {
+                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
+                    return (
+                      <div
+                        className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
+                        title={project.team.name || 'Team'}
+                      >
+                        {IconComponent ? (
+                          <IconComponent className="w-3 h-3" />
+                        ) : (
+                          <span className="text-xs">{icon}</span>
+                        )}
+                      </div>
+                    );
+                  })()
+                : null}
               <span
                 className="text-text-secondary truncate"
                 style={{
@@ -237,7 +237,9 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
                   fontWeight: 400,
                   lineHeight: '20px',
                 }}
-                title={typeof project.team === 'object' && project.team.name ? project.team.name : 'Team'}
+                title={
+                  typeof project.team === 'object' && project.team.name ? project.team.name : 'Team'
+                }
               >
                 {typeof project.team === 'object' && project.team.name
                   ? project.team.name
@@ -594,9 +596,9 @@ const ProjectsPage = () => {
                 </div>
 
                 {filteredProjects.map((project) => (
-                  <ProjectRow 
-                    key={project._id} 
-                    project={project} 
+                  <ProjectRow
+                    key={project._id}
+                    project={project}
                     onClick={handleRowClick}
                     showTeam={teamFilter === 'all'}
                   />

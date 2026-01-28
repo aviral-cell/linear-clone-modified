@@ -12,6 +12,7 @@ import {
   BarChart3,
   BarChart4,
   Plus,
+  FolderKanban,
 } from 'lucide-react';
 import { baseURL, getAvatarColor } from '../utils';
 import { useAuth } from '../context/AuthContext';
@@ -91,6 +92,7 @@ const IssuesBoard = ({
   view = 'columns',
   hideEmptyStatuses = false,
   onCreateIssueWithStatus,
+  userFilter,
 }) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,7 @@ const IssuesBoard = ({
   const navigate = useNavigate();
 
   const fetchIssues = React.useCallback(async () => {
-    if (!team && !project) return;
+    if (!team && !project && !userFilter) return;
 
     try {
       setLoading(true);
@@ -106,6 +108,8 @@ const IssuesBoard = ({
       let url;
       if (project) {
         url = `${baseURL}/api/projects/${project.identifier}/issues`;
+      } else if (userFilter) {
+        url = `${baseURL}/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`;
       } else {
         url = `${baseURL}/api/issues/team/${team._id}`;
       }
@@ -127,7 +131,7 @@ const IssuesBoard = ({
     } finally {
       setLoading(false);
     }
-  }, [team, project, token]);
+  }, [team, project, token, userFilter]);
 
   useEffect(() => {
     fetchIssues();
@@ -163,7 +167,11 @@ const IssuesBoard = ({
     return (
       <div className="flex-1 flex items-center justify-center bg-background">
         <div className="text-sm text-text-secondary">
-          {project ? 'No issues in this project yet.' : 'No issues for this team yet.'}
+          {project
+            ? 'No issues in this project yet.'
+            : userFilter
+              ? 'No issues found.'
+              : 'No issues for this team yet.'}
         </div>
       </div>
     );
@@ -226,7 +234,8 @@ const IssuesBoard = ({
                           {issue.title}
                         </span>
                         {issue.project && (
-                          <span className="ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0">
+                          <span className="ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0 flex items-center gap-1">
+                            <FolderKanban className="w-3 h-3" />
                             {issue.project.name}
                           </span>
                         )}
