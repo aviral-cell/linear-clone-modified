@@ -27,6 +27,37 @@ export const getIssuesByTeam = async (req, res) => {
   }
 };
 
+export const getMyIssues = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { filter } = req.query;
+
+    let query;
+    if (filter === 'created') {
+      query = { creator: userId };
+    } else if (filter === 'assigned') {
+      query = { assignee: userId };
+    } else {
+      query = {
+        $or: [{ creator: userId }, { assignee: userId }],
+      };
+    }
+
+    const issues = await Issue.find(query)
+      .populate('assignee', 'name email avatar')
+      .populate('creator', 'name email avatar')
+      .populate('team', 'name key icon')
+      .populate('project', 'name identifier icon')
+      .populate('parentIssue', 'identifier title')
+      .sort({ createdAt: -1 });
+
+    res.json({ issues });
+  } catch (error) {
+    console.error('Get my issues error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const getIssueByIdentifier = async (req, res) => {
   try {
     const { identifier } = req.params;
