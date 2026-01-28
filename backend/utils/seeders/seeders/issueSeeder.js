@@ -15,6 +15,15 @@ export async function seedIssues(teams, users, projects, creator) {
   console.log('Seeding issues...');
   const insertedIssues = [];
 
+  const teamProjectMap = {};
+  projects.forEach((project) => {
+    const teamId = project.team.toString();
+    if (!teamProjectMap[teamId]) {
+      teamProjectMap[teamId] = [];
+    }
+    teamProjectMap[teamId].push(project);
+  });
+
   for (const issueData of issuesData) {
     const team = teams.find((t) => t.key === issueData.team);
     if (!team) {
@@ -25,11 +34,23 @@ export async function seedIssues(teams, users, projects, creator) {
     const count = insertedIssues.filter((i) => i.team.toString() === team._id.toString()).length;
     const identifier = `${team.key}-${count + 1}`;
 
-    // Attach roughly half the issues for a team to its first project
-    const teamProjects = projects.filter(
-      (p) => p.team.toString() === team._id.toString()
-    );
-    const primaryProject = teamProjects.length > 0 ? teamProjects[0] : null;
+    const teamProjects = teamProjectMap[team._id.toString()] || [];
+    
+    let assignedProject = null;
+    
+    if (teamProjects.length > 0) {
+      const shouldAssignToProject = Math.random() < 0.65;
+      
+      if (shouldAssignToProject) {
+        if (issueData.projectIndex !== undefined && issueData.projectIndex !== null) {
+          const projectIndex = Math.min(issueData.projectIndex, teamProjects.length - 1);
+          assignedProject = teamProjects[projectIndex];
+        } else {
+          const randomIndex = Math.floor(Math.random() * teamProjects.length);
+          assignedProject = teamProjects[randomIndex];
+        }
+      }
+    }
 
     const issue = new Issue({
       identifier,
@@ -38,7 +59,7 @@ export async function seedIssues(teams, users, projects, creator) {
       status: issueData.status,
       priority: issueData.priority,
       team: team._id,
-      project: primaryProject && count % 2 === 0 ? primaryProject._id : null,
+      project: assignedProject ? assignedProject._id : null,
       assignee: issueData.assigneeIndex !== null ? users[issueData.assigneeIndex]._id : null,
       creator: creator._id,
     });
@@ -55,25 +76,49 @@ export async function seedIssues(teams, users, projects, creator) {
     await activity.save();
   }
 
-  // Seed sub-issues
-  const parentIssue = insertedIssues.find((i) => i.identifier === 'ENG-1');
-  if (parentIssue) {
+  // Seed sub-issues for high-effort issues
+  const highEffortIssues = insertedIssues.filter((issue) => {
+    const isHighPriority = issue.priority === 'urgent' || issue.priority === 'high';
+    const isInProgress = issue.status === 'in_progress' || issue.status === 'in_review';
+    const title = issue.title.toLowerCase();
+    const isComplexIssue = 
+      title.includes('authentication') ||
+      title.includes('database') ||
+      title.includes('schema') ||
+      title.includes('ci/cd') ||
+      title.includes('pipeline') ||
+      title.includes('security') ||
+      title.includes('audit') ||
+      title.includes('design system') ||
+      title.includes('mobile') ||
+      title.includes('campaign') ||
+      title.includes('launch') ||
+      title.includes('roadmap');
+    
+    return (isHighPriority || isInProgress) && isComplexIssue;
+  });
+
+  let subIssueCount = 0;
+  for (const parentIssue of highEffortIssues.slice(0, 8)) {
     const team = teams.find((t) => t._id.toString() === parentIssue.team.toString());
     
-    // Calculate identifiers dynamically to ensure sequential numbering
+    if (!team) continue;
+    
     const subIssuesData = getSubIssuesData(parentIssue, team, users);
+    
     for (const subIssueData of subIssuesData) {
-      // Calculate identifier based on current count (will be updated after each save)
       const currentCount = insertedIssues.filter(
         (i) => i.team.toString() === parentIssue.team.toString()
       ).length;
       subIssueData.identifier = `${team.key}-${currentCount + 1}`;
       
+      subIssueData.project = parentIssue.project || null;
+      
       const subIssue = new Issue(subIssueData);
       await subIssue.save();
       insertedIssues.push(subIssue);
+      subIssueCount++;
 
-      // Create activity for sub-issue creation
       const activity = new Activity({
         issue: subIssue._id,
         user: creator._id,
@@ -81,6 +126,10 @@ export async function seedIssues(teams, users, projects, creator) {
       });
       await activity.save();
     }
+  }
+
+  if (subIssueCount > 0) {
+    console.log(`  → Created ${subIssueCount} sub-issues across ${highEffortIssues.slice(0, 8).length} parent issues`);
   }
 
   console.log(`✓ Issues seeded successfully (${insertedIssues.length} issues)`);
