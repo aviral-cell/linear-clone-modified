@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { baseURL, getAvatarColor } from '../utils';
+import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
 import {
@@ -23,8 +24,12 @@ import { normalizeUpdateStatus } from '../utils/statusMapping';
 const TABLE_FONT_FAMILY =
   'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
-const TABLE_GRID_TEMPLATE =
-  '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px';
+const getTableGridTemplate = (showTeam) => {
+  if (showTeam) {
+    return '[indent] 18px [title] minmax(350px, 2fr) [team] minmax(120px, auto) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px';
+  }
+  return '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px';
+};
 
 const TABLE_HEADER_TEXT_STYLE = {
   fontSize: '11px',
@@ -158,7 +163,7 @@ const formatDate = (date) => {
   return `${month} ${day}${daySuffix}`;
 };
 
-const ProjectRow = React.memo(({ project, onClick }) => {
+const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
   const statusIndicator = getStatusIndicator(project);
   const StatusIcon = statusIndicator.icon;
   const priorityMeta = getPriorityMeta(project.priority);
@@ -174,7 +179,7 @@ const ProjectRow = React.memo(({ project, onClick }) => {
       className="w-full border-b border-border hover:bg-background-secondary/40 transition-colors"
       style={{
         display: 'grid',
-        gridTemplateColumns: TABLE_GRID_TEMPLATE,
+        gridTemplateColumns: getTableGridTemplate(showTeam),
         columnGap: '6px',
         fontFamily: TABLE_FONT_FAMILY,
       }}
@@ -203,6 +208,51 @@ const ProjectRow = React.memo(({ project, onClick }) => {
           {project.name}
         </span>
       </div>
+
+      {showTeam && (
+        <div className="px-2 flex items-center min-w-0" style={TABLE_CELL_PADDING_Y}>
+          {project.team ? (
+            <div className="flex items-center gap-1.5 min-w-0">
+              {typeof project.team === 'object' ? (
+                (() => {
+                  const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
+                  return (
+                    <div
+                      className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
+                      title={project.team.name || 'Team'}
+                    >
+                      {IconComponent ? (
+                        <IconComponent className="w-3 h-3" />
+                      ) : (
+                        <span className="text-xs">{icon}</span>
+                      )}
+                    </div>
+                  );
+                })()
+              ) : null}
+              <span
+                className="text-text-secondary truncate"
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  lineHeight: '20px',
+                }}
+                title={typeof project.team === 'object' && project.team.name ? project.team.name : 'Team'}
+              >
+                {typeof project.team === 'object' && project.team.name
+                  ? project.team.name
+                  : typeof project.team === 'object' && project.team.key
+                    ? project.team.key
+                    : '-'}
+              </span>
+            </div>
+          ) : (
+            <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
+              -
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
         {StatusIcon ? (
@@ -505,7 +555,7 @@ const ProjectsPage = () => {
                   className="sticky top-0 z-10 bg-background border-b border-border"
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: TABLE_GRID_TEMPLATE,
+                    gridTemplateColumns: getTableGridTemplate(teamFilter === 'all'),
                     columnGap: '6px',
                     fontFamily: TABLE_FONT_FAMILY,
                   }}
@@ -517,6 +567,11 @@ const ProjectsPage = () => {
                   <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Name
                   </div>
+                  {teamFilter === 'all' && (
+                    <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
+                      Team
+                    </div>
+                  )}
                   <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
                     Health
                   </div>
@@ -539,7 +594,12 @@ const ProjectsPage = () => {
                 </div>
 
                 {filteredProjects.map((project) => (
-                  <ProjectRow key={project._id} project={project} onClick={handleRowClick} />
+                  <ProjectRow 
+                    key={project._id} 
+                    project={project} 
+                    onClick={handleRowClick}
+                    showTeam={teamFilter === 'all'}
+                  />
                 ))}
               </div>
             </div>
