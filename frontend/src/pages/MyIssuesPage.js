@@ -88,7 +88,7 @@ const MyIssuesPage = () => {
           filter="all"
           refreshTrigger={issuesRefreshTrigger}
           view={viewMode}
-          hideEmptyStatuses={false}
+          hideEmptyStatuses={true}
         />
       </div>
     </>
