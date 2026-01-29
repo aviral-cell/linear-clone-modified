@@ -103,7 +103,6 @@ const ProjectProperties = ({
   const [showMembersMenu, setShowMembersMenu] = useState(false);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showTargetDatePicker, setShowTargetDatePicker] = useState(false);
-  const [dateError, setDateError] = useState('');
 
   const statusRef = useRef(null);
   const priorityRef = useRef(null);
@@ -127,57 +126,23 @@ const ProjectProperties = ({
   const startDate = project?.startDate ? new Date(project.startDate) : null;
   const targetDate = project?.targetDate ? new Date(project.targetDate) : null;
 
-  const compareDates = (date1, date2) => {
-    if (!date1 || !date2) return 0;
-    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
-    return d1.getTime() - d2.getTime();
-  };
-
   const handleStartDateChange = async (date) => {
     if (!date) {
       setShowStartDatePicker(false);
-      setDateError('');
       if (onUpdate) await onUpdate({ startDate: '' });
       return;
     }
-
-    if (targetDate) {
-      const comparison = compareDates(date, targetDate);
-      if (comparison >= 0) {
-        setDateError(
-          'Start date cannot be after or equal to target date. Target date has been cleared.'
-        );
-        setShowStartDatePicker(false);
-        if (onUpdate) await onUpdate({ startDate: date.toISOString(), targetDate: '' });
-        return;
-      }
-    }
-
     setShowStartDatePicker(false);
-    setDateError('');
     if (onUpdate) await onUpdate({ startDate: date.toISOString() });
   };
 
   const handleTargetDateChange = async (date) => {
     if (!date) {
       setShowTargetDatePicker(false);
-      setDateError('');
       if (onUpdate) await onUpdate({ targetDate: '' });
       return;
     }
-
-    if (startDate) {
-      const comparison = compareDates(date, startDate);
-      if (comparison <= 0) {
-        setDateError('Target date must be after start date');
-        setShowTargetDatePicker(false);
-        return;
-      }
-    }
-
     setShowTargetDatePicker(false);
-    setDateError('');
     if (onUpdate) await onUpdate({ targetDate: date.toISOString() });
   };
 
@@ -756,18 +721,12 @@ const ProjectProperties = ({
               <div className={`${getMenuClasses(isVertical, {})}`}>
                 <DatePickerHeader
                   title="Select Start Date"
-                  description={
-                    targetDate
-                      ? `Must be before ${targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-                      : 'Choose when the project begins'
-                  }
+                  description="Choose when the project begins"
                 />
                 <DatePicker
                   selected={startDate}
                   onChange={handleStartDateChange}
                   dateFormat="yyyy-MM-dd"
-                  minDate={new Date()}
-                  maxDate={targetDate || null}
                   inline
                   calendarClassName="react-datepicker-custom"
                 />
@@ -778,18 +737,12 @@ const ProjectProperties = ({
             <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[280px]' })}`}>
               <DatePickerHeader
                 title="Select Start Date"
-                description={
-                  targetDate
-                    ? `Must be before ${targetDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-                    : 'Choose when the project begins'
-                }
+                description="Choose when the project begins"
               />
               <DatePicker
                 selected={startDate}
                 onChange={handleStartDateChange}
                 dateFormat="yyyy-MM-dd"
-                minDate={new Date()}
-                maxDate={targetDate || null}
                 inline
                 calendarClassName="react-datepicker-custom"
               />
@@ -824,17 +777,12 @@ const ProjectProperties = ({
               <div className={`${getMenuClasses(isVertical, {})}`}>
                 <DatePickerHeader
                   title="Select Target Date"
-                  description={
-                    startDate
-                      ? `Must be after ${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-                      : 'Choose when the project should be completed'
-                  }
+                  description="Choose when the project should be completed"
                 />
                 <DatePicker
                   selected={targetDate}
                   onChange={handleTargetDateChange}
                   dateFormat="yyyy-MM-dd"
-                  minDate={startDate || new Date()}
                   inline
                   calendarClassName="react-datepicker-custom"
                 />
@@ -845,30 +793,17 @@ const ProjectProperties = ({
             <div className={`${getMenuClasses(isVertical, { minWidth: 'min-w-[280px]' })}`}>
               <DatePickerHeader
                 title="Select Target Date"
-                description={
-                  startDate
-                    ? `Must be after ${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-                    : 'Choose when the project should be completed'
-                }
+                description="Choose when the project should be completed"
               />
               <DatePicker
                 selected={targetDate}
                 onChange={handleTargetDateChange}
                 dateFormat="yyyy-MM-dd"
-                minDate={startDate || new Date()}
                 inline
                 calendarClassName="react-datepicker-custom"
               />
             </div>
           )}
-        </div>
-      )}
-
-      {dateError && (
-        <div
-          className={`px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-md ${!isVertical && 'w-full'}`}
-        >
-          <p className="text-xs text-red-400">{dateError}</p>
         </div>
       )}
 
