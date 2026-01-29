@@ -5,6 +5,8 @@ import { baseURL } from '../utils';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
+import { Button, LoadingScreen } from '../components/ui';
+import { cn } from '../utils/cn';
 import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -91,11 +93,7 @@ const IssuesPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   return (
@@ -119,66 +117,72 @@ const IssuesPage = () => {
           <section aria-label="Issues filters" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs">
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    filter === 'all' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/all`)}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    filter === 'all'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <List className="w-4 h-4" />
+                  <List className="h-4 w-4" />
                   All issues
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    filter === 'active' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/active`)}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    filter === 'active'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <CircleDot className="w-4 h-4 text-yellow-500" />
+                  <CircleDot className="h-4 w-4 text-yellow-500" />
                   Active
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    filter === 'backlog' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/backlog`)}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    filter === 'backlog'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <CircleDashed className="w-4 h-4 text-text-tertiary" />
+                  <CircleDashed className="h-4 w-4 text-text-tertiary" />
                   Backlog
-                </button>
+                </Button>
               </div>
 
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
+              <div className="flex flex-shrink-0 items-center gap-1.5">
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'p-1.5',
+                    viewMode === 'columns' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => handleViewChange('columns')}
-                  className={`btn-secondary-header ${
-                    viewMode === 'columns'
-                      ? 'border-accent bg-background-tertiary text-text-primary'
-                      : 'border-border text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                   title="Board view"
                 >
-                  <LayoutPanelLeft className="w-4 h-4" />
-                </button>
-                <button
+                  <LayoutPanelLeft className="h-4 w-4" />
+                </Button>
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'p-1.5',
+                    viewMode === 'list' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => handleViewChange('list')}
-                  className={`btn-secondary-header ${
-                    viewMode === 'list'
-                      ? 'border-accent bg-background-tertiary text-text-primary'
-                      : 'border-border text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                   title="List view"
                 >
-                  <LayoutList className="w-4 h-4" />
-                </button>
+                  <LayoutList className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </section>

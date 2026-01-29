@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDate } from '../utils';
+import { Divider, Label } from './ui';
 import ProjectProperties from './ProjectProperties';
 import ProjectActivity from './ProjectActivity';
 
@@ -34,7 +35,7 @@ const ProjectSidebar = ({
           onMembersChange={onMembersChange}
         />
 
-        <div className="divider" />
+        <Divider />
 
         {project?.identifier && token && (
           <ProjectActivity
@@ -45,10 +46,10 @@ const ProjectSidebar = ({
           />
         )}
 
-        <div className="divider" />
+        <Divider />
 
         <div>
-          <label className="label">Created</label>
+          <Label>Created</Label>
           <div className="text-sm text-text-secondary">
             {formatDate(project.createdAt, { relative: true })}
           </div>

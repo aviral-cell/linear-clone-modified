@@ -23,6 +23,7 @@ import { useAuth } from '../context/AuthContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { getAvatarColor } from '../utils';
 import ProjectProperties from './ProjectProperties';
+import { Button, IconButton } from './ui';
 
 const statusOptions = [
   { value: 'backlog', label: 'Backlog', icon: CircleDashed, color: 'text-orange-500' },
@@ -288,9 +289,9 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
               </span>
             )}
           </div>
-          <button type="button" onClick={onClose} className="btn-icon" aria-label="Close">
-            <X className="w-5 h-5" />
-          </button>
+          <IconButton size="md" aria-label="Close" onClick={onClose}>
+            <X className="h-5 w-5" />
+          </IconButton>
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
@@ -349,17 +350,20 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
           </div>
 
           <div className="modal-footer modal-footer-primary">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="md"
+              className="text-text-secondary hover:text-text-primary"
               onClick={onClose}
-              className="btn-secondary-header text-text-secondary hover:text-text-primary"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
               disabled={loading || !name.trim() || !teamId}
-              className="btn-primary"
             >
               {loading
                 ? initialProject
@@ -368,7 +372,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                 : initialProject
                   ? 'Save changes'
                   : 'Create project'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
+import { Avatar, Button } from './ui';
+import { cn } from '../utils/cn';
 
 const statusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
@@ -208,7 +210,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                 </div>
 
                 <div className="relative">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -216,37 +218,42 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowPriorityDropdown(false);
                       setShowAssigneeDropdown(false);
                     }}
-                    className="pill-button"
+                    variant="tertiary"
+                    size="md"
                   >
-                    <selectedStatus.Icon className={`w-4 h-4 ${selectedStatus.color}`} />
+                    <selectedStatus.Icon className={`h-4 w-4 ${selectedStatus.color}`} />
                     <span className="text-text-primary">{selectedStatus.label}</span>
-                  </button>
+                  </Button>
                   {showStatusDropdown && (
                     <div
                       className="dropdown-panel dropdown-panel-alt min-w-[160px] max-w-[calc(100vw-2rem)]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {statusOptions.map((option) => (
-                        <button
+                        <Button
                           key={option.value}
                           type="button"
+                          variant="ghost"
+                          className={cn(
+                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
+                            status === option.value && 'bg-background-hover'
+                          )}
                           onClick={(e) => {
                             e.stopPropagation();
                             setStatus(option.value);
                             setShowStatusDropdown(false);
                           }}
-                          className={`list-item-button ${status === option.value ? 'bg-background-hover' : ''}`}
                         >
-                          <option.Icon className={`w-4 h-4 ${option.color}`} />
+                          <option.Icon className={`h-4 w-4 ${option.color}`} />
                           <span className="text-text-primary">{option.label}</span>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
                 </div>
 
                 <div className="relative">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -254,37 +261,42 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowStatusDropdown(false);
                       setShowAssigneeDropdown(false);
                     }}
-                    className="pill-button"
+                    variant="tertiary"
+                    size="md"
                   >
-                    <selectedPriority.Icon className={`w-4 h-4 ${selectedPriority.color}`} />
+                    <selectedPriority.Icon className={`h-4 w-4 ${selectedPriority.color}`} />
                     <span className="text-text-primary">{selectedPriority.label}</span>
-                  </button>
+                  </Button>
                   {showPriorityDropdown && (
                     <div
                       className="dropdown-panel dropdown-panel-alt min-w-[160px] max-w-[calc(100vw-2rem)]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {priorityOptions.map((option) => (
-                        <button
+                        <Button
                           key={option.value}
                           type="button"
+                          variant="ghost"
+                          className={cn(
+                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
+                            priority === option.value && 'bg-background-hover'
+                          )}
                           onClick={(e) => {
                             e.stopPropagation();
                             setPriority(option.value);
                             setShowPriorityDropdown(false);
                           }}
-                          className={`list-item-button ${priority === option.value ? 'bg-background-hover' : ''}`}
                         >
-                          <option.Icon className={`w-4 h-4 ${option.color}`} />
+                          <option.Icon className={`h-4 w-4 ${option.color}`} />
                           <span className="text-text-primary">{option.label}</span>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
                 </div>
 
                 <div className="relative">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -292,55 +304,64 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowStatusDropdown(false);
                       setShowPriorityDropdown(false);
                     }}
-                    className="pill-button"
+                    variant="tertiary"
+                    size="md"
                   >
                     {selectedUser ? (
                       <>
-                        <div className={`avatar avatar-md ${getAvatarColor(selectedUser._id)}`}>
+                        <Avatar size="md" className={getAvatarColor(selectedUser._id)}>
                           {selectedUser.name.charAt(0)}
-                        </div>
+                        </Avatar>
                         <span className="text-text-primary">{selectedUser.name}</span>
                       </>
                     ) : (
                       <>
-                        <Circle className="w-4 h-4 text-text-primary" />
+                        <Circle className="h-4 w-4 text-text-primary" />
                         <span className="text-text-primary">Unassigned</span>
                       </>
                     )}
-                  </button>
+                  </Button>
                   {showAssigneeDropdown && (
                     <div
                       className="dropdown-panel dropdown-panel-alt min-w-[180px] max-w-[calc(100vw-2rem)] max-h-64 overflow-y-auto"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        className={cn(
+                          'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
+                          !assignee && 'bg-background-hover'
+                        )}
                         onClick={(e) => {
                           e.stopPropagation();
                           setAssignee('');
                           setShowAssigneeDropdown(false);
                         }}
-                        className={`list-item-button ${!assignee ? 'bg-background-hover' : ''}`}
                       >
-                        <Circle className="w-4 h-4 text-text-primary" />
+                        <Circle className="h-4 w-4 text-text-primary" />
                         <span className="text-text-primary">Unassigned</span>
-                      </button>
+                      </Button>
                       {users.map((user) => (
-                        <button
+                        <Button
                           key={user._id}
                           type="button"
+                          variant="ghost"
+                          className={cn(
+                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
+                            assignee === user._id && 'bg-background-hover'
+                          )}
                           onClick={(e) => {
                             e.stopPropagation();
                             setAssignee(user._id);
                             setShowAssigneeDropdown(false);
                           }}
-                          className={`list-item-button ${assignee === user._id ? 'bg-background-hover' : ''}`}
                         >
-                          <div className={`avatar avatar-md ${getAvatarColor(user._id)}`}>
+                          <Avatar size="md" className={getAvatarColor(user._id)}>
                             {user.name.charAt(0)}
-                          </div>
+                          </Avatar>
                           <span className="text-text-primary">{user.name}</span>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -348,8 +369,11 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
 
                 <div className="hidden lg:block flex-1" />
 
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="md"
+                  className="text-sm text-text-secondary hover:text-text-primary"
                   onClick={() => {
                     setShowForm(false);
                     setTitle('');
@@ -358,18 +382,18 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                     setPriority('no_priority');
                     setAssignee('');
                   }}
-                  className="px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  onClick={handleCreate}
+                  variant="primary"
+                  size="md"
                   disabled={loading}
-                  className="btn-primary"
+                  onClick={handleCreate}
                 >
                   {loading ? 'Creating...' : 'Create'}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -391,9 +415,9 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       <span className="text-sm text-text-primary">{subIssue.title}</span>
                     </div>
                     {subIssue.assignee && (
-                      <div className={`avatar avatar-md ${getAvatarColor(subIssue.assignee._id)}`}>
+                      <Avatar size="md" className={getAvatarColor(subIssue.assignee._id)}>
                         {subIssue.assignee.name.charAt(0)}
-                      </div>
+                      </Avatar>
                     )}
                   </div>
                 );
@@ -402,13 +426,15 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
           )}
         </div>
       ) : !issue.parentIssue ? (
-        <button
+        <Button
+          variant="ghost"
+          size="md"
+          className="text-sm text-text-secondary hover:text-text-primary"
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           <span>Add sub-issue</span>
-        </button>
+        </Button>
       ) : null}
     </div>
   );

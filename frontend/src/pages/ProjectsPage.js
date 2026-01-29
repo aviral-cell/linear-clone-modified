@@ -5,6 +5,7 @@ import { baseURL, getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
+import { Button, EmptyState, LoadingScreen } from '../components/ui';
 import {
   Plus,
   FolderKanban,
@@ -447,11 +448,7 @@ const ProjectsPage = () => {
   );
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   return (
@@ -468,10 +465,14 @@ const ProjectsPage = () => {
           <section aria-label="Projects filters" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs overflow-x-auto scrollbar-hide">
-                <button className="btn-secondary-header flex-shrink-0 bg-background-tertiary text-text-primary border-accent">
-                  <FolderKanban className="w-4 h-4" />
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-shrink-0 border-accent bg-background-tertiary text-text-primary"
+                >
+                  <FolderKanban className="h-4 w-4" />
                   All projects
-                </button>
+                </Button>
               </div>
             </div>
           </section>
@@ -484,9 +485,9 @@ const ProjectsPage = () => {
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="px-4 md:px-6 py-4">
-              <div className="empty-state">
+              <EmptyState>
                 No projects match your filters. Create a new project to get started.
-              </div>
+              </EmptyState>
             </div>
           ) : (
             <div className="overflow-x-auto font-sans" role="grid" aria-label="Projects">

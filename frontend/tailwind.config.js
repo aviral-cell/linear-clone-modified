@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   darkMode: 'class',
@@ -21,8 +22,12 @@ module.exports = {
           'monospace',
         ],
       },
+      fontSize: {
+        'table-header': ['11px', { lineHeight: '16px' }],
+        'table-cell': ['13px', { lineHeight: '20px' }],
+      },
       colors: {
-        // Darker Theme Colors
+        // Darker Theme Colors (brand/surface)
         background: {
           DEFAULT: '#0d0d0d',
           secondary: '#141414',
@@ -58,9 +63,38 @@ module.exports = {
           cancelled: '#6d6e73',
           duplicate: '#6d6e73',
         },
+        // Semantic aliases for alerts/feedback
+        success: '#16a34a',
+        warning: '#eab308',
+        danger: '#dc2626',
+      },
+      boxShadow: {
+        card: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2)',
+        modal: '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3)',
+      },
+      // Z-index layers: sticky/in-flow, overlay, modal/panel, dropdown/popover
+      zIndex: {
+        sticky: '10',
+        overlay: '40',
+        modal: '50',
+        dropdown: '9999',
+      },
+      // Transition durations for interactive elements
+      transitionDuration: {
+        fast: '150ms',
+        normal: '300ms',
+      },
+      // Dropdown/min-width tokens to avoid arbitrary values
+      minWidth: {
+        'dropdown-sm': '140px',
+        'dropdown-md': '180px',
+        'dropdown-lg': '220px',
+        'dropdown-xl': '280px',
+      },
+      maxWidth: {
+        'dropdown-viewport': 'calc(100vw - 2rem)',
       },
     },
   },
   plugins: [],
 };
-

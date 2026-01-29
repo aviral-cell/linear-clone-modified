@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
+import { Avatar, Button, IconButton, Textarea } from './ui';
 import toast from 'react-hot-toast';
 
 const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, token }) => {
@@ -82,11 +83,12 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
           <div key={`comment-${comment._id}-${idx}`} className="card-inner group">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-start gap-2 flex-1 min-w-0">
-                <div
-                  className={`avatar avatar-lg md:w-7 md:h-7 flex-shrink-0 ${getAvatarColor(comment.user._id)}`}
+                <Avatar
+                  size="lg"
+                  className={`flex-shrink-0 md:h-7 md:w-7 ${getAvatarColor(comment.user._id)}`}
                 >
                   {comment.user.name.charAt(0)}
-                </div>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium text-text-primary">
@@ -103,49 +105,55 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
               </div>
               {isOwner && !isEditing && (
                 <div className="flex items-center gap-1 md:gap-2 flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleEditClick(comment)}
-                    className="btn-icon-sm md:p-1 touch-manipulation active:bg-background-tertiary"
+                  <IconButton
+                    size="sm"
+                    className="touch-manipulation active:bg-background-tertiary md:p-1"
                     title="Edit comment"
                     aria-label="Edit comment"
+                    onClick={() => handleEditClick(comment)}
                   >
-                    <Pencil className="w-4 h-4 md:w-3.5 md:h-3.5 text-text-tertiary hover:text-text-primary" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(comment._id)}
-                    className="btn-icon-sm md:p-1 touch-manipulation active:bg-background-tertiary"
+                    <Pencil className="h-4 w-4 text-text-tertiary hover:text-text-primary md:h-3.5 md:w-3.5" />
+                  </IconButton>
+                  <IconButton
+                    size="sm"
+                    className="touch-manipulation active:bg-background-tertiary md:p-1"
                     title="Delete comment"
                     aria-label="Delete comment"
+                    onClick={() => handleDeleteClick(comment._id)}
                   >
-                    <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5 text-text-tertiary hover:text-red-400" />
-                  </button>
+                    <Trash2 className="h-4 w-4 text-text-tertiary hover:text-red-400 md:h-3.5 md:w-3.5" />
+                  </IconButton>
                 </div>
               )}
             </div>
             {isEditing ? (
               <div className="ml-0 md:ml-8 mt-2">
                 <div className="rounded-md relative">
-                  <textarea
+                  <Textarea
+                    size="sm"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="textarea-transparent textarea-transparent-sm"
                     rows={3}
                     autoFocus
                   />
-                  <div className="flex justify-end mt-3">
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <button
+                  <div className="mt-3 flex justify-end">
+                    <div className="flex w-full items-center gap-2 sm:w-auto">
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="flex-1 text-text-secondary hover:text-text-primary sm:flex-initial"
                         onClick={handleCancelEdit}
-                        className="flex-1 sm:flex-initial btn-secondary-header text-text-secondary hover:text-text-primary"
                       >
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="flex-1 sm:flex-initial"
                         onClick={() => handleSaveEdit(comment._id)}
-                        className="flex-1 sm:flex-initial btn-primary"
                       >
                         Save
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>

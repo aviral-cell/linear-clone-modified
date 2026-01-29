@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
+import { Avatar, IconButton } from './ui';
 import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
 import { useSidebar } from '../context/SidebarContext';
 
@@ -257,28 +258,24 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
       <div className={`border-t border-border py-3 ${isCollapsed ? 'px-2' : 'px-4 md:px-6'}`}>
         {isCollapsed ? (
           <div className="flex flex-col items-center gap-2">
-            <div
-              className={`avatar avatar-lg ${user ? getAvatarColor(user._id) : 'bg-purple-600'} flex-shrink-0`}
-            >
+            <Avatar size="lg" className={user ? getAvatarColor(user._id) : 'bg-purple-600'}>
               {user ? user.name.charAt(0) : 'A'}
-            </div>
-            <button onClick={handleLogout} className="btn-icon-sm" title="Logout">
-              <LogOut className="w-4 h-4" />
-            </button>
+            </Avatar>
+            <IconButton size="sm" aria-label="Logout" onClick={handleLogout} title="Logout">
+              <LogOut className="h-4 w-4" />
+            </IconButton>
           </div>
         ) : (
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 text-text-primary text-sm min-w-0">
-              <div
-                className={`avatar avatar-lg ${user ? getAvatarColor(user._id) : 'bg-purple-600'} flex-shrink-0`}
-              >
+            <div className="flex min-w-0 items-center gap-2.5 text-sm text-text-primary">
+              <Avatar size="lg" className={user ? getAvatarColor(user._id) : 'bg-purple-600'}>
                 {user ? user.name.charAt(0) : 'A'}
-              </div>
-              <span className="text-sm truncate">{user ? user.name : 'User'}</span>
+              </Avatar>
+              <span className="truncate text-sm">{user ? user.name : 'User'}</span>
             </div>
-            <button onClick={handleLogout} className="btn-icon-sm" title="Logout">
-              <LogOut className="w-4 h-4" />
-            </button>
+            <IconButton size="sm" aria-label="Logout" onClick={handleLogout} title="Logout">
+              <LogOut className="h-4 w-4" />
+            </IconButton>
           </div>
         )}
       </div>

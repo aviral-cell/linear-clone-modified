@@ -1,5 +1,6 @@
 import React from 'react';
 import { getAvatarColor, getInitials } from '../utils';
+import { Avatar, Button, Textarea } from './ui';
 
 const UpdateCard = ({
   update,
@@ -80,11 +81,12 @@ const UpdateCard = ({
               </>
             )}
           </div>
-          <textarea
+          <Textarea
+            size="sm"
+            minHeight="card"
             value={content || ''}
             onChange={(e) => onContentChange(e.target.value)}
             placeholder="Write a project update..."
-            className="textarea-transparent textarea-transparent-sm min-h-[56px]"
             ref={textareaRef}
             onFocus={() => setIsExpanded(true)}
             onClick={() => setIsExpanded(true)}
@@ -97,7 +99,10 @@ const UpdateCard = ({
                 : 'max-h-0 opacity-0 -translate-y-1 pointer-events-none'
             }`}
           >
-            <button
+            <Button
+              variant="secondary"
+              size="md"
+              className="text-text-secondary hover:text-text-primary"
               onClick={() => {
                 if (onContentChange) {
                   onContentChange('');
@@ -113,13 +118,12 @@ const UpdateCard = ({
                   onStatusMenuToggle();
                 }
               }}
-              className="btn-secondary-header text-text-secondary hover:text-text-primary"
             >
               Cancel
-            </button>
-            <button onClick={onPostUpdate} className="btn-primary">
+            </Button>
+            <Button variant="primary" size="md" onClick={onPostUpdate}>
               Post update
-            </button>
+            </Button>
           </div>
         </>
       ) : (
@@ -134,11 +138,12 @@ const UpdateCard = ({
               </div>
             )}
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div
-                className={`avatar avatar-lg flex-shrink-0 ${getAvatarColor(update?.author?._id || '')} text-[10px]`}
+              <Avatar
+                size="lg"
+                className={`flex-shrink-0 ${getAvatarColor(update?.author?._id || '')}`}
               >
                 {getInitials(update?.author?.name || 'Unknown')}
-              </div>
+              </Avatar>
               <div className="flex items-center gap-2 min-w-0 flex-wrap">
                 <span className="text-xs text-text-primary truncate">
                   {update?.author?.name || 'Unknown'}

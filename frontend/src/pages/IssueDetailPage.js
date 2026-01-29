@@ -9,6 +9,7 @@ import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
 import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
+import { LoadingScreen } from '../components/ui';
 import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -296,11 +297,7 @@ const IssueDetailPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   if (!issue) return null;

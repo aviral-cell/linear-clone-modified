@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTeams } from '../context/TeamsContext';
 import { useSidebar } from '../context/SidebarContext';
+import { LoadingScreen } from './ui';
 import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
@@ -8,11 +9,7 @@ const Layout = ({ children }) => {
   const { isCollapsed, isMobile, isDrawerOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   return (

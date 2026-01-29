@@ -10,6 +10,8 @@ import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import UpdateCard from '../components/UpdateCard';
 import UpdateActivityList from '../components/UpdateActivityList';
+import { Button, EmptyState, LoadingScreen } from '../components/ui';
+import { cn } from '../utils/cn';
 import {
   FolderKanban,
   FileText,
@@ -443,11 +445,7 @@ const ProjectDetailPage = () => {
   };
 
   if (loading || !project) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   const totalIssues = metrics?.totalIssues || 0;
@@ -479,42 +477,48 @@ const ProjectDetailPage = () => {
           <section aria-label="Project tabs" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs">
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    activeTab === 'overview' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => setActiveTab('overview')}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    activeTab === 'overview'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <FileText className="w-4 h-4" />
+                  <FileText className="h-4 w-4" />
                   Overview
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    activeTab === 'updates' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => {
                     setActiveTab('updates');
                     setFocusUpdateInput(false);
                   }}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    activeTab === 'updates'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <Clock className="w-4 h-4" />
+                  <Clock className="h-4 w-4" />
                   Updates
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    activeTab === 'issues' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => setActiveTab('issues')}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    activeTab === 'issues'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <List className="w-4 h-4" />
+                  <List className="h-4 w-4" />
                   Issues
-                </button>
+                </Button>
               </div>
             </div>
           </section>
@@ -605,16 +609,17 @@ const ProjectDetailPage = () => {
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-3">
                       <h2 className="text-xs font-medium text-text-tertiary">Latest update</h2>
-                      <button
+                      <Button
+                        variant="secondary"
+                        size="md"
                         onClick={() => {
                           setActiveTab('updates');
                           setFocusUpdateInput(true);
                         }}
-                        className="px-3 py-1.5 rounded-md bg-background-secondary border border-border text-xs text-text-primary hover:bg-background-tertiary transition-colors flex items-center gap-2"
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="h-3.5 w-3.5" />
                         Write new update
-                      </button>
+                      </Button>
                     </div>
                     {latestUpdate ? (
                       <UpdateCard
@@ -624,9 +629,9 @@ const ProjectDetailPage = () => {
                         formatDate={(date) => new Date(date).toLocaleDateString()}
                       />
                     ) : (
-                      <div className="empty-state empty-state-sm">
+                      <EmptyState size="sm">
                         No updates yet. Write the first update to track progress.
-                      </div>
+                      </EmptyState>
                     )}
                   </div>
                 </>
@@ -658,9 +663,9 @@ const ProjectDetailPage = () => {
                   </div>
 
                   {updates.length === 0 ? (
-                    <div className="empty-state empty-state-lg">
+                    <EmptyState size="lg">
                       <p className="text-sm text-text-tertiary">No updates yet</p>
-                    </div>
+                    </EmptyState>
                   ) : (
                     <div className="space-y-4">
                       {updates.map((update) => {

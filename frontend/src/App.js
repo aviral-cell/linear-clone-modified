@@ -11,16 +11,13 @@ import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import MyIssuesPage from './pages/MyIssuesPage';
 import Layout from './components/Layout';
+import { LoadingScreen } from './components/ui';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-screen-text">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading..." />;
   }
 
   return user ? children : <Navigate to="/login" />;

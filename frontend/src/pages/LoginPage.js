@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Zap, Mail, Lock, User as UserIcon } from 'lucide-react';
+import { Button, Input, Label } from '../components/ui';
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -60,88 +61,78 @@ const LoginPage = () => {
           <p className="text-text-secondary">{isLogin ? 'Welcome back' : 'Create your account'}</p>
         </div>
 
-        <div className="bg-background-secondary border border-border rounded-xl p-8 shadow-xl">
-          <div className="flex gap-2 mb-6 p-1 bg-background rounded-lg">
-            <button
+        <div className="rounded-xl border border-border bg-background-secondary p-8 shadow-modal">
+          <div className="mb-6 flex gap-2 rounded-lg bg-background p-1">
+            <Button
+              variant={isLogin ? 'primary' : 'ghost'}
+              size="lg"
+              className="flex-1"
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
-                isLogin
-                  ? 'bg-accent text-white shadow-lg'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
             >
               Login
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={!isLogin ? 'primary' : 'ghost'}
+              size="lg"
+              className="flex-1"
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
-                !isLogin
-                  ? 'bg-accent text-white shadow-lg'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
             >
               Register
-            </button>
+            </Button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label htmlFor="name" className="label label-md">
+                <Label htmlFor="name" size="md">
                   Name
-                </label>
-                <div className="relative">
-                  <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" />
-                  <input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="input-icon"
-                    placeholder="Your name"
-                    required={!isLogin}
-                  />
-                </div>
+                </Label>
+                <Input.WithIcon
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  required={!isLogin}
+                >
+                  <UserIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
+                </Input.WithIcon>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="label label-md">
+              <Label htmlFor="email" size="md">
                 Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-icon"
-                  placeholder="alex@workflow.dev"
-                  required
-                />
-              </div>
+              </Label>
+              <Input.WithIcon
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="alex@workflow.dev"
+                required
+              >
+                <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
+              </Input.WithIcon>
             </div>
 
             <div>
-              <label htmlFor="password" className="label label-md">
+              <Label htmlFor="password" size="md">
                 Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" />
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-icon"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
+              </Label>
+              <Input.WithIcon
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              >
+                <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
+              </Input.WithIcon>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary-hero">
+            <Button type="submit" variant="hero" size="xl" disabled={loading}>
               {loading ? (
                 <span className="flex items-center justify-center">
                   <svg
@@ -169,7 +160,7 @@ const LoginPage = () => {
               ) : (
                 <span>{isLogin ? 'Sign in' : 'Create account'}</span>
               )}
-            </button>
+            </Button>
           </form>
         </div>
 

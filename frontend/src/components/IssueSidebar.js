@@ -1,5 +1,6 @@
 import React from 'react';
 import { getAvatarColor, formatDate } from '../utils';
+import { Avatar, Divider, Label } from './ui';
 import IssueProperties from './IssueProperties';
 
 const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
@@ -18,20 +19,20 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
           showProject={true}
         />
 
-        <div className="divider" />
+        <Divider />
 
         <div>
-          <label className="label">Created by</label>
+          <Label>Created by</Label>
           <div className="flex items-center gap-2 text-sm text-text-primary">
-            <div className={`avatar avatar-md ${getAvatarColor(issue.creator._id)}`}>
+            <Avatar size="md" className={getAvatarColor(issue.creator._id)}>
               {issue.creator.name.charAt(0)}
-            </div>
+            </Avatar>
             <span>{issue.creator.name}</span>
           </div>
         </div>
 
         <div>
-          <label className="label">Created</label>
+          <Label>Created</Label>
           <div className="text-sm text-text-secondary">
             {formatDate(issue.createdAt, { relative: true })}
           </div>

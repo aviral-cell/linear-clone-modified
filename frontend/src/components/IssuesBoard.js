@@ -15,6 +15,7 @@ import {
   FolderKanban,
 } from 'lucide-react';
 import { baseURL, getAvatarColor } from '../utils';
+import { Avatar, Button } from './ui';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -199,14 +200,16 @@ const IssuesBoard = ({
                     <span className="text-xs text-text-tertiary">{statusIssues.length}</span>
                   </div>
                   {onCreateIssueWithStatus && (
-                    <button
+                    <Button
                       type="button"
-                      onClick={() => onCreateIssueWithStatus(status)}
-                      className="btn-secondary-header p-1.5"
+                      variant="secondary"
+                      size="sm"
+                      className="p-1.5"
                       title="Add issue"
+                      onClick={() => onCreateIssueWithStatus(status)}
                     >
-                      <Plus className="w-4 h-4" />
-                    </button>
+                      <Plus className="h-4 w-4" />
+                    </Button>
                   )}
                 </div>
 
@@ -240,11 +243,12 @@ const IssuesBoard = ({
                           </span>
                         )}
                         {issue.assignee && (
-                          <div
-                            className={`ml-2 avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
+                          <Avatar
+                            size="md"
+                            className={`ml-2 ${getAvatarColor(issue.assignee._id)}`}
                           >
                             {issue.assignee.name.charAt(0)}
-                          </div>
+                          </Avatar>
                         )}
                       </div>
                     );
@@ -279,18 +283,20 @@ const IssuesBoard = ({
                   <span className="text-xs text-text-tertiary">{statusIssues.length}</span>
                 </div>
                 {onCreateIssueWithStatus && (
-                  <button
+                  <Button
                     type="button"
-                    onClick={() => onCreateIssueWithStatus(status)}
-                    className="btn-secondary-header p-1.5"
+                    variant="secondary"
+                    size="sm"
+                    className="p-1.5"
                     title="Add issue"
+                    onClick={() => onCreateIssueWithStatus(status)}
                   >
-                    <Plus className="w-4 h-4" />
-                  </button>
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-2 py-2">
+              <div className="flex-1 space-y-2 overflow-y-auto py-2">
                 {statusIssues.map((issue) => {
                   const priorityInfo = priorityConfig[issue.priority];
                   const PriorityIcon = priorityInfo.icon;
@@ -300,21 +306,19 @@ const IssuesBoard = ({
                     <div
                       key={issue._id}
                       onClick={() => handleIssueClick(issue)}
-                      className="bg-background-card border border-border rounded-md p-3 hover:border-border-hover cursor-pointer group transition-all"
+                      className="group cursor-pointer rounded-md border border-border bg-background-card p-3 transition-all hover:border-border-hover"
                     >
                       {isSubIssue ? (
                         <>
-                          <div className="flex items-center justify-between mb-2 gap-2">
-                            <span className="text-xs text-text-tertiary font-mono truncate min-w-0 flex-1">
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
                               {issue.parentIssue?.identifier || 'N/A'} ›{' '}
                               {issue.parentIssue?.title || 'Parent Issue'}
                             </span>
                             {issue.assignee && (
-                              <div
-                                className={`avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
-                              >
+                              <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
                                 {issue.assignee.name.charAt(0)}
-                              </div>
+                              </Avatar>
                             )}
                           </div>
 
@@ -334,22 +338,20 @@ const IssuesBoard = ({
                         </>
                       ) : (
                         <>
-                          <div className="flex items-center justify-between mb-2 gap-2">
-                            <span className="text-xs text-text-tertiary font-mono truncate min-w-0 flex-1">
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
                               {issue.identifier}
                             </span>
                             {issue.assignee && (
-                              <div
-                                className={`avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
-                              >
+                              <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
                                 {issue.assignee.name.charAt(0)}
-                              </div>
+                              </Avatar>
                             )}
                           </div>
 
-                          <div className="flex items-start gap-2 mb-2">
+                          <div className="mb-2 flex items-start gap-2">
                             <StatusIcon
-                              className={`w-4 h-4 mt-0.5 flex-shrink-0 ${config.color}`}
+                              className={`mt-0.5 h-4 w-4 flex-shrink-0 ${config.color}`}
                             />
                             <p className="text-sm text-text-primary line-clamp-2 flex-1">
                               {issue.title}

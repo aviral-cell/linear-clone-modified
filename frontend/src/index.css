@@ -14,33 +14,33 @@
     @apply px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5;
   }
   .table-header-text {
-    @apply text-[11px] font-medium tracking-tight leading-4;
+    @apply text-table-header font-medium tracking-tight;
   }
   .table-cell-text {
-    @apply text-[13px] font-normal leading-5;
+    @apply text-table-cell font-normal;
   }
   /* Modal and overlay patterns */
   .modal-backdrop {
-    @apply fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4;
+    @apply fixed inset-0 bg-black/60 flex items-center justify-center z-modal p-4;
   }
   .modal-panel {
-    @apply bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col shadow-xl;
+    @apply bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col shadow-modal;
   }
   .modal-panel-secondary {
-    @apply bg-background-secondary border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col shadow-xl;
+    @apply bg-background-secondary border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col shadow-modal;
   }
   .overlay-backdrop {
-    @apply fixed inset-0 bg-black/50 z-40 transition-opacity duration-300;
+    @apply fixed inset-0 bg-black/50 z-overlay transition-opacity duration-normal;
   }
-  /* Dropdown panels */
+  /* Dropdown panels — use design tokens: z-dropdown, min-w-dropdown-* */
   .dropdown-panel {
-    @apply absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999];
+    @apply absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-dropdown;
   }
   .dropdown-panel-wide {
-    @apply min-w-[220px] max-h-60 overflow-y-auto;
+    @apply min-w-dropdown-lg max-h-60 overflow-y-auto;
   }
   .dropdown-panel-narrow {
-    @apply min-w-[140px];
+    @apply min-w-dropdown-sm;
   }
   .dropdown-panel-alt {
     @apply mt-2 bg-background-tertiary;
@@ -63,7 +63,7 @@
   }
   /* Modal header/footer */
   .modal-header {
-    @apply sticky top-0 z-10 border-b border-border px-6 py-4 flex items-center justify-between;
+    @apply sticky top-0 z-sticky border-b border-border px-6 py-4 flex items-center justify-between;
   }
   .modal-header-primary {
     @apply bg-background;
@@ -177,7 +177,7 @@
     @apply flex items-center gap-1.5 flex-nowrap flex-shrink-0;
   }
   .activity-dot {
-    @apply w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2;
+    @apply w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 z-sticky absolute left-3 -translate-x-1/2;
   }
   .activity-dot-default {
     @apply bg-background;
@@ -195,7 +195,7 @@
     @apply w-6 h-6 text-sm;
   }
   .detail-panel {
-    @apply fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out;
+    @apply fixed top-14 bottom-0 right-0 z-modal border-l border-border bg-background overflow-y-auto transition-transform duration-normal ease-in-out;
   }
   .btn-icon {
     @apply p-2 rounded-md text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors flex-shrink-0;
@@ -266,14 +266,9 @@ a {
   display: none;
 }
 
-/* Page/content padding: px-4 md:px-6 for main content horizontal; py-4 for standard sections, py-6 for larger blocks. */
-/* Hover tokens: toolbar/header/tabs = hover:bg-background-secondary; dropdown items/compact = hover:bg-background-tertiary; nav/list/pill = hover:bg-background-hover. */
-/* Gap scale: gap-1 tight; gap-1.5 inline controls; gap-2 default inline; gap-2.5 sidebar; gap-3 list/modal footer; gap-4 section. */
-/* Transition: transition-colors for buttons/dropdowns/tabs; transition-opacity for icon buttons/overlays; transition-all for modals/panels. */
-/* Textarea min-heights: min-h-[24px] summary; min-h-[56px] update card; min-h-[60px]/min-h-[80px] comment; min-h-[100px] description. */
-/* Margin scale: mb-2 below labels; mb-3 section internal; mb-4 between sections; mb-6 major block. */
-/* Avatars use rounded-full; icon badges use rounded-md. */
-/* Round 5: Font scale: text-xs labels/meta/table; text-sm body secondary/buttons; text-base body primary; text-lg section intro; text-2xl page title; text-3xl login title. font-medium section/names; font-semibold headings; font-bold hero only. */
-/* Z-index: z-10 sticky/in-flow; z-40 page overlay; z-50 modals/panels; z-[9999] dropdowns/popovers. */
-/* Breakpoints: sm label next to icon; md content padding (px-4 md:px-6), form/comment avatar; lg hide/show right panel. */
-/* Cursor: cursor-pointer clickable; cursor-text editable text; cursor-not-allowed disabled. */
+/* Design system conventions — see frontend/DESIGN_SYSTEM.md for full reference. */
+/* Spacing: px-4 md:px-6 main content; py-4 sections, py-6 larger blocks. Gap: gap-1 tight; gap-1.5 inline; gap-2 default; gap-3 list/footer; gap-4 section. */
+/* Hover: toolbar/header = hover:bg-background-secondary; dropdown = hover:bg-background-tertiary; list/pill = hover:bg-background-hover. */
+/* Transitions: duration-fast (150ms) buttons/tabs; duration-normal (300ms) modals/panels. Z-index: z-sticky, z-overlay, z-modal, z-dropdown. */
+/* Typography: text-xs labels/meta; text-sm body secondary; text-base body primary; text-2xl page title; text-3xl hero. */
+/* Cursor: cursor-pointer clickable; cursor-text editable; cursor-not-allowed disabled. */

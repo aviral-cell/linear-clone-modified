@@ -3,6 +3,7 @@ import { X, ChevronDown } from 'lucide-react';
 import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';
+import { Button, IconButton } from './ui';
 import { useAuth } from '../context/AuthContext';
 
 const CreateIssueModal = ({
@@ -256,9 +257,9 @@ const CreateIssueModal = ({
               <span className="text-sm text-text-primary font-medium">New Issue</span>
             )}
           </div>
-          <button type="button" onClick={onClose} className="btn-icon" aria-label="Close">
-            <X className="w-5 h-5" />
-          </button>
+          <IconButton size="md" aria-label="Close" onClick={onClose}>
+            <X className="h-5 w-5" />
+          </IconButton>
         </div>
 
         <div className="overflow-y-auto flex-1">
@@ -297,20 +298,23 @@ const CreateIssueModal = ({
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-4">
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
+                className="text-text-secondary hover:text-text-primary"
                 onClick={onClose}
-                className="btn-secondary-header text-text-secondary hover:text-text-primary"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
+                variant="primary"
+                size="md"
                 disabled={loading || !title.trim() || !selectedTeamId}
-                className="btn-primary"
               >
                 {loading ? 'Creating...' : 'Create issue'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

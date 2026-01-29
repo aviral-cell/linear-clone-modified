@@ -13,6 +13,8 @@ import {
   Edit3,
 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
+import { Avatar } from './ui';
+import { cn } from '../utils/cn';
 
 const statusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
@@ -150,9 +152,9 @@ const ActivityTimeline = ({ activities, users = [] }) => {
                     if (assigneeUser) {
                       const avatarColors = getAvatarColor(assigneeUser._id);
                       return (
-                        <div className={`activity-dot avatar avatar-md ${avatarColors}`}>
+                        <Avatar size="md" className={cn('activity-dot', avatarColors)}>
                           {assigneeUser.name.charAt(0).toUpperCase()}
-                        </div>
+                        </Avatar>
                       );
                     }
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
+import { Button, Textarea } from './ui';
 
 const CommentInput = ({ onSubmit, loading }) => {
   const [content, setContent] = useState('');
@@ -15,22 +16,25 @@ const CommentInput = ({ onSubmit, loading }) => {
   return (
     <div className="mt-4 md:mt-6">
       <form onSubmit={handleSubmit} className="card-inner">
-        <textarea
+        <Textarea
+          size="sm"
+          minHeight="comment"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Leave a comment..."
-          className="textarea-transparent textarea-transparent-sm min-h-[60px] md:min-h-[80px]"
           rows={3}
         />
-        <div className="flex justify-end mt-3">
-          <button
+        <div className="mt-3 flex justify-end">
+          <Button
             type="submit"
+            variant="tertiary"
+            size="lg"
+            className="min-w-[80px] touch-manipulation active:opacity-80 md:min-w-0"
             disabled={loading || !content.trim()}
-            className="px-4 py-2 md:px-3 md:py-1.5 bg-background-tertiary hover:bg-background-hover text-text-primary text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors touch-manipulation active:opacity-80 min-w-[80px] justify-center"
           >
-            <Send className="w-4 h-4 md:w-3.5 md:h-3.5" />
+            <Send className="h-4 w-4 md:h-3.5 md:w-3.5" />
             <span>Add</span>
-          </button>
+          </Button>
         </div>
       </form>
     </div>

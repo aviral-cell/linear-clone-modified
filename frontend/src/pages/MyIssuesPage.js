@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import IssuesBoard from '../components/IssuesBoard';
 import Header from '../components/Header';
+import { Button } from '../components/ui';
+import { cn } from '../utils/cn';
 import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from 'lucide-react';
 
 const MyIssuesPage = () => {
@@ -29,55 +31,61 @@ const MyIssuesPage = () => {
           <section aria-label="My issues filters" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs">
-                <button
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    filter === 'assigned' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => navigate('/my-issues/assigned')}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    filter === 'assigned'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <UserPlus className="w-4 h-4" />
+                  <UserPlus className="h-4 w-4" />
                   Assigned
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'flex-shrink-0',
+                    filter === 'created' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => navigate('/my-issues/created')}
-                  className={`btn-secondary-header flex-shrink-0 ${
-                    filter === 'created'
-                      ? 'bg-background-tertiary text-text-primary border-accent'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                 >
-                  <FileText className="w-4 h-4" />
+                  <FileText className="h-4 w-4" />
                   Created
-                </button>
+                </Button>
               </div>
 
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
+              <div className="flex flex-shrink-0 items-center gap-1.5">
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'p-1.5',
+                    viewMode === 'columns' &&
+                      'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => setViewMode('columns')}
-                  className={`btn-secondary-header ${
-                    viewMode === 'columns'
-                      ? 'border-accent bg-background-tertiary text-text-primary'
-                      : 'border-border text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                   title="Board view"
                 >
-                  <LayoutPanelLeft className="w-4 h-4" />
-                </button>
-                <button
+                  <LayoutPanelLeft className="h-4 w-4" />
+                </Button>
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  className={cn(
+                    'p-1.5',
+                    viewMode === 'list' && 'border-accent bg-background-tertiary text-text-primary'
+                  )}
                   onClick={() => setViewMode('list')}
-                  className={`btn-secondary-header ${
-                    viewMode === 'list'
-                      ? 'border-accent bg-background-tertiary text-text-primary'
-                      : 'border-border text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                  }`}
                   title="List view"
                 >
-                  <LayoutList className="w-4 h-4" />
-                </button>
+                  <LayoutList className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </section>
