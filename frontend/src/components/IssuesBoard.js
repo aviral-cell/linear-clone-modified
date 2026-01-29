@@ -234,7 +234,7 @@ const IssuesBoard = ({
                           {issue.title}
                         </span>
                         {issue.project && (
-                          <span className="hidden md:flex ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0 items-center gap-1">
+                          <span className="hidden sm:flex ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0 items-center gap-1">
                             <FolderKanban className="w-3 h-3" />
                             {issue.project.name}
                           </span>

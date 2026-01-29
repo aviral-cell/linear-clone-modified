@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { baseURL } from '../utils';
 import IssuesBoard from '../components/IssuesBoard';
@@ -20,6 +20,7 @@ const IssuesPage = () => {
   const { token, user } = useAuth();
   const { teamKey, issuesFilter } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     fetchTeams();
@@ -45,6 +46,26 @@ const IssuesPage = () => {
       setFilter('all');
     }
   }, [issuesFilter]);
+
+  useEffect(() => {
+    const view = searchParams.get('view');
+    if (view === 'list' || view === 'columns') {
+      setViewMode(view);
+    } else {
+      setViewMode('columns');
+    }
+  }, [searchParams]);
+
+  const handleViewChange = (mode) => {
+    setViewMode(mode);
+    const next = new URLSearchParams(searchParams);
+    if (mode === 'columns') {
+      next.delete('view');
+    } else {
+      next.set('view', mode);
+    }
+    setSearchParams(next);
+  };
 
   const fetchTeams = async () => {
     try {
@@ -136,7 +157,7 @@ const IssuesPage = () => {
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <button
                   type="button"
-                  onClick={() => setViewMode('columns')}
+                  onClick={() => handleViewChange('columns')}
                   className={`btn-secondary-header ${
                     viewMode === 'columns'
                       ? 'border-accent bg-background-tertiary text-text-primary'
@@ -148,7 +169,7 @@ const IssuesPage = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setViewMode('list')}
+                  onClick={() => handleViewChange('list')}
                   className={`btn-secondary-header ${
                     viewMode === 'list'
                       ? 'border-accent bg-background-tertiary text-text-primary'
@@ -187,6 +208,7 @@ const IssuesPage = () => {
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           team={selectedTeam}
+          teams={teams}
           initialStatus={initialStatus}
           onSuccess={() => {
             setIssuesRefreshTrigger((prev) => prev + 1);

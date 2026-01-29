@@ -759,6 +759,7 @@ const ProjectDetailPage = () => {
           onClose={() => setShowCreateModal(false)}
           team={project.team}
           project={project}
+          teams={teams}
           initialStatus={initialIssueStatus}
           onSuccess={() => {
             setIssuesRefreshTrigger((prev) => prev + 1);
