@@ -55,7 +55,7 @@ const UpdateCard = ({
                   {statusConfig.label}
                 </button>
                 {showStatusMenu && statusOptions && (
-                  <div className="absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999] min-w-[140px]">
+                  <div className="dropdown-panel dropdown-panel-narrow">
                     {statusOptions.map((option) => {
                       const OptionIcon = option.icon;
                       return (

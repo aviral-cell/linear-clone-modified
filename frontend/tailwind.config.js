@@ -12,6 +12,14 @@ module.exports = {
           'Roboto',
           'sans-serif',
         ],
+        mono: [
+          'source-code-pro',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          '"Courier New"',
+          'monospace',
+        ],
       },
       colors: {
         // Darker Theme Colors

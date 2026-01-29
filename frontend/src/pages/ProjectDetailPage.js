@@ -625,7 +625,7 @@ const ProjectDetailPage = () => {
                         formatDate={(date) => new Date(date).toLocaleDateString()}
                       />
                     ) : (
-                      <div className="border border-dashed border-border rounded-md p-4 text-center text-xs text-text-tertiary">
+                      <div className="empty-state empty-state-sm">
                         No updates yet. Write the first update to track progress.
                       </div>
                     )}
@@ -659,7 +659,7 @@ const ProjectDetailPage = () => {
                   </div>
 
                   {updates.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-md p-8 text-center">
+                    <div className="empty-state empty-state-lg">
                       <p className="text-sm text-text-tertiary">No updates yet</p>
                     </div>
                   ) : (
@@ -722,7 +722,7 @@ const ProjectDetailPage = () => {
 
           {isRightSidebarOpen && (
             <div
-              className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+              className="lg:hidden overlay-backdrop"
               onClick={() => setIsRightSidebarOpen(false)}
             />
           )}

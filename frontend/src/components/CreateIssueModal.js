@@ -195,15 +195,9 @@ const CreateIssueModal = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-background-secondary border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="sticky top-0 bg-background-secondary px-6 py-4 flex items-center justify-between z-10">
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-panel-secondary" onClick={(e) => e.stopPropagation()}>
+        <div className="sticky top-0 bg-background-secondary border-b border-border px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
             {selectedTeamObj ? (
               <>
@@ -215,9 +209,7 @@ const CreateIssueModal = ({
                   {(() => {
                     const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
                     return (
-                      <div
-                        className={`w-5 h-5 ${colorClass} rounded flex items-center justify-center text-white flex-shrink-0`}
-                      >
+                      <div className={`icon-badge icon-badge-md ${colorClass}`}>
                         {IconComponent ? (
                           <IconComponent className="w-3 h-3" />
                         ) : (
@@ -232,10 +224,7 @@ const CreateIssueModal = ({
                 <span className="text-text-tertiary">›</span>
                 <span className="text-sm text-text-primary font-medium">New Issue</span>
                 {showTeamMenu && teams.length > 0 && (
-                  <div
-                    ref={teamMenuRef}
-                    className="absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999] min-w-[220px] max-h-60 overflow-y-auto"
-                  >
+                  <div ref={teamMenuRef} className="dropdown-panel dropdown-panel-wide">
                     {teams.map((teamItem) => {
                       const { IconComponent, colorClass, icon } = getTeamIconDisplay(teamItem);
                       return (
@@ -249,9 +238,7 @@ const CreateIssueModal = ({
                               : 'text-text-primary'
                           }`}
                         >
-                          <div
-                            className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-                          >
+                          <div className={`icon-badge icon-badge-md ${colorClass}`}>
                             {IconComponent ? (
                               <IconComponent className="w-3 h-3" />
                             ) : (

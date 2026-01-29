@@ -116,7 +116,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
         className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : ''}`}
       >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
-          <div className="w-7 h-7 bg-gradient-to-br from-accent to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="icon-badge w-7 h-7 bg-gradient-to-br from-accent to-purple-600 rounded-lg">
             <Zap className="w-4 h-4 text-white" />
           </div>
           {!isCollapsed && (
@@ -198,9 +198,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                       title={team.name}
                     >
                       <div className="flex items-center gap-2.5">
-                        <div
-                          className={`w-6 h-6 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-                        >
+                        <div className={`icon-badge icon-badge-lg ${colorClass}`}>
                           {IconComponent ? (
                             <IconComponent className="w-4 h-4" />
                           ) : (

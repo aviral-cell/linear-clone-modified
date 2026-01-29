@@ -152,12 +152,13 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
   return (
     <button
       type="button"
+      role="row"
       onClick={() => onClick(project)}
       className={`w-full grid gap-x-1.5 font-sans border-b border-border hover:bg-background-secondary/40 transition-colors ${TABLE_GRID_CLASS(showTeam)}`}
     >
-      <div className="py-2 px-2 pr-4 md:pr-6"></div>
+      <div role="gridcell" className="py-2 px-2 pr-4 md:pr-6"></div>
 
-      <div className="py-2 px-2 flex items-center gap-2 min-w-0">
+      <div role="gridcell" className="py-2 px-2 flex items-center gap-2 min-w-0">
         <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
           {project.icon ? (
             <span className="text-xs">{project.icon}</span>
@@ -169,7 +170,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
       </div>
 
       {showTeam && (
-        <div className="py-2 px-2 flex items-center min-w-0">
+        <div role="gridcell" className="py-2 px-2 flex items-center min-w-0">
           {project.team ? (
             <div className="flex items-center gap-1.5 min-w-0">
               {typeof project.team === 'object'
@@ -177,7 +178,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
                     const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
                     return (
                       <div
-                        className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
+                        className={`icon-badge icon-badge-md ${colorClass}`}
                         title={project.team.name || 'Team'}
                       >
                         {IconComponent ? (
@@ -208,7 +209,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
         </div>
       )}
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         {StatusIcon ? (
           <StatusIcon
             className={`w-4 h-4 ${statusIndicator.color}`}
@@ -219,7 +220,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
         )}
       </div>
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         {project.priority && project.priority !== 'no_priority' ? (
           <div className="flex items-center">
             <PriorityIcon
@@ -232,7 +233,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
         )}
       </div>
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         {project.creator ? (
           <div
             className={`w-5 h-5 text-[11px] font-medium ${getAvatarColor(
@@ -255,22 +256,22 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
         )}
       </div>
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         <span className="table-cell-text text-text-secondary">{formatDate(project.startDate)}</span>
       </div>
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         <span className="table-cell-text text-text-secondary">{formatDate(project.targetDate)}</span>
       </div>
 
-      <div className="py-2 px-2 flex items-center">
+      <div role="gridcell" className="py-2 px-2 flex items-center">
         <StatusIconComponent
           className={`w-4 h-4 ${statusIcon.color}`}
           title={project.status.charAt(0).toUpperCase() + project.status.slice(1)}
         />
       </div>
 
-      <div className="py-2 px-2"></div>
+      <div role="gridcell" className="py-2 px-2"></div>
     </button>
   );
 });
@@ -479,28 +480,29 @@ const ProjectsPage = () => {
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="px-4 md:px-6 py-4">
-              <div className="border border-dashed border-border rounded-lg p-6 text-center text-text-tertiary text-sm">
+              <div className="empty-state">
                 No projects match your filters. Create a new project to get started.
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto font-sans">
+            <div className="overflow-x-auto font-sans" role="grid" aria-label="Projects">
               <div className="min-w-full">
                 <div
+                  role="row"
                   className={`sticky top-0 z-10 grid gap-x-1.5 font-sans bg-background border-b border-border ${TABLE_GRID_CLASS(teamFilter === 'all')}`}
                 >
-                  <div className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary"></div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Name</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary" aria-label=""></div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Name">Name</div>
                   {teamFilter === 'all' && (
-                    <div className="table-header-text px-2 py-2 text-text-tertiary">Team</div>
+                    <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Team">Team</div>
                   )}
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Health</div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Priority</div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Lead</div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Start date</div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Target date</div>
-                  <div className="table-header-text px-2 py-2 text-text-tertiary">Status</div>
-                  <div className="px-2 py-2"></div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Health">Health</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Priority">Priority</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Lead">Lead</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Start date">Start date</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Target date">Target date</div>
+                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Status">Status</div>
+                  <div role="columnheader" className="px-2 py-2" aria-label=""></div>
                 </div>
 
                 {filteredProjects.map((project) => (

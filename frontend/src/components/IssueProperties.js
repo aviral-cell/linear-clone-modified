@@ -175,16 +175,13 @@ const IssueProperties = ({
 
   const getMenuClasses = (isVertical, options = {}) => {
     const { minWidth, align = 'left' } = options;
-    const baseClasses =
-      'absolute z-[9999] mt-1 bg-background-secondary border border-border shadow-xl';
-    if (isVertical) {
-      const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
-      return `${baseClasses} top-full left-0 rounded-md shadow-lg ${finalMinWidth}`;
-    }
-    const alignment = align === 'right' ? 'right-0' : 'left-0';
     const finalMinWidth = minWidth !== undefined ? minWidth : 'min-w-[180px]';
+    if (isVertical) {
+      return `dropdown-panel ${finalMinWidth}`;
+    }
+    const alignment = align === 'right' ? 'right-0 left-auto' : 'left-0';
     const maxWidth = 'max-w-[calc(100vw-2rem)]';
-    return `${baseClasses} top-full ${alignment} rounded-md shadow-lg ${finalMinWidth || ''} ${maxWidth}`.trim();
+    return `dropdown-panel ${alignment} ${finalMinWidth || ''} ${maxWidth}`.trim();
   };
 
   const getMenuItemClasses = (isCurrent = false) =>
@@ -261,7 +258,7 @@ const IssueProperties = ({
     if (issue?.project) {
       return (
         <>
-          <div className="w-4 h-4 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+          <div className="icon-badge icon-badge-sm bg-background-secondary border border-border text-text-secondary">
             {issue.project.icon ? (
               <span className="text-xs">{issue.project.icon}</span>
             ) : (
@@ -548,7 +545,7 @@ const IssueProperties = ({
                       }}
                       className={getMenuItemClasses(issue?.project?._id === project._id)}
                     >
-                      <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+                      <div className="icon-badge icon-badge-md bg-background-secondary border border-border text-text-secondary">
                         {project.icon ? (
                           <span className="text-xs">{project.icon}</span>
                         ) : (
@@ -588,7 +585,7 @@ const IssueProperties = ({
                     }}
                     className={getMenuItemClasses(issue?.project?._id === project._id)}
                   >
-                    <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+                    <div className="icon-badge icon-badge-md bg-background-secondary border border-border text-text-secondary">
                       {project.icon ? (
                         <span className="text-xs">{project.icon}</span>
                       ) : (

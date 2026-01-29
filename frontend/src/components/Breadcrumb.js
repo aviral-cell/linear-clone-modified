@@ -53,10 +53,8 @@ const Breadcrumb = ({
   };
 
   return (
-    <div className="flex items-center gap-2 min-w-0">
-      <div
-        className={`w-6 h-6 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-      >
+    <nav aria-label="Breadcrumb" className="flex items-center gap-2 min-w-0">
+      <div className={`icon-badge icon-badge-lg ${colorClass}`}>
         {IconComponent ? (
           <IconComponent className="w-4 h-4" />
         ) : (
@@ -91,7 +89,7 @@ const Breadcrumb = ({
           </>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
 

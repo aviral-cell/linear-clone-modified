@@ -223,14 +223,8 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="sticky top-0 bg-background border-b border-border px-6 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
             {selectedTeamObj ? (
@@ -243,9 +237,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                   {(() => {
                     const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
                     return (
-                      <div
-                        className={`w-5 h-5 ${colorClass} rounded flex items-center justify-center text-white flex-shrink-0`}
-                      >
+                      <div className={`icon-badge icon-badge-md ${colorClass}`}>
                         {IconComponent ? (
                           <IconComponent className="w-3 h-3" />
                         ) : (
@@ -262,10 +254,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                   {initialProject ? 'Edit project' : 'New project'}
                 </span>
                 {showTeamMenu && (
-                  <div
-                    ref={teamMenuRef}
-                    className="absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999] min-w-[220px] max-h-60 overflow-y-auto"
-                  >
+                  <div ref={teamMenuRef} className="dropdown-panel dropdown-panel-wide">
                     {teams.map((team) => {
                       const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
                       return (
@@ -279,9 +268,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                               : 'text-text-primary'
                           }`}
                         >
-                          <div
-                            className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-                          >
+                          <div className={`icon-badge icon-badge-md ${colorClass}`}>
                             {IconComponent ? (
                               <IconComponent className="w-3 h-3" />
                             ) : (
@@ -312,7 +299,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
           <div className="flex-1 px-6 py-6 space-y-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-tertiary flex-shrink-0">
+              <div className="icon-badge icon-badge-lg bg-background-secondary border border-border text-text-tertiary">
                 <FolderKanban className="w-6 h-6" />
               </div>
               <div className="flex-1">
