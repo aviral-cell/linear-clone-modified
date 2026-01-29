@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   X,
   CircleDashed,
@@ -23,7 +23,16 @@ import { useAuth } from '../context/AuthContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { getAvatarColor } from '../utils';
 import ProjectProperties from './ProjectProperties';
-import { Button, IconButton } from './ui';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuItem,
+  FieldTrigger,
+  IconBadge,
+  IconButton,
+  Input,
+  Textarea,
+} from './ui';
 
 const statusOptions = [
   { value: 'backlog', label: 'Backlog', icon: CircleDashed, color: 'text-orange-500' },
@@ -57,9 +66,6 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   const [loading, setLoading] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showTeamMenu, setShowTeamMenu] = useState(false);
-  const teamMenuRef = useRef(null);
-  const teamHeaderRef = useRef(null);
-
   useEffect(() => {
     if (!isOpen) return;
 
@@ -79,27 +85,6 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
 
     fetchUsers();
   }, [isOpen, token]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        teamMenuRef.current &&
-        !teamMenuRef.current.contains(event.target) &&
-        teamHeaderRef.current &&
-        !teamHeaderRef.current.contains(event.target)
-      ) {
-        setShowTeamMenu(false);
-      }
-    };
-
-    if (showTeamMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showTeamMenu]);
 
   useEffect(() => {
     if (initialProject) {
@@ -227,61 +212,60 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header modal-header-primary">
-          <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
+          <div className="flex items-center gap-2 relative">
             {selectedTeamObj ? (
               <>
-                <button
-                  type="button"
-                  onClick={() => setShowTeamMenu(!showTeamMenu)}
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                  {(() => {
-                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
-                    return (
-                      <div className={`icon-badge icon-badge-md ${colorClass}`}>
-                        {IconComponent ? (
-                          <IconComponent className="w-3 h-3" />
-                        ) : (
-                          <span className="text-xs">{icon}</span>
-                        )}
-                      </div>
-                    );
-                  })()}
-                  <span className="text-sm text-text-secondary">{selectedTeamObj.key}</span>
-                  <ChevronDown className="w-4 h-4 text-text-tertiary" />
-                </button>
-                <span className="text-text-tertiary">›</span>
-                <span className="text-sm text-text-primary font-medium">
-                  {initialProject ? 'Edit project' : 'New project'}
-                </span>
-                {showTeamMenu && (
-                  <div ref={teamMenuRef} className="dropdown-panel dropdown-panel-wide">
-                    {teams.map((team) => {
-                      const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
-                      return (
-                        <button
-                          key={team._id}
-                          type="button"
-                          onClick={() => handleTeamSelect(team._id)}
-                          className={`w-full text-left px-3 py-2 text-sm hover:bg-background-tertiary transition-colors flex items-center gap-2 ${
-                            selectedTeamObj._id === team._id
-                              ? 'bg-background-tertiary'
-                              : 'text-text-primary'
-                          }`}
-                        >
-                          <div className={`icon-badge icon-badge-md ${colorClass}`}>
+                <DropdownMenu
+                  open={showTeamMenu}
+                  onOpenChange={setShowTeamMenu}
+                  minWidth="min-w-dropdown-lg"
+                  trigger={
+                    <FieldTrigger
+                      className="border-transparent bg-transparent px-0 py-0 text-sm text-text-secondary hover:opacity-80 hover:bg-transparent"
+                      onClick={() => setShowTeamMenu((prev) => !prev)}
+                    >
+                      {(() => {
+                        const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
+                        return (
+                          <IconBadge size="md" className={colorClass}>
                             {IconComponent ? (
                               <IconComponent className="w-3 h-3" />
                             ) : (
                               <span className="text-xs">{icon}</span>
                             )}
-                          </div>
-                          <span>{team.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                          </IconBadge>
+                        );
+                      })()}
+                      <span>{selectedTeamObj.key}</span>
+                      <ChevronDown className="w-4 h-4 text-text-tertiary" />
+                    </FieldTrigger>
+                  }
+                >
+                  {teams.map((team) => {
+                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
+                    return (
+                      <DropdownMenuItem
+                        key={team._id}
+                        onClick={() => handleTeamSelect(team._id)}
+                        selected={selectedTeamObj._id === team._id}
+                        className="flex items-center gap-2"
+                      >
+                        <IconBadge size="md" className={colorClass}>
+                          {IconComponent ? (
+                            <IconComponent className="w-3 h-3" />
+                          ) : (
+                            <span className="text-xs">{icon}</span>
+                          )}
+                        </IconBadge>
+                        <span>{team.name}</span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenu>
+                <span className="text-text-tertiary">›</span>
+                <span className="text-sm text-text-primary font-medium">
+                  {initialProject ? 'Edit project' : 'New project'}
+                </span>
               </>
             ) : (
               <span className="text-sm text-text-primary font-medium">
@@ -297,11 +281,14 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
           <div className="flex-1 px-6 py-6 space-y-6">
             <div className="flex items-start gap-4">
-              <div className="icon-badge icon-badge-lg bg-background-secondary border border-border text-text-tertiary">
+              <IconBadge
+                size="lg"
+                className="bg-background-secondary border border-border text-text-tertiary"
+              >
                 <FolderKanban className="w-6 h-6" />
-              </div>
+              </IconBadge>
               <div className="flex-1">
-                <input
+                <Input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -310,7 +297,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                   required
                   autoFocus
                 />
-                <textarea
+                <Textarea
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
                   className="textarea-transparent textarea-transparent-sm mt-2 border-none text-text-secondary min-h-[24px]"
@@ -339,7 +326,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
             />
 
             <div>
-              <textarea
+              <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={6}

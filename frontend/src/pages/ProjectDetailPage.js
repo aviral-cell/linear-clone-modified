@@ -10,7 +10,7 @@ import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import UpdateCard from '../components/UpdateCard';
 import UpdateActivityList from '../components/UpdateActivityList';
-import { Button, EmptyState, LoadingScreen } from '../components/ui';
+import { Button, EmptyState, IconButton, Input, LoadingScreen, Textarea } from '../components/ui';
 import { cn } from '../utils/cn';
 import {
   FolderKanban,
@@ -530,7 +530,9 @@ const ProjectDetailPage = () => {
               {activeTab === 'overview' && (
                 <>
                   <div className="mb-6 flex items-start gap-3">
-                    <button
+                    <IconButton
+                      size="md"
+                      aria-label="Choose icon"
                       className="w-10 h-10 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors flex-shrink-0"
                       title="Choose icon"
                     >
@@ -539,10 +541,10 @@ const ProjectDetailPage = () => {
                       ) : (
                         <FolderKanban className="w-5 h-5" />
                       )}
-                    </button>
+                    </IconButton>
                     <div className="flex-1">
                       {editingName ? (
-                        <input
+                        <Input
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -564,7 +566,7 @@ const ProjectDetailPage = () => {
                       )}
 
                       {editingSummary ? (
-                        <textarea
+                        <Textarea
                           value={summary}
                           onChange={(e) => setSummary(e.target.value)}
                           onBlur={saveSummary}
@@ -694,16 +696,18 @@ const ProjectDetailPage = () => {
               {activeTab === 'issues' && (
                 <div className="flex-1 flex flex-col overflow-hidden -mx-4 md:-mx-6">
                   <div className="px-4 md:px-6 flex items-center justify-end">
-                    <button
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => {
                         setInitialIssueStatus('todo');
                         setShowCreateModal(true);
                       }}
-                      className="px-2 py-1 rounded-md border border-border text-xs text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5"
+                      className="text-text-secondary hover:text-text-primary"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span className="hidden sm:inline">Add Issue</span>
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="flex-1 overflow-hidden">

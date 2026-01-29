@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { baseURL } from '../utils';
 import UpdateActivityList from './UpdateActivityList';
+import { Button } from './ui';
 
 const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll }) => {
   const [activities, setActivities] = useState([]);
@@ -70,9 +71,12 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll })
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-sm font-medium text-text-primary flex items-center gap-1 hover:opacity-80 transition-opacity"
+          className="text-text-primary font-medium gap-1"
         >
           Activity
           {isExpanded ? (
@@ -80,10 +84,10 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll })
           ) : (
             <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
           )}
-        </button>
-        <button onClick={onSeeAll} className="text-xs text-text-secondary hover:text-text-primary">
+        </Button>
+        <Button type="button" variant="ghost" size="sm" onClick={onSeeAll} className="text-xs">
           See all
-        </button>
+        </Button>
       </div>
       {isExpanded && (
         <UpdateActivityList

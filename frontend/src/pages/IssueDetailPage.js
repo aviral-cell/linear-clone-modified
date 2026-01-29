@@ -9,7 +9,7 @@ import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
 import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
-import { LoadingScreen } from '../components/ui';
+import { Button, Input, LoadingScreen, Textarea } from '../components/ui';
 import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -320,7 +320,7 @@ const IssueDetailPage = () => {
           <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
             <div>
               {editingTitle ? (
-                <input
+                <Input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -351,7 +351,9 @@ const IssueDetailPage = () => {
                   <div className="py-2 text-sm">
                     <div className="flex items-center text-text-tertiary">
                       <span>Sub-issue of</span>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => navigate(`/issue/${issue.parentIssue.identifier}`)}
                         className="flex items-center gap-1.5 px-2 py-1 ml-1 text-text-primary rounded-md transition-colors group relative hover:bg-background-secondary"
                       >
@@ -362,7 +364,7 @@ const IssueDetailPage = () => {
                           {issue.parentIssue.identifier}
                         </span>
                         <span className="relative z-10">{issue.parentIssue.title}</span>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -370,7 +372,7 @@ const IssueDetailPage = () => {
 
             <div className="mb-4 mt-6">
               {editingDescription ? (
-                <textarea
+                <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   onBlur={saveDescription}

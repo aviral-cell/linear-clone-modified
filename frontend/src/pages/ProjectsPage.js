@@ -5,7 +5,7 @@ import { baseURL, getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
-import { Button, EmptyState, LoadingScreen } from '../components/ui';
+import { Avatar, Button, EmptyState, IconBadge, LoadingScreen } from '../components/ui';
 import {
   Plus,
   FolderKanban,
@@ -151,22 +151,27 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
   const StatusIconComponent = statusIcon.Icon;
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="sm"
       role="row"
       onClick={() => onClick(project)}
-      className={`w-full grid gap-x-1.5 font-sans border-b border-border hover:bg-background-secondary/40 transition-colors ${TABLE_GRID_CLASS(showTeam)}`}
+      className={`w-full grid gap-x-1.5 font-sans border-b border-border hover:bg-background-secondary/40 transition-colors p-0 text-left ${TABLE_GRID_CLASS(showTeam)}`}
     >
       <div role="gridcell" className="py-2 px-2 pr-4 md:pr-6"></div>
 
       <div role="gridcell" className="py-2 px-2 flex items-center gap-2 min-w-0">
-        <div className="icon-badge icon-badge-md bg-background-secondary border border-border text-text-secondary">
+        <IconBadge
+          size="md"
+          className="bg-background-secondary border border-border text-text-secondary"
+        >
           {project.icon ? (
             <span className="text-xs">{project.icon}</span>
           ) : (
             <FolderKanban className="w-3.5 h-3.5" />
           )}
-        </div>
+        </IconBadge>
         <span className="table-cell-text text-text-primary truncate">{project.name}</span>
       </div>
 
@@ -178,8 +183,9 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
                 ? (() => {
                     const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
                     return (
-                      <div
-                        className={`icon-badge icon-badge-md ${colorClass}`}
+                      <IconBadge
+                        size="md"
+                        className={colorClass}
                         title={project.team.name || 'Team'}
                       >
                         {IconComponent ? (
@@ -187,7 +193,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
                         ) : (
                           <span className="text-xs">{icon}</span>
                         )}
-                      </div>
+                      </IconBadge>
                     );
                   })()
                 : null}
@@ -236,12 +242,13 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
 
       <div role="gridcell" className="py-2 px-2 flex items-center">
         {project.creator ? (
-          <div
-            className={`w-5 h-5 text-[11px] font-medium ${getAvatarColor(
+          <Avatar
+            size="md"
+            className={`${getAvatarColor(
               typeof project.creator === 'object' && project.creator._id
                 ? project.creator._id
                 : project.creator
-            )} rounded-full flex items-center justify-center text-white`}
+            )} text-[11px] font-medium`}
             title={
               typeof project.creator === 'object' && project.creator.name
                 ? project.creator.name
@@ -251,7 +258,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
             {typeof project.creator === 'object' && project.creator.name
               ? project.creator.name.charAt(0).toUpperCase()
               : 'C'}
-          </div>
+          </Avatar>
         ) : (
           <span className="table-cell-text text-text-tertiary">-</span>
         )}
@@ -275,7 +282,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
       </div>
 
       <div role="gridcell" className="py-2 px-2"></div>
-    </button>
+    </Button>
   );
 });
 

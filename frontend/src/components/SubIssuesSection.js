@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -18,8 +18,7 @@ import {
 } from 'lucide-react';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { Avatar, Button } from './ui';
-import { cn } from '../utils/cn';
+import { Avatar, Button, DropdownMenu, DropdownMenuItem, FieldTrigger, Input, Textarea } from './ui';
 
 const statusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
@@ -135,24 +134,16 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
   const selectedPriority = priorityOptions.find((p) => p.value === priority);
   const selectedUser = users.find((u) => u._id === assignee);
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowStatusDropdown(false);
-      setShowPriorityDropdown(false);
-      setShowAssigneeDropdown(false);
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
-
   return (
     <div className="pb-8 border-border border-b">
       {subIssues.length > 0 || showForm ? (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowList(!showList)}
-              className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
+              className="px-0 py-0 flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
             >
               {showList ? (
                 <ChevronDown className="w-4 h-4" />
@@ -163,7 +154,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
               <span className="text-text-tertiary">
                 {subIssues.filter((s) => s.status === 'done').length}/{subIssues.length}
               </span>
-            </button>
+            </Button>
             {!issue.parentIssue && (
               <Plus
                 className="w-4 h-4 text-text-tertiary hover:text-text-primary cursor-pointer"
@@ -177,14 +168,14 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
 
           {showForm && !issue.parentIssue && (
             <div className="px-6 py-4 space-y-4 text-base bg-background-secondary rounded-md border border-border">
-              <input
+              <Input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Issue title"
                 className="input-transparent"
               />
-              <textarea
+              <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add description..."
@@ -209,163 +200,138 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   <span>{issue.team.key}</span>
                 </div>
 
-                <div className="relative">
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowStatusDropdown(!showStatusDropdown);
+                <DropdownMenu
+                  open={showStatusDropdown}
+                  onOpenChange={(open) => {
+                    setShowStatusDropdown(open);
+                    if (open) {
                       setShowPriorityDropdown(false);
                       setShowAssigneeDropdown(false);
-                    }}
-                    variant="tertiary"
-                    size="md"
-                  >
-                    <selectedStatus.Icon className={`h-4 w-4 ${selectedStatus.color}`} />
-                    <span className="text-text-primary">{selectedStatus.label}</span>
-                  </Button>
-                  {showStatusDropdown && (
-                    <div
-                      className="dropdown-panel dropdown-panel-alt min-w-[160px] max-w-[calc(100vw-2rem)]"
-                      onClick={(e) => e.stopPropagation()}
+                    }
+                  }}
+                  minWidth="min-w-dropdown-md"
+                  trigger={
+                    <FieldTrigger
+                      className="text-sm"
+                      onClick={() => setShowStatusDropdown((prev) => !prev)}
                     >
-                      {statusOptions.map((option) => (
-                        <Button
-                          key={option.value}
-                          type="button"
-                          variant="ghost"
-                          className={cn(
-                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
-                            status === option.value && 'bg-background-hover'
-                          )}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setStatus(option.value);
-                            setShowStatusDropdown(false);
-                          }}
-                        >
-                          <option.Icon className={`h-4 w-4 ${option.color}`} />
-                          <span className="text-text-primary">{option.label}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      <selectedStatus.Icon className={`h-4 w-4 ${selectedStatus.color}`} />
+                      <span className="text-text-primary">{selectedStatus.label}</span>
+                    </FieldTrigger>
+                  }
+                >
+                  {statusOptions.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      selected={status === option.value}
+                      className="flex items-center gap-3"
+                      onClick={() => {
+                        setStatus(option.value);
+                        setShowStatusDropdown(false);
+                      }}
+                    >
+                      <option.Icon className={`h-4 w-4 ${option.color}`} />
+                      <span className="text-text-primary">{option.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenu>
 
-                <div className="relative">
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowPriorityDropdown(!showPriorityDropdown);
+                <DropdownMenu
+                  open={showPriorityDropdown}
+                  onOpenChange={(open) => {
+                    setShowPriorityDropdown(open);
+                    if (open) {
                       setShowStatusDropdown(false);
                       setShowAssigneeDropdown(false);
-                    }}
-                    variant="tertiary"
-                    size="md"
-                  >
-                    <selectedPriority.Icon className={`h-4 w-4 ${selectedPriority.color}`} />
-                    <span className="text-text-primary">{selectedPriority.label}</span>
-                  </Button>
-                  {showPriorityDropdown && (
-                    <div
-                      className="dropdown-panel dropdown-panel-alt min-w-[160px] max-w-[calc(100vw-2rem)]"
-                      onClick={(e) => e.stopPropagation()}
+                    }
+                  }}
+                  minWidth="min-w-dropdown-md"
+                  trigger={
+                    <FieldTrigger
+                      className="text-sm"
+                      onClick={() => setShowPriorityDropdown((prev) => !prev)}
                     >
-                      {priorityOptions.map((option) => (
-                        <Button
-                          key={option.value}
-                          type="button"
-                          variant="ghost"
-                          className={cn(
-                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
-                            priority === option.value && 'bg-background-hover'
-                          )}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPriority(option.value);
-                            setShowPriorityDropdown(false);
-                          }}
-                        >
-                          <option.Icon className={`h-4 w-4 ${option.color}`} />
-                          <span className="text-text-primary">{option.label}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      <selectedPriority.Icon className={`h-4 w-4 ${selectedPriority.color}`} />
+                      <span className="text-text-primary">{selectedPriority.label}</span>
+                    </FieldTrigger>
+                  }
+                >
+                  {priorityOptions.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      selected={priority === option.value}
+                      className="flex items-center gap-3"
+                      onClick={() => {
+                        setPriority(option.value);
+                        setShowPriorityDropdown(false);
+                      }}
+                    >
+                      <option.Icon className={`h-4 w-4 ${option.color}`} />
+                      <span className="text-text-primary">{option.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenu>
 
-                <div className="relative">
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowAssigneeDropdown(!showAssigneeDropdown);
+                <DropdownMenu
+                  open={showAssigneeDropdown}
+                  onOpenChange={(open) => {
+                    setShowAssigneeDropdown(open);
+                    if (open) {
                       setShowStatusDropdown(false);
                       setShowPriorityDropdown(false);
-                    }}
-                    variant="tertiary"
-                    size="md"
-                  >
-                    {selectedUser ? (
-                      <>
-                        <Avatar size="md" className={getAvatarColor(selectedUser._id)}>
-                          {selectedUser.name.charAt(0)}
-                        </Avatar>
-                        <span className="text-text-primary">{selectedUser.name}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Circle className="h-4 w-4 text-text-primary" />
-                        <span className="text-text-primary">Unassigned</span>
-                      </>
-                    )}
-                  </Button>
-                  {showAssigneeDropdown && (
-                    <div
-                      className="dropdown-panel dropdown-panel-alt min-w-[180px] max-w-[calc(100vw-2rem)] max-h-64 overflow-y-auto"
-                      onClick={(e) => e.stopPropagation()}
+                    }
+                  }}
+                  minWidth="min-w-dropdown-md"
+                  maxHeight="max-h-64"
+                  trigger={
+                    <FieldTrigger
+                      className="text-sm"
+                      onClick={() => setShowAssigneeDropdown((prev) => !prev)}
                     >
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className={cn(
-                          'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
-                          !assignee && 'bg-background-hover'
-                        )}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAssignee('');
-                          setShowAssigneeDropdown(false);
-                        }}
-                      >
-                        <Circle className="h-4 w-4 text-text-primary" />
-                        <span className="text-text-primary">Unassigned</span>
-                      </Button>
-                      {users.map((user) => (
-                        <Button
-                          key={user._id}
-                          type="button"
-                          variant="ghost"
-                          className={cn(
-                            'w-full justify-start px-4 py-2.5 gap-3 text-sm hover:bg-background-hover',
-                            assignee === user._id && 'bg-background-hover'
-                          )}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setAssignee(user._id);
-                            setShowAssigneeDropdown(false);
-                          }}
-                        >
-                          <Avatar size="md" className={getAvatarColor(user._id)}>
-                            {user.name.charAt(0)}
+                      {selectedUser ? (
+                        <>
+                          <Avatar size="md" className={getAvatarColor(selectedUser._id)}>
+                            {selectedUser.name.charAt(0)}
                           </Avatar>
-                          <span className="text-text-primary">{user.name}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                          <span className="text-text-primary">{selectedUser.name}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Circle className="h-4 w-4 text-text-primary" />
+                          <span className="text-text-primary">Unassigned</span>
+                        </>
+                      )}
+                    </FieldTrigger>
+                  }
+                >
+                  <DropdownMenuItem
+                    selected={!assignee}
+                    className="flex items-center gap-3"
+                    onClick={() => {
+                      setAssignee('');
+                      setShowAssigneeDropdown(false);
+                    }}
+                  >
+                    <Circle className="h-4 w-4 text-text-primary" />
+                    <span className="text-text-primary">Unassigned</span>
+                  </DropdownMenuItem>
+                  {users.map((user) => (
+                    <DropdownMenuItem
+                      key={user._id}
+                      selected={assignee === user._id}
+                      className="flex items-center gap-3"
+                      onClick={() => {
+                        setAssignee(user._id);
+                        setShowAssigneeDropdown(false);
+                      }}
+                    >
+                      <Avatar size="md" className={getAvatarColor(user._id)}>
+                        {user.name.charAt(0)}
+                      </Avatar>
+                      <span className="text-text-primary">{user.name}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenu>
 
                 <div className="hidden lg:block flex-1" />
 

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTeams } from '../context/TeamsContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
+import { Button, IconBadge } from './ui';
 
 const Breadcrumb = ({
   fallbackText = null,
@@ -54,21 +55,23 @@ const Breadcrumb = ({
 
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-2 min-w-0">
-      <div className={`icon-badge icon-badge-lg ${colorClass}`}>
+      <IconBadge size="lg" className={colorClass}>
         {IconComponent ? (
           <IconComponent className="w-4 h-4" />
         ) : (
           <span className="text-sm">{icon}</span>
         )}
-      </div>
+      </IconBadge>
       <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleTeamClick}
-          className="text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-normal truncate max-w-[120px] sm:max-w-none"
+          className="px-0 py-0 text-base font-medium text-text-primary hover:opacity-70 transition-opacity cursor-pointer leading-normal truncate max-w-[120px] sm:max-w-none"
           title={selectedTeam.name}
         >
           {selectedTeam.name}
-        </button>
+        </Button>
         {projectName && (
           <>
             <span className="text-text-tertiary text-base leading-normal flex-shrink-0">›</span>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { getAvatarColor, getInitials } from '../utils';
-import { Avatar, Button, Textarea } from './ui';
+import { Avatar, Button, DropdownMenu, DropdownMenuItem, FieldTrigger, Textarea } from './ui';
 
 const UpdateCard = ({
   update,
@@ -43,41 +43,49 @@ const UpdateCard = ({
           <div className="flex items-start gap-3 mb-3 relative" ref={statusMenuRef}>
             {statusConfig && StatusIcon && (
               <>
-                <button
-                  onClick={() => {
-                    setIsExpanded(true);
-                    if (onStatusMenuToggle) {
+                <DropdownMenu
+                  open={showStatusMenu}
+                  onOpenChange={(open) => {
+                    if (open !== showStatusMenu && onStatusMenuToggle) {
                       onStatusMenuToggle();
                     }
                   }}
-                  className={`px-2 py-1 rounded-md border text-xs font-medium flex items-center gap-1 ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor} hover:opacity-80 transition-opacity`}
+                  minWidth="min-w-dropdown-sm"
+                  trigger={
+                    <FieldTrigger
+                      className={`px-2 py-1 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor}`}
+                      onClick={() => {
+                        setIsExpanded(true);
+                        if (onStatusMenuToggle) {
+                          onStatusMenuToggle();
+                        }
+                      }}
+                    >
+                      <StatusIcon className="w-3 h-3" />
+                      {statusConfig.label}
+                    </FieldTrigger>
+                  }
                 >
-                  <StatusIcon className="w-3 h-3" />
-                  {statusConfig.label}
-                </button>
-                {showStatusMenu && statusOptions && (
-                  <div className="dropdown-panel dropdown-panel-narrow">
-                    {statusOptions.map((option) => {
-                      const OptionIcon = option.icon;
-                      return (
-                        <button
-                          key={option.value}
-                          onClick={() => {
-                            onStatusChange(option.value);
-                          }}
-                          className={`w-full text-left px-3 py-2 text-xs hover:bg-background-tertiary transition-colors flex items-center gap-2 ${
-                            currentStatus === option.value
-                              ? 'bg-background-tertiary'
-                              : 'text-text-primary'
-                          }`}
-                        >
-                          <OptionIcon className={`w-3 h-3 ${option.color}`} />
-                          <span>{option.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                  {statusOptions?.map((option) => {
+                    const OptionIcon = option.icon;
+                    return (
+                      <DropdownMenuItem
+                        key={option.value}
+                        selected={currentStatus === option.value}
+                        className="flex items-center gap-2 text-xs"
+                        onClick={() => {
+                          onStatusChange(option.value);
+                          if (onStatusMenuToggle) {
+                            onStatusMenuToggle();
+                          }
+                        }}
+                      >
+                        <OptionIcon className={`w-3 h-3 ${option.color}`} />
+                        <span>{option.label}</span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenu>
               </>
             )}
           </div>

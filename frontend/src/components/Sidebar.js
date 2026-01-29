@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { Avatar, IconButton } from './ui';
+import { Avatar, Button, IconBadge, IconButton } from './ui';
 import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
 import { useSidebar } from '../context/SidebarContext';
 
@@ -117,9 +117,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
         className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : ''}`}
       >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
-          <div className="icon-badge icon-badge-xl bg-gradient-to-br from-accent to-purple-600 rounded-md">
+          <IconBadge size="xl" className="bg-gradient-to-br from-accent to-purple-600">
             <Zap className="w-4 h-4 text-white" />
-          </div>
+          </IconBadge>
           {!isCollapsed && (
             <span className="text-lg font-semibold text-text-primary whitespace-nowrap">
               Workflow
@@ -130,7 +130,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
       <div className="flex-1 overflow-y-auto py-2">
         <div className="space-y-0.5">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleMyIssuesClick}
             className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'px-6'
@@ -143,9 +145,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           >
             <List className="w-4 h-4 flex-shrink-0" />
             {!isCollapsed && <span>My Issues</span>}
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleProjectsClick}
             className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'px-6'
@@ -158,11 +162,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           >
             <FolderKanban className="w-4 h-4 flex-shrink-0" />
             {!isCollapsed && <span>Projects</span>}
-          </button>
+          </Button>
         </div>
 
         <div className="mt-2">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={toggleTeamsSection}
             className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
@@ -176,7 +182,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
               ) : (
                 <ChevronRight className="w-4 h-4 flex-shrink-0" />
               ))}
-          </button>
+          </Button>
           {isTeamsSectionExpanded && (
             <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
               {teams.map((team) => {
@@ -184,7 +190,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
                 return (
                   <div key={team._id}>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         if (isCollapsed) {
@@ -199,13 +207,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                       title={team.name}
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className={`icon-badge icon-badge-lg ${colorClass}`}>
+                        <IconBadge size="lg" className={colorClass}>
                           {IconComponent ? (
                             <IconComponent className="w-4 h-4" />
                           ) : (
                             <span className="text-sm">{icon}</span>
                           )}
-                        </div>
+                        </IconBadge>
                         {!isCollapsed && <span>{team.name}</span>}
                       </div>
                       {!isCollapsed &&
@@ -214,10 +222,12 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                         ) : (
                           <ChevronRight className="w-4 h-4 flex-shrink-0" />
                         ))}
-                    </button>
+                    </Button>
                     {expandedTeams[team._id] && !isCollapsed && (
                       <div className="ml-6 mr-2 mt-0.5 space-y-0.5">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleTeamIssuesClick(team);
@@ -230,8 +240,10 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                         >
                           <List className="w-4 h-4 flex-shrink-0" />
                           <span>Issues</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleTeamProjectsClick(team);
@@ -244,7 +256,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                         >
                           <FolderKanban className="w-4 h-4 flex-shrink-0" />
                           <span>Projects</span>
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>

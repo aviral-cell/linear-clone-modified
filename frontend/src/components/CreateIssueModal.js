@@ -1,9 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';
-import { Button, IconButton } from './ui';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuItem,
+  FieldTrigger,
+  IconBadge,
+  IconButton,
+  Input,
+  Textarea,
+} from './ui';
 import { useAuth } from '../context/AuthContext';
 
 const CreateIssueModal = ({
@@ -28,9 +37,6 @@ const CreateIssueModal = ({
   const [teams, setTeams] = useState(teamsProp);
   const [selectedTeamId, setSelectedTeamId] = useState('');
   const [showTeamMenu, setShowTeamMenu] = useState(false);
-  const teamMenuRef = useRef(null);
-  const teamHeaderRef = useRef(null);
-
   useEffect(() => {
     if (teamsProp.length > 0) {
       setTeams(teamsProp);
@@ -56,23 +62,6 @@ const CreateIssueModal = ({
       fetchProjects(firstTeamId);
     }
   }, [isOpen, team?._id, project?._id, project?.team?._id, initialStatus, teams]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        teamMenuRef.current &&
-        !teamMenuRef.current.contains(event.target) &&
-        teamHeaderRef.current &&
-        !teamHeaderRef.current.contains(event.target)
-      ) {
-        setShowTeamMenu(false);
-      }
-    };
-    if (showTeamMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showTeamMenu]);
 
   const fetchTeams = async () => {
     try {
@@ -199,59 +188,58 @@ const CreateIssueModal = ({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-panel-secondary" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header modal-header-secondary">
-          <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
+          <div className="flex items-center gap-2 relative">
             {selectedTeamObj ? (
               <>
-                <button
-                  type="button"
-                  onClick={() => setShowTeamMenu(!showTeamMenu)}
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                  {(() => {
-                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
-                    return (
-                      <div className={`icon-badge icon-badge-md ${colorClass}`}>
-                        {IconComponent ? (
-                          <IconComponent className="w-3 h-3" />
-                        ) : (
-                          <span className="text-xs">{icon}</span>
-                        )}
-                      </div>
-                    );
-                  })()}
-                  <span className="text-sm text-text-secondary">{selectedTeamObj.key}</span>
-                  <ChevronDown className="w-4 h-4 text-text-tertiary" />
-                </button>
-                <span className="text-text-tertiary">›</span>
-                <span className="text-sm text-text-primary font-medium">New Issue</span>
-                {showTeamMenu && teams.length > 0 && (
-                  <div ref={teamMenuRef} className="dropdown-panel dropdown-panel-wide">
-                    {teams.map((teamItem) => {
-                      const { IconComponent, colorClass, icon } = getTeamIconDisplay(teamItem);
-                      return (
-                        <button
-                          key={teamItem._id}
-                          type="button"
-                          onClick={() => handleTeamSelect(teamItem._id)}
-                          className={`w-full text-left px-3 py-2 text-sm hover:bg-background-tertiary transition-colors flex items-center gap-2 ${
-                            selectedTeamObj._id === teamItem._id
-                              ? 'bg-background-tertiary'
-                              : 'text-text-primary'
-                          }`}
-                        >
-                          <div className={`icon-badge icon-badge-md ${colorClass}`}>
+                <DropdownMenu
+                  open={showTeamMenu}
+                  onOpenChange={setShowTeamMenu}
+                  minWidth="min-w-dropdown-lg"
+                  trigger={
+                    <FieldTrigger
+                      className="border-transparent bg-transparent px-0 py-0 text-sm text-text-secondary hover:opacity-80 hover:bg-transparent"
+                      onClick={() => setShowTeamMenu((prev) => !prev)}
+                    >
+                      {(() => {
+                        const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
+                        return (
+                          <IconBadge size="md" className={colorClass}>
                             {IconComponent ? (
                               <IconComponent className="w-3 h-3" />
                             ) : (
                               <span className="text-xs">{icon}</span>
                             )}
-                          </div>
-                          <span>{teamItem.name}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                          </IconBadge>
+                        );
+                      })()}
+                      <span>{selectedTeamObj.key}</span>
+                      <ChevronDown className="w-4 h-4 text-text-tertiary" />
+                    </FieldTrigger>
+                  }
+                >
+                  {teams.map((teamItem) => {
+                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(teamItem);
+                    return (
+                      <DropdownMenuItem
+                        key={teamItem._id}
+                        onClick={() => handleTeamSelect(teamItem._id)}
+                        selected={selectedTeamObj._id === teamItem._id}
+                        className="flex items-center gap-2"
+                      >
+                        <IconBadge size="md" className={colorClass}>
+                          {IconComponent ? (
+                            <IconComponent className="w-3 h-3" />
+                          ) : (
+                            <span className="text-xs">{icon}</span>
+                          )}
+                        </IconBadge>
+                        <span>{teamItem.name}</span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenu>
+                <span className="text-text-tertiary">›</span>
+                <span className="text-sm text-text-primary font-medium">New Issue</span>
               </>
             ) : (
               <span className="text-sm text-text-primary font-medium">New Issue</span>
@@ -264,7 +252,7 @@ const CreateIssueModal = ({
 
         <div className="overflow-y-auto flex-1">
           <form onSubmit={handleSubmit} className="px-6 pb-4 space-y-4">
-            <input
+            <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -274,7 +262,7 @@ const CreateIssueModal = ({
               autoFocus
             />
 
-            <textarea
+            <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add description..."

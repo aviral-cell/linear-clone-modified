@@ -15,7 +15,14 @@ import {
   FolderKanban,
 } from 'lucide-react';
 import { getAvatarColor } from '../utils';
-import { Avatar, DropdownMenu, DropdownMenuItem, FieldTrigger, PropertyField } from './ui';
+import {
+  Avatar,
+  DropdownMenu,
+  DropdownMenuItem,
+  FieldTrigger,
+  IconBadge,
+  PropertyField,
+} from './ui';
 
 const statusOptions = [
   {
@@ -122,13 +129,16 @@ const IssueProperties = ({
     if (issue?.project) {
       return (
         <>
-          <div className="icon-badge icon-badge-sm bg-background-secondary border border-border text-text-secondary">
+          <IconBadge
+            size="sm"
+            className="bg-background-secondary border border-border text-text-secondary"
+          >
             {issue.project.icon ? (
               <span className="text-xs">{issue.project.icon}</span>
             ) : (
               <FolderKanban className="w-3 h-3" />
             )}
-          </div>
+          </IconBadge>
           <span>{issue.project.name}</span>
         </>
       );
@@ -318,13 +328,16 @@ const IssueProperties = ({
                   setShowProjectMenu(false);
                 }}
               >
-                <div className="icon-badge icon-badge-md flex flex-shrink-0 items-center justify-center rounded-md border border-border bg-background-secondary text-text-secondary">
+                <IconBadge
+                  size="md"
+                  className="flex-shrink-0 border border-border bg-background-secondary text-text-secondary"
+                >
                   {project.icon ? (
                     <span className="text-xs">{project.icon}</span>
                   ) : (
                     <FolderKanban className="h-3 w-3" />
                   )}
-                </div>
+                </IconBadge>
                 <span>{project.name}</span>
               </DropdownMenuItem>
             ))}
