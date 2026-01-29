@@ -170,6 +170,11 @@ export const updateIssue = async (req, res) => {
       return res.status(404).json({ message: 'Issue not found' });
     }
 
+    if (updates.projectId !== undefined) {
+      updates.project = updates.projectId;
+      delete updates.projectId;
+    }
+
     const changes = [];
     const fieldsToTrack = [
       'status',
@@ -179,11 +184,6 @@ export const updateIssue = async (req, res) => {
       'description',
       'project',
     ];
-
-    if (updates.projectId !== undefined) {
-      updates.project = updates.projectId || null;
-      delete updates.projectId;
-    }
 
     fieldsToTrack.forEach((field) => {
       if (updates[field] === undefined) {

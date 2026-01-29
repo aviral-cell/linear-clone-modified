@@ -26,6 +26,7 @@ const activitySchema = new mongoose.Schema(
         'deleted_comment',
         'added_label',
         'removed_label',
+        'updated_project',
       ],
     },
     changes: {
