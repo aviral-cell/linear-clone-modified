@@ -19,7 +19,7 @@ const CommentInput = ({ onSubmit, loading }) => {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Leave a comment..."
-          className="w-full bg-transparent text-text-primary focus:outline-none resize-none placeholder-text-tertiary text-sm min-h-[60px] md:min-h-[80px]"
+          className="textarea-transparent textarea-transparent-sm min-h-[60px] md:min-h-[80px]"
           rows={3}
         />
         <div className="flex justify-end mt-3">

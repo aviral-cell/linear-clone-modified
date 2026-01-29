@@ -262,11 +262,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             >
               {user ? user.name.charAt(0) : 'A'}
             </div>
-            <button
-              onClick={handleLogout}
-              className="p-1.5 hover:bg-background-tertiary rounded text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0 flex items-center justify-center"
-              title="Logout"
-            >
+            <button onClick={handleLogout} className="btn-icon-sm" title="Logout">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -280,11 +276,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
               </div>
               <span className="text-sm truncate">{user ? user.name : 'User'}</span>
             </div>
-            <button
-              onClick={handleLogout}
-              className="p-1.5 hover:bg-background-tertiary rounded text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0 flex items-center justify-center"
-              title="Logout"
-            >
+            <button onClick={handleLogout} className="btn-icon-sm" title="Logout">
               <LogOut className="w-4 h-4" />
             </button>
           </div>

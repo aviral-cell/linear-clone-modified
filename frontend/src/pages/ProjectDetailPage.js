@@ -548,14 +548,11 @@ const ProjectDetailPage = () => {
                               setEditingName(false);
                             }
                           }}
-                          className="w-full text-2xl font-semibold bg-transparent border-b border-border text-text-primary focus:outline-none pb-2"
+                          className="input-transparent editable-title editable-title-bordered"
                           autoFocus
                         />
                       ) : (
-                        <h1
-                          onClick={() => setEditingName(true)}
-                          className="text-2xl font-semibold text-text-primary cursor-text hover:opacity-80 transition-opacity"
-                        >
+                        <h1 onClick={() => setEditingName(true)} className="editable-title">
                           {project.name}
                         </h1>
                       )}
@@ -566,13 +563,13 @@ const ProjectDetailPage = () => {
                           onChange={(e) => setSummary(e.target.value)}
                           onBlur={saveSummary}
                           placeholder="Add project summary..."
-                          className="w-full mt-2 min-h-[60px] px-0 py-2 bg-background text-text-primary focus:outline-none resize-none placeholder-text-tertiary text-sm"
+                          className="textarea-transparent textarea-transparent-sm mt-2 min-h-[60px] px-0 py-2 bg-background"
                           autoFocus
                         />
                       ) : (
                         <div
                           onClick={() => setEditingSummary(true)}
-                          className="mt-2 px-0 py-2 text-text-secondary cursor-text hover:opacity-80 min-h-[40px] transition-opacity text-sm"
+                          className="editable-title mt-2 px-0 py-2 text-text-secondary min-h-[40px] text-sm"
                         >
                           {project.summary || project.description || (
                             <span className="text-text-tertiary">Add project summary...</span>

@@ -26,7 +26,7 @@ const MyIssuesPage = () => {
         <div className="bg-background">
           <Header fallbackText="My Issues" />
 
-          <div className="filter-bar">
+          <section aria-label="My issues filters" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs">
                 <button
@@ -80,7 +80,7 @@ const MyIssuesPage = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         <IssuesBoard

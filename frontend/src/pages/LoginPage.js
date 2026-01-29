@@ -141,11 +141,7 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-accent to-purple-600 hover:from-accent-hover hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
+            <button type="submit" disabled={loading} className="btn-primary-hero">
               {loading ? (
                 <span className="flex items-center justify-center">
                   <svg

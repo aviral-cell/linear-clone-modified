@@ -335,14 +335,11 @@ const IssueDetailPage = () => {
                       setEditingTitle(false);
                     }
                   }}
-                  className="w-full text-2xl font-semibold bg-transparent border-b border-border text-text-primary focus:outline-none pb-2"
+                  className="input-transparent editable-title editable-title-bordered"
                   autoFocus
                 />
               ) : (
-                <h1
-                  onClick={() => setEditingTitle(true)}
-                  className="text-2xl font-semibold text-text-primary cursor-text hover:opacity-70 transition-opacity"
-                >
+                <h1 onClick={() => setEditingTitle(true)} className="editable-title">
                   {issue.title}
                 </h1>
               )}
@@ -381,7 +378,7 @@ const IssueDetailPage = () => {
                   onChange={(e) => setDescription(e.target.value)}
                   onBlur={saveDescription}
                   placeholder="Add description..."
-                  className="w-full min-h-[100px] px-0 py-2 bg-background text-text-primary focus:outline-none resize-none placeholder-text-tertiary"
+                  className="textarea-transparent min-h-[100px] px-0 py-2 bg-background"
                   autoFocus
                 />
               ) : (

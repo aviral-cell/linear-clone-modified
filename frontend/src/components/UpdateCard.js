@@ -84,7 +84,7 @@ const UpdateCard = ({
             value={content || ''}
             onChange={(e) => onContentChange(e.target.value)}
             placeholder="Write a project update..."
-            className="w-full bg-transparent text-text-primary focus:outline-none resize-none placeholder-text-tertiary text-sm min-h-[56px]"
+            className="textarea-transparent textarea-transparent-sm min-h-[56px]"
             ref={textareaRef}
             onFocus={() => setIsExpanded(true)}
             onClick={() => setIsExpanded(true)}

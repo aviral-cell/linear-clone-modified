@@ -105,7 +105,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
                 <div className="flex items-center gap-1 md:gap-2 flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEditClick(comment)}
-                    className="p-1.5 md:p-1 rounded transition-colors touch-manipulation active:bg-background-tertiary"
+                    className="btn-icon-sm md:p-1 touch-manipulation active:bg-background-tertiary"
                     title="Edit comment"
                     aria-label="Edit comment"
                   >
@@ -113,7 +113,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
                   </button>
                   <button
                     onClick={() => handleDeleteClick(comment._id)}
-                    className="p-1.5 md:p-1 rounded transition-colors touch-manipulation active:bg-background-tertiary"
+                    className="btn-icon-sm md:p-1 touch-manipulation active:bg-background-tertiary"
                     title="Delete comment"
                     aria-label="Delete comment"
                   >
@@ -128,7 +128,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
                   <textarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="w-full bg-transparent text-text-primary focus:outline-none resize-none placeholder-text-tertiary text-sm"
+                    className="textarea-transparent textarea-transparent-sm"
                     rows={3}
                     autoFocus
                   />

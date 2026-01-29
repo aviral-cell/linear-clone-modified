@@ -116,7 +116,7 @@ const IssuesPage = () => {
             }}
           />
 
-          <div className="filter-bar">
+          <section aria-label="Issues filters" className="filter-bar">
             <div className="filter-bar-inner">
               <div className="filter-bar-tabs">
                 <button
@@ -181,7 +181,7 @@ const IssuesPage = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         {selectedTeam ? (

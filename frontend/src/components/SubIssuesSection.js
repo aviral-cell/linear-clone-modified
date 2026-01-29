@@ -180,13 +180,13 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Issue title"
-                className="w-full bg-transparent text-text-primary focus:outline-none placeholder-text-tertiary"
+                className="input-transparent"
               />
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add description..."
-                className="w-full bg-transparent text-text-primary focus:outline-none resize-none placeholder-text-tertiary"
+                className="textarea-transparent"
                 rows={2}
               />
 
