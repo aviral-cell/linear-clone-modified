@@ -55,7 +55,9 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const [dateError, setDateError] = useState('');
+  const [showTeamMenu, setShowTeamMenu] = useState(false);
+  const teamMenuRef = useRef(null);
+  const teamHeaderRef = useRef(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -78,6 +80,27 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   }, [isOpen, token]);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        teamMenuRef.current &&
+        !teamMenuRef.current.contains(event.target) &&
+        teamHeaderRef.current &&
+        !teamHeaderRef.current.contains(event.target)
+      ) {
+        setShowTeamMenu(false);
+      }
+    };
+
+    if (showTeamMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showTeamMenu]);
+
+  useEffect(() => {
     if (initialProject) {
       setName(initialProject.name || '');
       setDescription(initialProject.description || '');
@@ -91,23 +114,8 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
       const loadedTargetDate = initialProject.targetDate
         ? new Date(initialProject.targetDate)
         : null;
-
-      if (loadedStartDate && loadedTargetDate) {
-        const comparison = compareDates(loadedTargetDate, loadedStartDate);
-        if (comparison <= 0) {
-          setDateError('Target date must be after start date. Please update the dates.');
-          setStartDate(loadedStartDate);
-          setTargetDate(null);
-        } else {
-          setStartDate(loadedStartDate);
-          setTargetDate(loadedTargetDate);
-          setDateError('');
-        }
-      } else {
-        setStartDate(loadedStartDate);
-        setTargetDate(loadedTargetDate);
-        setDateError('');
-      }
+      setStartDate(loadedStartDate);
+      setTargetDate(loadedTargetDate);
     } else if (isOpen) {
       setName('');
       setDescription('');
@@ -160,36 +168,19 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         updates.targetDate && updates.targetDate !== '' ? new Date(updates.targetDate) : null
       );
     }
-  };
-
-  const compareDates = (date1, date2) => {
-    if (!date1 || !date2) return 0;
-    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
-    return d1.getTime() - d2.getTime();
-  };
-
-  const validateDates = () => {
-    setDateError('');
-
-    if (startDate && targetDate) {
-      const comparison = compareDates(targetDate, startDate);
-      if (comparison <= 0) {
-        setDateError('Target date must be after start date');
-        return false;
-      }
+    if (updates.teamId !== undefined) {
+      setTeamId(updates.teamId || '');
     }
+  };
 
-    return true;
+  const handleTeamSelect = (teamId) => {
+    setTeamId(teamId);
+    setShowTeamMenu(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !teamId) return;
-
-    if (!validateDates()) {
-      return;
-    }
 
     setLoading(true);
     try {
@@ -241,30 +232,74 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-background border-b border-border px-6 py-3 flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            {selectedTeamObj && (
+          <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
+            {selectedTeamObj ? (
               <>
-                {(() => {
-                  const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
-                  return (
-                    <div
-                      className={`w-5 h-5 ${colorClass} rounded flex items-center justify-center text-white flex-shrink-0`}
-                    >
-                      {IconComponent ? (
-                        <IconComponent className="w-3 h-3" />
-                      ) : (
-                        <span className="text-xs">{icon}</span>
-                      )}
-                    </div>
-                  );
-                })()}
-                <span className="text-sm text-text-secondary">{selectedTeamObj.key}</span>
+                <button
+                  type="button"
+                  onClick={() => setShowTeamMenu(!showTeamMenu)}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                  {(() => {
+                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
+                    return (
+                      <div
+                        className={`w-5 h-5 ${colorClass} rounded flex items-center justify-center text-white flex-shrink-0`}
+                      >
+                        {IconComponent ? (
+                          <IconComponent className="w-3 h-3" />
+                        ) : (
+                          <span className="text-xs">{icon}</span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                  <span className="text-sm text-text-secondary">{selectedTeamObj.key}</span>
+                  <ChevronDown className="w-4 h-4 text-text-tertiary" />
+                </button>
                 <span className="text-text-tertiary">›</span>
+                <span className="text-sm text-text-primary font-medium">
+                  {initialProject ? 'Edit project' : 'New project'}
+                </span>
+                {showTeamMenu && (
+                  <div
+                    ref={teamMenuRef}
+                    className="absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999] min-w-[220px] max-h-60 overflow-y-auto"
+                  >
+                    {teams.map((team) => {
+                      const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
+                      return (
+                        <button
+                          key={team._id}
+                          type="button"
+                          onClick={() => handleTeamSelect(team._id)}
+                          className={`w-full text-left px-3 py-2 text-sm hover:bg-background-tertiary transition-colors flex items-center gap-2 ${
+                            selectedTeamObj._id === team._id
+                              ? 'bg-background-tertiary'
+                              : 'text-text-primary'
+                          }`}
+                        >
+                          <div
+                            className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
+                          >
+                            {IconComponent ? (
+                              <IconComponent className="w-3 h-3" />
+                            ) : (
+                              <span className="text-xs">{icon}</span>
+                            )}
+                          </div>
+                          <span>{team.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </>
+            ) : (
+              <span className="text-sm text-text-primary font-medium">
+                {initialProject ? 'Edit project' : 'New project'}
+              </span>
             )}
-            <span className="text-sm text-text-primary font-medium">
-              {initialProject ? 'Edit project' : 'New project'}
-            </span>
           </div>
           <button
             onClick={onClose}

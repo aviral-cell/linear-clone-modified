@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, ChevronDown } from 'lucide-react';
 import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';
+import { useAuth } from '../context/AuthContext';
 
 const CreateIssueModal = ({
   isOpen,
@@ -10,37 +11,93 @@ const CreateIssueModal = ({
   team,
   project,
   onSuccess,
-  initialStatus = 'todo',
+  initialStatus = 'backlog',
+  teams: teamsProp = [],
 }) => {
+  const { token } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState(initialStatus || 'todo');
+  const [status, setStatus] = useState(initialStatus || 'backlog');
   const [priority, setPriority] = useState('no_priority');
   const [assignee, setAssignee] = useState('');
   const [projectId, setProjectId] = useState('');
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [teams, setTeams] = useState(teamsProp);
+  const [selectedTeamId, setSelectedTeamId] = useState('');
+  const [showTeamMenu, setShowTeamMenu] = useState(false);
+  const teamMenuRef = useRef(null);
+  const teamHeaderRef = useRef(null);
 
-  React.useEffect(() => {
-    if (isOpen) {
-      setStatus(initialStatus || 'todo');
-      fetchUsers();
-      const teamId = team?._id || project?.team?._id;
-      if (teamId) {
-        fetchProjects(teamId);
-        if (project?._id) {
-          setProjectId(project._id);
+  useEffect(() => {
+    if (teamsProp.length > 0) {
+      setTeams(teamsProp);
+    } else if (isOpen && teams.length === 0) {
+      fetchTeams();
+    }
+  }, [teamsProp, isOpen, teams.length]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setStatus(initialStatus || 'backlog');
+    fetchUsers();
+    const teamId = team?._id || project?.team?._id;
+    if (teamId) {
+      setSelectedTeamId(teamId);
+      fetchProjects(teamId);
+      if (project?._id) {
+        setProjectId(project._id);
+      }
+    } else if (teams.length > 0) {
+      const firstTeamId = teams[0]._id;
+      setSelectedTeamId(firstTeamId);
+      fetchProjects(firstTeamId);
+    }
+  }, [isOpen, team?._id, project?._id, project?.team?._id, initialStatus, teams]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        teamMenuRef.current &&
+        !teamMenuRef.current.contains(event.target) &&
+        teamHeaderRef.current &&
+        !teamHeaderRef.current.contains(event.target)
+      ) {
+        setShowTeamMenu(false);
+      }
+    };
+    if (showTeamMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showTeamMenu]);
+
+  const fetchTeams = async () => {
+    try {
+      const response = await fetch(`${baseURL}/api/teams`, {
+        headers: {
+          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTeams(data.teams || []);
+        if (data.teams && data.teams.length > 0 && !selectedTeamId) {
+          setSelectedTeamId(data.teams[0]._id);
+          fetchProjects(data.teams[0]._id);
         }
       }
+    } catch (error) {
+      console.error('Error fetching teams:', error);
     }
-  }, [isOpen, team, project, initialStatus]);
+  };
 
   const fetchUsers = async () => {
     try {
       const response = await fetch(`${baseURL}/api/users`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
         },
       });
       if (response.ok) {
@@ -56,7 +113,7 @@ const CreateIssueModal = ({
     try {
       const response = await fetch(`${baseURL}/api/projects?teamId=${teamId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
         },
       });
       if (response.ok) {
@@ -68,9 +125,16 @@ const CreateIssueModal = ({
     }
   };
 
+  const handleTeamSelect = (teamId) => {
+    setSelectedTeamId(teamId);
+    setShowTeamMenu(false);
+    fetchProjects(teamId);
+    setProjectId('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || !selectedTeamId) return;
 
     setLoading(true);
     try {
@@ -78,12 +142,12 @@ const CreateIssueModal = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
           title,
           description,
-          teamId: team?._id || project?.team?._id,
+          teamId: selectedTeamId,
           projectId: projectId || undefined,
           status,
           priority,
@@ -94,7 +158,7 @@ const CreateIssueModal = ({
       if (response.ok) {
         setTitle('');
         setDescription('');
-        setStatus('todo');
+        setStatus('backlog');
         setPriority('no_priority');
         setAssignee('');
         setProjectId('');
@@ -109,6 +173,8 @@ const CreateIssueModal = ({
   };
 
   if (!isOpen) return null;
+
+  const selectedTeamObj = teams.find((t) => t._id === selectedTeamId) || team || project?.team;
 
   const tempIssue = {
     status,
@@ -138,26 +204,70 @@ const CreateIssueModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-background-secondary px-6 py-4 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            <div className="px-2 py-1 bg-background-tertiary rounded flex items-center gap-2 text-md">
-              {(() => {
-                const displayTeam = team || project?.team;
-                if (!displayTeam) return null;
-                const { IconComponent, icon } = getTeamIconDisplay(displayTeam);
-                return (
-                  <>
-                    <div className="w-6 h-6 flex items-center justify-center text-text-secondary flex-shrink-0">
-                      {IconComponent ? (
-                        <IconComponent className="w-4 h-4" />
-                      ) : (
-                        <span className="text-sm">{icon}</span>
-                      )}
-                    </div>
-                    <span className="text-text-secondary">{displayTeam.key}</span>
-                  </>
-                );
-              })()}
-            </div>
+          <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
+            {selectedTeamObj ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setShowTeamMenu(!showTeamMenu)}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                  {(() => {
+                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
+                    return (
+                      <div
+                        className={`w-5 h-5 ${colorClass} rounded flex items-center justify-center text-white flex-shrink-0`}
+                      >
+                        {IconComponent ? (
+                          <IconComponent className="w-3 h-3" />
+                        ) : (
+                          <span className="text-xs">{icon}</span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                  <span className="text-sm text-text-secondary">{selectedTeamObj.key}</span>
+                  <ChevronDown className="w-4 h-4 text-text-tertiary" />
+                </button>
+                <span className="text-text-tertiary">›</span>
+                <span className="text-sm text-text-primary font-medium">New Issue</span>
+                {showTeamMenu && teams.length > 0 && (
+                  <div
+                    ref={teamMenuRef}
+                    className="absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-[9999] min-w-[220px] max-h-60 overflow-y-auto"
+                  >
+                    {teams.map((teamItem) => {
+                      const { IconComponent, colorClass, icon } = getTeamIconDisplay(teamItem);
+                      return (
+                        <button
+                          key={teamItem._id}
+                          type="button"
+                          onClick={() => handleTeamSelect(teamItem._id)}
+                          className={`w-full text-left px-3 py-2 text-sm hover:bg-background-tertiary transition-colors flex items-center gap-2 ${
+                            selectedTeamObj._id === teamItem._id
+                              ? 'bg-background-tertiary'
+                              : 'text-text-primary'
+                          }`}
+                        >
+                          <div
+                            className={`w-5 h-5 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
+                          >
+                            {IconComponent ? (
+                              <IconComponent className="w-3 h-3" />
+                            ) : (
+                              <span className="text-xs">{icon}</span>
+                            )}
+                          </div>
+                          <span>{teamItem.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            ) : (
+              <span className="text-sm text-text-primary font-medium">New Issue</span>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -212,7 +322,7 @@ const CreateIssueModal = ({
               </button>
               <button
                 type="submit"
-                disabled={loading || !title.trim()}
+                disabled={loading || !title.trim() || !selectedTeamId}
                 className="btn-secondary-header bg-accent hover:bg-accent-hover text-white disabled:opacity-50 disabled:cursor-not-allowed border-transparent"
               >
                 {loading ? 'Creating...' : 'Create issue'}
