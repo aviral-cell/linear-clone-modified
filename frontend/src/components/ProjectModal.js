@@ -288,12 +288,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
               </span>
             )}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="btn-icon"
-            aria-label="Close"
-          >
+          <button type="button" onClick={onClose} className="btn-icon" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
         </div>

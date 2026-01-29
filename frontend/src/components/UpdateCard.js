@@ -117,10 +117,7 @@ const UpdateCard = ({
             >
               Cancel
             </button>
-            <button
-              onClick={onPostUpdate}
-              className="btn-primary"
-            >
+            <button onClick={onPostUpdate} className="btn-primary">
               Post update
             </button>
           </div>

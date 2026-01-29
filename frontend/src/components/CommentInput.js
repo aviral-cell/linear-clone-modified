@@ -14,10 +14,7 @@ const CommentInput = ({ onSubmit, loading }) => {
 
   return (
     <div className="mt-4 md:mt-6">
-      <form
-        onSubmit={handleSubmit}
-        className="card-inner"
-      >
+      <form onSubmit={handleSubmit} className="card-inner">
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

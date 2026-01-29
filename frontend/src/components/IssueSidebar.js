@@ -21,13 +21,9 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
         <div className="divider" />
 
         <div>
-          <label className="label">
-            Created by
-          </label>
+          <label className="label">Created by</label>
           <div className="flex items-center gap-2 text-sm text-text-primary">
-            <div
-              className={`avatar avatar-md ${getAvatarColor(issue.creator._id)}`}
-            >
+            <div className={`avatar avatar-md ${getAvatarColor(issue.creator._id)}`}>
               {issue.creator.name.charAt(0)}
             </div>
             <span>{issue.creator.name}</span>
@@ -35,9 +31,7 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
         </div>
 
         <div>
-          <label className="label">
-            Created
-          </label>
+          <label className="label">Created</label>
           <div className="text-sm text-text-secondary">
             {formatDate(issue.createdAt, { relative: true })}
           </div>

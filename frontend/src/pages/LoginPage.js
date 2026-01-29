@@ -87,10 +87,7 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label
-                  htmlFor="name"
-                  className="label label-md"
-                >
+                <label htmlFor="name" className="label label-md">
                   Name
                 </label>
                 <div className="relative">
@@ -127,10 +124,7 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="label label-md"
-              >
+              <label htmlFor="password" className="label label-md">
                 Password
               </label>
               <div className="relative">

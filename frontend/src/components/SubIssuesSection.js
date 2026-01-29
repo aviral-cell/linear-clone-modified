@@ -296,9 +296,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   >
                     {selectedUser ? (
                       <>
-                        <div
-                          className={`avatar avatar-md ${getAvatarColor(selectedUser._id)}`}
-                        >
+                        <div className={`avatar avatar-md ${getAvatarColor(selectedUser._id)}`}>
                           {selectedUser.name.charAt(0)}
                         </div>
                         <span className="text-text-primary">{selectedUser.name}</span>
@@ -338,9 +336,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                           }}
                           className={`list-item-button ${assignee === user._id ? 'bg-background-hover' : ''}`}
                         >
-                          <div
-                            className={`avatar avatar-md ${getAvatarColor(user._id)}`}
-                          >
+                          <div className={`avatar avatar-md ${getAvatarColor(user._id)}`}>
                             {user.name.charAt(0)}
                           </div>
                           <span className="text-text-primary">{user.name}</span>
@@ -395,9 +391,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       <span className="text-sm text-text-primary">{subIssue.title}</span>
                     </div>
                     {subIssue.assignee && (
-                      <div
-                        className={`avatar avatar-md ${getAvatarColor(subIssue.assignee._id)}`}
-                      >
+                      <div className={`avatar avatar-md ${getAvatarColor(subIssue.assignee._id)}`}>
                         {subIssue.assignee.name.charAt(0)}
                       </div>
                     )}

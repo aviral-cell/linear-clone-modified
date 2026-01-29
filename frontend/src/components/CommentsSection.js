@@ -79,10 +79,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
         const isEditing = editingCommentId === comment._id;
 
         return (
-          <div
-            key={`comment-${comment._id}-${idx}`}
-            className="card-inner group"
-          >
+          <div key={`comment-${comment._id}-${idx}`} className="card-inner group">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-start gap-2 flex-1 min-w-0">
                 <div

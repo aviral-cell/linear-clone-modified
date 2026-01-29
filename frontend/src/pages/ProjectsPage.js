@@ -261,7 +261,9 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
       </div>
 
       <div role="gridcell" className="py-2 px-2 flex items-center">
-        <span className="table-cell-text text-text-secondary">{formatDate(project.targetDate)}</span>
+        <span className="table-cell-text text-text-secondary">
+          {formatDate(project.targetDate)}
+        </span>
       </div>
 
       <div role="gridcell" className="py-2 px-2 flex items-center">
@@ -493,17 +495,69 @@ const ProjectsPage = () => {
                   role="row"
                   className={`sticky top-0 z-10 grid gap-x-1.5 font-sans bg-background border-b border-border ${TABLE_GRID_CLASS(teamFilter === 'all')}`}
                 >
-                  <div role="columnheader" className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary" aria-label=""></div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Name">Name</div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary"
+                    aria-label=""
+                  ></div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Name"
+                  >
+                    Name
+                  </div>
                   {teamFilter === 'all' && (
-                    <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Team">Team</div>
+                    <div
+                      role="columnheader"
+                      className="table-header-text px-2 py-2 text-text-tertiary"
+                      aria-label="Team"
+                    >
+                      Team
+                    </div>
                   )}
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Health">Health</div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Priority">Priority</div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Lead">Lead</div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Start date">Start date</div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Target date">Target date</div>
-                  <div role="columnheader" className="table-header-text px-2 py-2 text-text-tertiary" aria-label="Status">Status</div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Health"
+                  >
+                    Health
+                  </div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Priority"
+                  >
+                    Priority
+                  </div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Lead"
+                  >
+                    Lead
+                  </div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Start date"
+                  >
+                    Start date
+                  </div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Target date"
+                  >
+                    Target date
+                  </div>
+                  <div
+                    role="columnheader"
+                    className="table-header-text px-2 py-2 text-text-tertiary"
+                    aria-label="Status"
+                  >
+                    Status
+                  </div>
                   <div role="columnheader" className="px-2 py-2" aria-label=""></div>
                 </div>
 

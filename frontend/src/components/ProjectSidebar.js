@@ -48,9 +48,7 @@ const ProjectSidebar = ({
         <div className="divider" />
 
         <div>
-          <label className="label">
-            Created
-          </label>
+          <label className="label">Created</label>
           <div className="text-sm text-text-secondary">
             {formatDate(project.createdAt, { relative: true })}
           </div>
