@@ -305,6 +305,7 @@ export const getProjectIssues = async (req, res) => {
       .populate('assignee', 'name email avatar')
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
+      .populate('project', 'name identifier icon')
       .sort({ createdAt: -1 });
 
     res.json({ issues });

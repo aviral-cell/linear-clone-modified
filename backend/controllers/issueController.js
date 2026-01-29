@@ -17,6 +17,7 @@ export const getIssuesByTeam = async (req, res) => {
       .populate('assignee', 'name email avatar')
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
+      .populate('project', 'name identifier icon')
       .populate('parentIssue', 'identifier title')
       .sort({ createdAt: -1 });
 
