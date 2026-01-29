@@ -268,7 +268,7 @@ const CreateIssueModal = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Issue title"
-              className="w-full bg-transparent text-text-primary text-lg placeholder:text-text-tertiary focus:outline-none"
+              className="input-transparent text-lg"
               required
               autoFocus
             />

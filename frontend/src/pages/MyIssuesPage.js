@@ -83,13 +83,15 @@ const MyIssuesPage = () => {
           </section>
         </div>
 
-        <IssuesBoard
-          userFilter={filter}
-          filter="all"
-          refreshTrigger={issuesRefreshTrigger}
-          view={viewMode}
-          hideEmptyStatuses={true}
-        />
+        <div className="page-content">
+          <IssuesBoard
+            userFilter={filter}
+            filter="all"
+            refreshTrigger={issuesRefreshTrigger}
+            view={viewMode}
+            hideEmptyStatuses={true}
+          />
+        </div>
       </div>
     </>
   );

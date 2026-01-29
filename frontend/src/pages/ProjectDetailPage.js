@@ -476,46 +476,48 @@ const ProjectDetailPage = () => {
             isPanelOpen={isRightSidebarOpen}
           />
 
-          <div className="border-b border-border px-4 md:px-6 py-2 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1.5 flex-nowrap min-w-max">
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`btn-secondary-header flex-shrink-0 ${
-                  activeTab === 'overview'
-                    ? 'bg-background-tertiary text-text-primary border-accent'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                }`}
-              >
-                <FileText className="w-4 h-4" />
-                Overview
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab('updates');
-                  setFocusUpdateInput(false);
-                }}
-                className={`btn-secondary-header flex-shrink-0 ${
-                  activeTab === 'updates'
-                    ? 'bg-background-tertiary text-text-primary border-accent'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                }`}
-              >
-                <Clock className="w-4 h-4" />
-                Updates
-              </button>
-              <button
-                onClick={() => setActiveTab('issues')}
-                className={`btn-secondary-header flex-shrink-0 ${
-                  activeTab === 'issues'
-                    ? 'bg-background-tertiary text-text-primary border-accent'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
-                }`}
-              >
-                <List className="w-4 h-4" />
-                Issues
-              </button>
+          <section aria-label="Project tabs" className="filter-bar">
+            <div className="filter-bar-inner">
+              <div className="filter-bar-tabs">
+                <button
+                  onClick={() => setActiveTab('overview')}
+                  className={`btn-secondary-header flex-shrink-0 ${
+                    activeTab === 'overview'
+                      ? 'bg-background-tertiary text-text-primary border-accent'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
+                  }`}
+                >
+                  <FileText className="w-4 h-4" />
+                  Overview
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab('updates');
+                    setFocusUpdateInput(false);
+                  }}
+                  className={`btn-secondary-header flex-shrink-0 ${
+                    activeTab === 'updates'
+                      ? 'bg-background-tertiary text-text-primary border-accent'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
+                  }`}
+                >
+                  <Clock className="w-4 h-4" />
+                  Updates
+                </button>
+                <button
+                  onClick={() => setActiveTab('issues')}
+                  className={`btn-secondary-header flex-shrink-0 ${
+                    activeTab === 'issues'
+                      ? 'bg-background-tertiary text-text-primary border-accent'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-background-secondary'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  Issues
+                </button>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
 
         <div className="flex-1 flex overflow-hidden relative">

@@ -312,7 +312,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                 <textarea
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
-                  className="w-full mt-2 text-sm bg-transparent border-none text-text-secondary focus:outline-none resize-none placeholder:text-text-tertiary min-h-[24px]"
+                  className="textarea-transparent textarea-transparent-sm mt-2 border-none text-text-secondary min-h-[24px]"
                   placeholder="Add a short summary..."
                   rows={1}
                 />

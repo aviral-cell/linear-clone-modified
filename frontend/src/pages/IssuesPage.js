@@ -184,23 +184,25 @@ const IssuesPage = () => {
           </section>
         </div>
 
-        {selectedTeam ? (
-          <IssuesBoard
-            team={selectedTeam}
-            filter={filter}
-            refreshTrigger={issuesRefreshTrigger}
-            view={viewMode}
-            hideEmptyStatuses={filter !== 'all'}
-            onCreateIssueWithStatus={(status) => {
-              setInitialStatus(status);
-              setShowCreateModal(true);
-            }}
-          />
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-text-secondary">Select a team to view issues</div>
-          </div>
-        )}
+        <div className="page-content">
+          {selectedTeam ? (
+            <IssuesBoard
+              team={selectedTeam}
+              filter={filter}
+              refreshTrigger={issuesRefreshTrigger}
+              view={viewMode}
+              hideEmptyStatuses={filter !== 'all'}
+              onCreateIssueWithStatus={(status) => {
+                setInitialStatus(status);
+                setShowCreateModal(true);
+              }}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <div className="text-text-secondary">Select a team to view issues</div>
+            </div>
+          )}
+        </div>
       </div>
 
       {selectedTeam && (
