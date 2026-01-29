@@ -16,7 +16,7 @@ const CommentInput = ({ onSubmit, loading }) => {
     <div className="mt-4 md:mt-6">
       <form
         onSubmit={handleSubmit}
-        className="p-3 md:p-4 bg-background-secondary border border-border rounded-md"
+        className="card-inner"
       >
         <textarea
           value={content}

@@ -9,8 +9,8 @@ const Layout = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background">
-        <div className="text-text-secondary">Loading...</div>
+      <div className="loading-screen">
+        <div className="loading-screen-text">Loading...</div>
       </div>
     );
   }

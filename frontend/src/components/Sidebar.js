@@ -116,7 +116,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
         className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : ''}`}
       >
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
-          <div className="icon-badge w-7 h-7 bg-gradient-to-br from-accent to-purple-600 rounded-lg">
+          <div className="icon-badge icon-badge-xl bg-gradient-to-br from-accent to-purple-600 rounded-md">
             <Zap className="w-4 h-4 text-white" />
           </div>
           {!isCollapsed && (
@@ -258,7 +258,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
         {isCollapsed ? (
           <div className="flex flex-col items-center gap-2">
             <div
-              className={`w-6 h-6 ${user ? getAvatarColor(user._id) : 'bg-purple-600'} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+              className={`avatar avatar-lg ${user ? getAvatarColor(user._id) : 'bg-purple-600'} flex-shrink-0`}
             >
               {user ? user.name.charAt(0) : 'A'}
             </div>
@@ -274,7 +274,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 text-text-primary text-sm min-w-0">
               <div
-                className={`w-6 h-6 ${user ? getAvatarColor(user._id) : 'bg-purple-600'} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+                className={`avatar avatar-lg ${user ? getAvatarColor(user._id) : 'bg-purple-600'} flex-shrink-0`}
               >
                 {user ? user.name.charAt(0) : 'A'}
               </div>

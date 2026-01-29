@@ -49,7 +49,7 @@ const UpdateCard = ({
                       onStatusMenuToggle();
                     }
                   }}
-                  className={`px-2 py-1 rounded border text-xs font-medium flex items-center gap-1 ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor} hover:opacity-80 transition-opacity`}
+                  className={`px-2 py-1 rounded-md border text-xs font-medium flex items-center gap-1 ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor} hover:opacity-80 transition-opacity`}
                 >
                   <StatusIcon className="w-3 h-3" />
                   {statusConfig.label}
@@ -119,7 +119,7 @@ const UpdateCard = ({
             </button>
             <button
               onClick={onPostUpdate}
-              className="btn-secondary-header bg-accent hover:bg-accent-hover text-white border-transparent"
+              className="btn-primary"
             >
               Post update
             </button>
@@ -130,7 +130,7 @@ const UpdateCard = ({
           <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 mb-3">
             {statusConfig && StatusIcon && (
               <div
-                className={`px-2 py-1 rounded border text-xs font-medium inline-flex items-center gap-1 w-fit ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor}`}
+                className={`px-2 py-1 rounded-md border text-xs font-medium inline-flex items-center gap-1 w-fit ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor}`}
               >
                 <StatusIcon className="w-3 h-3" />
                 {statusConfig.label}
@@ -138,7 +138,7 @@ const UpdateCard = ({
             )}
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <div
-                className={`w-6 h-6 flex-shrink-0 ${getAvatarColor(update?.author?._id || '')} rounded-full flex items-center justify-center text-[10px] text-white font-medium`}
+                className={`avatar avatar-lg flex-shrink-0 ${getAvatarColor(update?.author?._id || '')} text-[10px]`}
               >
                 {getInitials(update?.author?.name || 'Unknown')}
               </div>

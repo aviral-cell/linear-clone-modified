@@ -27,7 +27,7 @@ const Header = ({
         {(isMobile || isCollapsed) && (
           <button
             onClick={toggleSidebar}
-            className="p-1.5 rounded-md text-text-secondary hover:text-text-primary hover:bg-background-secondary transition-colors flex-shrink-0"
+            className="btn-icon"
             aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
           >
             {isOpen ? (

@@ -123,7 +123,7 @@ const ActivityTimeline = ({ activities, users = [] }) => {
 
   return (
     <div className="my-6">
-      <h3 className="font-medium text-text-primary mb-4">Activity</h3>
+      <h3 className="section-title">Activity</h3>
       <div className="space-y-4 relative">
         <div className="absolute left-3 top-0 bottom-0 w-px bg-border" />
 
@@ -141,7 +141,7 @@ const ActivityTimeline = ({ activities, users = [] }) => {
 
                     if (!assigneeId || assigneeId === 'null' || assigneeId === null) {
                       return (
-                        <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2">
+                        <div className="activity-dot activity-dot-default">
                           <Circle className="w-4 h-4 text-text-primary" />
                         </div>
                       );
@@ -150,16 +150,14 @@ const ActivityTimeline = ({ activities, users = [] }) => {
                     if (assigneeUser) {
                       const avatarColors = getAvatarColor(assigneeUser._id);
                       return (
-                        <div
-                          className={`w-5 h-5 ${avatarColors} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0 z-10 absolute left-3 -translate-x-1/2`}
-                        >
+                        <div className={`activity-dot avatar avatar-md ${avatarColors}`}>
                           {assigneeUser.name.charAt(0).toUpperCase()}
                         </div>
                       );
                     }
 
                     return (
-                      <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2">
+                      <div className="activity-dot activity-dot-default">
                         <Circle className="w-4 h-4 text-text-primary" />
                       </div>
                     );
@@ -167,7 +165,7 @@ const ActivityTimeline = ({ activities, users = [] }) => {
                 : (() => {
                     const IconComponent = iconData.Icon;
                     return (
-                      <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2">
+                      <div className="activity-dot activity-dot-default">
                         <IconComponent className={`w-4 h-4 ${iconData.color}`} />
                       </div>
                     );

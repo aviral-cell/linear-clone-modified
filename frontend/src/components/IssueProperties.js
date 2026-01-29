@@ -105,10 +105,8 @@ const IssueProperties = ({
     ? 'flex flex-col space-y-6'
     : 'flex items-center gap-2 flex-wrap';
 
-  const verticalButtonClasses =
-    'w-full px-3 py-1 bg-background border border-border rounded-md text-xs text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-2 disabled:opacity-50';
-  const horizontalButtonClasses =
-    'px-3 py-1 bg-background border border-border rounded-md text-xs text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-2 disabled:opacity-50';
+  const verticalButtonClasses = 'field-trigger field-trigger-full';
+  const horizontalButtonClasses = 'field-trigger';
 
   const calculateMenuAlignment = (buttonRef, menuRef, setAlign) => {
     if (!buttonRef.current || !menuRef.current || isVertical) {
@@ -189,7 +187,7 @@ const IssueProperties = ({
       isCurrent ? 'bg-background-tertiary' : ''
     }`;
 
-  const labelClasses = `text-xs font-medium text-text-tertiary tracking-wide ${!isVertical && 'hidden'} ${isVertical ? 'w-20 mr-2 flex-shrink-0' : 'block mb-2'}`;
+  const labelClasses = `label ${!isVertical && 'hidden'} ${isVertical ? 'w-20 mr-2 flex-shrink-0' : ''}`;
 
   const chevronClasses = 'w-3.5 h-3.5 text-text-tertiary';
 

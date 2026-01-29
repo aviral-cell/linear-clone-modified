@@ -197,7 +197,7 @@ const CreateIssueModal = ({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-panel-secondary" onClick={(e) => e.stopPropagation()}>
-        <div className="sticky top-0 bg-background-secondary border-b border-border px-6 py-4 flex items-center justify-between z-10">
+        <div className="modal-header modal-header-secondary">
           <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
             {selectedTeamObj ? (
               <>
@@ -257,8 +257,10 @@ const CreateIssueModal = ({
             )}
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-text-tertiary hover:text-text-primary transition-colors"
+            className="btn-icon"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -310,7 +312,7 @@ const CreateIssueModal = ({
               <button
                 type="submit"
                 disabled={loading || !title.trim() || !selectedTeamId}
-                className="btn-secondary-header bg-accent hover:bg-accent-hover text-white disabled:opacity-50 disabled:cursor-not-allowed border-transparent"
+                className="btn-primary"
               >
                 {loading ? 'Creating...' : 'Create issue'}
               </button>

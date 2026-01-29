@@ -159,7 +159,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
       <div role="gridcell" className="py-2 px-2 pr-4 md:pr-6"></div>
 
       <div role="gridcell" className="py-2 px-2 flex items-center gap-2 min-w-0">
-        <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
+        <div className="icon-badge icon-badge-md bg-background-secondary border border-border text-text-secondary">
           {project.icon ? (
             <span className="text-xs">{project.icon}</span>
           ) : (
@@ -446,8 +446,8 @@ const ProjectsPage = () => {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background">
-        <div className="text-text-secondary">Loading...</div>
+      <div className="loading-screen">
+        <div className="loading-screen-text">Loading...</div>
       </div>
     );
   }
@@ -463,17 +463,19 @@ const ProjectsPage = () => {
             onPrimaryActionClick={handleOpenNewProject}
           />
 
-          <div className="border-b border-border px-4 md:px-6 py-2 flex items-center justify-between gap-3 overflow-hidden">
-            <div className="flex items-center gap-1.5 flex-nowrap min-w-max flex-shrink-0 overflow-x-auto scrollbar-hide">
-              <button className="btn-secondary-header flex-shrink-0 bg-background-tertiary text-text-primary border-accent">
-                <FolderKanban className="w-4 h-4" />
-                All projects
-              </button>
+          <section aria-label="Projects filters" className="filter-bar">
+            <div className="filter-bar-inner">
+              <div className="filter-bar-tabs overflow-x-auto scrollbar-hide">
+                <button className="btn-secondary-header flex-shrink-0 bg-background-tertiary text-text-primary border-accent">
+                  <FolderKanban className="w-4 h-4" />
+                  All projects
+                </button>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <section aria-label="Projects list" className="page-content">
           {projectsLoading ? (
             <div className="px-4 md:px-6 py-4">
               <div className="text-text-secondary text-sm">Loading projects...</div>
@@ -516,7 +518,7 @@ const ProjectsPage = () => {
               </div>
             </div>
           )}
-        </div>
+        </section>
       </div>
 
       <ProjectModal

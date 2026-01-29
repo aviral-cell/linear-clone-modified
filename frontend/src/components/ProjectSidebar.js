@@ -15,8 +15,8 @@ const ProjectSidebar = ({
   onSeeAllActivities,
 }) => {
   return (
-    <div className="w-full h-full p-6">
-      <div className="space-y-6">
+    <div className="sidebar-content">
+      <div className="sidebar-content-inner">
         <ProjectProperties
           project={project}
           users={users}
@@ -34,7 +34,7 @@ const ProjectSidebar = ({
           onMembersChange={onMembersChange}
         />
 
-        <div className="h-px bg-border my-4" />
+        <div className="divider" />
 
         {project?.identifier && token && (
           <ProjectActivity
@@ -45,10 +45,10 @@ const ProjectSidebar = ({
           />
         )}
 
-        <div className="h-px bg-border my-4" />
+        <div className="divider" />
 
         <div>
-          <label className="block text-xs font-medium text-text-tertiary mb-2 tracking-wide">
+          <label className="label">
             Created
           </label>
           <div className="text-sm text-text-secondary">

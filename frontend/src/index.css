@@ -58,6 +58,47 @@
   .icon-badge-lg {
     @apply w-6 h-6;
   }
+  .icon-badge-xl {
+    @apply w-7 h-7;
+  }
+  /* Modal header/footer */
+  .modal-header {
+    @apply sticky top-0 z-10 border-b border-border px-6 py-4 flex items-center justify-between;
+  }
+  .modal-header-primary {
+    @apply bg-background;
+  }
+  .modal-header-secondary {
+    @apply bg-background-secondary;
+  }
+  .modal-footer {
+    @apply sticky bottom-0 border-t border-border px-6 py-4 flex items-center justify-end gap-3;
+  }
+  .modal-footer-primary {
+    @apply bg-background;
+  }
+  /* Primary action button */
+  .btn-primary {
+    @apply px-3 py-1.5 rounded-md border border-transparent text-xs font-medium bg-accent hover:bg-accent-hover text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5;
+  }
+  /* Card inner (comment/input container) */
+  .card-inner {
+    @apply p-3 md:p-4 bg-background-secondary border border-border rounded-md;
+  }
+  /* Dropdown/field trigger (optional) */
+  .field-trigger {
+    @apply px-3 py-1 bg-background border border-border rounded-md text-xs font-medium text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5 disabled:opacity-50;
+  }
+  .field-trigger-full {
+    @apply w-full;
+  }
+  /* SubIssuesSection pill and list-item (optional) */
+  .pill-button {
+    @apply px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors;
+  }
+  .list-item-button {
+    @apply w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors;
+  }
   /* Login form input */
   .input-icon {
     @apply w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all;
@@ -71,6 +112,73 @@
   }
   .empty-state-lg {
     @apply rounded-md p-8;
+  }
+  /* Round 4: Loading, labels, dividers, section titles, sidebars, filter bar, activity, avatars, detail panel */
+  .loading-screen {
+    @apply h-screen w-screen flex items-center justify-center bg-background;
+  }
+  .loading-screen-text {
+    @apply text-text-secondary;
+  }
+  .label {
+    @apply block text-xs font-medium text-text-tertiary mb-2 tracking-wide;
+  }
+  .label-md {
+    @apply text-sm text-text-secondary;
+  }
+  .divider {
+    @apply h-px bg-border my-4;
+  }
+  .section-title {
+    @apply font-medium text-text-primary mb-4;
+  }
+  .section-title-sm {
+    @apply text-xs font-medium text-text-tertiary mb-3;
+  }
+  .sidebar-content {
+    @apply w-full h-full p-6;
+  }
+  .sidebar-content-inner {
+    @apply space-y-6;
+  }
+  .filter-bar {
+    @apply border-b border-border px-4 md:px-6 py-2 overflow-x-auto scrollbar-hide;
+  }
+  .filter-bar-inner {
+    @apply flex items-center justify-between gap-2 min-w-max;
+  }
+  .filter-bar-tabs {
+    @apply flex items-center gap-1.5 flex-nowrap flex-shrink-0;
+  }
+  .activity-dot {
+    @apply w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 z-10 absolute left-3 -translate-x-1/2;
+  }
+  .activity-dot-default {
+    @apply bg-background;
+  }
+  .avatar {
+    @apply rounded-full flex items-center justify-center text-white font-medium flex-shrink-0;
+  }
+  .avatar-sm {
+    @apply w-4 h-4 text-[10px];
+  }
+  .avatar-md {
+    @apply w-5 h-5 text-xs;
+  }
+  .avatar-lg {
+    @apply w-6 h-6 text-sm;
+  }
+  .detail-panel {
+    @apply fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out;
+  }
+  .btn-icon {
+    @apply p-2 rounded-md text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors flex-shrink-0;
+  }
+  .page-content {
+    @apply flex-1 overflow-y-auto;
+  }
+  .activity-list {
+    @apply mt-2 mb-4 pl-4 border-l border-border space-y-2;
   }
 }
 
@@ -131,3 +239,11 @@ a {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Page/content padding: px-4 md:px-6 for main content horizontal; py-4 for standard sections, py-6 for larger blocks. */
+/* Hover tokens: toolbar/header/tabs = hover:bg-background-secondary; dropdown items/compact = hover:bg-background-tertiary; nav/list/pill = hover:bg-background-hover. */
+/* Gap scale: gap-1 tight; gap-1.5 inline controls; gap-2 default inline; gap-2.5 sidebar; gap-3 list/modal footer; gap-4 section. */
+/* Transition: transition-colors for buttons/dropdowns/tabs; transition-opacity for icon buttons/overlays; transition-all for modals/panels. */
+/* Textarea min-heights: min-h-[24px] summary; min-h-[56px] update card; min-h-[60px]/min-h-[80px] comment; min-h-[100px] description. */
+/* Margin scale: mb-2 below labels; mb-3 section internal; mb-4 between sections; mb-6 major block. */
+/* Avatars use rounded-full; icon badges use rounded-md. */

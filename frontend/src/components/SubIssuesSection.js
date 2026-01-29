@@ -191,7 +191,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
               />
 
               <div className="flex items-center flex-wrap gap-3">
-                <div className="px-3 py-1.5 bg-background-tertiary rounded text-sm text-text-secondary flex items-center gap-2">
+                <div className="px-3 py-1.5 bg-background-tertiary rounded-md text-sm text-text-secondary flex items-center gap-2">
                   {(() => {
                     const { IconComponent, icon } = getTeamIconDisplay(issue.team);
                     return (
@@ -216,7 +216,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowPriorityDropdown(false);
                       setShowAssigneeDropdown(false);
                     }}
-                    className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
+                    className="pill-button"
                   >
                     <selectedStatus.Icon className={`w-4 h-4 ${selectedStatus.color}`} />
                     <span className="text-text-primary">{selectedStatus.label}</span>
@@ -235,9 +235,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                             setStatus(option.value);
                             setShowStatusDropdown(false);
                           }}
-                          className={`w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                            status === option.value ? 'bg-background-hover' : ''
-                          }`}
+                          className={`list-item-button ${status === option.value ? 'bg-background-hover' : ''}`}
                         >
                           <option.Icon className={`w-4 h-4 ${option.color}`} />
                           <span className="text-text-primary">{option.label}</span>
@@ -256,7 +254,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowStatusDropdown(false);
                       setShowAssigneeDropdown(false);
                     }}
-                    className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
+                    className="pill-button"
                   >
                     <selectedPriority.Icon className={`w-4 h-4 ${selectedPriority.color}`} />
                     <span className="text-text-primary">{selectedPriority.label}</span>
@@ -275,9 +273,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                             setPriority(option.value);
                             setShowPriorityDropdown(false);
                           }}
-                          className={`w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                            priority === option.value ? 'bg-background-hover' : ''
-                          }`}
+                          className={`list-item-button ${priority === option.value ? 'bg-background-hover' : ''}`}
                         >
                           <option.Icon className={`w-4 h-4 ${option.color}`} />
                           <span className="text-text-primary">{option.label}</span>
@@ -296,12 +292,12 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                       setShowStatusDropdown(false);
                       setShowPriorityDropdown(false);
                     }}
-                    className="px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors"
+                    className="pill-button"
                   >
                     {selectedUser ? (
                       <>
                         <div
-                          className={`w-5 h-5 ${getAvatarColor(selectedUser._id)} rounded-full flex items-center justify-center text-xs text-white font-medium`}
+                          className={`avatar avatar-md ${getAvatarColor(selectedUser._id)}`}
                         >
                           {selectedUser.name.charAt(0)}
                         </div>
@@ -326,9 +322,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                           setAssignee('');
                           setShowAssigneeDropdown(false);
                         }}
-                        className={`w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                          !assignee ? 'bg-background-hover' : ''
-                        }`}
+                        className={`list-item-button ${!assignee ? 'bg-background-hover' : ''}`}
                       >
                         <Circle className="w-4 h-4 text-text-primary" />
                         <span className="text-text-primary">Unassigned</span>
@@ -342,12 +336,10 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                             setAssignee(user._id);
                             setShowAssigneeDropdown(false);
                           }}
-                          className={`w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-                            assignee === user._id ? 'bg-background-hover' : ''
-                          }`}
+                          className={`list-item-button ${assignee === user._id ? 'bg-background-hover' : ''}`}
                         >
                           <div
-                            className={`w-5 h-5 ${getAvatarColor(user._id)} rounded-full flex items-center justify-center text-xs text-white font-medium`}
+                            className={`avatar avatar-md ${getAvatarColor(user._id)}`}
                           >
                             {user.name.charAt(0)}
                           </div>
@@ -378,7 +370,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                   type="button"
                   onClick={handleCreate}
                   disabled={loading}
-                  className="px-3 py-1.5 bg-accent hover:bg-accent-hover text-white text-sm rounded-md disabled:opacity-50 transition-colors"
+                  className="btn-primary"
                 >
                   {loading ? 'Creating...' : 'Create'}
                 </button>
@@ -404,7 +396,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
                     </div>
                     {subIssue.assignee && (
                       <div
-                        className={`w-5 h-5 ${getAvatarColor(subIssue.assignee._id)} rounded-full flex items-center justify-center text-xs text-white font-medium`}
+                        className={`avatar avatar-md ${getAvatarColor(subIssue.assignee._id)}`}
                       >
                         {subIssue.assignee.name.charAt(0)}
                       </div>

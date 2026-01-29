@@ -26,9 +26,9 @@ const MyIssuesPage = () => {
         <div className="bg-background">
           <Header fallbackText="My Issues" />
 
-          <div className="border-b border-border px-4 md:px-6 py-2 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center justify-between gap-2 min-w-max">
-              <div className="flex items-center gap-1.5 flex-nowrap">
+          <div className="filter-bar">
+            <div className="filter-bar-inner">
+              <div className="filter-bar-tabs">
                 <button
                   onClick={() => navigate('/my-issues/assigned')}
                   className={`btn-secondary-header flex-shrink-0 ${

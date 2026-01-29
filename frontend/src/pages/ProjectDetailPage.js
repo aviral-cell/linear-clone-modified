@@ -444,8 +444,8 @@ const ProjectDetailPage = () => {
 
   if (loading || !project) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background">
-        <div className="text-text-secondary">Loading...</div>
+      <div className="loading-screen">
+        <div className="loading-screen-text">Loading...</div>
       </div>
     );
   }
@@ -519,7 +519,7 @@ const ProjectDetailPage = () => {
         </div>
 
         <div className="flex-1 flex overflow-hidden relative">
-          <div className="flex-1 overflow-y-auto">
+          <div className="page-content">
             <div className="w-full px-4 md:px-6 py-6">
               {activeTab === 'overview' && (
                 <>
@@ -583,7 +583,7 @@ const ProjectDetailPage = () => {
                   </div>
 
                   <div className="mb-6">
-                    <h2 className="text-xs font-medium text-text-tertiary mb-3">Properties</h2>
+                    <h2 className="section-title-sm">Properties</h2>
                     <ProjectProperties
                       project={project}
                       users={users}
@@ -729,11 +729,7 @@ const ProjectDetailPage = () => {
 
           <div
             ref={sidebarRef}
-            className={`
-              fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out
-              ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
-              w-80
-            `}
+            className={`lg:hidden detail-panel ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'} w-80`}
           >
             <ProjectSidebar
               project={project}

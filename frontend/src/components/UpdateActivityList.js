@@ -16,9 +16,7 @@ const UpdateActivityList = ({
   }
 
   const isSidebar = variant === 'sidebar';
-  const containerClasses = isSidebar
-    ? 'space-y-3'
-    : 'mt-2 mb-4 pl-4 border-l border-border space-y-2';
+  const containerClasses = isSidebar ? 'space-y-3' : 'activity-list';
   const iconSize = isSidebar ? 'w-4 h-4' : 'w-3 h-3';
   const iconContainerSize = isSidebar ? 'w-4 h-4' : 'w-3 h-3';
   const usernameClasses = isSidebar ? 'text-text-primary font-medium' : 'text-text-primary';

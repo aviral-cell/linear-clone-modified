@@ -241,9 +241,7 @@ const IssuesBoard = ({
                         )}
                         {issue.assignee && (
                           <div
-                            className={`ml-2 w-5 h-5 ${getAvatarColor(
-                              issue.assignee._id
-                            )} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+                            className={`ml-2 avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
                           >
                             {issue.assignee.name.charAt(0)}
                           </div>
@@ -313,7 +311,7 @@ const IssuesBoard = ({
                             </span>
                             {issue.assignee && (
                               <div
-                                className={`w-5 h-5 ${getAvatarColor(issue.assignee._id)} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+                                className={`avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
                               >
                                 {issue.assignee.name.charAt(0)}
                               </div>
@@ -342,7 +340,7 @@ const IssuesBoard = ({
                             </span>
                             {issue.assignee && (
                               <div
-                                className={`w-5 h-5 ${getAvatarColor(issue.assignee._id)} rounded-full flex items-center justify-center text-xs text-white font-medium flex-shrink-0`}
+                                className={`avatar avatar-md ${getAvatarColor(issue.assignee._id)}`}
                               >
                                 {issue.assignee.name.charAt(0)}
                               </div>

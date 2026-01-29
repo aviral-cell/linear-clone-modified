@@ -89,7 +89,7 @@ const LoginPage = () => {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-text-secondary mb-2"
+                  className="label label-md"
                 >
                   Name
                 </label>
@@ -109,7 +109,7 @@ const LoginPage = () => {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+              <label htmlFor="email" className="label label-md">
                 Email
               </label>
               <div className="relative">
@@ -129,7 +129,7 @@ const LoginPage = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-text-secondary mb-2"
+                className="label label-md"
               >
                 Password
               </label>

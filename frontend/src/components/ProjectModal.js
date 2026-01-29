@@ -225,7 +225,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="sticky top-0 bg-background border-b border-border px-6 py-3 flex items-center justify-between z-10">
+        <div className="modal-header modal-header-primary">
           <div className="flex items-center gap-2 relative" ref={teamHeaderRef}>
             {selectedTeamObj ? (
               <>
@@ -289,8 +289,10 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
             )}
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-text-tertiary hover:text-text-primary transition-colors p-1"
+            className="btn-icon"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
@@ -351,7 +353,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
             </div>
           </div>
 
-          <div className="sticky bottom-0 bg-background border-t border-border px-6 py-4 flex items-center justify-end gap-3">
+          <div className="modal-footer modal-footer-primary">
             <button
               type="button"
               onClick={onClose}
@@ -362,7 +364,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
             <button
               type="submit"
               disabled={loading || !name.trim() || !teamId}
-              className="btn-secondary-header bg-accent hover:bg-accent-hover text-white disabled:opacity-50 disabled:cursor-not-allowed border-transparent"
+              className="btn-primary"
             >
               {loading
                 ? initialProject

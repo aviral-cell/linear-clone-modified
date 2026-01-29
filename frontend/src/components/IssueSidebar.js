@@ -4,8 +4,8 @@ import IssueProperties from './IssueProperties';
 
 const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
   return (
-    <div className="w-full h-full p-6">
-      <div className="space-y-6">
+    <div className="sidebar-content">
+      <div className="sidebar-content-inner">
         <IssueProperties
           issue={issue}
           users={users}
@@ -18,15 +18,15 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
           showProject={true}
         />
 
-        <div className="h-px bg-border my-4" />
+        <div className="divider" />
 
         <div>
-          <label className="block text-xs font-medium text-text-tertiary mb-2 tracking-wide">
+          <label className="label">
             Created by
           </label>
           <div className="flex items-center gap-2 text-sm text-text-primary">
             <div
-              className={`w-5 h-5 ${getAvatarColor(issue.creator._id)} rounded-full flex items-center justify-center text-xs text-white font-medium`}
+              className={`avatar avatar-md ${getAvatarColor(issue.creator._id)}`}
             >
               {issue.creator.name.charAt(0)}
             </div>
@@ -35,7 +35,7 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-text-tertiary mb-2 tracking-wide">
+          <label className="label">
             Created
           </label>
           <div className="text-sm text-text-secondary">

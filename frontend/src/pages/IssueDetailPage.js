@@ -297,8 +297,8 @@ const IssueDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background">
-        <div className="text-text-secondary">Loading...</div>
+      <div className="loading-screen">
+        <div className="loading-screen-text">Loading...</div>
       </div>
     );
   }
@@ -319,7 +319,7 @@ const IssueDetailPage = () => {
       </div>
 
       <div className="flex-1 flex overflow-hidden relative">
-        <div className="flex-1 overflow-y-auto">
+        <div className="page-content">
           <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
             <div>
               {editingTitle ? (
@@ -446,11 +446,7 @@ const IssueDetailPage = () => {
 
         <div
           ref={sidebarRef}
-          className={`
-            fixed top-14 bottom-0 right-0 z-50 border-l border-border bg-background overflow-y-auto transition-transform duration-300 ease-in-out
-            ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
-            w-80
-          `}
+          className={`lg:hidden detail-panel ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'} w-80`}
         >
           <IssueSidebar issue={issue} users={users} projects={projects} onUpdate={updateIssue} />
         </div>

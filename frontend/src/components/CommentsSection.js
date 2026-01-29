@@ -81,12 +81,12 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
         return (
           <div
             key={`comment-${comment._id}-${idx}`}
-            className="p-3 md:p-4 bg-background-secondary border border-border rounded-md group"
+            className="card-inner group"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-start gap-2 flex-1 min-w-0">
                 <div
-                  className={`w-6 h-6 md:w-7 md:h-7 flex-shrink-0 ${getAvatarColor(comment.user._id)} rounded-full flex items-center justify-center text-xs text-white font-medium`}
+                  className={`avatar avatar-lg md:w-7 md:h-7 flex-shrink-0 ${getAvatarColor(comment.user._id)}`}
                 >
                   {comment.user.name.charAt(0)}
                 </div>
@@ -139,13 +139,13 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <button
                         onClick={handleCancelEdit}
-                        className="flex-1 sm:flex-initial px-4 py-2 text-text-secondary hover:text-text-primary text-sm font-medium rounded-md transition-colors touch-manipulation active:bg-background-tertiary"
+                        className="flex-1 sm:flex-initial btn-secondary-header text-text-secondary hover:text-text-primary"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={() => handleSaveEdit(comment._id)}
-                        className="flex-1 sm:flex-initial px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-colors touch-manipulation active:opacity-90"
+                        className="flex-1 sm:flex-initial btn-primary"
                       >
                         Save
                       </button>
