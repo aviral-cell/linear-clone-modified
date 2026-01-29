@@ -21,33 +21,10 @@ import {
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
 
-const TABLE_FONT_FAMILY =
-  'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-const getTableGridTemplate = (showTeam) => {
-  if (showTeam) {
-    return '[indent] 18px [title] minmax(350px, 2fr) [team] minmax(120px, auto) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px';
-  }
-  return '[indent] 18px [title] minmax(350px, 2fr) [health] 50px [priority] 68px [lead] 48px [startDate] minmax(76px, auto) [targetDate] minmax(76px, auto) [status] 28px [end-padding] 12px';
-};
-
-const TABLE_HEADER_TEXT_STYLE = {
-  fontSize: '11px',
-  fontWeight: 500,
-  letterSpacing: '0.01em',
-  lineHeight: '16px',
-};
-
-const TABLE_CELL_PADDING_Y = {
-  paddingTop: '8px',
-  paddingBottom: '8px',
-};
-
-const TABLE_DATE_TEXT_STYLE = {
-  fontSize: '13px',
-  fontWeight: 400,
-  lineHeight: '20px',
-};
+const TABLE_GRID_CLASS = (showTeam) =>
+  showTeam
+    ? 'grid-cols-[18px_minmax(350px,2fr)_minmax(120px,auto)_50px_68px_48px_minmax(76px,auto)_minmax(76px,auto)_28px_12px]'
+    : 'grid-cols-[18px_minmax(350px,2fr)_50px_68px_48px_minmax(76px,auto)_minmax(76px,auto)_28px_12px]';
 
 const getStatusIndicator = (project) => {
   const latestUpdate = project.latestUpdate;
@@ -176,41 +153,23 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
     <button
       type="button"
       onClick={() => onClick(project)}
-      className="w-full border-b border-border hover:bg-background-secondary/40 transition-colors"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: getTableGridTemplate(showTeam),
-        columnGap: '6px',
-        fontFamily: TABLE_FONT_FAMILY,
-      }}
+      className={`w-full grid gap-x-1.5 font-sans border-b border-border hover:bg-background-secondary/40 transition-colors ${TABLE_GRID_CLASS(showTeam)}`}
     >
-      <div className="px-2 pr-4 md:pr-6" style={TABLE_CELL_PADDING_Y}></div>
+      <div className="py-2 px-2 pr-4 md:pr-6"></div>
 
-      <div className="px-2 flex items-center gap-2 min-w-0" style={TABLE_CELL_PADDING_Y}>
-        <div
-          className="rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0"
-          style={{ width: '20px', height: '20px' }}
-        >
+      <div className="py-2 px-2 flex items-center gap-2 min-w-0">
+        <div className="w-5 h-5 rounded-md bg-background-secondary border border-border flex items-center justify-center text-text-secondary flex-shrink-0">
           {project.icon ? (
-            <span style={{ fontSize: '12px' }}>{project.icon}</span>
+            <span className="text-xs">{project.icon}</span>
           ) : (
             <FolderKanban className="w-3.5 h-3.5" />
           )}
         </div>
-        <span
-          className="text-text-primary truncate"
-          style={{
-            fontSize: '13px',
-            fontWeight: 400,
-            lineHeight: '20px',
-          }}
-        >
-          {project.name}
-        </span>
+        <span className="table-cell-text text-text-primary truncate">{project.name}</span>
       </div>
 
       {showTeam && (
-        <div className="px-2 flex items-center min-w-0" style={TABLE_CELL_PADDING_Y}>
+        <div className="py-2 px-2 flex items-center min-w-0">
           {project.team ? (
             <div className="flex items-center gap-1.5 min-w-0">
               {typeof project.team === 'object'
@@ -231,12 +190,7 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
                   })()
                 : null}
               <span
-                className="text-text-secondary truncate"
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 400,
-                  lineHeight: '20px',
-                }}
+                className="table-cell-text text-text-secondary truncate"
                 title={
                   typeof project.team === 'object' && project.team.name ? project.team.name : 'Team'
                 }
@@ -249,57 +203,43 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
               </span>
             </div>
           ) : (
-            <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
-              -
-            </span>
+            <span className="table-cell-text text-text-tertiary">-</span>
           )}
         </div>
       )}
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+      <div className="py-2 px-2 flex items-center">
         {StatusIcon ? (
           <StatusIcon
-            className={statusIndicator.color}
-            style={{ width: '16px', height: '16px' }}
+            className={`w-4 h-4 ${statusIndicator.color}`}
             title={statusIndicator.label}
           />
         ) : (
-          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
-            -
-          </span>
+          <span className="table-cell-text text-text-tertiary">-</span>
         )}
       </div>
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+      <div className="py-2 px-2 flex items-center">
         {project.priority && project.priority !== 'no_priority' ? (
           <div className="flex items-center">
             <PriorityIcon
-              className={priorityColorClass}
-              style={{ width: '14px', height: '14px' }}
+              className={`w-3.5 h-3.5 ${priorityColorClass}`}
               title={priorityMeta.label}
             />
           </div>
         ) : (
-          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
-            -
-          </span>
+          <span className="table-cell-text text-text-tertiary">-</span>
         )}
       </div>
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+      <div className="py-2 px-2 flex items-center">
         {project.creator ? (
           <div
-            className={`${getAvatarColor(
+            className={`w-5 h-5 text-[11px] font-medium ${getAvatarColor(
               typeof project.creator === 'object' && project.creator._id
                 ? project.creator._id
                 : project.creator
             )} rounded-full flex items-center justify-center text-white`}
-            style={{
-              width: '20px',
-              height: '20px',
-              fontSize: '11px',
-              fontWeight: 500,
-            }}
             title={
               typeof project.creator === 'object' && project.creator.name
                 ? project.creator.name
@@ -311,33 +251,26 @@ const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
               : 'C'}
           </div>
         ) : (
-          <span className="text-text-tertiary" style={{ fontSize: '13px', lineHeight: '20px' }}>
-            -
-          </span>
+          <span className="table-cell-text text-text-tertiary">-</span>
         )}
       </div>
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
-        <span className="text-text-secondary" style={TABLE_DATE_TEXT_STYLE}>
-          {formatDate(project.startDate)}
-        </span>
+      <div className="py-2 px-2 flex items-center">
+        <span className="table-cell-text text-text-secondary">{formatDate(project.startDate)}</span>
       </div>
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
-        <span className="text-text-secondary" style={TABLE_DATE_TEXT_STYLE}>
-          {formatDate(project.targetDate)}
-        </span>
+      <div className="py-2 px-2 flex items-center">
+        <span className="table-cell-text text-text-secondary">{formatDate(project.targetDate)}</span>
       </div>
 
-      <div className="px-2 flex items-center" style={TABLE_CELL_PADDING_Y}>
+      <div className="py-2 px-2 flex items-center">
         <StatusIconComponent
-          className={statusIcon.color}
-          style={{ width: '16px', height: '16px' }}
+          className={`w-4 h-4 ${statusIcon.color}`}
           title={project.status.charAt(0).toUpperCase() + project.status.slice(1)}
         />
       </div>
 
-      <div className="px-2" style={TABLE_CELL_PADDING_Y}></div>
+      <div className="py-2 px-2"></div>
     </button>
   );
 });
@@ -551,47 +484,22 @@ const ProjectsPage = () => {
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto" style={{ fontFamily: TABLE_FONT_FAMILY }}>
+            <div className="overflow-x-auto font-sans">
               <div className="min-w-full">
                 <div
-                  className="sticky top-0 z-10 bg-background border-b border-border"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: getTableGridTemplate(teamFilter === 'all'),
-                    columnGap: '6px',
-                    fontFamily: TABLE_FONT_FAMILY,
-                  }}
+                  className={`sticky top-0 z-10 grid gap-x-1.5 font-sans bg-background border-b border-border ${TABLE_GRID_CLASS(teamFilter === 'all')}`}
                 >
-                  <div
-                    className="px-2 py-2 pr-4 md:pr-6 text-text-tertiary"
-                    style={TABLE_HEADER_TEXT_STYLE}
-                  ></div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Name
-                  </div>
+                  <div className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary"></div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Name</div>
                   {teamFilter === 'all' && (
-                    <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                      Team
-                    </div>
+                    <div className="table-header-text px-2 py-2 text-text-tertiary">Team</div>
                   )}
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Health
-                  </div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Priority
-                  </div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Lead
-                  </div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Start date
-                  </div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Target date
-                  </div>
-                  <div className="px-2 py-2 text-text-tertiary" style={TABLE_HEADER_TEXT_STYLE}>
-                    Status
-                  </div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Health</div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Priority</div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Lead</div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Start date</div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Target date</div>
+                  <div className="table-header-text px-2 py-2 text-text-tertiary">Status</div>
                   <div className="px-2 py-2"></div>
                 </div>
 

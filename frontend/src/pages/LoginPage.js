@@ -51,7 +51,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background-secondary flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+      <main className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-accent to-purple-600 rounded-2xl mb-4 shadow-lg shadow-accent/20">
             <Zap className="w-8 h-8 text-white" />
@@ -184,7 +184,7 @@ const LoginPage = () => {
         </div>
 
         <p className="text-center text-xs text-text-tertiary mt-8">Issue tracking made simple</p>
-      </div>
+      </main>
     </div>
   );
 };

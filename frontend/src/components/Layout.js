@@ -37,7 +37,7 @@ const Layout = ({ children }) => {
         </>
       )}
 
-      <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
+      <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
     </div>
   );
 };

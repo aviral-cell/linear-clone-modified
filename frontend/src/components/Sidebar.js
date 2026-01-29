@@ -104,7 +104,8 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   };
 
   return (
-    <div
+    <nav
+      aria-label="Main"
       className={`
       bg-background-secondary border-r border-border flex flex-col h-screen overflow-hidden
       transition-all duration-300
@@ -291,7 +292,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           </div>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
 

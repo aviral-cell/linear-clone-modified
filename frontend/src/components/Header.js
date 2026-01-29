@@ -22,7 +22,7 @@ const Header = ({
   const isOpen = isMobile ? isDrawerOpen : !isCollapsed;
 
   return (
-    <div className="h-14 border-b border-border px-4 md:px-6 flex items-center justify-between gap-2 overflow-visible">
+    <header className="h-14 border-b border-border px-4 md:px-6 flex items-center justify-between gap-2 overflow-visible">
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {(isMobile || isCollapsed) && (
           <button
@@ -74,7 +74,7 @@ const Header = ({
           </button>
         )}
       </div>
-    </div>
+    </header>
   );
 };
 

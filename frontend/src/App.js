@@ -35,11 +35,7 @@ function App() {
             <Toaster
               position="bottom-right"
               toastOptions={{
-                style: {
-                  background: '#232329',
-                  color: '#e5e5e6',
-                  border: '1px solid #2d2d33',
-                },
+                className: '!bg-background-secondary !text-text-primary !border !border-border',
               }}
             />
             <Routes>

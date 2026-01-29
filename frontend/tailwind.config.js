@@ -3,6 +3,16 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          'sans-serif',
+        ],
+      },
       colors: {
         // Darker Theme Colors
         background: {
@@ -10,6 +20,7 @@ module.exports = {
           secondary: '#141414',
           tertiary: '#1a1a1a',
           hover: '#1f1f1f',
+          card: '#1a1a1a',
         },
         border: {
           DEFAULT: '#2a2a2a',
