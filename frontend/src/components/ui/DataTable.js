@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-const tableHeaderStyles = 'text-table-header font-medium tracking-tight';
+const tableHeaderStyles = 'text-[13px] leading-[14px] font-medium tracking-tight';
 const tableCellStyles = 'text-table-cell font-normal';
 
 /**

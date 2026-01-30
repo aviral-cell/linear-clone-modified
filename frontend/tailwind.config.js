@@ -23,7 +23,7 @@ module.exports = {
         ],
       },
       fontSize: {
-        'table-header': ['11px', { lineHeight: '16px' }],
+        'table-header': ['11px', { lineHeight: '14px' }],
         'table-cell': ['13px', { lineHeight: '20px' }],
       },
       colors: {
