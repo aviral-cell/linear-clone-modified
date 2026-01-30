@@ -10,19 +10,23 @@ export const useSidebar = () => {
   return context;
 };
 
+const SIDEBAR_TOGGLE_BREAKPOINT = 768;
+
 export const SidebarProvider = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [showSidebarToggle, setShowSidebarToggle] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       const mobile = width < 640;
       setIsMobile(mobile);
+      setShowSidebarToggle(width <= SIDEBAR_TOGGLE_BREAKPOINT);
       if (!mobile) {
         setIsDrawerOpen(false);
-        if (width <= 768) {
+        if (width <= SIDEBAR_TOGGLE_BREAKPOINT) {
           setIsCollapsed(true);
         } else {
           setIsCollapsed(false);
@@ -65,6 +69,7 @@ export const SidebarProvider = ({ children }) => {
         isCollapsed,
         isMobile,
         isDrawerOpen,
+        showSidebarToggle,
         toggleSidebar,
         openSidebar,
         closeSidebar,

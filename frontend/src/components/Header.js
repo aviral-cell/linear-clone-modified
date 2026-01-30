@@ -19,14 +19,14 @@ const Header = ({
   isPanelOpen,
   hidePanelIconOnLarge = false,
 }) => {
-  const { isCollapsed, isMobile, isDrawerOpen, toggleSidebar } = useSidebar();
+  const { isCollapsed, isMobile, isDrawerOpen, showSidebarToggle, toggleSidebar } = useSidebar();
 
   const isOpen = isMobile ? isDrawerOpen : !isCollapsed;
 
   return (
     <header className="h-14 border-b border-border px-4 md:px-6 flex items-center justify-between gap-2 overflow-visible">
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        {(isMobile || isCollapsed) && (
+        {showSidebarToggle && (
           <Button
             variant="ghost"
             size="sm"
