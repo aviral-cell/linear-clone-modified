@@ -167,7 +167,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                   minWidth="min-w-dropdown-lg"
                   trigger={
                     <FieldTrigger
-                      className="border-transparent bg-transparent px-0 py-0 text-sm text-text-secondary hover:opacity-80 hover:bg-transparent"
+                      className={`border-transparent bg-transparent px-0 py-0 text-sm text-text-secondary hover:opacity-80 hover:bg-transparent ${showTeamMenu ? '!border-accent' : ''}`}
                       onClick={() => setShowTeamMenu((prev) => !prev)}
                     >
                       {(() => {

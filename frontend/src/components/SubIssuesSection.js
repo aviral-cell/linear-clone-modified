@@ -5,6 +5,7 @@ import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants';
 import { api } from '../services/api';
+import { cn } from '../utils/cn';
 import {
   Avatar,
   Button,
@@ -148,7 +149,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
                     minWidth="min-w-dropdown-md"
                     trigger={
                       <FieldTrigger
-                        className="text-sm"
+                        className={cn('text-sm', showStatusDropdown && 'border-accent')}
                         onClick={() => setShowStatusDropdown((prev) => !prev)}
                       >
                         <selectedStatus.Icon className={`h-4 w-4 ${selectedStatus.color}`} />
@@ -184,7 +185,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
                     minWidth="min-w-dropdown-md"
                     trigger={
                       <FieldTrigger
-                        className="text-sm"
+                        className={cn('text-sm', showPriorityDropdown && 'border-accent')}
                         onClick={() => setShowPriorityDropdown((prev) => !prev)}
                       >
                         <selectedPriority.Icon className={`h-4 w-4 ${selectedPriority.color}`} />
@@ -221,7 +222,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
                     maxHeight="max-h-64"
                     trigger={
                       <FieldTrigger
-                        className="text-sm"
+                        className={cn('text-sm', showAssigneeDropdown && 'border-accent')}
                         onClick={() => setShowAssigneeDropdown((prev) => !prev)}
                       >
                         {selectedUser ? (

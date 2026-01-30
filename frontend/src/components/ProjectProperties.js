@@ -167,6 +167,7 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showStatusMenu && 'border-accent')}
                 onClick={() => setShowStatusMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -211,6 +212,7 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showPriorityMenu && 'border-accent')}
                 onClick={() => setShowPriorityMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -256,6 +258,7 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showLeadMenu && 'border-accent')}
                 onClick={() => setShowLeadMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">{renderLeadContent()}</div>
@@ -304,6 +307,7 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showMembersMenu && 'border-accent')}
                 onClick={() => setShowMembersMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -359,7 +363,7 @@ const ProjectProperties = ({
                 disabled={disabled}
                 fullWidth={isVertical}
                 title={isVertical ? undefined : 'Start date'}
-                className={cn(!!startDate && 'border-accent', !startDate && 'text-text-tertiary')}
+                className={cn(showStartDatePicker && 'border-accent', !startDate && 'text-text-tertiary')}
                 onClick={() => setShowStartDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -401,7 +405,7 @@ const ProjectProperties = ({
                 disabled={disabled}
                 fullWidth={isVertical}
                 title={isVertical ? undefined : 'Target date'}
-                className={cn(!!targetDate && 'border-accent', !targetDate && 'text-text-tertiary')}
+                className={cn(showTargetDatePicker && 'border-accent', !targetDate && 'text-text-tertiary')}
                 onClick={() => setShowTargetDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -444,6 +448,7 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showTeamMenu && 'border-accent')}
                 onClick={() => setShowTeamMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">{renderTeamContent()}</div>

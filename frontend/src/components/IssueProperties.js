@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, User, FolderKanban } from '../icons';
 import { getAvatarColor } from '../utils';
+import { cn } from '../utils/cn';
 import { issueStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
@@ -99,6 +100,7 @@ const IssueProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showStatusMenu && 'border-accent')}
                 onClick={() => setShowStatusMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -143,6 +145,7 @@ const IssueProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showPriorityMenu && 'border-accent')}
                 onClick={() => setShowPriorityMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -188,6 +191,7 @@ const IssueProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showAssigneeMenu && 'border-accent')}
                 onClick={() => setShowAssigneeMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">{renderAssigneeContent()}</div>
@@ -236,6 +240,7 @@ const IssueProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
+                className={cn(showProjectMenu && 'border-accent')}
                 onClick={() => setShowProjectMenu((v) => !v)}
               >
                 <div className="flex items-center gap-2">{renderProjectContent()}</div>

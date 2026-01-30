@@ -53,7 +53,7 @@ const UpdateCard = ({
                   minWidth="min-w-dropdown-sm"
                   trigger={
                     <FieldTrigger
-                      className={`px-2 py-1 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor}`}
+                      className={`px-2 py-1 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.color} ${statusConfig.borderColor} ${showStatusMenu ? '!border-accent' : ''}`}
                       onClick={() => {
                         setIsExpanded(true);
                         if (onStatusMenuToggle) {
