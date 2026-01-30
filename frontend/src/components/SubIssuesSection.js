@@ -4,6 +4,7 @@ import { Plus, Circle } from '../icons';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants';
+import { api } from '../services/api';
 import {
   Avatar,
   Button,
@@ -22,7 +23,7 @@ const statusOptions = issueStatusOptions.filter(
   (o) => ['backlog', 'todo', 'in_progress', 'in_review'].includes(o.value)
 );
 
-const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, users = [] }) => {
+const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) => {
   const [showList, setShowList] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
@@ -41,37 +42,26 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, 
 
     setLoading(true);
     try {
-      const response = await fetch(`${baseURL}/api/issues`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          teamId: issue.team._id,
-          status,
-          priority,
-          assignee: assignee || null,
-          parentIssue: issue._id,
-        }),
+      await api.issues.create({
+        title,
+        description,
+        teamId: issue.team._id,
+        status,
+        priority,
+        assignee: assignee || null,
+        parentIssue: issue._id,
       });
 
-      if (response.ok) {
-        setTitle('');
-        setDescription('');
-        setStatus('todo');
-        setPriority('no_priority');
-        setAssignee('');
-        setShowForm(false);
-        onCreateSubIssue();
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Failed to create sub-issue');
-      }
+      setTitle('');
+      setDescription('');
+      setStatus('todo');
+      setPriority('no_priority');
+      setAssignee('');
+      setShowForm(false);
+      onCreateSubIssue();
     } catch (error) {
       console.error('Error creating sub-issue:', error);
+      alert(error.message || 'Failed to create sub-issue');
     } finally {
       setLoading(false);
     }

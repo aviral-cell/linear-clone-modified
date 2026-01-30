@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { baseURL } from '../utils';
-import { getTeamIconDisplay } from '../utils/teamIcons';
+import { api } from '../services/api';
 import Header from '../components/Header';
 import ProjectSidebar from '../components/ProjectSidebar';
 import ProjectProperties from '../components/ProjectProperties';
@@ -26,12 +24,10 @@ import {
   FileText,
   List,
   Clock,
-  Star,
   Plus,
   PanelRight,
 } from '../icons';
 import toast from 'react-hot-toast';
-import { formatDate, getAvatarColor, getInitials } from '../utils';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
 import {
   updateStatusOptions,
@@ -44,14 +40,11 @@ const getStatusConfig = (status) => {
 };
 
 const ProjectDetailPage = () => {
-  const { token, user } = useAuth();
   const navigate = useNavigate();
   const { projectIdentifier, tab } = useParams();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
   const [project, setProject] = useState(null);
-  const [metrics, setMetrics] = useState(null);
-  const [issues, setIssues] = useState([]);
   const [updates, setUpdates] = useState([]);
   const [pendingActivities, setPendingActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -150,93 +143,50 @@ const ProjectDetailPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [teamsRes, usersRes] = await Promise.all([
-          fetch(`${baseURL}/api/teams`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${baseURL}/api/users`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+        const [teamsData, usersData] = await Promise.all([
+          api.teams.getAll(),
+          api.users.getAll(),
         ]);
-
-        if (teamsRes.ok) {
-          const data = await teamsRes.json();
-          setTeams(data.teams);
-        }
-
-        if (usersRes.ok) {
-          const data = await usersRes.json();
-          setUsers(data.users);
-        }
+        setTeams(teamsData.teams);
+        setUsers(usersData.users);
       } catch (error) {
         console.error('Error fetching initial data:', error);
       }
     };
 
     fetchInitialData();
-  }, [token]);
+  }, []);
 
   const fetchProject = React.useCallback(async () => {
     if (!projectIdentifier) return;
     try {
       setLoading(true);
       setMembersInitialized(false);
-      const response = await fetch(`${baseURL}/api/projects/${projectIdentifier}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setProject(data.project);
-        setMetrics(data.metrics || null);
-        setName(data.project.name);
-        setSummary(data.project.summary || data.project.description || '');
-        setSelectedMembers(data.project.members?.map((m) => m._id || m) || []);
-        setMembersInitialized(true);
-      } else {
-        toast.error('Project not found');
-        navigate('/projects/all');
-      }
+      const data = await api.projects.getByIdentifier(projectIdentifier);
+      setProject(data.project);
+      setName(data.project.name);
+      setSummary(data.project.summary || data.project.description || '');
+      setSelectedMembers(data.project.members?.map((m) => m._id || m) || []);
+      setMembersInitialized(true);
     } catch (error) {
       console.error('Error fetching project:', error);
-      toast.error('Failed to fetch project');
+      toast.error('Project not found');
+      navigate('/projects/all');
     } finally {
       setLoading(false);
     }
-  }, [projectIdentifier, token, navigate]);
-
-  const fetchIssues = React.useCallback(async () => {
-    if (!projectIdentifier) return;
-    try {
-      const response = await fetch(`${baseURL}/api/projects/${projectIdentifier}/issues`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setIssues(data.issues || []);
-      }
-    } catch (error) {
-      console.error('Error fetching project issues:', error);
-    }
-  }, [projectIdentifier, token]);
+  }, [projectIdentifier, navigate]);
 
   const fetchUpdates = React.useCallback(async () => {
     if (!projectIdentifier) return;
     try {
-      const response = await fetch(
-        `${baseURL}/api/projects/${projectIdentifier}/updates?includeActivities=true`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setUpdates(data.updates || []);
-        setPendingActivities(data.pendingActivities || []);
-      }
+      const data = await api.get(`/api/projects/${projectIdentifier}/updates?includeActivities=true`);
+      setUpdates(data.updates || []);
+      setPendingActivities(data.pendingActivities || []);
     } catch (error) {
       console.error('Error fetching project updates:', error);
     }
-  }, [projectIdentifier, token]);
+  }, [projectIdentifier]);
 
   useEffect(() => {
     if (skipNextFetchRef.current) {
@@ -244,9 +194,8 @@ const ProjectDetailPage = () => {
       return;
     }
     fetchProject();
-    fetchIssues();
     fetchUpdates();
-  }, [fetchProject, fetchIssues, fetchUpdates]);
+  }, [fetchProject, fetchUpdates]);
 
   useEffect(() => {
     if (!membersInitialized || !project) return;
@@ -303,27 +252,13 @@ const ProjectDetailPage = () => {
         setProject((prev) => ({ ...prev, members: updatedMembers }));
       }
 
-      const response = await fetch(`${baseURL}/api/projects/${project.identifier}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProject((prev) => ({ ...prev, ...data.project }));
-        setActivitiesRefreshTrigger((prev) => prev + 1);
-        toast.success('Project updated');
-        if (data.project.identifier && data.project.identifier !== projectIdentifier) {
-          skipNextFetchRef.current = true;
-          navigate(`/projects/${data.project.identifier}/${activeTab}`, { replace: true });
-        }
-      } else {
-        await fetchProject();
-        toast.error('Failed to update project');
+      const data = await api.projects.update(project.identifier, updates);
+      setProject((prev) => ({ ...prev, ...data.project }));
+      setActivitiesRefreshTrigger((prev) => prev + 1);
+      toast.success('Project updated');
+      if (data.project.identifier && data.project.identifier !== projectIdentifier) {
+        skipNextFetchRef.current = true;
+        navigate(`/projects/${data.project.identifier}/${activeTab}`, { replace: true });
       }
     } catch (error) {
       console.error('Error updating project:', error);
@@ -341,28 +276,17 @@ const ProjectDetailPage = () => {
     }
 
     try {
-      const response = await fetch(`${baseURL}/api/projects/${projectIdentifier}/updates`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          content: updateContent.trim(),
-          status: updateStatus,
-        }),
+      await api.post(`/api/projects/${projectIdentifier}/updates`, {
+        content: updateContent.trim(),
+        status: updateStatus,
       });
 
-      if (response.ok) {
-        toast.success('Update created');
-        setUpdateContent('');
-        setUpdateStatus('at_risk');
-        setActivitiesRefreshTrigger((prev) => prev + 1);
-        await fetchUpdates();
-        await fetchProject();
-      } else {
-        toast.error('Failed to create update');
-      }
+      toast.success('Update created');
+      setUpdateContent('');
+      setUpdateStatus('at_risk');
+      setActivitiesRefreshTrigger((prev) => prev + 1);
+      await fetchUpdates();
+      await fetchProject();
     } catch (error) {
       console.error('Error creating update:', error);
       toast.error('Failed to create update');
@@ -382,32 +306,10 @@ const ProjectDetailPage = () => {
     return updates[0];
   };
 
-  const getStatusIndicator = () => {
-    const latestUpdate = getLatestUpdate();
-    if (!latestUpdate) {
-      return { status: 'no_updates', label: 'No updates', color: 'text-text-tertiary' };
-    }
-
-    const hoursAgo = Math.floor(
-      (Date.now() - new Date(latestUpdate.createdAt).getTime()) / (1000 * 60 * 60)
-    );
-
-    const statusConfig = getStatusConfig(latestUpdate.status);
-    return {
-      status: latestUpdate.status,
-      label: `${statusConfig.label}, last update ${hoursAgo}h ago`,
-      color: statusConfig.color,
-    };
-  };
-
   if (loading || !project) {
     return <LoadingScreen message="Loading..." />;
   }
 
-  const totalIssues = metrics?.totalIssues || 0;
-  const doneIssues = metrics?.doneIssues || 0;
-  const percent = totalIssues === 0 ? 0 : Math.round((doneIssues / totalIssues) * 100);
-  const statusIndicator = getStatusIndicator();
   const latestUpdate = getLatestUpdate();
 
   return (
@@ -647,7 +549,6 @@ const ProjectDetailPage = () => {
               onUpdate={handleUpdateProject}
               selectedMembers={selectedMembers}
               onMembersChange={setSelectedMembers}
-              token={token}
               activitiesRefreshTrigger={activitiesRefreshTrigger}
               onSeeAllActivities={() => {
                 setIsRightSidebarOpen(false);
@@ -668,7 +569,6 @@ const ProjectDetailPage = () => {
           initialStatus={initialIssueStatus}
           onSuccess={() => {
             setIssuesRefreshTrigger((prev) => prev + 1);
-            fetchIssues();
           }}
         />
       )}

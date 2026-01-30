@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from '../icons';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 import { issueStatusConfig, priorityConfig } from '../constants';
 import IssueCard from './IssueCard';
 import { Button } from './ui';
-import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const statusConfig = issueStatusConfig;
@@ -22,7 +21,6 @@ const IssuesBoard = ({
 }) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
   const navigate = useNavigate();
 
   const fetchIssues = React.useCallback(async () => {
@@ -31,33 +29,23 @@ const IssuesBoard = ({
     try {
       setLoading(true);
 
-      let url;
+      let data;
       if (project) {
-        url = `${baseURL}/api/projects/${project.identifier}/issues`;
+        data = await api.projects.getIssues(project.identifier);
       } else if (userFilter) {
-        url = `${baseURL}/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`;
+        data = await api.get(`/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`);
       } else {
-        url = `${baseURL}/api/issues/team/${team._id}`;
+        data = await api.get(`/api/issues/team/${team._id}`);
       }
 
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        setIssues(data.issues);
-      }
+      setIssues(data.issues);
     } catch (error) {
       console.error('Error fetching issues:', error);
       toast.error('Failed to fetch issues');
     } finally {
       setLoading(false);
     }
-  }, [team, project, token, userFilter]);
+  }, [team, project, userFilter]);
 
   useEffect(() => {
     fetchIssues();

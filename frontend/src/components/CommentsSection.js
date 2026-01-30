@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2 } from '../icons';
 import { getAvatarColor, formatDateTime } from '../utils';
+import { api } from '../services/api';
 import { Avatar, Button, Card, IconButton, Textarea } from './ui';
 import toast from 'react-hot-toast';
 
-const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, token }) => {
+const CommentsSection = ({ comments, onEditComment, onDeleteComment }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState('');
 
@@ -20,23 +21,11 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
     }
 
     try {
-      const response = await fetch(`${baseURL}/api/comments/${commentId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: editContent }),
-      });
-
-      if (response.ok) {
-        toast.success('Comment updated');
-        onEditComment();
-        setEditingCommentId(null);
-        setEditContent('');
-      } else {
-        toast.error('Failed to update comment');
-      }
+      await api.comments.update(commentId, editContent);
+      toast.success('Comment updated');
+      onEditComment();
+      setEditingCommentId(null);
+      setEditContent('');
     } catch (error) {
       console.error('Error updating comment:', error);
       toast.error('Failed to update comment');
@@ -50,19 +39,9 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
 
   const handleDeleteClick = async (commentId) => {
     try {
-      const response = await fetch(`${baseURL}/api/comments/${commentId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        toast.success('Comment deleted');
-        onDeleteComment();
-      } else {
-        toast.error('Failed to delete comment');
-      }
+      await api.comments.delete(commentId);
+      toast.success('Comment deleted');
+      onDeleteComment();
     } catch (error) {
       console.error('Error deleting comment:', error);
       toast.error('Failed to delete comment');

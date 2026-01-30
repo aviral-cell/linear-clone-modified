@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
@@ -19,7 +18,6 @@ const IssuesPage = () => {
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState('columns');
   const [initialStatus, setInitialStatus] = useState('todo');
-  const { token, user } = useAuth();
   const { teamKey, issuesFilter } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,18 +70,8 @@ const IssuesPage = () => {
   const fetchTeams = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/teams`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data.teams);
-      } else {
-        toast.error('Failed to fetch teams');
-      }
+      const data = await api.teams.getAll();
+      setTeams(data.teams);
     } catch (error) {
       console.error('Error fetching teams:', error);
       toast.error('Failed to fetch teams');

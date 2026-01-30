@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -18,19 +18,8 @@ export const AuthProvider = ({ children }) => {
 
   const fetchCurrentUser = async () => {
     try {
-      const response = await fetch(`${baseURL}/api/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else {
-        localStorage.removeItem('token');
-        setToken(null);
-      }
+      const data = await api.auth.getCurrentUser();
+      setUser(data.user);
     } catch (error) {
       console.error('Error fetching user:', error);
       localStorage.removeItem('token');
@@ -42,53 +31,27 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${baseURL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        return { success: true };
-      } else {
-        return { success: false, message: data.message };
-      }
+      const data = await api.auth.login(email, password);
+      localStorage.setItem('token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
-      return { success: false, message: 'Network error' };
+      return { success: false, message: error.message || 'Network error' };
     }
   };
 
   const register = async (email, password, name) => {
     try {
-      const response = await fetch(`${baseURL}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        return { success: true };
-      } else {
-        return { success: false, message: data.message };
-      }
+      const data = await api.auth.register(email, password, name);
+      localStorage.setItem('token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      return { success: true };
     } catch (error) {
       console.error('Register error:', error);
-      return { success: false, message: 'Network error' };
+      return { success: false, message: error.message || 'Network error' };
     }
   };
 

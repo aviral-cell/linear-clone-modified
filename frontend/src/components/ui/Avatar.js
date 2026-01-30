@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { cn } from '../../utils/cn';
 
 const sizeStyles = {
@@ -15,12 +15,14 @@ const baseStyles =
  * Avatar primitive. Use for user/team avatars; pass bg color via className or getAvatarColor().
  * @param {'sm'|'md'|'lg'|'xl'} [size='md']
  */
-function Avatar({ size = 'md', className, children, ...props }) {
+const Avatar = memo(function Avatar({ size = 'md', className, children, ...props }) {
   return (
     <div className={cn(baseStyles, sizeStyles[size], className)} role="img" {...props}>
       {children}
     </div>
   );
-}
+});
+
+Avatar.displayName = 'Avatar';
 
 export default Avatar;

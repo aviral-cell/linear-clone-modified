@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, ChevronDown, FolderKanban } from '../icons';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../styles/ProjectModal.css';
-import { baseURL } from '../utils';
-import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { getAvatarColor } from '../utils';
 import ProjectProperties from './ProjectProperties';
 import {
   Button,
@@ -20,7 +15,6 @@ import {
 } from './ui';
 
 const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selectedTeam }) => {
-  const { token } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [summary, setSummary] = useState('');
@@ -40,20 +34,15 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${baseURL}/api/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data.users);
-        }
+        const data = await api.users.getAll();
+        setUsers(data.users);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     };
 
     fetchUsers();
-  }, [isOpen, token]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (initialProject) {
@@ -150,24 +139,14 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         targetDate: targetDate ? targetDate.toISOString() : undefined,
       };
 
-      const method = initialProject ? 'PUT' : 'POST';
-      const url = initialProject
-        ? `${baseURL}/api/projects/${initialProject.identifier}`
-        : `${baseURL}/api/projects`;
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        if (onSuccess) onSuccess();
-        onClose();
+      if (initialProject) {
+        await api.projects.update(initialProject.identifier, payload);
+      } else {
+        await api.post('/api/projects', payload);
       }
+
+      if (onSuccess) onSuccess();
+      onClose();
     } catch (error) {
       console.error('Error saving project:', error);
     } finally {

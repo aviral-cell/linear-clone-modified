@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { baseURL, getAvatarColor } from '../utils';
+import { api } from '../services/api';
+import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
 import {
   Avatar,
-  Button,
   DataTable,
   EmptyState,
   IconBadge,
@@ -86,7 +85,6 @@ const formatDate = (date) => {
 };
 
 const ProjectsPage = () => {
-  const { token } = useAuth();
   const navigate = useNavigate();
   const { teamKey } = useParams();
   const [teams, setTeams] = useState([]);
@@ -94,11 +92,11 @@ const ProjectsPage = () => {
   const [projectsWithUpdates, setProjectsWithUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter] = useState('all');
   const [teamFilter, setTeamFilter] = useState(() => {
     return teamKey || 'all';
   });
-  const [creatorFilter, setCreatorFilter] = useState('all');
+  const [creatorFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const teamsRef = useRef([]);
@@ -106,17 +104,9 @@ const ProjectsPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const teamsRes = await fetch(`${baseURL}/api/teams`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (teamsRes.ok) {
-          const data = await teamsRes.json();
-          setTeams(data.teams);
-          teamsRef.current = data.teams;
-        } else {
-          toast.error('Failed to fetch teams');
-        }
+        const data = await api.teams.getAll();
+        setTeams(data.teams);
+        teamsRef.current = data.teams;
       } catch (error) {
         console.error('Error fetching initial data:', error);
         toast.error('Failed to load workspace data');
@@ -126,63 +116,50 @@ const ProjectsPage = () => {
     };
 
     fetchInitialData();
-  }, [token]);
+  }, []);
 
   const fetchProjects = useCallback(
     async (opts = {}) => {
       try {
         setProjectsLoading(true);
+        let teamId = null;
+        if (opts.teamKey && opts.teamKey !== 'all') {
+          const team = teamsRef.current.find((t) => t.key === opts.teamKey);
+          if (team) {
+            teamId = team._id;
+          }
+        }
+
+        // Build the endpoint with query params
         const params = new URLSearchParams();
         if (opts.status && opts.status !== 'all') {
           params.append('status', opts.status);
         }
-        if (opts.teamKey && opts.teamKey !== 'all') {
-          const team = teamsRef.current.find((t) => t.key === opts.teamKey);
-          if (team) {
-            params.append('teamId', team._id);
-          }
+        if (teamId) {
+          params.append('teamId', teamId);
         }
         if (opts.creatorId && opts.creatorId !== 'all') {
           params.append('creatorId', opts.creatorId);
         }
 
         const query = params.toString();
-        const url = `${baseURL}/api/projects${query ? `?${query}` : ''}`;
+        const data = await api.get(`/api/projects${query ? `?${query}` : ''}`);
+        setProjects(data.projects || []);
 
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setProjects(data.projects || []);
-
-          const projectsWithUpdatesData = await Promise.all(
-            (data.projects || []).map(async (project) => {
-              try {
-                const updateRes = await fetch(
-                  `${baseURL}/api/projects/${project.identifier}/updates`,
-                  {
-                    headers: { Authorization: `Bearer ${token}` },
-                  }
-                );
-                if (updateRes.ok) {
-                  const updateData = await updateRes.json();
-                  return {
-                    ...project,
-                    latestUpdate: updateData.updates?.[0] || null,
-                  };
-                }
-                return { ...project, latestUpdate: null };
-              } catch {
-                return { ...project, latestUpdate: null };
-              }
-            })
-          );
-          setProjectsWithUpdates(projectsWithUpdatesData);
-        } else {
-          toast.error('Failed to fetch projects');
-        }
+        const projectsWithUpdatesData = await Promise.all(
+          (data.projects || []).map(async (project) => {
+            try {
+              const updateData = await api.projects.getUpdates(project.identifier);
+              return {
+                ...project,
+                latestUpdate: updateData.updates?.[0] || null,
+              };
+            } catch {
+              return { ...project, latestUpdate: null };
+            }
+          })
+        );
+        setProjectsWithUpdates(projectsWithUpdatesData);
       } catch (error) {
         console.error('Error fetching projects:', error);
         toast.error('Failed to fetch projects');
@@ -190,7 +167,7 @@ const ProjectsPage = () => {
         setProjectsLoading(false);
       }
     },
-    [token]
+    []
   );
 
   useEffect(() => {
@@ -226,11 +203,6 @@ const ProjectsPage = () => {
 
   const handleOpenNewProject = useCallback(() => {
     setEditingProject(null);
-    setIsModalOpen(true);
-  }, []);
-
-  const handleEditProject = useCallback((project) => {
-    setEditingProject(project);
     setIsModalOpen(true);
   }, []);
 

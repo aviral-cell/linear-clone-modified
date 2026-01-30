@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, User, Users, CalendarClock, CalendarCheck2 } from '../icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import '../styles/ProjectModal.css';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { projectStatusOptions, priorityOptions } from '../constants';

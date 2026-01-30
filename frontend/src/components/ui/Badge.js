@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { cn } from '../../utils/cn';
 
 const toneStyles = {
@@ -22,12 +22,14 @@ const baseStyles = 'inline-flex items-center justify-center rounded-md font-medi
  * @param {'default'|'accent'|'success'|'warning'|'danger'} [tone='default']
  * @param {'sm'|'md'|'lg'} [size='md']
  */
-function Badge({ tone = 'default', size = 'md', className, children, ...props }) {
+const Badge = memo(function Badge({ tone = 'default', size = 'md', className, children, ...props }) {
   return (
     <span className={cn(baseStyles, toneStyles[tone], sizeStyles[size], className)} {...props}>
       {children}
     </span>
   );
-}
+});
+
+Badge.displayName = 'Badge';
 
 export default Badge;

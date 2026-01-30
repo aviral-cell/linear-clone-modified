@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 import toast from 'react-hot-toast';
 
 const TeamsContext = createContext();
@@ -27,18 +27,8 @@ export const TeamsProvider = ({ children }) => {
   const fetchTeams = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${baseURL}/api/teams`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data.teams);
-      } else {
-        toast.error('Failed to fetch teams');
-      }
+      const data = await api.teams.getAll();
+      setTeams(data.teams);
     } catch (error) {
       console.error('Error fetching teams:', error);
       toast.error('Failed to fetch teams');

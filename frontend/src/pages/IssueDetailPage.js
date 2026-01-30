@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 import SubIssuesSection from '../components/SubIssuesSection';
 import ActivityTimeline from '../components/ActivityTimeline';
 import CommentsSection from '../components/CommentsSection';
@@ -26,7 +25,6 @@ const IssueDetailPage = () => {
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
-  const [teams, setTeams] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -36,7 +34,6 @@ const IssueDetailPage = () => {
   const [saving, setSaving] = useState(false);
   const sidebarRef = useRef(null);
   const { identifier } = useParams();
-  const { token, user: currentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,7 +85,6 @@ const IssueDetailPage = () => {
   useEffect(() => {
     fetchIssue();
     fetchUsers();
-    fetchTeams();
   }, [identifier]);
 
   useEffect(() => {
@@ -101,29 +97,10 @@ const IssueDetailPage = () => {
     }
   }, [issue]);
 
-  const fetchTeams = async () => {
-    try {
-      const response = await fetch(`${baseURL}/api/teams`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data.teams);
-      }
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-    }
-  };
-
   const fetchProjects = async (teamId) => {
     try {
-      const response = await fetch(`${baseURL}/api/projects?teamId=${teamId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data.projects || []);
-      }
+      const data = await api.projects.getByTeam(teamId);
+      setProjects(data.projects || []);
     } catch (error) {
       console.error('Error fetching projects:', error);
     }
@@ -132,25 +109,17 @@ const IssueDetailPage = () => {
   const fetchIssue = async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const response = await fetch(`${baseURL}/api/issues/${identifier}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setIssue(data.issue);
-        setSubIssues(data.subIssues || []);
-        setTitle(data.issue.title);
-        setDescription(data.issue.description);
-      } else {
-        if (!silent) {
-          toast.error('Issue not found');
-          navigate('/');
-        }
-      }
+      const data = await api.issues.getByIdentifier(identifier);
+      setIssue(data.issue);
+      setSubIssues(data.subIssues || []);
+      setTitle(data.issue.title);
+      setDescription(data.issue.description);
     } catch (error) {
       console.error('Error fetching issue:', error);
-      if (!silent) toast.error('Failed to fetch issue');
+      if (!silent) {
+        toast.error('Issue not found');
+        navigate('/');
+      }
     } finally {
       if (!silent) setLoading(false);
     }
@@ -158,13 +127,8 @@ const IssueDetailPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${baseURL}/api/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.users);
-      }
+      const data = await api.users.getAll();
+      setUsers(data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -172,13 +136,8 @@ const IssueDetailPage = () => {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`${baseURL}/api/comments/issue/${issue._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setComments(data.comments);
-      }
+      const data = await api.comments.getByIssue(issue._id);
+      setComments(data.comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
@@ -188,14 +147,8 @@ const IssueDetailPage = () => {
     try {
       const targetIssueId = issueId || issue?._id;
       if (!targetIssueId) return;
-
-      const response = await fetch(`${baseURL}/api/activities/issue/${targetIssueId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setActivities(data.activities);
-      }
+      const data = await api.activities.getByIssue(targetIssueId);
+      setActivities(data.activities);
     } catch (error) {
       console.error('Error fetching activities:', error);
     }
@@ -223,24 +176,10 @@ const IssueDetailPage = () => {
         setIssue((prev) => ({ ...prev, project: project || null }));
       }
 
-      const response = await fetch(`${baseURL}/api/issues/${identifier}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setIssue((prev) => ({ ...prev, ...data.issue }));
-        toast.success('Issue updated');
-        await fetchActivities(data.issue._id);
-      } else {
-        await fetchIssue();
-        toast.error('Failed to update issue');
-      }
+      const data = await api.issues.update(identifier, updates);
+      setIssue((prev) => ({ ...prev, ...data.issue }));
+      toast.success('Issue updated');
+      await fetchActivities(data.issue._id);
     } catch (error) {
       console.error('Error updating issue:', error);
       await fetchIssue();
@@ -253,22 +192,10 @@ const IssueDetailPage = () => {
   const handleAddComment = async (content) => {
     setCommentLoading(true);
     try {
-      const response = await fetch(`${baseURL}/api/comments/issue/${issue._id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content }),
-      });
-
-      if (response.ok) {
-        fetchComments();
-        fetchActivities();
-        toast.success('Comment added');
-      } else {
-        toast.error('Failed to add comment');
-      }
+      await api.comments.create(issue._id, content);
+      fetchComments();
+      fetchActivities();
+      toast.success('Comment added');
     } catch (error) {
       console.error('Error adding comment:', error);
       toast.error('Failed to add comment');
@@ -375,8 +302,6 @@ const IssueDetailPage = () => {
               issue={issue}
               subIssues={subIssues}
               onCreateSubIssue={() => fetchIssue(true)}
-              token={token}
-              baseURL={baseURL}
               users={users}
             />
 
@@ -389,8 +314,6 @@ const IssueDetailPage = () => {
                 fetchComments();
                 fetchActivities();
               }}
-              baseURL={baseURL}
-              token={token}
             />
 
             <CommentInput onSubmit={handleAddComment} loading={commentLoading} />

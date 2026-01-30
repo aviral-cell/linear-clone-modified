@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from '../icons';
-import { baseURL } from '../utils';
+import { api } from '../services/api';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';
 import {
@@ -13,7 +13,6 @@ import {
   Input,
   Textarea,
 } from './ui';
-import { useAuth } from '../context/AuthContext';
 
 const CreateIssueModal = ({
   isOpen,
@@ -24,7 +23,6 @@ const CreateIssueModal = ({
   initialStatus = 'backlog',
   teams: teamsProp = [],
 }) => {
-  const { token } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState(initialStatus || 'backlog');
@@ -65,18 +63,11 @@ const CreateIssueModal = ({
 
   const fetchTeams = async () => {
     try {
-      const response = await fetch(`${baseURL}/api/teams`, {
-        headers: {
-          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data.teams || []);
-        if (data.teams && data.teams.length > 0 && !selectedTeamId) {
-          setSelectedTeamId(data.teams[0]._id);
-          fetchProjects(data.teams[0]._id);
-        }
+      const data = await api.teams.getAll();
+      setTeams(data.teams || []);
+      if (data.teams && data.teams.length > 0 && !selectedTeamId) {
+        setSelectedTeamId(data.teams[0]._id);
+        fetchProjects(data.teams[0]._id);
       }
     } catch (error) {
       console.error('Error fetching teams:', error);
@@ -85,15 +76,8 @@ const CreateIssueModal = ({
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${baseURL}/api/users`, {
-        headers: {
-          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.users);
-      }
+      const data = await api.users.getAll();
+      setUsers(data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -101,15 +85,8 @@ const CreateIssueModal = ({
 
   const fetchProjects = async (teamId) => {
     try {
-      const response = await fetch(`${baseURL}/api/projects?teamId=${teamId}`, {
-        headers: {
-          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data.projects || []);
-      }
+      const data = await api.projects.getByTeam(teamId);
+      setProjects(data.projects || []);
     } catch (error) {
       console.error('Error fetching projects:', error);
     }
@@ -128,33 +105,24 @@ const CreateIssueModal = ({
 
     setLoading(true);
     try {
-      const response = await fetch(`${baseURL}/api/issues`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token || localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          title,
-          description,
-          teamId: selectedTeamId,
-          projectId: projectId || undefined,
-          status,
-          priority,
-          assignee: assignee || undefined,
-        }),
+      await api.issues.create({
+        title,
+        description,
+        teamId: selectedTeamId,
+        projectId: projectId || undefined,
+        status,
+        priority,
+        assignee: assignee || undefined,
       });
 
-      if (response.ok) {
-        setTitle('');
-        setDescription('');
-        setStatus('backlog');
-        setPriority('no_priority');
-        setAssignee('');
-        setProjectId('');
-        onSuccess();
-        onClose();
-      }
+      setTitle('');
+      setDescription('');
+      setStatus('backlog');
+      setPriority('no_priority');
+      setAssignee('');
+      setProjectId('');
+      onSuccess();
+      onClose();
     } catch (error) {
       console.error('Error creating issue:', error);
     } finally {

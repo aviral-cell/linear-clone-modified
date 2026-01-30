@@ -11,7 +11,6 @@ const ProjectSidebar = ({
   onUpdate,
   selectedMembers = [],
   onMembersChange,
-  token,
   activitiesRefreshTrigger,
   onSeeAllActivities,
 }) => {
@@ -37,10 +36,9 @@ const ProjectSidebar = ({
 
         <Divider />
 
-        {project?.identifier && token && (
+        {project?.identifier && (
           <ProjectActivity
             projectIdentifier={project.identifier}
-            token={token}
             refreshTrigger={activitiesRefreshTrigger}
             onSeeAll={onSeeAllActivities}
           />

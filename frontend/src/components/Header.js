@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { PanelLeftClose, PanelRightClose } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 import { cn } from '../utils/cn';
 import Breadcrumb from './Breadcrumb';
 import { Button } from './ui';
 
-const Header = ({
+const Header = memo(function Header({
   fallbackText,
   primaryActionLabel,
   PrimaryActionIcon,
@@ -18,7 +18,7 @@ const Header = ({
   onPanelOpenerClick,
   isPanelOpen,
   hidePanelIconOnLarge = false,
-}) => {
+}) {
   const { isCollapsed, isMobile, isDrawerOpen, showSidebarToggle, toggleSidebar } = useSidebar();
 
   const isOpen = isMobile ? isDrawerOpen : !isCollapsed;
@@ -79,6 +79,8 @@ const Header = ({
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

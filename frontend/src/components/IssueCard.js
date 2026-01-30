@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FolderKanban } from '../icons';
 import { Avatar } from './ui';
 import { getAvatarColor } from '../utils';
 
-const IssueCard = ({
+const IssueCard = memo(function IssueCard({
   issue,
   onClick,
   variant = 'list',
@@ -13,7 +13,7 @@ const IssueCard = ({
   priorityColor,
   priorityLabel,
   showProject = false,
-}) => {
+}) {
   const identifier = issue.parentIssue
     ? issue.parentIssue.identifier || issue.identifier
     : issue.identifier;
@@ -119,6 +119,19 @@ const IssueCard = ({
       )}
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison for better performance
+  return (
+    prevProps.issue._id === nextProps.issue._id &&
+    prevProps.issue.title === nextProps.issue.title &&
+    prevProps.issue.status === nextProps.issue.status &&
+    prevProps.issue.priority === nextProps.issue.priority &&
+    prevProps.issue.assignee?._id === nextProps.issue.assignee?._id &&
+    prevProps.variant === nextProps.variant &&
+    prevProps.showProject === nextProps.showProject
+  );
+});
+
+IssueCard.displayName = 'IssueCard';
 
 export default IssueCard;

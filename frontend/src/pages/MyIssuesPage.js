@@ -9,7 +9,7 @@ import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from '../icons';
 const MyIssuesPage = () => {
   const [filter, setFilter] = useState('assigned');
   const [viewMode, setViewMode] = useState('columns');
-  const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
+  const [issuesRefreshTrigger] = useState(0);
   const { issuesFilter } = useParams();
   const navigate = useNavigate();
 

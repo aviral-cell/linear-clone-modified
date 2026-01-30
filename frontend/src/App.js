@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TeamsProvider } from './context/TeamsContext';
 import { SidebarProvider } from './context/SidebarContext';
-import LoginPage from './pages/LoginPage';
-import IssuesPage from './pages/IssuesPage';
-import IssueDetailPage from './pages/IssueDetailPage';
-import ProjectsPage from './pages/ProjectsPage';
-import ProjectDetailPage from './pages/ProjectDetailPage';
-import MyIssuesPage from './pages/MyIssuesPage';
+import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import { LoadingScreen } from './components/ui';
+
+// Lazy load page components for code splitting
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const IssuesPage = lazy(() => import('./pages/IssuesPage'));
+const IssueDetailPage = lazy(() => import('./pages/IssueDetailPage'));
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
+const MyIssuesPage = lazy(() => import('./pages/MyIssuesPage'));
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -23,95 +26,102 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
+// Page loading fallback component
+const PageLoader = () => <LoadingScreen message="Loading page..." />;
+
 function App() {
   return (
-    <AuthProvider>
-      <TeamsProvider>
-        <SidebarProvider>
-          <Router>
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                className: '!bg-background-secondary !text-text-primary !border !border-border',
-              }}
-            />
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <IssuesPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
+    <ErrorBoundary>
+      <AuthProvider>
+        <TeamsProvider>
+          <SidebarProvider>
+            <Router>
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  className: '!bg-background-secondary !text-text-primary !border !border-border',
+                }}
               />
-              <Route
-                path="/my-issues/:issuesFilter?"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <MyIssuesPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/projects/all"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <ProjectsPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/team/:teamKey/projects/all"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <ProjectsPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/projects/:projectIdentifier/:tab?"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <ProjectDetailPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/team/:teamKey/:issuesFilter"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <IssuesPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/issue/:identifier"
-                element={
-                  <PrivateRoute>
-                    <Layout>
-                      <IssueDetailPage />
-                    </Layout>
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </Router>
-        </SidebarProvider>
-      </TeamsProvider>
-    </AuthProvider>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route
+                  path="/"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <IssuesPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/my-issues/:issuesFilter?"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <MyIssuesPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/projects/all"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <ProjectsPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/team/:teamKey/projects/all"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <ProjectsPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/projects/:projectIdentifier/:tab?"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <ProjectDetailPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/team/:teamKey/:issuesFilter"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <IssuesPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/issue/:identifier"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <IssueDetailPage />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                </Routes>
+              </Suspense>
+            </Router>
+          </SidebarProvider>
+        </TeamsProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
