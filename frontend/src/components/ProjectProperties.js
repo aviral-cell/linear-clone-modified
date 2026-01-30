@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, User, Users, CalendarClock, CalendarCheck2 } from '../icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   FieldTrigger,
-  getDropdownPanelClasses,
+  PopoverPortal,
   PropertyField,
 } from './ui';
 import { cn } from '../utils/cn';
@@ -56,9 +56,6 @@ const ProjectProperties = ({
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showTargetDatePicker, setShowTargetDatePicker] = useState(false);
 
-  const startDateRef = useRef(null);
-  const targetDateRef = useRef(null);
-
   const startDate = project?.startDate ? new Date(project.startDate) : null;
   const targetDate = project?.targetDate ? new Date(project.targetDate) : null;
 
@@ -90,22 +87,6 @@ const ProjectProperties = ({
       onMembersChange(newMembers);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (startDateRef.current && !startDateRef.current.contains(event.target)) {
-        setShowStartDatePicker(false);
-      }
-      if (targetDateRef.current && !targetDateRef.current.contains(event.target)) {
-        setShowTargetDatePicker(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const currentStatus =
     projectStatusOptions.find((o) => o.value === (project?.status || 'backlog')) ||
@@ -166,7 +147,7 @@ const ProjectProperties = ({
   };
 
   const DatePickerHeader = ({ title, description }) => (
-    <div className="px-4 py-2 border-b border-border">
+    <div className="px-4 py-2 border-b border-border max-w-[280px] min-w-0">
       <h3 className="text-sm font-medium text-text-primary">{title}</h3>
       <p className="text-xs text-text-tertiary mt-0.5">{description}</p>
     </div>
@@ -368,78 +349,86 @@ const ProjectProperties = ({
       )}
 
       {showStartDate && (
-        <PropertyField label="Start date" variant={variant} ref={startDateRef}>
-          <div className="relative">
-            <FieldTrigger
-              disabled={disabled}
-              fullWidth={isVertical}
-              title={isVertical ? undefined : 'Start date'}
-              className={cn(!!startDate && 'border-accent', !startDate && 'text-text-tertiary')}
-              onClick={() => setShowStartDatePicker((v) => !v)}
-            >
-              <div className="flex items-center gap-2">
-                <CalendarClock className={`h-4 w-4 ${startDate ? '' : 'text-text-tertiary'}`} />
-                {startDate ? (
-                  <span>{formatDateWithOrdinal(startDate)}</span>
-                ) : isVertical ? (
-                  <span className="text-text-tertiary">No start date</span>
-                ) : null}
-              </div>
-            </FieldTrigger>
-            {showStartDatePicker && (
-              <div className={getDropdownPanelClasses(isVertical, { minWidth: 'min-w-[280px]' })}>
-                <DatePickerHeader
-                  title="Select Start Date"
-                  description="Choose when the project begins"
-                />
-                <DatePicker
-                  selected={startDate}
-                  onChange={handleStartDateChange}
-                  dateFormat="yyyy-MM-dd"
-                  inline
-                  calendarClassName="react-datepicker-custom"
-                />
-              </div>
-            )}
-          </div>
+        <PropertyField label="Start date" variant={variant}>
+          <PopoverPortal
+            open={showStartDatePicker}
+            onOpenChange={setShowStartDatePicker}
+            minWidth="min-w-0"
+            trigger={
+              <FieldTrigger
+                disabled={disabled}
+                fullWidth={isVertical}
+                title={isVertical ? undefined : 'Start date'}
+                className={cn(!!startDate && 'border-accent', !startDate && 'text-text-tertiary')}
+                onClick={() => setShowStartDatePicker((v) => !v)}
+              >
+                <div className="flex items-center gap-2">
+                  <CalendarClock className={`h-4 w-4 ${startDate ? '' : 'text-text-tertiary'}`} />
+                  {startDate ? (
+                    <span>{formatDateWithOrdinal(startDate)}</span>
+                  ) : isVertical ? (
+                    <span className="text-text-tertiary">No start date</span>
+                  ) : null}
+                </div>
+              </FieldTrigger>
+            }
+          >
+            <div className="w-fit">
+              <DatePickerHeader
+                title="Select Start Date"
+                description="Choose when the project begins"
+              />
+              <DatePicker
+                selected={startDate}
+                onChange={handleStartDateChange}
+                dateFormat="yyyy-MM-dd"
+                inline
+                calendarClassName="react-datepicker-custom"
+              />
+            </div>
+          </PopoverPortal>
         </PropertyField>
       )}
 
       {showTargetDate && (
-        <PropertyField label="Target date" variant={variant} ref={targetDateRef}>
-          <div className="relative">
-            <FieldTrigger
-              disabled={disabled}
-              fullWidth={isVertical}
-              title={isVertical ? undefined : 'Target date'}
-              className={cn(!!targetDate && 'border-accent', !targetDate && 'text-text-tertiary')}
-              onClick={() => setShowTargetDatePicker((v) => !v)}
-            >
-              <div className="flex items-center gap-2">
-                <CalendarCheck2 className={`h-4 w-4 ${targetDate ? '' : 'text-text-tertiary'}`} />
-                {targetDate ? (
-                  <span>{formatDateWithOrdinal(targetDate)}</span>
-                ) : isVertical ? (
-                  <span className="text-text-tertiary">No target date</span>
-                ) : null}
-              </div>
-            </FieldTrigger>
-            {showTargetDatePicker && (
-              <div className={getDropdownPanelClasses(isVertical, { minWidth: 'min-w-[280px]' })}>
-                <DatePickerHeader
-                  title="Select Target Date"
-                  description="Choose when the project should be completed"
-                />
-                <DatePicker
-                  selected={targetDate}
-                  onChange={handleTargetDateChange}
-                  dateFormat="yyyy-MM-dd"
-                  inline
-                  calendarClassName="react-datepicker-custom"
-                />
-              </div>
-            )}
-          </div>
+        <PropertyField label="Target date" variant={variant}>
+          <PopoverPortal
+            open={showTargetDatePicker}
+            onOpenChange={setShowTargetDatePicker}
+            minWidth="min-w-0"
+            trigger={
+              <FieldTrigger
+                disabled={disabled}
+                fullWidth={isVertical}
+                title={isVertical ? undefined : 'Target date'}
+                className={cn(!!targetDate && 'border-accent', !targetDate && 'text-text-tertiary')}
+                onClick={() => setShowTargetDatePicker((v) => !v)}
+              >
+                <div className="flex items-center gap-2">
+                  <CalendarCheck2 className={`h-4 w-4 ${targetDate ? '' : 'text-text-tertiary'}`} />
+                  {targetDate ? (
+                    <span>{formatDateWithOrdinal(targetDate)}</span>
+                  ) : isVertical ? (
+                    <span className="text-text-tertiary">No target date</span>
+                  ) : null}
+                </div>
+              </FieldTrigger>
+            }
+          >
+            <div className="w-fit">
+              <DatePickerHeader
+                title="Select Target Date"
+                description="Choose when the project ends"
+              />
+              <DatePicker
+                selected={targetDate}
+                onChange={handleTargetDateChange}
+                dateFormat="yyyy-MM-dd"
+                inline
+                calendarClassName="react-datepicker-custom"
+              />
+            </div>
+          </PopoverPortal>
         </PropertyField>
       )}
 

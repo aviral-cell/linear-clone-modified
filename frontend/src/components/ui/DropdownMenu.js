@@ -1,8 +1,22 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from '../../utils/cn';
+
+const GAP = 4;
+const MIN_SPACE_BELOW = 220;
+const MIN_SPACE_ABOVE = 180;
+/** Tall popovers (e.g. date picker calendar) need more room; prefer placing above if not enough below */
+const MIN_SPACE_BELOW_TALL = 360;
+const MIN_SPACE_ABOVE_TALL = 200;
+const PADDING_VIEWPORT = 16;
+/** On narrow viewports use slightly more padding so panels aren't clipped at screen edges */
+const PADDING_VIEWPORT_MOBILE = 20;
+const MOBILE_BREAKPOINT = 640;
 
 /**
  * Returns panel position classes for dropdown (horizontal layout with optional right-align).
+ * Used for in-flow panels (e.g. date pickers in ProjectProperties). For DropdownMenu panel
+ * we use fixed positioning in a portal instead.
  */
 export function getDropdownPanelClasses(isVertical, options = {}) {
   const { minWidth = 'min-w-dropdown-md', align = 'left' } = options;
@@ -13,9 +27,67 @@ export function getDropdownPanelClasses(isVertical, options = {}) {
   return cn('dropdown-panel', alignment, minWidth, 'max-w-dropdown-viewport');
 }
 
+const ESTIMATED_PANEL_WIDTH = 200;
+
+/**
+ * Compute fixed position for portaled dropdown panel from trigger rect and viewport.
+ * Uses estimated panel size when actual size not yet available.
+ * @param {DOMRect} triggerRect
+ * @param {string} align - 'left' | 'right'
+ * @param {number} [panelWidth]
+ * @param {{ minSpaceBelow?: number, minSpaceAbove?: number }} [options] - For tall panels (e.g. date picker) pass larger minSpaceBelow so we place above when needed.
+ */
+function getPanelPlacement(triggerRect, align, panelWidth = ESTIMATED_PANEL_WIDTH, options = {}) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const padding = vw < MOBILE_BREAKPOINT ? PADDING_VIEWPORT_MOBILE : PADDING_VIEWPORT;
+  const minBelow = options.minSpaceBelow ?? MIN_SPACE_BELOW;
+  const minAbove = options.minSpaceAbove ?? MIN_SPACE_ABOVE;
+  const spaceBelow = vh - triggerRect.bottom;
+  const spaceAbove = triggerRect.top;
+  const placeAbove = spaceBelow < minBelow && spaceAbove >= Math.min(minAbove, spaceBelow);
+
+  const top = placeAbove
+    ? undefined
+    : triggerRect.bottom + GAP;
+  const bottom = placeAbove
+    ? vh - triggerRect.top + GAP
+    : undefined;
+
+  const pw = panelWidth || 180;
+  const spaceOnRight = vw - triggerRect.right;
+  const useRight = align === 'right' || (spaceOnRight < pw + padding && triggerRect.left > spaceOnRight);
+
+  const left = useRight
+    ? undefined
+    : Math.max(padding, Math.min(triggerRect.left, vw - pw - padding));
+  const right = useRight
+    ? Math.max(padding, Math.min(vw - triggerRect.right, vw - pw - padding))
+    : undefined;
+
+  return { top, bottom, left, right };
+}
+
+/**
+ * Compute max-height so a portaled panel stays inside the viewport.
+ */
+function getPanelMaxHeight(triggerRect, placement) {
+  const vh = window.innerHeight;
+  if (placement.top != null) {
+    return vh - placement.top - PADDING_VIEWPORT;
+  }
+  if (placement.bottom != null) {
+    return vh - placement.bottom - PADDING_VIEWPORT;
+  }
+  return vh - PADDING_VIEWPORT * 2;
+}
+
 /**
  * Dropdown menu: wrapper with click-outside and panel alignment.
- * Renders container (with ref), trigger, and when open the panel with children.
+ * Renders the panel in a portal with fixed positioning so it is not clipped by
+ * sidebar, modal, or overflow. Used on all pages (IssueProperties, SubIssuesSection,
+ * UpdateCard, ProjectProperties, ProjectModal, CreateIssueModal).
+ *
  * @param {boolean} open
  * @param {(open: boolean) => void} onOpenChange
  * @param {React.ReactNode} trigger - The trigger button (e.g. FieldTrigger)
@@ -39,11 +111,44 @@ function DropdownMenu({
   const panelRef = useRef(null);
   const triggerRef = useRef(null);
   const [align, setAlign] = useState('left');
+  const [, setPlaceTick] = useState(0);
 
+  // Sync align when opening.
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const spaceOnRight = vw - triggerRect.right;
+    const newAlign = isVertical ? 'left' : (spaceOnRight < 196 && triggerRect.left > spaceOnRight ? 'right' : 'left');
+    setAlign(newAlign);
+  }, [open, isVertical]);
+
+  // Resize/scroll: force re-render so we recompute placement from trigger rect.
+  useEffect(() => {
+    if (!open) return;
+    const handle = () => setPlaceTick((t) => t + 1);
+    window.addEventListener('resize', handle);
+    window.addEventListener('scroll', handle, true);
+    return () => {
+      window.removeEventListener('resize', handle);
+      window.removeEventListener('scroll', handle, true);
+    };
+  }, [open]);
+
+  // Compute placement during render when open (avoids flash; stays correct on resize/scroll via placeTick).
+  const triggerRect = open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
+  const renderAlign = triggerRect
+    ? (isVertical ? 'left' : (window.innerWidth - triggerRect.right < 196 && triggerRect.left > window.innerWidth - triggerRect.right ? 'right' : 'left'))
+    : align;
+  const renderPlacement = triggerRect ? getPanelPlacement(triggerRect, renderAlign) : { top: 0, left: 0 };
+
+  // Click outside: treat both trigger container and portaled panel as "inside"
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
+      const inTrigger = containerRef.current && containerRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inTrigger && !inPanel) {
         onOpenChange(false);
       }
     };
@@ -51,57 +156,143 @@ function DropdownMenu({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open, onOpenChange]);
 
+  // Escape to close
   useEffect(() => {
-    if (!open || isVertical) return;
-    const run = () => {
-      if (!triggerRef.current || !panelRef.current) return;
-      const buttonRect = triggerRef.current.getBoundingClientRect();
-      const menuRect = panelRef.current.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const padding = 16;
-      const spaceOnRight = viewportWidth - buttonRect.right;
-      const spaceOnLeft = buttonRect.left;
-      const menuWidth = menuRect.width || 180;
-      if (spaceOnRight < menuWidth + padding && spaceOnLeft > spaceOnRight) {
-        setAlign('right');
-      } else {
-        setAlign('left');
-      }
+    if (!open) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onOpenChange(false);
     };
-    requestAnimationFrame(run);
-  }, [open, isVertical]);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onOpenChange]);
 
-  useEffect(() => {
-    if (!open || isVertical) return;
-    const handleResize = () =>
-      requestAnimationFrame(() => {
-        if (triggerRef.current && panelRef.current) {
-          const buttonRect = triggerRef.current.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-          const spaceOnRight = viewportWidth - buttonRect.right;
-          const spaceOnLeft = buttonRect.left;
-          setAlign(spaceOnRight < 196 && spaceOnLeft > spaceOnRight ? 'right' : 'left');
-        }
-      });
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [open, isVertical]);
-
-  const panelClasses = getDropdownPanelClasses(isVertical, {
+  const panelClasses = cn(
+    'dropdown-panel-portaled z-dropdown',
+    'bg-background-secondary border border-border rounded-md shadow-lg',
+    'max-w-dropdown-viewport',
     minWidth,
-    align: isVertical ? 'left' : align,
-  });
+    maxHeight && 'overflow-y-auto',
+    maxHeight
+  );
+  const panelStyle = {
+    position: 'fixed',
+    top: renderPlacement.top != null ? renderPlacement.top : undefined,
+    bottom: renderPlacement.bottom != null ? renderPlacement.bottom : undefined,
+    left: renderPlacement.left != null ? renderPlacement.left : undefined,
+    right: renderPlacement.right != null ? renderPlacement.right : undefined,
+  };
+
+  const panelContent = open ? (
+    <div
+      ref={panelRef}
+      className={panelClasses}
+      style={panelStyle}
+      role="menu"
+    >
+      {children}
+    </div>
+  ) : null;
 
   return (
     <div ref={containerRef} className={cn('relative', className)}>
       <div ref={triggerRef}>{trigger}</div>
-      {open && (
-        <div ref={panelRef} className={cn(panelClasses, maxHeight && 'overflow-y-auto', maxHeight)}>
-          {children}
-        </div>
-      )}
+      {open && createPortal(panelContent, document.body)}
+    </div>
+  );
+}
+
+/**
+ * Popover portal: renders panel in a portal with fixed positioning (same as DropdownMenu).
+ * Use for date pickers and other popover content that should not be clipped by sidebar/modal/overflow.
+ *
+ * @param {boolean} open
+ * @param {(open: boolean) => void} onOpenChange
+ * @param {React.ReactNode} trigger - The trigger element (e.g. FieldTrigger)
+ * @param {React.ReactNode} children - Panel content (e.g. DatePicker wrapper)
+ * @param {string} [minWidth='min-w-[280px]']
+ * @param {string} [className]
+ */
+function PopoverPortal({
+  open,
+  onOpenChange,
+  trigger,
+  children,
+  minWidth = 'min-w-[280px]',
+  className,
+}) {
+  const containerRef = useRef(null);
+  const panelRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [, setPlaceTick] = useState(0);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = () => setPlaceTick((t) => t + 1);
+    window.addEventListener('resize', handle);
+    window.addEventListener('scroll', handle, true);
+    return () => {
+      window.removeEventListener('resize', handle);
+      window.removeEventListener('scroll', handle, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e) => {
+      const inTrigger = containerRef.current && containerRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inTrigger && !inPanel) onOpenChange(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open, onOpenChange]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onOpenChange(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onOpenChange]);
+
+  const triggerRect = open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
+  const renderPlacement = triggerRect
+    ? getPanelPlacement(triggerRect, 'left', 280, {
+        minSpaceBelow: MIN_SPACE_BELOW_TALL,
+        minSpaceAbove: MIN_SPACE_ABOVE_TALL,
+      })
+    : { top: 0, left: 0 };
+  const maxHeight = triggerRect ? getPanelMaxHeight(triggerRect, renderPlacement) : undefined;
+
+  const panelClasses = cn(
+    'dropdown-panel-portaled z-dropdown w-fit',
+    'bg-background-secondary border border-border rounded-md shadow-lg',
+    'max-w-dropdown-viewport overflow-y-auto',
+    minWidth
+  );
+  const panelStyle = {
+    position: 'fixed',
+    top: renderPlacement.top != null ? renderPlacement.top : undefined,
+    bottom: renderPlacement.bottom != null ? renderPlacement.bottom : undefined,
+    left: renderPlacement.left != null ? renderPlacement.left : undefined,
+    right: renderPlacement.right != null ? renderPlacement.right : undefined,
+    maxHeight: maxHeight != null ? `${Math.max(200, maxHeight)}px` : undefined,
+  };
+
+  const panelContent = open ? (
+    <div ref={panelRef} className={panelClasses} style={panelStyle} role="dialog" aria-modal="true">
+      {children}
+    </div>
+  ) : null;
+
+  return (
+    <div ref={containerRef} className={cn('relative', className)}>
+      <div ref={triggerRef}>{trigger}</div>
+      {open && createPortal(panelContent, document.body)}
     </div>
   );
 }
 
 export default DropdownMenu;
+export { PopoverPortal };

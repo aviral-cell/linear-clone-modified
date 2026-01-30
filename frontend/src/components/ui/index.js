@@ -12,7 +12,7 @@ export { default as IconButton } from './IconButton';
 export { default as IconBadge } from './IconBadge';
 export { default as FieldTrigger } from './FieldTrigger';
 export { default as PropertyField } from './PropertyField';
-export { default as DropdownMenu } from './DropdownMenu';
+export { default as DropdownMenu, PopoverPortal } from './DropdownMenu';
 export { getDropdownPanelClasses } from './DropdownMenu';
 export { default as DropdownMenuItem } from './DropdownMenuItem';
 export { default as Spinner } from './Spinner';
