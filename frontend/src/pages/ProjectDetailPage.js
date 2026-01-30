@@ -119,6 +119,7 @@ const ProjectDetailPage = () => {
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const statusMenuRef = useRef(null);
   const sidebarRef = useRef(null);
+  const skipNextFetchRef = useRef(false);
 
   useEffect(() => {
     if (focusUpdateInput) {
@@ -284,6 +285,10 @@ const ProjectDetailPage = () => {
   }, [projectIdentifier, token]);
 
   useEffect(() => {
+    if (skipNextFetchRef.current) {
+      skipNextFetchRef.current = false;
+      return;
+    }
     fetchProject();
     fetchIssues();
     fetchUpdates();
@@ -358,6 +363,10 @@ const ProjectDetailPage = () => {
         setProject((prev) => ({ ...prev, ...data.project }));
         setActivitiesRefreshTrigger((prev) => prev + 1);
         toast.success('Project updated');
+        if (data.project.identifier && data.project.identifier !== projectIdentifier) {
+          skipNextFetchRef.current = true;
+          navigate(`/projects/${data.project.identifier}/${activeTab}`, { replace: true });
+        }
       } else {
         await fetchProject();
         toast.error('Failed to update project');

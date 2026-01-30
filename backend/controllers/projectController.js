@@ -266,6 +266,7 @@ export const updateProject = async (req, res) => {
 
     if (otherUpdates.name !== undefined && otherUpdates.name !== project.name) {
       await createProjectActivity(project._id, req.user._id, 'name_changed', project.name, otherUpdates.name);
+      otherUpdates.identifier = generateProjectIdentifier(otherUpdates.name);
     }
 
     if (otherUpdates.summary !== undefined && otherUpdates.summary !== (project.summary || '')) {
