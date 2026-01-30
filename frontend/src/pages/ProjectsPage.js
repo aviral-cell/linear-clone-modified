@@ -14,7 +14,7 @@ import {
   LoadingScreen,
   TabNavigation,
 } from '../components/ui';
-import { Plus, FolderKanban, CircleDashed, Ban } from '../icons';
+import { Plus, FolderKanban } from '../icons';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
 import {
@@ -66,13 +66,7 @@ const getStatusIndicator = (project) => {
 };
 
 const getStatusIcon = (status) => {
-  const entry = projectStatusIcons[status];
-  if (entry) return entry;
-  if (status === 'planned') return { Icon: FolderKanban, color: 'text-blue-500' };
-  if (status === 'in_progress') return { Icon: CircleDashed, color: 'text-green-500' };
-  if (status === 'completed') return { Icon: FolderKanban, color: 'text-text-tertiary' };
-  if (status === 'cancelled') return { Icon: Ban, color: 'text-text-tertiary' };
-  return { Icon: CircleDashed, color: 'text-text-tertiary' };
+  return projectStatusIcons[status] || projectStatusIcons.backlog;
 };
 
 const formatDate = (date) => {
