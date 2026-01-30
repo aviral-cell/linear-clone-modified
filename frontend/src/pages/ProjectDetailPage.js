@@ -519,7 +519,6 @@ const ProjectDetailPage = () => {
                         placeholder="Add project summary..."
                         minHeight="comment"
                         className="mt-2 min-h-[60px] px-0 py-2 bg-background text-sm"
-                        displayClassName="editable-title mt-2 px-0 py-2 text-text-secondary min-h-[40px] text-sm"
                         onSave={(nextSummary) => {
                           if (nextSummary !== (project.summary || project.description || '')) {
                             setSummary(nextSummary);

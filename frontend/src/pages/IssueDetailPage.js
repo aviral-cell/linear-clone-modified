@@ -356,7 +356,6 @@ const IssueDetailPage = () => {
                 placeholder="Add description..."
                 minHeight="description"
                 className="min-h-[100px] px-0 py-2 bg-background"
-                displayClassName="px-0 py-2 text-text-primary cursor-text hover:opacity-70 min-h-[60px] transition-opacity"
                 onSave={(nextDescription) => {
                   if (nextDescription !== issue.description) {
                     setDescription(nextDescription);
