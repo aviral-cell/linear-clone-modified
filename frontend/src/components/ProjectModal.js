@@ -1,20 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  X,
-  CircleDashed,
-  Minus,
-  User,
-  Users,
-  CalendarCheck2,
-  CalendarClock,
-  FolderKanban,
-  AlertCircle,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-  ChevronDown,
-  CheckCircle2,
-} from 'lucide-react';
+import { X, ChevronDown, FolderKanban } from '../icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/ProjectModal.css';
@@ -33,22 +18,6 @@ import {
   Input,
   Textarea,
 } from './ui';
-
-const statusOptions = [
-  { value: 'backlog', label: 'Backlog', icon: CircleDashed, color: 'text-orange-500' },
-  { value: 'planned', label: 'Planned', icon: FolderKanban, color: 'text-text-tertiary' },
-  { value: 'in_progress', label: 'In Progress', icon: CircleDashed, color: 'text-green-500' },
-  { value: 'completed', label: 'Completed', icon: FolderKanban, color: 'text-accent' },
-  { value: 'cancelled', label: 'Cancelled', icon: X, color: 'text-text-tertiary' },
-];
-
-const priorityOptions = [
-  { value: 'no_priority', label: 'No priority', icon: Minus, color: 'text-text-tertiary' },
-  { value: 'urgent', label: 'Urgent', icon: AlertCircle, color: 'text-red-500' },
-  { value: 'high', label: 'High', icon: BarChart4, color: 'text-orange-500' },
-  { value: 'medium', label: 'Medium', icon: BarChart3, color: 'text-yellow-500' },
-  { value: 'low', label: 'Low', icon: BarChart2, color: 'text-text-tertiary' },
-];
 
 const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selectedTeam }) => {
   const { token } = useAuth();
@@ -120,8 +89,6 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   if (!isOpen) return null;
 
   const selectedTeamObj = teams.find((t) => t._id === teamId) || selectedTeam;
-  const selectedStatus = statusOptions.find((s) => s.value === status);
-  const selectedPriorityObj = priorityOptions.find((p) => p.value === priority);
   const selectedCreator = users.find((u) => u._id === creatorId);
   const selectedLead = users.find((u) => u._id === leadId);
 

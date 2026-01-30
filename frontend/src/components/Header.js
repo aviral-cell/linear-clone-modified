@@ -1,5 +1,5 @@
 import React from 'react';
-import { PanelLeftClose, PanelRightClose } from 'lucide-react';
+import { PanelLeftClose, PanelRightClose } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 import { cn } from '../utils/cn';
 import Breadcrumb from './Breadcrumb';

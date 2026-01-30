@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown } from '../icons';
 import { baseURL } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import IssueProperties from './IssueProperties';

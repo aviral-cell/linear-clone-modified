@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send } from '../icons';
 import { Button, Card, Textarea } from './ui';
 
 const CommentInput = ({ onSubmit, loading }) => {

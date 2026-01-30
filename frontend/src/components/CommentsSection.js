@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from '../icons';
 import { getAvatarColor, formatDateTime } from '../utils';
 import { Avatar, Button, Card, IconButton, Textarea } from './ui';
 import toast from 'react-hot-toast';

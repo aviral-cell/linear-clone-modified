@@ -1,26 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  ChevronDown,
-  User,
-  Users,
-  CalendarClock,
-  CalendarCheck2,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-  AlertCircle,
-  Clock,
-  Circle,
-  CircleDot,
-  CheckCircle2,
-  X,
-} from 'lucide-react';
+import { ChevronDown, User, Users, CalendarClock, CalendarCheck2 } from '../icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/ProjectModal.css';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
+import { projectStatusOptions, priorityOptions } from '../constants/status';
 import {
   Avatar,
   DropdownMenu,
@@ -30,47 +15,6 @@ import {
   PropertyField,
 } from './ui';
 import { cn } from '../utils/cn';
-
-const projectStatusOptions = [
-  {
-    value: 'backlog',
-    label: 'Backlog',
-    Icon: Clock,
-    iconColor: 'text-orange-400',
-  },
-  {
-    value: 'planned',
-    label: 'Planned',
-    Icon: Circle,
-    iconColor: 'text-text-tertiary',
-  },
-  {
-    value: 'in_progress',
-    label: 'In Progress',
-    Icon: CircleDot,
-    iconColor: 'text-yellow-400',
-  },
-  {
-    value: 'completed',
-    label: 'Completed',
-    Icon: CheckCircle2,
-    iconColor: 'text-blue-500',
-  },
-  {
-    value: 'cancelled',
-    label: 'Canceled',
-    Icon: X,
-    iconColor: 'text-text-tertiary',
-  },
-];
-
-const priorityOptions = [
-  { value: 'no_priority', label: 'No priority', Icon: Minus, color: 'text-text-tertiary' },
-  { value: 'urgent', label: 'Urgent', Icon: AlertCircle, color: 'text-red-500' },
-  { value: 'high', label: 'High', Icon: BarChart4, color: 'text-orange-500' },
-  { value: 'medium', label: 'Medium', Icon: BarChart3, color: 'text-yellow-500' },
-  { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
-];
 
 const formatDateWithOrdinal = (date) => {
   if (!date) return '';
@@ -267,7 +211,7 @@ const ProjectProperties = ({
                     setShowStatusMenu(false);
                   }}
                 >
-                  <OptionIcon className={`h-4 w-4 ${option.iconColor}`} />
+                  <OptionIcon className={`h-4 w-4 ${option.color}`} />
                   <span>{option.label}</span>
                 </DropdownMenuItem>
               );

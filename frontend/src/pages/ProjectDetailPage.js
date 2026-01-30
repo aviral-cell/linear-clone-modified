@@ -29,64 +29,18 @@ import {
   Star,
   Plus,
   PanelRight,
-  Check,
-  TrendingUp,
-  TrendingDown,
-  X,
-  AlertCircle,
-} from 'lucide-react';
+} from '../icons';
 import toast from 'react-hot-toast';
 import { formatDate, getAvatarColor, getInitials } from '../utils';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
-
-const updateStatusOptions = [
-  {
-    value: 'on_track',
-    label: 'On track',
-    icon: TrendingUp,
-    color: 'text-green-400',
-    bgColor: 'bg-green-500/20',
-    borderColor: 'border-green-500/30',
-  },
-  {
-    value: 'at_risk',
-    label: 'At risk',
-    icon: AlertCircle,
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-500/20',
-    borderColor: 'border-yellow-500/30',
-  },
-  {
-    value: 'off_track',
-    label: 'Off track',
-    icon: TrendingDown,
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/20',
-    borderColor: 'border-red-500/30',
-  },
-];
+import {
+  updateStatusOptions,
+  getUpdateStatusConfig,
+} from '../constants/status';
 
 const getStatusConfig = (status) => {
   const displayStatus = normalizeUpdateStatus(status);
-  const config = updateStatusOptions.find((opt) => opt.value === displayStatus);
-
-  if (config) {
-    return {
-      label: config.label,
-      icon: config.icon,
-      color: config.color,
-      bgColor: config.bgColor,
-      borderColor: config.borderColor,
-    };
-  }
-
-  return {
-    label: status,
-    icon: Check,
-    color: 'text-text-tertiary',
-    bgColor: 'bg-text-tertiary/20',
-    borderColor: 'border-border',
-  };
+  return getUpdateStatusConfig(displayStatus);
 };
 
 const ProjectDetailPage = () => {

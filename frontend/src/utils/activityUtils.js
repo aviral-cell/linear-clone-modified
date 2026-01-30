@@ -1,39 +1,19 @@
 import {
   CircleDot,
   CheckCircle2,
-  BarChart4,
-  BarChart3,
-  BarChart2,
+  TrendingUp,
+  AlertCircle,
+  TrendingDown,
   CalendarClock,
   CalendarCheck2,
   User,
   Users,
   Building2,
   Edit,
-  TrendingUp,
-  AlertCircle,
-  TrendingDown,
-  Clock,
-  Circle,
-  X,
-  Minus,
-} from 'lucide-react';
+} from '../icons';
+import { projectStatusIcons, priorityIcons } from '../constants/status';
 
-export const projectStatusIcons = {
-  backlog: { Icon: Clock, color: 'text-orange-400' },
-  planned: { Icon: Circle, color: 'text-text-tertiary' },
-  in_progress: { Icon: CircleDot, color: 'text-yellow-400' },
-  completed: { Icon: CheckCircle2, color: 'text-blue-500' },
-  cancelled: { Icon: X, color: 'text-text-tertiary' },
-};
-
-export const priorityIcons = {
-  no_priority: { Icon: Minus, color: 'text-text-tertiary' },
-  urgent: { Icon: AlertCircle, color: 'text-red-500' },
-  high: { Icon: BarChart4, color: 'text-orange-500' },
-  medium: { Icon: BarChart3, color: 'text-yellow-500' },
-  low: { Icon: BarChart2, color: 'text-text-tertiary' },
-};
+export { projectStatusIcons, priorityIcons };
 
 export const getActivityIcon = (actionType, updateStatus = null, activityValue = null) => {
   switch (actionType) {
@@ -46,7 +26,7 @@ export const getActivityIcon = (actionType, updateStatus = null, activityValue =
       if (activityValue && priorityIcons[activityValue]) {
         return priorityIcons[activityValue];
       }
-      return { Icon: BarChart4, color: 'text-text-tertiary' };
+      return { Icon: priorityIcons.high?.Icon || priorityIcons.no_priority.Icon, color: 'text-text-tertiary' };
     case 'update_posted':
       if (updateStatus === 'on_track') {
         return { Icon: TrendingUp, color: 'text-green-400' };

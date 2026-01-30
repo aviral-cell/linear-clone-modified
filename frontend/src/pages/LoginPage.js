@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { Zap, Mail, Lock, User as UserIcon } from 'lucide-react';
+import { Zap, Mail, Lock, User } from '../icons';
 import { Button, Input, Label, Spinner } from '../components/ui';
 
 const LoginPage = () => {
@@ -95,7 +95,7 @@ const LoginPage = () => {
                   placeholder="Your name"
                   required={!isLogin}
                 >
-                  <UserIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
+                  <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
                 </Input.WithIcon>
               </div>
             )}

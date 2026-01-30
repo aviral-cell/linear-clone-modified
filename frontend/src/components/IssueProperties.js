@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
-import {
-  ChevronDown,
-  User,
-  Circle,
-  CircleDashed,
-  CircleDot,
-  CheckCircle2,
-  XCircle,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-  AlertCircle,
-  FolderKanban,
-} from 'lucide-react';
+import { ChevronDown, User, FolderKanban } from '../icons';
 import { getAvatarColor } from '../utils';
+import { issueStatusOptions, priorityOptions } from '../constants/status';
 import {
   Avatar,
   DropdownMenu,
@@ -23,59 +10,6 @@ import {
   IconBadge,
   PropertyField,
 } from './ui';
-
-const statusOptions = [
-  {
-    value: 'backlog',
-    label: 'Backlog',
-    Icon: CircleDashed,
-    iconColor: 'text-text-tertiary',
-  },
-  {
-    value: 'todo',
-    label: 'Todo',
-    Icon: Circle,
-    iconColor: 'text-text-secondary',
-  },
-  {
-    value: 'in_progress',
-    label: 'In Progress',
-    Icon: CircleDot,
-    iconColor: 'text-yellow-500',
-  },
-  {
-    value: 'in_review',
-    label: 'In Review',
-    Icon: CircleDot,
-    iconColor: 'text-green-500',
-  },
-  {
-    value: 'done',
-    label: 'Done',
-    Icon: CheckCircle2,
-    iconColor: 'text-accent',
-  },
-  {
-    value: 'cancelled',
-    label: 'Cancelled',
-    Icon: XCircle,
-    iconColor: 'text-text-tertiary',
-  },
-  {
-    value: 'duplicate',
-    label: 'Duplicate',
-    Icon: XCircle,
-    iconColor: 'text-text-tertiary',
-  },
-];
-
-const priorityOptions = [
-  { value: 'no_priority', label: 'No priority', Icon: Minus, color: 'text-text-tertiary' },
-  { value: 'urgent', label: 'Urgent', Icon: AlertCircle, color: 'text-red-500' },
-  { value: 'high', label: 'High', Icon: BarChart4, color: 'text-orange-500' },
-  { value: 'medium', label: 'Medium', Icon: BarChart3, color: 'text-yellow-500' },
-  { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
-];
 
 const IssueProperties = ({
   issue,
@@ -100,7 +34,7 @@ const IssueProperties = ({
     : 'flex items-center gap-2 flex-wrap';
 
   const currentStatus =
-    statusOptions.find((o) => o.value === (issue?.status || 'todo')) || statusOptions[1];
+    issueStatusOptions.find((o) => o.value === (issue?.status || 'todo')) || issueStatusOptions[1];
 
   const currentPriority =
     priorityOptions.find((o) => o.value === (issue?.priority || 'no_priority')) ||
@@ -177,7 +111,7 @@ const IssueProperties = ({
               </FieldTrigger>
             }
           >
-            {statusOptions.map((option) => {
+            {issueStatusOptions.map((option) => {
               const OptionIcon = option.Icon;
               const isCurrent = option.value === currentStatus.value;
               return (
@@ -189,7 +123,7 @@ const IssueProperties = ({
                     setShowStatusMenu(false);
                   }}
                 >
-                  <OptionIcon className={`h-4 w-4 ${option.iconColor}`} />
+                  <OptionIcon className={`h-4 w-4 ${option.color}`} />
                   <span>{option.label}</span>
                 </DropdownMenuItem>
               );

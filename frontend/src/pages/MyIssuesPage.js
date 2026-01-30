@@ -4,7 +4,7 @@ import IssuesBoard from '../components/IssuesBoard';
 import Header from '../components/Header';
 import { Button, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
-import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from 'lucide-react';
+import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from '../icons';
 
 const MyIssuesPage = () => {
   const [filter, setFilter] = useState('assigned');

@@ -14,21 +14,15 @@ import {
   LoadingScreen,
   TabNavigation,
 } from '../components/ui';
-import {
-  Plus,
-  FolderKanban,
-  AlertCircle,
-  Ban,
-  CircleDashed,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-} from 'lucide-react';
+import { Plus, FolderKanban, CircleDashed, Ban } from '../icons';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
+import {
+  updateStatusIndicatorIcons,
+  projectStatusIcons,
+  getPriorityColor,
+  getPriorityMeta,
+} from '../constants/status';
 
 const TABLE_GRID_CLASS = (showTeam) =>
   showTeam
@@ -51,86 +45,34 @@ const getStatusIndicator = (project) => {
   );
 
   const displayStatus = normalizeUpdateStatus(latestUpdate.status);
+  const indicator = updateStatusIndicatorIcons[displayStatus];
+  const statusLabels = { on_track: 'On track', at_risk: 'At risk', off_track: 'Off track' };
 
-  switch (displayStatus) {
-    case 'on_track':
-      return {
-        status: 'on_track',
-        label: `On track, last update ${hoursAgo}h ago`,
-        color: 'text-green-400',
-        icon: TrendingUp,
-      };
-    case 'at_risk':
-      return {
-        status: 'at_risk',
-        label: `At risk, last update ${hoursAgo}h ago`,
-        color: 'text-yellow-400',
-        icon: AlertCircle,
-      };
-    case 'off_track':
-      return {
-        status: 'off_track',
-        label: `Off track, last update ${hoursAgo}h ago`,
-        color: 'text-red-400',
-        icon: TrendingDown,
-      };
-    default:
-      return {
-        status: 'unknown',
-        label: `Last update ${hoursAgo}h ago`,
-        color: 'text-text-tertiary',
-        icon: null,
-      };
+  if (indicator) {
+    return {
+      status: displayStatus,
+      label: `${statusLabels[displayStatus] || displayStatus}, last update ${hoursAgo}h ago`,
+      color: indicator.color,
+      icon: indicator.icon,
+    };
   }
-};
 
-const getPriorityColor = (priority) => {
-  switch (priority) {
-    case 'urgent':
-      return 'text-red-500';
-    case 'high':
-      return 'text-orange-500';
-    case 'medium':
-      return 'text-yellow-500';
-    case 'low':
-      return 'text-blue-500';
-    default:
-      return 'text-text-tertiary';
-  }
-};
-
-const getPriorityMeta = (priority) => {
-  switch (priority) {
-    case 'urgent':
-      return { Icon: AlertCircle, label: 'Urgent' };
-    case 'high':
-      return { Icon: BarChart4, label: 'High' };
-    case 'medium':
-      return { Icon: BarChart3, label: 'Medium' };
-    case 'low':
-      return { Icon: BarChart2, label: 'Low' };
-    case 'no_priority':
-      return { Icon: Minus, label: 'No priority' };
-    default:
-      return { Icon: Minus, label: 'No priority' };
-  }
+  return {
+    status: 'unknown',
+    label: `Last update ${hoursAgo}h ago`,
+    color: 'text-text-tertiary',
+    icon: null,
+  };
 };
 
 const getStatusIcon = (status) => {
-  switch (status) {
-    case 'backlog':
-      return { Icon: CircleDashed, color: 'text-text-tertiary' };
-    case 'planned':
-      return { Icon: FolderKanban, color: 'text-blue-500' };
-    case 'in_progress':
-      return { Icon: CircleDashed, color: 'text-green-500' };
-    case 'completed':
-      return { Icon: FolderKanban, color: 'text-text-tertiary' };
-    case 'cancelled':
-      return { Icon: Ban, color: 'text-text-tertiary' };
-    default:
-      return { Icon: CircleDashed, color: 'text-text-tertiary' };
-  }
+  const entry = projectStatusIcons[status];
+  if (entry) return entry;
+  if (status === 'planned') return { Icon: FolderKanban, color: 'text-blue-500' };
+  if (status === 'in_progress') return { Icon: CircleDashed, color: 'text-green-500' };
+  if (status === 'completed') return { Icon: FolderKanban, color: 'text-text-tertiary' };
+  if (status === 'cancelled') return { Icon: Ban, color: 'text-text-tertiary' };
+  return { Icon: CircleDashed, color: 'text-text-tertiary' };
 };
 
 const formatDate = (date) => {

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { Avatar, Button, IconBadge, IconButton } from './ui';
-import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from 'lucide-react';
+import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {

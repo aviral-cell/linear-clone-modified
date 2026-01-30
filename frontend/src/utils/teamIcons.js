@@ -1,4 +1,4 @@
-import { Settings, Briefcase, Megaphone, Rocket } from 'lucide-react';
+import { Settings, Briefcase, Megaphone, Rocket } from '../icons';
 
 export const teamIcons = {
   '⚙️': Settings,

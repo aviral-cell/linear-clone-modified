@@ -1,5 +1,5 @@
 import React from 'react';
-import { FolderKanban } from 'lucide-react';
+import { FolderKanban } from '../icons';
 import { Avatar } from './ui';
 import { getAvatarColor } from '../utils';
 

@@ -7,7 +7,7 @@ import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
 import { Button, LoadingScreen, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
-import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from 'lucide-react';
+import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from '../icons';
 import toast from 'react-hot-toast';
 
 const IssuesPage = () => {

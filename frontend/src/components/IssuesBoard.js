@@ -1,89 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Circle,
-  CircleDashed,
-  CheckCircle2,
-  CircleDot,
-  XCircle,
-  AlertCircle,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-  Plus,
-} from 'lucide-react';
+import { Plus } from '../icons';
 import { baseURL } from '../utils';
+import { issueStatusConfig, priorityConfig } from '../constants/status';
 import IssueCard from './IssueCard';
 import { Button } from './ui';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-const statusConfig = {
-  backlog: {
-    label: 'Backlog',
-    icon: CircleDashed,
-    color: 'text-text-tertiary',
-  },
-  todo: {
-    label: 'Todo',
-    icon: Circle,
-    color: 'text-text-secondary',
-  },
-  in_progress: {
-    label: 'In Progress',
-    icon: CircleDot,
-    color: 'text-yellow-500',
-  },
-  in_review: {
-    label: 'In Review',
-    icon: CircleDot,
-    color: 'text-green-500',
-  },
-  done: {
-    label: 'Done',
-    icon: CheckCircle2,
-    color: 'text-accent',
-  },
-  cancelled: {
-    label: 'Cancelled',
-    icon: XCircle,
-    color: 'text-text-tertiary',
-  },
-  duplicate: {
-    label: 'Duplicate',
-    icon: XCircle,
-    color: 'text-text-tertiary',
-  },
-};
-
-const priorityConfig = {
-  urgent: {
-    label: 'Urgent',
-    icon: AlertCircle,
-    color: 'text-red-500',
-  },
-  high: {
-    label: 'High',
-    icon: BarChart4,
-    color: 'text-orange-500',
-  },
-  medium: {
-    label: 'Medium',
-    icon: BarChart3,
-    color: 'text-yellow-500',
-  },
-  low: {
-    label: 'Low',
-    icon: BarChart2,
-    color: 'text-text-tertiary',
-  },
-  no_priority: {
-    label: 'Set priority',
-    icon: Minus,
-    color: 'text-text-tertiary',
-  },
-};
+const statusConfig = issueStatusConfig;
 
 const IssuesBoard = ({
   team,

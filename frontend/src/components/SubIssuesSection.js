@@ -1,23 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Plus,
-  ChevronDown,
-  ChevronRight,
-  Link2,
-  Circle,
-  CircleDashed,
-  CheckCircle2,
-  CircleDot,
-  XCircle,
-  AlertCircle,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-} from 'lucide-react';
+import { Plus, Circle } from '../icons';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
+import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants/status';
 import {
   Avatar,
   Button,
@@ -31,60 +17,10 @@ import {
 } from './ui';
 import IssueCard from './IssueCard';
 
-const statusIcons = {
-  backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
-  todo: { Icon: Circle, color: 'text-text-secondary' },
-  in_progress: { Icon: CircleDot, color: 'text-yellow-500' },
-  in_review: { Icon: CircleDot, color: 'text-green-500' },
-  done: { Icon: CheckCircle2, color: 'text-accent' },
-  cancelled: { Icon: XCircle, color: 'text-text-tertiary' },
-  duplicate: { Icon: XCircle, color: 'text-text-tertiary' },
-};
-
-const statusOptions = [
-  {
-    value: 'backlog',
-    label: 'Backlog',
-    Icon: CircleDashed,
-    color: 'text-text-tertiary',
-  },
-  { value: 'todo', label: 'Todo', Icon: Circle, color: 'text-text-secondary' },
-  {
-    value: 'in_progress',
-    label: 'In Progress',
-    Icon: CircleDot,
-    color: 'text-yellow-500',
-  },
-  {
-    value: 'in_review',
-    label: 'In Review',
-    Icon: CircleDot,
-    color: 'text-green-500',
-  },
-];
-
-const priorityOptions = [
-  {
-    value: 'no_priority',
-    label: 'No priority',
-    Icon: Minus,
-    color: 'text-text-tertiary',
-  },
-  {
-    value: 'urgent',
-    label: 'Urgent',
-    Icon: AlertCircle,
-    color: 'text-red-500',
-  },
-  { value: 'high', label: 'High', Icon: BarChart4, color: 'text-orange-500' },
-  {
-    value: 'medium',
-    label: 'Medium',
-    Icon: BarChart3,
-    color: 'text-yellow-500',
-  },
-  { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
-];
+const statusIcons = issueStatusIcons;
+const statusOptions = issueStatusOptions.filter(
+  (o) => ['backlog', 'todo', 'in_progress', 'in_review'].includes(o.value)
+);
 
 const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, token, baseURL, users = [] }) => {
   const [showList, setShowList] = useState(true);

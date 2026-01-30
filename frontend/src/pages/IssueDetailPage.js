@@ -16,18 +16,9 @@ import {
   EditableTitle,
   LoadingScreen,
 } from '../components/ui';
-import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
+import { PanelRight } from '../icons';
+import { issueStatusIcons } from '../constants/status';
 import toast from 'react-hot-toast';
-
-const statusIcons = {
-  backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
-  todo: { Icon: Circle, color: 'text-text-secondary' },
-  in_progress: { Icon: CircleDot, color: 'text-yellow-500' },
-  in_review: { Icon: CircleDot, color: 'text-green-500' },
-  done: { Icon: CheckCircle2, color: 'text-accent' },
-  cancelled: { Icon: XCircle, color: 'text-text-tertiary' },
-  duplicate: { Icon: XCircle, color: 'text-text-tertiary' },
-};
 
 const IssueDetailPage = () => {
   const [issue, setIssue] = useState(null);
@@ -325,7 +316,7 @@ const IssueDetailPage = () => {
             {issue.parentIssue &&
               (() => {
                 const parentStatus = issue.parentIssue.status || 'todo';
-                const statusConfig = statusIcons[parentStatus] || statusIcons.todo;
+                const statusConfig = issueStatusIcons[parentStatus] || issueStatusIcons.todo;
                 const StatusIcon = statusConfig.Icon;
                 return (
                   <div className="py-2 text-sm">

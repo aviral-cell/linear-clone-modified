@@ -1,37 +1,8 @@
 import React from 'react';
-import {
-  Circle,
-  CircleDashed,
-  CheckCircle2,
-  CircleDot,
-  XCircle,
-  AlertCircle,
-  Minus,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-  Edit3,
-} from 'lucide-react';
+import { Circle, CircleDot, Edit3 } from '../icons';
+import { issueStatusIcons, priorityIcons } from '../constants/status';
 import { getAvatarColor, formatDateTime } from '../utils';
 import { ActivityDot, SectionTitle } from './ui';
-
-const statusIcons = {
-  backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
-  todo: { Icon: Circle, color: 'text-text-secondary' },
-  in_progress: { Icon: CircleDot, color: 'text-yellow-500' },
-  in_review: { Icon: CircleDot, color: 'text-green-500' },
-  done: { Icon: CheckCircle2, color: 'text-accent' },
-  cancelled: { Icon: XCircle, color: 'text-text-tertiary' },
-  duplicate: { Icon: XCircle, color: 'text-text-tertiary' },
-};
-
-const priorityIcons = {
-  urgent: { Icon: AlertCircle, color: 'text-red-500' },
-  high: { Icon: BarChart4, color: 'text-orange-500' },
-  medium: { Icon: BarChart3, color: 'text-yellow-500' },
-  low: { Icon: BarChart2, color: 'text-text-tertiary' },
-  no_priority: { Icon: Minus, color: 'text-text-tertiary' },
-};
 
 const getActivityIcon = (action, changes, users = []) => {
   if (action.includes('priority')) {
@@ -40,7 +11,7 @@ const getActivityIcon = (action, changes, users = []) => {
     if (newPriority && priorityIcons[newPriority]) {
       return { ...priorityIcons[newPriority], type: 'icon' };
     }
-    return { Icon: BarChart3, color: 'text-orange-500', type: 'icon' };
+    return { Icon: priorityIcons.medium.Icon, color: 'text-orange-500', type: 'icon' };
   }
 
   if (action.includes('status')) {
@@ -58,8 +29,8 @@ const getActivityIcon = (action, changes, users = []) => {
       }
     }
 
-    if (newStatus && statusIcons[newStatus]) {
-      return { ...statusIcons[newStatus], type: 'icon' };
+    if (newStatus && issueStatusIcons[newStatus]) {
+      return { ...issueStatusIcons[newStatus], type: 'icon' };
     }
 
     return { Icon: CircleDot, color: 'text-yellow-500', type: 'icon' };
