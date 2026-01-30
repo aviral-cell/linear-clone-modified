@@ -1,6 +1,9 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
+const tableHeaderStyles = 'text-table-header font-medium tracking-tight';
+const tableCellStyles = 'text-table-cell font-normal';
+
 /**
  * DataTable primitive for grid-based tables.
  * @param {Array<{ key: string, label?: string, ariaLabel?: string, headerClassName?: string, cellClassName?: string, render?: (row: any) => React.ReactNode }>} columns
@@ -39,7 +42,7 @@ function DataTable({
             <div
               key={column.key}
               role="columnheader"
-              className={cn('table-header-text px-2 py-2 text-text-tertiary', column.headerClassName)}
+              className={cn(tableHeaderStyles, 'px-2 py-2 text-text-tertiary', column.headerClassName)}
               aria-label={column.ariaLabel || column.label || ''}
             >
               {column.label || null}
@@ -66,7 +69,7 @@ function DataTable({
                 <div
                   key={`${key}-${column.key}`}
                   role="gridcell"
-                  className={cn('px-2 py-2', column.cellClassName)}
+                  className={cn(tableCellStyles, 'px-2 py-2', column.cellClassName)}
                 >
                   {column.render ? column.render(row) : row?.[column.key]}
                 </div>

@@ -9,6 +9,10 @@ const sizeClasses = {
   xl: 'text-2xl',
 };
 
+const editableTitleDisplay =
+  'text-2xl font-semibold text-text-primary cursor-text transition-opacity hover:opacity-80';
+const editableTitleBordered = 'border-b border-border pb-2';
+
 /**
  * Editable title with click-to-edit behavior.
  * @param {string} value
@@ -54,11 +58,8 @@ function EditableTitle({ value, onSave, placeholder, className, size = 'lg' }) {
         }}
         placeholder={placeholder}
         autoFocus
-        className={cn(
-          'input-transparent editable-title editable-title-bordered',
-          sizeClasses[size],
-          className
-        )}
+        variant="transparent"
+        className={cn(editableTitleBordered, sizeClasses[size], className)}
       />
     );
   }
@@ -66,7 +67,7 @@ function EditableTitle({ value, onSave, placeholder, className, size = 'lg' }) {
   return (
     <h1
       onClick={() => setIsEditing(true)}
-      className={cn('editable-title', sizeClasses[size], className)}
+      className={cn(editableTitleDisplay, sizeClasses[size], className)}
     >
       {value || <span className="text-text-tertiary">{placeholder || 'Untitled'}</span>}
     </h1>

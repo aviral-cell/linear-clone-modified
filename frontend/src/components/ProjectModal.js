@@ -292,7 +292,8 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="input-transparent text-2xl font-semibold border-none"
+                  variant="transparent"
+                  className="text-2xl font-semibold border-none"
                   placeholder="Project name"
                   required
                   autoFocus
@@ -300,9 +301,10 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                 <Textarea
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
-                  className="textarea-transparent textarea-transparent-sm mt-2 border-none text-text-secondary min-h-[24px]"
+                  className="mt-2 border-none text-text-secondary min-h-[24px]"
                   placeholder="Add a short summary..."
                   rows={1}
+                  size="sm"
                 />
               </div>
             </div>
@@ -330,8 +332,9 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={6}
-                className="textarea-transparent textarea-transparent-sm px-0 py-2 border-none"
+                className="px-0 py-2 border-none"
                 placeholder="Write a description, a project brief, or collect ideas..."
+                size="sm"
               />
             </div>
           </div>

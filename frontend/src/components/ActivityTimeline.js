@@ -13,7 +13,7 @@ import {
   Edit3,
 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
-import { ActivityDot } from './ui';
+import { ActivityDot, SectionTitle } from './ui';
 
 const statusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
@@ -124,7 +124,9 @@ const ActivityTimeline = ({ activities, users = [] }) => {
 
   return (
     <div className="my-6">
-      <h3 className="section-title">Activity</h3>
+      <SectionTitle as="h3" size="lg" className="mb-4">
+        Activity
+      </SectionTitle>
       <div className="space-y-4 relative">
         <div className="absolute left-3 top-0 bottom-0 w-px bg-border" />
 

@@ -386,7 +386,7 @@ const ProjectsPage = () => {
                           <FolderKanban className="w-3.5 h-3.5" />
                         )}
                       </IconBadge>
-                      <span className="table-cell-text text-text-primary truncate">
+                      <span className="text-table-cell font-normal text-text-primary truncate">
                         {project.name}
                       </span>
                     </div>
@@ -421,7 +421,7 @@ const ProjectsPage = () => {
                                   })()
                                 : null}
                               <span
-                                className="table-cell-text text-text-secondary truncate"
+                                className="text-table-cell font-normal text-text-secondary truncate"
                                 title={
                                   typeof project.team === 'object' && project.team.name
                                     ? project.team.name
@@ -436,7 +436,7 @@ const ProjectsPage = () => {
                               </span>
                             </div>
                           ) : (
-                            <span className="table-cell-text text-text-tertiary">-</span>
+                            <span className="text-table-cell font-normal text-text-tertiary">-</span>
                           ),
                       },
                     ]
@@ -453,7 +453,7 @@ const ProjectsPage = () => {
                         title={statusIndicator.label}
                       />
                     ) : (
-                      <span className="table-cell-text text-text-tertiary">-</span>
+                      <span className="text-table-cell font-normal text-text-tertiary">-</span>
                     );
                   },
                 },
@@ -470,7 +470,7 @@ const ProjectsPage = () => {
                         title={priorityMeta.label}
                       />
                     ) : (
-                      <span className="table-cell-text text-text-tertiary">-</span>
+                      <span className="text-table-cell font-normal text-text-tertiary">-</span>
                     );
                   },
                 },
@@ -497,14 +497,14 @@ const ProjectsPage = () => {
                           : 'C'}
                       </Avatar>
                     ) : (
-                      <span className="table-cell-text text-text-tertiary">-</span>
+                      <span className="text-table-cell font-normal text-text-tertiary">-</span>
                     ),
                 },
                 {
                   key: 'startDate',
                   label: 'Start date',
                   render: (project) => (
-                    <span className="table-cell-text text-text-secondary">
+                    <span className="text-table-cell font-normal text-text-secondary">
                       {formatDate(project.startDate)}
                     </span>
                   ),
@@ -513,7 +513,7 @@ const ProjectsPage = () => {
                   key: 'targetDate',
                   label: 'Target date',
                   render: (project) => (
-                    <span className="table-cell-text text-text-secondary">
+                    <span className="text-table-cell font-normal text-text-secondary">
                       {formatDate(project.targetDate)}
                     </span>
                   ),

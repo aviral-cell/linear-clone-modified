@@ -1,14 +1,19 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-const inputBase =
-  'w-full bg-background rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent transition-all';
+const variantStyles = {
+  default:
+    'w-full bg-background rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent transition-all py-3 pl-10 pr-4',
+  transparent:
+    'w-full bg-transparent text-text-primary focus:outline-none placeholder:text-text-tertiary focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:border-accent',
+};
 
 /**
  * Input primitive. Use for standard form inputs; supports leading icon via wrapper.
+ * @param {'default'|'transparent'} [variant='default'] - transparent for inline editing
  */
-function Input({ className, ...props }) {
-  return <input className={cn(inputBase, 'py-3 pl-10 pr-4', className)} {...props} />;
+function Input({ variant = 'default', className, ...props }) {
+  return <input className={cn(variantStyles[variant], className)} {...props} />;
 }
 
 /**

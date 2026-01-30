@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
-import { Button, Textarea } from './ui';
+import { Button, Card, Textarea } from './ui';
 
 const CommentInput = ({ onSubmit, loading }) => {
   const [content, setContent] = useState('');
@@ -15,8 +15,10 @@ const CommentInput = ({ onSubmit, loading }) => {
 
   return (
     <div className="mt-4 md:mt-6">
-      <form onSubmit={handleSubmit} className="card-inner">
-        <Textarea
+      <Card variant="secondary">
+        <Card.Inner>
+          <form onSubmit={handleSubmit}>
+            <Textarea
           size="sm"
           minHeight="comment"
           value={content}
@@ -36,7 +38,9 @@ const CommentInput = ({ onSubmit, loading }) => {
             <span>Add</span>
           </Button>
         </div>
-      </form>
+          </form>
+        </Card.Inner>
+      </Card>
     </div>
   );
 };

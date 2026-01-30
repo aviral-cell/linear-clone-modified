@@ -518,7 +518,7 @@ const ProjectDetailPage = () => {
                         value={summary}
                         placeholder="Add project summary..."
                         minHeight="comment"
-                        className="textarea-transparent textarea-transparent-sm mt-2 min-h-[60px] px-0 py-2 bg-background"
+                        className="mt-2 min-h-[60px] px-0 py-2 bg-background text-sm"
                         displayClassName="editable-title mt-2 px-0 py-2 text-text-secondary min-h-[40px] text-sm"
                         onSave={(nextSummary) => {
                           if (nextSummary !== (project.summary || project.description || '')) {
@@ -531,7 +531,7 @@ const ProjectDetailPage = () => {
                   </div>
 
                   <div className="mb-6">
-                    <SectionTitle size="sm" className="section-title-sm">
+                    <SectionTitle size="sm" className="mb-3">
                       Properties
                     </SectionTitle>
                     <ProjectProperties

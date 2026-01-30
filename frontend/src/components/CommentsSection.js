@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
-import { Avatar, Button, IconButton, Textarea } from './ui';
+import { Avatar, Button, Card, IconButton, Textarea } from './ui';
 import toast from 'react-hot-toast';
 
 const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, token }) => {
@@ -80,7 +80,8 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
         const isEditing = editingCommentId === comment._id;
 
         return (
-          <div key={`comment-${comment._id}-${idx}`} className="card-inner group">
+          <Card key={`comment-${comment._id}-${idx}`} variant="secondary">
+            <Card.Inner className="group">
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-start gap-2 flex-1 min-w-0">
                 <Avatar
@@ -163,7 +164,8 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment, baseURL, to
                 {comment.content}
               </p>
             )}
-          </div>
+            </Card.Inner>
+          </Card>
         );
       })}
     </div>

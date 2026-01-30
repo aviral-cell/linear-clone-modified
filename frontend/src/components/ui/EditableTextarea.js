@@ -54,7 +54,7 @@ function EditableTextarea({
         placeholder={placeholder}
         minHeight={minHeight}
         autoFocus
-        className={cn('textarea-transparent', className)}
+        className={className}
       />
     );
   }

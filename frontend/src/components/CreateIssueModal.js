@@ -257,7 +257,8 @@ const CreateIssueModal = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Issue title"
-              className="input-transparent text-lg"
+              variant="transparent"
+              className="text-lg"
               required
               autoFocus
             />
@@ -267,7 +268,6 @@ const CreateIssueModal = ({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add description..."
               rows={2}
-              className="textarea-transparent"
             />
 
             <div className="pt-4">

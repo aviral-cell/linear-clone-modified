@@ -9,16 +9,8 @@
 }
 
 /* Rounded convention: rounded-md for cards, dropdowns, buttons; rounded-lg for modals and large empty states; rounded-xl for login card. */
+/* Remaining global component classes (layout only): modal-*, overlay-backdrop, dropdown-panel*, sidebar-content*, filter-bar*, page-content, activity-list. Prefer UI primitives (Button, Card, Input, etc.) for components. */
 @layer components {
-  .btn-secondary-header {
-    @apply px-3 py-1 rounded-md border border-border text-xs font-medium transition-colors flex items-center gap-1.5;
-  }
-  .table-header-text {
-    @apply text-table-header font-medium tracking-tight;
-  }
-  .table-cell-text {
-    @apply text-table-cell font-normal;
-  }
   /* Modal and overlay patterns */
   .modal-backdrop {
     @apply fixed inset-0 bg-black/60 flex items-center justify-center z-modal p-4;
@@ -45,22 +37,6 @@
   .dropdown-panel-alt {
     @apply mt-2 bg-background-tertiary;
   }
-  /* Icon/team badges */
-  .icon-badge {
-    @apply rounded-md flex items-center justify-center text-white flex-shrink-0;
-  }
-  .icon-badge-sm {
-    @apply w-4 h-4;
-  }
-  .icon-badge-md {
-    @apply w-5 h-5;
-  }
-  .icon-badge-lg {
-    @apply w-6 h-6;
-  }
-  .icon-badge-xl {
-    @apply w-7 h-7;
-  }
   /* Modal header/footer */
   .modal-header {
     @apply sticky top-0 z-sticky border-b border-border px-6 py-4 flex items-center justify-between;
@@ -77,90 +53,7 @@
   .modal-footer-primary {
     @apply bg-background;
   }
-  /* Primary action button */
-  .btn-primary {
-    @apply px-3 py-1.5 rounded-md border border-transparent text-xs font-medium bg-accent hover:bg-accent-hover text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5;
-  }
-  /* Card inner (comment/input container) */
-  .card-inner {
-    @apply p-3 md:p-4 bg-background-secondary border border-border rounded-md;
-  }
-  /* Dropdown/field trigger (optional) */
-  .field-trigger {
-    @apply px-3 py-1 bg-background border border-border rounded-md text-xs font-medium text-text-primary hover:bg-background-secondary transition-colors flex items-center gap-1.5 disabled:opacity-50;
-  }
-  .field-trigger-full {
-    @apply w-full;
-  }
-  /* SubIssuesSection pill and list-item (optional) */
-  .pill-button {
-    @apply px-3 py-1.5 bg-background-tertiary hover:bg-background-hover border border-border rounded-md flex items-center gap-2 text-sm transition-colors;
-  }
-  .list-item-button {
-    @apply w-full px-4 py-2.5 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors;
-  }
-  /* Login form input */
-  .input-icon {
-    @apply w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all;
-  }
-  /* Round 5: Transparent inputs, editable title, small icon button */
-  .input-transparent {
-    @apply w-full bg-transparent text-text-primary focus:outline-none placeholder:text-text-tertiary focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:border-accent;
-  }
-  .textarea-transparent {
-    @apply input-transparent resize-none;
-  }
-  .textarea-transparent-sm {
-    @apply text-sm;
-  }
-  .editable-title {
-    @apply text-2xl font-semibold text-text-primary cursor-text transition-opacity;
-  }
-  .editable-title:hover {
-    @apply opacity-80;
-  }
-  .editable-title-bordered {
-    @apply border-b border-border pb-2;
-  }
-  .btn-icon-sm {
-    @apply p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors flex-shrink-0 flex items-center justify-center;
-  }
-  /* Hero CTA: use for auth/marketing; use .btn-primary for in-app primary actions */
-  .btn-primary-hero {
-    @apply w-full py-3 px-4 rounded-lg font-medium text-white bg-gradient-to-r from-accent to-purple-600 hover:from-accent-hover hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
-  }
-  /* Empty states */
-  .empty-state {
-    @apply border border-dashed border-border rounded-lg p-6 text-center text-text-tertiary text-sm;
-  }
-  .empty-state-sm {
-    @apply rounded-md p-4 text-xs;
-  }
-  .empty-state-lg {
-    @apply rounded-md p-8;
-  }
-  /* Round 4: Loading, labels, dividers, section titles, sidebars, filter bar, activity, avatars, detail panel */
-  .loading-screen {
-    @apply h-screen w-screen flex items-center justify-center bg-background;
-  }
-  .loading-screen-text {
-    @apply text-text-secondary;
-  }
-  .label {
-    @apply block text-xs font-medium text-text-tertiary mb-2 tracking-wide;
-  }
-  .label-md {
-    @apply text-sm text-text-secondary;
-  }
-  .divider {
-    @apply h-px bg-border my-4;
-  }
-  .section-title {
-    @apply font-medium text-text-primary mb-4;
-  }
-  .section-title-sm {
-    @apply text-xs font-medium text-text-tertiary mb-3;
-  }
+  /* Sidebars, filter bar, activity, detail panel */
   .sidebar-content {
     @apply w-full h-full p-6;
   }
@@ -175,30 +68,6 @@
   }
   .filter-bar-tabs {
     @apply flex items-center gap-1.5 flex-nowrap flex-shrink-0;
-  }
-  .activity-dot {
-    @apply w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 z-sticky absolute left-3 -translate-x-1/2;
-  }
-  .activity-dot-default {
-    @apply bg-background;
-  }
-  .avatar {
-    @apply rounded-full flex items-center justify-center text-white font-medium flex-shrink-0;
-  }
-  .avatar-sm {
-    @apply w-4 h-4 text-[10px];
-  }
-  .avatar-md {
-    @apply w-5 h-5 text-xs;
-  }
-  .avatar-lg {
-    @apply w-6 h-6 text-sm;
-  }
-  .detail-panel {
-    @apply fixed top-14 bottom-0 right-0 z-modal border-l border-border bg-background overflow-y-auto transition-transform duration-normal ease-in-out;
-  }
-  .btn-icon {
-    @apply p-2 rounded-md text-text-tertiary hover:text-text-primary hover:bg-background-secondary transition-colors flex-shrink-0;
   }
   .page-content {
     @apply flex-1 overflow-y-auto;
