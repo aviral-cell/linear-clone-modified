@@ -187,7 +187,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           </Button>
           <div
             className={`overflow-hidden transition-[max-height] duration-200 ease-out ${
-              isCollapsed ? 'max-h-0' : isTeamsSectionExpanded ? 'max-h-[1000px]' : 'max-h-0'
+              isCollapsed ? 'max-h-[1000px]' : isTeamsSectionExpanded ? 'max-h-[1000px]' : 'max-h-0'
             }`}
           >
             <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
