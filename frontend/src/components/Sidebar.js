@@ -114,9 +114,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     `}
     >
       <div
-        className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : ''}`}
+        className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : 'justify-start'}`}
       >
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5 justify-start'}`}>
           <IconBadge size="xl" className="bg-gradient-to-br from-accent to-purple-600">
             <Zap className="w-4 h-4 text-white" />
           </IconBadge>
@@ -135,7 +135,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             size="sm"
             onClick={handleMyIssuesClick}
             className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-              isCollapsed ? 'justify-center px-2' : 'px-6'
+              isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
             } ${
               isMyIssuesPage
                 ? 'text-text-primary bg-background-tertiary rounded-md'
@@ -152,7 +152,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             size="sm"
             onClick={handleProjectsClick}
             className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
-              isCollapsed ? 'justify-center px-2' : 'px-6'
+              isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
             } ${
               isGlobalProjectsPage
                 ? 'text-text-primary bg-background-tertiary rounded-md'
@@ -170,7 +170,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             variant="ghost"
             size="sm"
             onClick={toggleTeamsSection}
-            className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
+            className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-primary text-sm transition-colors ${
               isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
             }`}
             title="Your teams"
@@ -201,7 +201,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                           toggleTeam(team._id);
                         }
                       }}
-                      className={`w-full py-2 hover:bg-background-hover flex items-center text-text-primary text-sm group transition-colors ${
+                      className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-text-primary text-sm transition-colors ${
                         isCollapsed ? 'justify-center px-2' : 'justify-between px-6'
                       }`}
                       title={team.name}
@@ -232,7 +232,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                             e.stopPropagation();
                             handleTeamIssuesClick(team);
                           }}
-                          className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                          className={`w-full justify-start px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
                             isTeamIssuesPage && teamKey === team.key
                               ? 'text-text-primary bg-background-tertiary rounded-md'
                               : 'text-text-secondary'
@@ -248,7 +248,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                             e.stopPropagation();
                             handleTeamProjectsClick(team);
                           }}
-                          className={`w-full px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                          className={`w-full justify-start px-6 py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
                             isTeamProjectsPage && teamKey === team.key
                               ? 'text-text-primary bg-background-tertiary rounded-md'
                               : 'text-text-secondary'

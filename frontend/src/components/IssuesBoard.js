@@ -12,10 +12,10 @@ import {
   BarChart3,
   BarChart4,
   Plus,
-  FolderKanban,
 } from 'lucide-react';
-import { baseURL, getAvatarColor } from '../utils';
-import { Avatar, Button } from './ui';
+import { baseURL } from '../utils';
+import IssueCard from './IssueCard';
+import { Button } from './ui';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -217,40 +217,17 @@ const IssuesBoard = ({
                   {statusIssues.map((issue) => {
                     const priorityInfo = priorityConfig[issue.priority];
                     const PriorityIcon = priorityInfo.icon;
-                    const identifier = issue.parentIssue
-                      ? issue.parentIssue.identifier || issue.identifier
-                      : issue.identifier;
-
                     return (
-                      <div
+                      <IssueCard
                         key={issue._id}
-                        onClick={() => handleIssueClick(issue)}
-                        className="px-4 py-2 flex items-center gap-2 text-sm hover:bg-background-secondary cursor-pointer transition-colors"
-                      >
-                        <PriorityIcon
-                          className={`w-3.5 h-3.5 flex-shrink-0 ${priorityInfo.color}`}
-                        />
-                        <span className="w-14 md:w-20 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
-                          {identifier}
-                        </span>
-                        <span className="flex-1 text-text-primary truncate ml-1">
-                          {issue.title}
-                        </span>
-                        {issue.project && (
-                          <span className="hidden sm:flex ml-4 px-2 py-0.5 rounded-full bg-background-tertiary text-xs text-text-secondary flex-shrink-0 items-center gap-1">
-                            <FolderKanban className="w-3 h-3" />
-                            {issue.project.name}
-                          </span>
-                        )}
-                        {issue.assignee && (
-                          <Avatar
-                            size="md"
-                            className={`ml-2 ${getAvatarColor(issue.assignee._id)}`}
-                          >
-                            {issue.assignee.name.charAt(0)}
-                          </Avatar>
-                        )}
-                      </div>
+                        issue={issue}
+                        variant="list"
+                        onClick={handleIssueClick}
+                        priorityIcon={PriorityIcon}
+                        priorityColor={priorityInfo.color}
+                        priorityLabel={priorityInfo.label}
+                        showProject={Boolean(issue.project)}
+                      />
                     );
                   })}
                 </div>
@@ -300,71 +277,18 @@ const IssuesBoard = ({
                 {statusIssues.map((issue) => {
                   const priorityInfo = priorityConfig[issue.priority];
                   const PriorityIcon = priorityInfo.icon;
-                  const isSubIssue = issue.parentIssue;
-
                   return (
-                    <div
+                    <IssueCard
                       key={issue._id}
-                      onClick={() => handleIssueClick(issue)}
-                      className="group cursor-pointer rounded-md border border-border bg-background-card p-3 transition-all hover:border-border-hover"
-                    >
-                      {isSubIssue ? (
-                        <>
-                          <div className="mb-2 flex items-center justify-between gap-2">
-                            <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                              {issue.parentIssue?.identifier || 'N/A'} ›{' '}
-                              {issue.parentIssue?.title || 'Parent Issue'}
-                            </span>
-                            {issue.assignee && (
-                              <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
-                                {issue.assignee.name.charAt(0)}
-                              </Avatar>
-                            )}
-                          </div>
-
-                          <div className="flex items-start gap-2 mb-2">
-                            <StatusIcon
-                              className={`w-4 h-4 mt-0.5 flex-shrink-0 ${config.color}`}
-                            />
-                            <p className="text-sm text-text-primary line-clamp-2 flex-1">
-                              {issue.title}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
-                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="mb-2 flex items-center justify-between gap-2">
-                            <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                              {issue.identifier}
-                            </span>
-                            {issue.assignee && (
-                              <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
-                                {issue.assignee.name.charAt(0)}
-                              </Avatar>
-                            )}
-                          </div>
-
-                          <div className="mb-2 flex items-start gap-2">
-                            <StatusIcon
-                              className={`mt-0.5 h-4 w-4 flex-shrink-0 ${config.color}`}
-                            />
-                            <p className="text-sm text-text-primary line-clamp-2 flex-1">
-                              {issue.title}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            <PriorityIcon className={`w-3.5 h-3.5 ${priorityInfo.color}`} />
-                            <span className="text-xs text-text-tertiary">{priorityInfo.label}</span>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                      issue={issue}
+                      variant="card"
+                      onClick={handleIssueClick}
+                      statusIcon={StatusIcon}
+                      statusColor={config.color}
+                      priorityIcon={PriorityIcon}
+                      priorityColor={priorityInfo.color}
+                      priorityLabel={priorityInfo.label}
+                    />
                   );
                 })}
               </div>

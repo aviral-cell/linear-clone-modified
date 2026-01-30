@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 
 const baseStyles =
-  'w-full bg-transparent text-text-primary placeholder:text-text-tertiary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:border-accent resize-none transition-colors';
+  'w-full bg-transparent text-text-primary placeholder:text-text-tertiary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 resize-none transition-colors';
 
 const sizeStyles = {
   sm: 'text-sm',

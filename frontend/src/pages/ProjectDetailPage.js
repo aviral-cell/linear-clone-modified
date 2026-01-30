@@ -10,8 +10,17 @@ import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import UpdateCard from '../components/UpdateCard';
 import UpdateActivityList from '../components/UpdateActivityList';
-import { Button, EmptyState, IconButton, Input, LoadingScreen, Textarea } from '../components/ui';
-import { cn } from '../utils/cn';
+import {
+  Button,
+  DetailPanel,
+  EditableTextarea,
+  EditableTitle,
+  EmptyState,
+  IconButton,
+  LoadingScreen,
+  SectionTitle,
+  TabNavigation,
+} from '../components/ui';
 import {
   FolderKanban,
   FileText,
@@ -103,8 +112,6 @@ const ProjectDetailPage = () => {
   const [initialIssueStatus, setInitialIssueStatus] = useState('todo');
 
   const [activeTab, setActiveTab] = useState(tab || 'overview');
-  const [editingName, setEditingName] = useState(false);
-  const [editingSummary, setEditingSummary] = useState(false);
   const [name, setName] = useState('');
   const [summary, setSummary] = useState('');
   const [updateContent, setUpdateContent] = useState('');
@@ -407,20 +414,6 @@ const ProjectDetailPage = () => {
     return `${month} ${day}`;
   };
 
-  const saveName = () => {
-    if (name.trim() && name.trim() !== project.name) {
-      handleUpdateProject({ name: name.trim() });
-    }
-    setEditingName(false);
-  };
-
-  const saveSummary = () => {
-    if (summary !== (project.summary || project.description || '')) {
-      handleUpdateProject({ summary });
-    }
-    setEditingSummary(false);
-  };
-
   const getLatestUpdate = () => {
     if (updates.length === 0) return null;
     return updates[0];
@@ -474,54 +467,20 @@ const ProjectDetailPage = () => {
             isPanelOpen={isRightSidebarOpen}
           />
 
-          <section aria-label="Project tabs" className="filter-bar">
-            <div className="filter-bar-inner">
-              <div className="filter-bar-tabs">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    activeTab === 'overview' &&
-                      'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => setActiveTab('overview')}
-                >
-                  <FileText className="h-4 w-4" />
-                  Overview
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    activeTab === 'updates' &&
-                      'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => {
-                    setActiveTab('updates');
-                    setFocusUpdateInput(false);
-                  }}
-                >
-                  <Clock className="h-4 w-4" />
-                  Updates
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    activeTab === 'issues' &&
-                      'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => setActiveTab('issues')}
-                >
-                  <List className="h-4 w-4" />
-                  Issues
-                </Button>
-              </div>
-            </div>
-          </section>
+          <TabNavigation
+            tabs={[
+              { id: 'overview', label: 'Overview', icon: <FileText className="h-4 w-4" /> },
+              { id: 'updates', label: 'Updates', icon: <Clock className="h-4 w-4" /> },
+              { id: 'issues', label: 'Issues', icon: <List className="h-4 w-4" /> },
+            ]}
+            activeTab={activeTab}
+            onTabChange={(tabId) => {
+              setActiveTab(tabId);
+              if (tabId === 'updates') {
+                setFocusUpdateInput(false);
+              }
+            }}
+          />
         </div>
 
         <div className="flex-1 flex overflow-hidden relative">
@@ -543,52 +502,38 @@ const ProjectDetailPage = () => {
                       )}
                     </IconButton>
                     <div className="flex-1">
-                      {editingName ? (
-                        <Input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          onBlur={saveName}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') saveName();
-                            if (e.key === 'Escape') {
-                              setName(project.name);
-                              setEditingName(false);
-                            }
-                          }}
-                          className="input-transparent editable-title editable-title-bordered"
-                          autoFocus
-                        />
-                      ) : (
-                        <h1 onClick={() => setEditingName(true)} className="editable-title">
-                          {project.name}
-                        </h1>
-                      )}
+                      <EditableTitle
+                        value={name}
+                        placeholder="Project name"
+                        size="xl"
+                        onSave={(nextName) => {
+                          if (nextName.trim() && nextName.trim() !== project.name) {
+                            setName(nextName);
+                            handleUpdateProject({ name: nextName.trim() });
+                          }
+                        }}
+                      />
 
-                      {editingSummary ? (
-                        <Textarea
-                          value={summary}
-                          onChange={(e) => setSummary(e.target.value)}
-                          onBlur={saveSummary}
-                          placeholder="Add project summary..."
-                          className="textarea-transparent textarea-transparent-sm mt-2 min-h-[60px] px-0 py-2 bg-background"
-                          autoFocus
-                        />
-                      ) : (
-                        <div
-                          onClick={() => setEditingSummary(true)}
-                          className="editable-title mt-2 px-0 py-2 text-text-secondary min-h-[40px] text-sm"
-                        >
-                          {project.summary || project.description || (
-                            <span className="text-text-tertiary">Add project summary...</span>
-                          )}
-                        </div>
-                      )}
+                      <EditableTextarea
+                        value={summary}
+                        placeholder="Add project summary..."
+                        minHeight="comment"
+                        className="textarea-transparent textarea-transparent-sm mt-2 min-h-[60px] px-0 py-2 bg-background"
+                        displayClassName="editable-title mt-2 px-0 py-2 text-text-secondary min-h-[40px] text-sm"
+                        onSave={(nextSummary) => {
+                          if (nextSummary !== (project.summary || project.description || '')) {
+                            setSummary(nextSummary);
+                            handleUpdateProject({ summary: nextSummary });
+                          }
+                        }}
+                      />
                     </div>
                   </div>
 
                   <div className="mb-6">
-                    <h2 className="section-title-sm">Properties</h2>
+                    <SectionTitle size="sm" className="section-title-sm">
+                      Properties
+                    </SectionTitle>
                     <ProjectProperties
                       project={project}
                       users={users}
@@ -610,7 +555,7 @@ const ProjectDetailPage = () => {
 
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-xs font-medium text-text-tertiary">Latest update</h2>
+                      <SectionTitle size="sm">Latest update</SectionTitle>
                       <Button
                         variant="secondary"
                         size="md"
@@ -728,16 +673,10 @@ const ProjectDetailPage = () => {
             </div>
           </div>
 
-          {isRightSidebarOpen && (
-            <div
-              className="lg:hidden overlay-backdrop"
-              onClick={() => setIsRightSidebarOpen(false)}
-            />
-          )}
-
-          <div
-            ref={sidebarRef}
-            className={`lg:hidden detail-panel ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'} w-80`}
+          <DetailPanel
+            isOpen={isRightSidebarOpen}
+            onClose={() => setIsRightSidebarOpen(false)}
+            panelRef={sidebarRef}
           >
             <ProjectSidebar
               project={project}
@@ -753,7 +692,7 @@ const ProjectDetailPage = () => {
                 setActiveTab('updates');
               }}
             />
-          </div>
+          </DetailPanel>
         </div>
       </div>
 

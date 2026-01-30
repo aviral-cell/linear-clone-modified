@@ -9,7 +9,13 @@ import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
 import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
-import { Button, Input, LoadingScreen, Textarea } from '../components/ui';
+import {
+  Button,
+  DetailPanel,
+  EditableTextarea,
+  EditableTitle,
+  LoadingScreen,
+} from '../components/ui';
 import { PanelRight, CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -33,8 +39,6 @@ const IssueDetailPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
-  const [editingTitle, setEditingTitle] = useState(false);
-  const [editingDescription, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
@@ -282,20 +286,6 @@ const IssueDetailPage = () => {
     }
   };
 
-  const saveTitle = () => {
-    if (title !== issue.title && title.trim()) {
-      updateIssue({ title });
-    }
-    setEditingTitle(false);
-  };
-
-  const saveDescription = () => {
-    if (description !== issue.description) {
-      updateIssue({ description });
-    }
-    setEditingDescription(false);
-  };
-
   if (loading) {
     return <LoadingScreen message="Loading..." />;
   }
@@ -319,27 +309,17 @@ const IssueDetailPage = () => {
         <div className="page-content">
           <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
             <div>
-              {editingTitle ? (
-                <Input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  onBlur={saveTitle}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') saveTitle();
-                    if (e.key === 'Escape') {
-                      setTitle(issue.title);
-                      setEditingTitle(false);
-                    }
-                  }}
-                  className="input-transparent editable-title editable-title-bordered"
-                  autoFocus
-                />
-              ) : (
-                <h1 onClick={() => setEditingTitle(true)} className="editable-title">
-                  {issue.title}
-                </h1>
-              )}
+              <EditableTitle
+                value={title}
+                placeholder="Issue title"
+                size="xl"
+                onSave={(nextTitle) => {
+                  if (nextTitle && nextTitle !== issue.title) {
+                    setTitle(nextTitle);
+                    updateIssue({ title: nextTitle });
+                  }
+                }}
+              />
             </div>
 
             {issue.parentIssue &&
@@ -371,25 +351,19 @@ const IssueDetailPage = () => {
               })()}
 
             <div className="mb-4 mt-6">
-              {editingDescription ? (
-                <Textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  onBlur={saveDescription}
-                  placeholder="Add description..."
-                  className="textarea-transparent min-h-[100px] px-0 py-2 bg-background"
-                  autoFocus
-                />
-              ) : (
-                <div
-                  onClick={() => setEditingDescription(true)}
-                  className="px-0 py-2 text-text-primary cursor-text hover:opacity-70 min-h-[60px] transition-opacity"
-                >
-                  {issue.description || (
-                    <span className="text-text-tertiary">Add description...</span>
-                  )}
-                </div>
-              )}
+              <EditableTextarea
+                value={description}
+                placeholder="Add description..."
+                minHeight="description"
+                className="min-h-[100px] px-0 py-2 bg-background"
+                displayClassName="px-0 py-2 text-text-primary cursor-text hover:opacity-70 min-h-[60px] transition-opacity"
+                onSave={(nextDescription) => {
+                  if (nextDescription !== issue.description) {
+                    setDescription(nextDescription);
+                    updateIssue({ description: nextDescription });
+                  }
+                }}
+              />
             </div>
 
             <div className="mb-6">
@@ -433,19 +407,13 @@ const IssueDetailPage = () => {
           </div>
         </div>
 
-        {isRightSidebarOpen && (
-          <div
-            className="lg:hidden overlay-backdrop"
-            onClick={() => setIsRightSidebarOpen(false)}
-          />
-        )}
-
-        <div
-          ref={sidebarRef}
-          className={`lg:hidden detail-panel ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'} w-80`}
+        <DetailPanel
+          isOpen={isRightSidebarOpen}
+          onClose={() => setIsRightSidebarOpen(false)}
+          panelRef={sidebarRef}
         >
           <IssueSidebar issue={issue} users={users} projects={projects} onUpdate={updateIssue} />
-        </div>
+        </DetailPanel>
       </div>
     </div>
   );

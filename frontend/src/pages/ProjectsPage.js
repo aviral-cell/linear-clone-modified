@@ -5,7 +5,15 @@ import { baseURL, getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
-import { Avatar, Button, EmptyState, IconBadge, LoadingScreen } from '../components/ui';
+import {
+  Avatar,
+  Button,
+  DataTable,
+  EmptyState,
+  IconBadge,
+  LoadingScreen,
+  TabNavigation,
+} from '../components/ui';
 import {
   Plus,
   FolderKanban,
@@ -140,151 +148,6 @@ const formatDate = (date) => {
   const month = d.toLocaleDateString('en-US', { month: 'short' });
   return `${month} ${day}${daySuffix}`;
 };
-
-const ProjectRow = React.memo(({ project, onClick, showTeam = false }) => {
-  const statusIndicator = getStatusIndicator(project);
-  const StatusIcon = statusIndicator.icon;
-  const priorityMeta = getPriorityMeta(project.priority);
-  const PriorityIcon = priorityMeta.Icon;
-  const priorityColorClass = getPriorityColor(project.priority);
-  const statusIcon = getStatusIcon(project.status);
-  const StatusIconComponent = statusIcon.Icon;
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="sm"
-      role="row"
-      onClick={() => onClick(project)}
-      className={`w-full grid gap-x-1.5 font-sans border-b border-border hover:bg-background-secondary/40 transition-colors p-0 text-left ${TABLE_GRID_CLASS(showTeam)}`}
-    >
-      <div role="gridcell" className="py-2 px-2 pr-4 md:pr-6"></div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center gap-2 min-w-0">
-        <IconBadge
-          size="md"
-          className="bg-background-secondary border border-border text-text-secondary"
-        >
-          {project.icon ? (
-            <span className="text-xs">{project.icon}</span>
-          ) : (
-            <FolderKanban className="w-3.5 h-3.5" />
-          )}
-        </IconBadge>
-        <span className="table-cell-text text-text-primary truncate">{project.name}</span>
-      </div>
-
-      {showTeam && (
-        <div role="gridcell" className="py-2 px-2 flex items-center min-w-0">
-          {project.team ? (
-            <div className="flex items-center gap-1.5 min-w-0">
-              {typeof project.team === 'object'
-                ? (() => {
-                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
-                    return (
-                      <IconBadge
-                        size="md"
-                        className={colorClass}
-                        title={project.team.name || 'Team'}
-                      >
-                        {IconComponent ? (
-                          <IconComponent className="w-3 h-3" />
-                        ) : (
-                          <span className="text-xs">{icon}</span>
-                        )}
-                      </IconBadge>
-                    );
-                  })()
-                : null}
-              <span
-                className="table-cell-text text-text-secondary truncate"
-                title={
-                  typeof project.team === 'object' && project.team.name ? project.team.name : 'Team'
-                }
-              >
-                {typeof project.team === 'object' && project.team.name
-                  ? project.team.name
-                  : typeof project.team === 'object' && project.team.key
-                    ? project.team.key
-                    : '-'}
-              </span>
-            </div>
-          ) : (
-            <span className="table-cell-text text-text-tertiary">-</span>
-          )}
-        </div>
-      )}
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        {StatusIcon ? (
-          <StatusIcon
-            className={`w-4 h-4 ${statusIndicator.color}`}
-            title={statusIndicator.label}
-          />
-        ) : (
-          <span className="table-cell-text text-text-tertiary">-</span>
-        )}
-      </div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        {project.priority && project.priority !== 'no_priority' ? (
-          <div className="flex items-center">
-            <PriorityIcon
-              className={`w-3.5 h-3.5 ${priorityColorClass}`}
-              title={priorityMeta.label}
-            />
-          </div>
-        ) : (
-          <span className="table-cell-text text-text-tertiary">-</span>
-        )}
-      </div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        {project.creator ? (
-          <Avatar
-            size="md"
-            className={`${getAvatarColor(
-              typeof project.creator === 'object' && project.creator._id
-                ? project.creator._id
-                : project.creator
-            )} text-[11px] font-medium`}
-            title={
-              typeof project.creator === 'object' && project.creator.name
-                ? project.creator.name
-                : 'Creator'
-            }
-          >
-            {typeof project.creator === 'object' && project.creator.name
-              ? project.creator.name.charAt(0).toUpperCase()
-              : 'C'}
-          </Avatar>
-        ) : (
-          <span className="table-cell-text text-text-tertiary">-</span>
-        )}
-      </div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        <span className="table-cell-text text-text-secondary">{formatDate(project.startDate)}</span>
-      </div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        <span className="table-cell-text text-text-secondary">
-          {formatDate(project.targetDate)}
-        </span>
-      </div>
-
-      <div role="gridcell" className="py-2 px-2 flex items-center">
-        <StatusIconComponent
-          className={`w-4 h-4 ${statusIcon.color}`}
-          title={project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-        />
-      </div>
-
-      <div role="gridcell" className="py-2 px-2"></div>
-    </Button>
-  );
-});
 
 const ProjectsPage = () => {
   const { token } = useAuth();
@@ -469,20 +332,17 @@ const ProjectsPage = () => {
             onPrimaryActionClick={handleOpenNewProject}
           />
 
-          <section aria-label="Projects filters" className="filter-bar">
-            <div className="filter-bar-inner">
-              <div className="filter-bar-tabs overflow-x-auto scrollbar-hide">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="flex-shrink-0 border-accent bg-background-tertiary text-text-primary"
-                >
-                  <FolderKanban className="h-4 w-4" />
-                  All projects
-                </Button>
-              </div>
-            </div>
-          </section>
+          <TabNavigation
+            tabs={[
+              {
+                id: 'all',
+                label: 'All projects',
+                icon: <FolderKanban className="h-4 w-4" />,
+              },
+            ]}
+            activeTab="all"
+            onTabChange={() => {}}
+          />
         </div>
 
         <section aria-label="Projects list" className="page-content">
@@ -497,88 +357,188 @@ const ProjectsPage = () => {
               </EmptyState>
             </div>
           ) : (
-            <div className="overflow-x-auto font-sans" role="grid" aria-label="Projects">
-              <div className="min-w-full">
-                <div
-                  role="row"
-                  className={`sticky top-0 z-10 grid gap-x-1.5 font-sans bg-background border-b border-border ${TABLE_GRID_CLASS(teamFilter === 'all')}`}
-                >
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 pr-4 md:pr-6 text-text-tertiary"
-                    aria-label=""
-                  ></div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Name"
-                  >
-                    Name
-                  </div>
-                  {teamFilter === 'all' && (
-                    <div
-                      role="columnheader"
-                      className="table-header-text px-2 py-2 text-text-tertiary"
-                      aria-label="Team"
-                    >
-                      Team
+            <DataTable
+              data={filteredProjects}
+              onRowClick={handleRowClick}
+              getRowKey={(project) => project._id}
+              gridTemplateClass={TABLE_GRID_CLASS(teamFilter === 'all')}
+              rowClassName="py-0"
+              columns={[
+                {
+                  key: 'spacer',
+                  ariaLabel: '',
+                  headerClassName: 'pr-4 md:pr-6',
+                  cellClassName: 'pr-4 md:pr-6',
+                  render: () => null,
+                },
+                {
+                  key: 'name',
+                  label: 'Name',
+                  render: (project) => (
+                    <div className="flex items-center gap-2 min-w-0">
+                      <IconBadge
+                        size="md"
+                        className="bg-background-secondary border border-border text-text-secondary"
+                      >
+                        {project.icon ? (
+                          <span className="text-xs">{project.icon}</span>
+                        ) : (
+                          <FolderKanban className="w-3.5 h-3.5" />
+                        )}
+                      </IconBadge>
+                      <span className="table-cell-text text-text-primary truncate">
+                        {project.name}
+                      </span>
                     </div>
-                  )}
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Health"
-                  >
-                    Health
-                  </div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Priority"
-                  >
-                    Priority
-                  </div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Lead"
-                  >
-                    Lead
-                  </div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Start date"
-                  >
-                    Start date
-                  </div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Target date"
-                  >
-                    Target date
-                  </div>
-                  <div
-                    role="columnheader"
-                    className="table-header-text px-2 py-2 text-text-tertiary"
-                    aria-label="Status"
-                  >
-                    Status
-                  </div>
-                  <div role="columnheader" className="px-2 py-2" aria-label=""></div>
-                </div>
-
-                {filteredProjects.map((project) => (
-                  <ProjectRow
-                    key={project._id}
-                    project={project}
-                    onClick={handleRowClick}
-                    showTeam={teamFilter === 'all'}
-                  />
-                ))}
-              </div>
-            </div>
+                  ),
+                },
+                ...(teamFilter === 'all'
+                  ? [
+                      {
+                        key: 'team',
+                        label: 'Team',
+                        render: (project) =>
+                          project.team ? (
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              {typeof project.team === 'object'
+                                ? (() => {
+                                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(
+                                      project.team
+                                    );
+                                    return (
+                                      <IconBadge
+                                        size="md"
+                                        className={colorClass}
+                                        title={project.team.name || 'Team'}
+                                      >
+                                        {IconComponent ? (
+                                          <IconComponent className="w-3 h-3" />
+                                        ) : (
+                                          <span className="text-xs">{icon}</span>
+                                        )}
+                                      </IconBadge>
+                                    );
+                                  })()
+                                : null}
+                              <span
+                                className="table-cell-text text-text-secondary truncate"
+                                title={
+                                  typeof project.team === 'object' && project.team.name
+                                    ? project.team.name
+                                    : 'Team'
+                                }
+                              >
+                                {typeof project.team === 'object' && project.team.name
+                                  ? project.team.name
+                                  : typeof project.team === 'object' && project.team.key
+                                    ? project.team.key
+                                    : '-'}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="table-cell-text text-text-tertiary">-</span>
+                          ),
+                      },
+                    ]
+                  : []),
+                {
+                  key: 'health',
+                  label: 'Health',
+                  render: (project) => {
+                    const statusIndicator = getStatusIndicator(project);
+                    const StatusIcon = statusIndicator.icon;
+                    return StatusIcon ? (
+                      <StatusIcon
+                        className={`w-4 h-4 ${statusIndicator.color}`}
+                        title={statusIndicator.label}
+                      />
+                    ) : (
+                      <span className="table-cell-text text-text-tertiary">-</span>
+                    );
+                  },
+                },
+                {
+                  key: 'priority',
+                  label: 'Priority',
+                  render: (project) => {
+                    const priorityMeta = getPriorityMeta(project.priority);
+                    const PriorityIcon = priorityMeta.Icon;
+                    const priorityColorClass = getPriorityColor(project.priority);
+                    return project.priority && project.priority !== 'no_priority' ? (
+                      <PriorityIcon
+                        className={`w-3.5 h-3.5 ${priorityColorClass}`}
+                        title={priorityMeta.label}
+                      />
+                    ) : (
+                      <span className="table-cell-text text-text-tertiary">-</span>
+                    );
+                  },
+                },
+                {
+                  key: 'lead',
+                  label: 'Lead',
+                  render: (project) =>
+                    project.creator ? (
+                      <Avatar
+                        size="md"
+                        className={`${getAvatarColor(
+                          typeof project.creator === 'object' && project.creator._id
+                            ? project.creator._id
+                            : project.creator
+                        )} text-[11px] font-medium`}
+                        title={
+                          typeof project.creator === 'object' && project.creator.name
+                            ? project.creator.name
+                            : 'Creator'
+                        }
+                      >
+                        {typeof project.creator === 'object' && project.creator.name
+                          ? project.creator.name.charAt(0).toUpperCase()
+                          : 'C'}
+                      </Avatar>
+                    ) : (
+                      <span className="table-cell-text text-text-tertiary">-</span>
+                    ),
+                },
+                {
+                  key: 'startDate',
+                  label: 'Start date',
+                  render: (project) => (
+                    <span className="table-cell-text text-text-secondary">
+                      {formatDate(project.startDate)}
+                    </span>
+                  ),
+                },
+                {
+                  key: 'targetDate',
+                  label: 'Target date',
+                  render: (project) => (
+                    <span className="table-cell-text text-text-secondary">
+                      {formatDate(project.targetDate)}
+                    </span>
+                  ),
+                },
+                {
+                  key: 'status',
+                  label: 'Status',
+                  render: (project) => {
+                    const statusIcon = getStatusIcon(project.status);
+                    const StatusIconComponent = statusIcon.Icon;
+                    return (
+                      <StatusIconComponent
+                        className={`w-4 h-4 ${statusIcon.color}`}
+                        title={project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                      />
+                    );
+                  },
+                },
+                {
+                  key: 'spacer-end',
+                  ariaLabel: '',
+                  render: () => null,
+                },
+              ]}
+            />
           )}
         </section>
       </div>

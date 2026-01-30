@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import IssuesBoard from '../components/IssuesBoard';
 import Header from '../components/Header';
-import { Button } from '../components/ui';
+import { Button, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
 import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from 'lucide-react';
 
@@ -28,36 +28,14 @@ const MyIssuesPage = () => {
         <div className="bg-background">
           <Header fallbackText="My Issues" />
 
-          <section aria-label="My issues filters" className="filter-bar">
-            <div className="filter-bar-inner">
-              <div className="filter-bar-tabs">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    filter === 'assigned' &&
-                      'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => navigate('/my-issues/assigned')}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  Assigned
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    filter === 'created' && 'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => navigate('/my-issues/created')}
-                >
-                  <FileText className="h-4 w-4" />
-                  Created
-                </Button>
-              </div>
-
+          <TabNavigation
+            tabs={[
+              { id: 'assigned', label: 'Assigned', icon: <UserPlus className="h-4 w-4" /> },
+              { id: 'created', label: 'Created', icon: <FileText className="h-4 w-4" /> },
+            ]}
+            activeTab={filter}
+            onTabChange={(tabId) => navigate(`/my-issues/${tabId}`)}
+            actions={
               <div className="flex flex-shrink-0 items-center gap-1.5">
                 <Button
                   type="button"
@@ -87,8 +65,8 @@ const MyIssuesPage = () => {
                   <LayoutList className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-          </section>
+            }
+          />
         </div>
 
         <div className="page-content">

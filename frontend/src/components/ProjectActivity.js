@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { baseURL } from '../utils';
 import UpdateActivityList from './UpdateActivityList';
-import { Button } from './ui';
+import { Button, CollapsibleSection } from './ui';
 
 const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll }) => {
   const [activities, setActivities] = useState([]);
@@ -69,34 +68,24 @@ const ProjectActivity = ({ projectIdentifier, token, refreshTrigger, onSeeAll })
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-text-primary font-medium gap-1"
-        >
-          Activity
-          {isExpanded ? (
-            <ChevronUp className="w-3.5 h-3.5 text-text-tertiary" />
-          ) : (
-            <ChevronDown className="w-3.5 h-3.5 text-text-tertiary" />
-          )}
-        </Button>
+    <CollapsibleSection
+      title="Activity"
+      expanded={isExpanded}
+      onToggle={setIsExpanded}
+      actions={
         <Button type="button" variant="ghost" size="sm" onClick={onSeeAll} className="text-xs">
           See all
         </Button>
-      </div>
-      {isExpanded && (
-        <UpdateActivityList
-          activities={activities.slice(0, 5)}
-          updateStatusMap={updateStatusMap}
-          variant="sidebar"
-        />
-      )}
-    </div>
+      }
+      headerClassName="text-text-primary font-medium gap-1"
+      contentClassName="mt-2"
+    >
+      <UpdateActivityList
+        activities={activities.slice(0, 5)}
+        updateStatusMap={updateStatusMap}
+        variant="sidebar"
+      />
+    </CollapsibleSection>
   );
 };
 

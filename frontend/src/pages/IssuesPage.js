@@ -5,7 +5,7 @@ import { baseURL } from '../utils';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
-import { Button, LoadingScreen } from '../components/ui';
+import { Button, LoadingScreen, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
 import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -114,47 +114,19 @@ const IssuesPage = () => {
             }}
           />
 
-          <section aria-label="Issues filters" className="filter-bar">
-            <div className="filter-bar-inner">
-              <div className="filter-bar-tabs">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    filter === 'all' && 'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/all`)}
-                >
-                  <List className="h-4 w-4" />
-                  All issues
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    filter === 'active' && 'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/active`)}
-                >
-                  <CircleDot className="h-4 w-4 text-yellow-500" />
-                  Active
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'flex-shrink-0',
-                    filter === 'backlog' && 'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => selectedTeam && navigate(`/team/${selectedTeam.key}/backlog`)}
-                >
-                  <CircleDashed className="h-4 w-4 text-text-tertiary" />
-                  Backlog
-                </Button>
-              </div>
-
+          <TabNavigation
+            tabs={[
+              { id: 'all', label: 'All issues', icon: <List className="h-4 w-4" /> },
+              { id: 'active', label: 'Active', icon: <CircleDot className="h-4 w-4 text-yellow-500" /> },
+              {
+                id: 'backlog',
+                label: 'Backlog',
+                icon: <CircleDashed className="h-4 w-4 text-text-tertiary" />,
+              },
+            ]}
+            activeTab={filter}
+            onTabChange={(tabId) => selectedTeam && navigate(`/team/${selectedTeam.key}/${tabId}`)}
+            actions={
               <div className="flex flex-shrink-0 items-center gap-1.5">
                 <Button
                   type="button"
@@ -184,8 +156,8 @@ const IssuesPage = () => {
                   <LayoutList className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-          </section>
+            }
+          />
         </div>
 
         <div className="page-content">

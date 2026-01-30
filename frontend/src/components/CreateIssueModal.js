@@ -251,7 +251,7 @@ const CreateIssueModal = ({
         </div>
 
         <div className="overflow-y-auto flex-1">
-          <form onSubmit={handleSubmit} className="px-6 pb-4 space-y-4">
+          <form onSubmit={handleSubmit} className="px-6 pt-1 pb-4 space-y-4">
             <Input
               type="text"
               value={title}

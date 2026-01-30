@@ -278,7 +278,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
           </IconButton>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col pt-1">
           <div className="flex-1 px-6 py-6 space-y-6">
             <div className="flex items-start gap-4">
               <IconBadge

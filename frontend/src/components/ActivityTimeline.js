@@ -13,8 +13,7 @@ import {
   Edit3,
 } from 'lucide-react';
 import { getAvatarColor, formatDateTime } from '../utils';
-import { Avatar } from './ui';
-import { cn } from '../utils/cn';
+import { ActivityDot } from './ui';
 
 const statusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
@@ -143,33 +142,34 @@ const ActivityTimeline = ({ activities, users = [] }) => {
 
                     if (!assigneeId || assigneeId === 'null' || assigneeId === null) {
                       return (
-                        <div className="activity-dot activity-dot-default">
+                        <ActivityDot>
                           <Circle className="w-4 h-4 text-text-primary" />
-                        </div>
+                        </ActivityDot>
                       );
                     }
                     const assigneeUser = users.find((u) => u._id === assigneeId);
                     if (assigneeUser) {
-                      const avatarColors = getAvatarColor(assigneeUser._id);
                       return (
-                        <Avatar size="md" className={cn('activity-dot', avatarColors)}>
-                          {assigneeUser.name.charAt(0).toUpperCase()}
-                        </Avatar>
+                        <ActivityDot className={getAvatarColor(assigneeUser._id)}>
+                          <span className="text-xs font-medium text-white">
+                            {assigneeUser.name.charAt(0).toUpperCase()}
+                          </span>
+                        </ActivityDot>
                       );
                     }
 
                     return (
-                      <div className="activity-dot activity-dot-default">
+                      <ActivityDot>
                         <Circle className="w-4 h-4 text-text-primary" />
-                      </div>
+                      </ActivityDot>
                     );
                   })()
                 : (() => {
                     const IconComponent = iconData.Icon;
                     return (
-                      <div className="activity-dot activity-dot-default">
+                      <ActivityDot>
                         <IconComponent className={`w-4 h-4 ${iconData.color}`} />
-                      </div>
+                      </ActivityDot>
                     );
                   })()}
               <div className="flex-1 pt-0.5 ml-8">
