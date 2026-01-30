@@ -17,7 +17,7 @@ import {
   LoadingScreen,
 } from '../components/ui';
 import { PanelRight } from '../icons';
-import { issueStatusIcons } from '../constants/status';
+import { issueStatusIcons } from '../constants';
 import toast from 'react-hot-toast';
 
 const IssueDetailPage = () => {

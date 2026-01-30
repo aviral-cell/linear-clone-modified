@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/ProjectModal.css';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { projectStatusOptions, priorityOptions } from '../constants/status';
+import { projectStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
   DropdownMenu,

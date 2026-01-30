@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, User, FolderKanban } from '../icons';
 import { getAvatarColor } from '../utils';
-import { issueStatusOptions, priorityOptions } from '../constants/status';
+import { issueStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
   DropdownMenu,

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Circle } from '../icons';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
-import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants/status';
+import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
   Button,

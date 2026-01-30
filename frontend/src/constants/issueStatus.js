@@ -8,7 +8,7 @@ import {
   CircleDot,
   CheckCircle2,
   XCircle,
-} from '../../icons';
+} from '../icons';
 
 /** Map of issue status key → { Icon, color } for rendering */
 export const issueStatusIcons = {

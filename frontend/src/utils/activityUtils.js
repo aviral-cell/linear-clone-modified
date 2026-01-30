@@ -11,7 +11,7 @@ import {
   Building2,
   Edit,
 } from '../icons';
-import { projectStatusIcons, priorityIcons } from '../constants/status';
+import { projectStatusIcons, priorityIcons } from '../constants';
 
 export { projectStatusIcons, priorityIcons };
 

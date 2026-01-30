@@ -36,7 +36,7 @@ import { normalizeUpdateStatus } from '../utils/statusMapping';
 import {
   updateStatusOptions,
   getUpdateStatusConfig,
-} from '../constants/status';
+} from '../constants';
 
 const getStatusConfig = (status) => {
   const displayStatus = normalizeUpdateStatus(status);

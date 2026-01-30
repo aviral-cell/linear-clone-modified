@@ -1,6 +1,6 @@
 import React from 'react';
 import { Circle, CircleDot, Edit3 } from '../icons';
-import { issueStatusIcons, priorityIcons } from '../constants/status';
+import { issueStatusIcons, priorityIcons } from '../constants';
 import { getAvatarColor, formatDateTime } from '../utils';
 import { ActivityDot, SectionTitle } from './ui';
 

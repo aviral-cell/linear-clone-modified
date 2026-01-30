@@ -22,7 +22,7 @@ import {
   projectStatusIcons,
   getPriorityColor,
   getPriorityMeta,
-} from '../constants/status';
+} from '../constants';
 
 const TABLE_GRID_CLASS = (showTeam) =>
   showTeam

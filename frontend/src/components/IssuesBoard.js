@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from '../icons';
 import { baseURL } from '../utils';
-import { issueStatusConfig, priorityConfig } from '../constants/status';
+import { issueStatusConfig, priorityConfig } from '../constants';
 import IssueCard from './IssueCard';
 import { Button } from './ui';
 import { useAuth } from '../context/AuthContext';

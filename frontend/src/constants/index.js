@@ -1,5 +1,5 @@
 /**
- * Status constants – centralized exports for issue, project, priority, and update status.
+ * Constants – centralized exports for issue, project, priority, and update status.
  */
 
 export {

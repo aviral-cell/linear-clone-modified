@@ -8,7 +8,7 @@ import {
   CircleDot,
   CheckCircle2,
   X,
-} from '../../icons';
+} from '../icons';
 
 /** Map of project status key → { Icon, color } for rendering (e.g. activity timeline) */
 export const projectStatusIcons = {

@@ -2,7 +2,7 @@
  * Priority constants – labels, icons, and colors for issue/update priority.
  */
 
-import { Minus, AlertCircle, BarChart2, BarChart3, BarChart4 } from '../../icons';
+import { Minus, AlertCircle, BarChart2, BarChart3, BarChart4 } from '../icons';
 
 /** Map of priority key → { Icon, color } for rendering */
 export const priorityIcons = {

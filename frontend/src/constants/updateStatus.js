@@ -2,7 +2,7 @@
  * Project update status constants – on_track, at_risk, off_track.
  */
 
-import { TrendingUp, AlertCircle, TrendingDown, Check } from '../../icons';
+import { TrendingUp, AlertCircle, TrendingDown, Check } from '../icons';
 
 /** Options array for update status dropdown: value, label, icon, color, bgColor, borderColor */
 export const updateStatusOptions = [
