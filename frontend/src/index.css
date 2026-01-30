@@ -31,6 +31,17 @@
   /* Portaled dropdown (fixed position, rendered in body) — avoids clipping by sidebar/modal/overflow */
   .dropdown-panel-portaled {
     @apply z-dropdown;
+    animation: dropdown-open 0.15s ease-out;
+  }
+  @keyframes dropdown-open {
+    from {
+      opacity: 0;
+      transform: scale(0.98) translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
   .dropdown-panel-wide {
     @apply min-w-dropdown-lg max-h-60 overflow-y-auto;

@@ -185,7 +185,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                 <ChevronRight className="w-4 h-4 flex-shrink-0" />
               ))}
           </Button>
-          {isTeamsSectionExpanded && (
+          <div
+            className={`overflow-hidden transition-[max-height] duration-200 ease-out ${
+              isCollapsed ? 'max-h-0' : isTeamsSectionExpanded ? 'max-h-[1000px]' : 'max-h-0'
+            }`}
+          >
             <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
               {teams.map((team) => {
                 const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
@@ -225,7 +229,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                           <ChevronRight className="w-4 h-4 flex-shrink-0" />
                         ))}
                     </Button>
-                    {expandedTeams[team._id] && !isCollapsed && (
+                    <div
+                      className={`overflow-hidden transition-[max-height] duration-200 ease-out ${
+                        expandedTeams[team._id] && !isCollapsed ? 'max-h-28' : 'max-h-0'
+                      }`}
+                    >
                       <div className="ml-6 mr-2 mt-0.5 space-y-0.5">
                         <Button
                           variant="ghost"
@@ -260,12 +268,12 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                           <span>Projects</span>
                         </Button>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
