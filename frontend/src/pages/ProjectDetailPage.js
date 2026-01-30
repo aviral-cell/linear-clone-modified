@@ -19,20 +19,10 @@ import {
   SectionTitle,
   TabNavigation,
 } from '../components/ui';
-import {
-  FolderKanban,
-  FileText,
-  List,
-  Clock,
-  Plus,
-  PanelRight,
-} from '../icons';
+import { FolderKanban, FileText, List, Clock, Plus, PanelRight } from '../icons';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
-import {
-  updateStatusOptions,
-  getUpdateStatusConfig,
-} from '../constants';
+import { updateStatusOptions, getUpdateStatusConfig } from '../constants';
 
 const getStatusConfig = (status) => {
   const displayStatus = normalizeUpdateStatus(status);
@@ -143,10 +133,7 @@ const ProjectDetailPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [teamsData, usersData] = await Promise.all([
-          api.teams.getAll(),
-          api.users.getAll(),
-        ]);
+        const [teamsData, usersData] = await Promise.all([api.teams.getAll(), api.users.getAll()]);
         setTeams(teamsData.teams);
         setUsers(usersData.users);
       } catch (error) {
@@ -180,7 +167,9 @@ const ProjectDetailPage = () => {
   const fetchUpdates = React.useCallback(async () => {
     if (!projectIdentifier) return;
     try {
-      const data = await api.get(`/api/projects/${projectIdentifier}/updates?includeActivities=true`);
+      const data = await api.get(
+        `/api/projects/${projectIdentifier}/updates?includeActivities=true`
+      );
       setUpdates(data.updates || []);
       setPendingActivities(data.pendingActivities || []);
     } catch (error) {

@@ -18,9 +18,7 @@ function DetailPanel({ isOpen, onClose, children, width = 'w-80', side = 'right'
 
   return (
     <>
-      {isOpen && (
-        <div className="lg:hidden overlay-backdrop top-14" onClick={onClose} />
-      )}
+      {isOpen && <div className="lg:hidden overlay-backdrop top-14" onClick={onClose} />}
       <div
         ref={panelRef}
         className={cn(detailPanelStyles, isOpen ? 'translate-x-0' : translateClass, width)}

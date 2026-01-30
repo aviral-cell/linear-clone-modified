@@ -169,7 +169,8 @@ const CreateIssueModal = ({
                       onClick={() => setShowTeamMenu((prev) => !prev)}
                     >
                       {(() => {
-                        const { IconComponent, colorClass, icon } = getTeamIconDisplay(selectedTeamObj);
+                        const { IconComponent, colorClass, icon } =
+                          getTeamIconDisplay(selectedTeamObj);
                         return (
                           <IconBadge size="md" className={colorClass}>
                             {IconComponent ? (

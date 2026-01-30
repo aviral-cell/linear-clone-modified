@@ -2,13 +2,7 @@
  * Issue status constants – labels, icons, and colors for issue workflow states.
  */
 
-import {
-  CircleDashed,
-  Circle,
-  CircleDot,
-  CheckCircle2,
-  XCircle,
-} from '../icons';
+import { CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from '../icons';
 
 /** Map of issue status key → { Icon, color } for rendering */
 export const issueStatusIcons = {

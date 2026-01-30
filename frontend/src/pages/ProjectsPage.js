@@ -118,57 +118,54 @@ const ProjectsPage = () => {
     fetchInitialData();
   }, []);
 
-  const fetchProjects = useCallback(
-    async (opts = {}) => {
-      try {
-        setProjectsLoading(true);
-        let teamId = null;
-        if (opts.teamKey && opts.teamKey !== 'all') {
-          const team = teamsRef.current.find((t) => t.key === opts.teamKey);
-          if (team) {
-            teamId = team._id;
-          }
+  const fetchProjects = useCallback(async (opts = {}) => {
+    try {
+      setProjectsLoading(true);
+      let teamId = null;
+      if (opts.teamKey && opts.teamKey !== 'all') {
+        const team = teamsRef.current.find((t) => t.key === opts.teamKey);
+        if (team) {
+          teamId = team._id;
         }
-
-        // Build the endpoint with query params
-        const params = new URLSearchParams();
-        if (opts.status && opts.status !== 'all') {
-          params.append('status', opts.status);
-        }
-        if (teamId) {
-          params.append('teamId', teamId);
-        }
-        if (opts.creatorId && opts.creatorId !== 'all') {
-          params.append('creatorId', opts.creatorId);
-        }
-
-        const query = params.toString();
-        const data = await api.get(`/api/projects${query ? `?${query}` : ''}`);
-        setProjects(data.projects || []);
-
-        const projectsWithUpdatesData = await Promise.all(
-          (data.projects || []).map(async (project) => {
-            try {
-              const updateData = await api.projects.getUpdates(project.identifier);
-              return {
-                ...project,
-                latestUpdate: updateData.updates?.[0] || null,
-              };
-            } catch {
-              return { ...project, latestUpdate: null };
-            }
-          })
-        );
-        setProjectsWithUpdates(projectsWithUpdatesData);
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-        toast.error('Failed to fetch projects');
-      } finally {
-        setProjectsLoading(false);
       }
-    },
-    []
-  );
+
+      // Build the endpoint with query params
+      const params = new URLSearchParams();
+      if (opts.status && opts.status !== 'all') {
+        params.append('status', opts.status);
+      }
+      if (teamId) {
+        params.append('teamId', teamId);
+      }
+      if (opts.creatorId && opts.creatorId !== 'all') {
+        params.append('creatorId', opts.creatorId);
+      }
+
+      const query = params.toString();
+      const data = await api.get(`/api/projects${query ? `?${query}` : ''}`);
+      setProjects(data.projects || []);
+
+      const projectsWithUpdatesData = await Promise.all(
+        (data.projects || []).map(async (project) => {
+          try {
+            const updateData = await api.projects.getUpdates(project.identifier);
+            return {
+              ...project,
+              latestUpdate: updateData.updates?.[0] || null,
+            };
+          } catch {
+            return { ...project, latestUpdate: null };
+          }
+        })
+      );
+      setProjectsWithUpdates(projectsWithUpdatesData);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      toast.error('Failed to fetch projects');
+    } finally {
+      setProjectsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (teamFilter !== 'all' && teams.length === 0) {
@@ -344,7 +341,9 @@ const ProjectsPage = () => {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-table-cell font-normal text-text-tertiary">-</span>
+                            <span className="text-table-cell font-normal text-text-tertiary">
+                              -
+                            </span>
                           ),
                       },
                     ]

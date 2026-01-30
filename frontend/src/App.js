@@ -44,77 +44,77 @@ function App() {
               />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route
-                  path="/"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <IssuesPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/my-issues/:issuesFilter?"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <MyIssuesPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/projects/all"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <ProjectsPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/team/:teamKey/projects/all"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <ProjectsPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/projects/:projectIdentifier/:tab?"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <ProjectDetailPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/team/:teamKey/:issuesFilter"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <IssuesPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/issue/:identifier"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <IssueDetailPage />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route
+                    path="/"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <IssuesPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/my-issues/:issuesFilter?"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <MyIssuesPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects/all"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <ProjectsPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/team/:teamKey/projects/all"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <ProjectsPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects/:projectIdentifier/:tab?"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <ProjectDetailPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/team/:teamKey/:issuesFilter"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <IssuesPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/issue/:identifier"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <IssueDetailPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
                 </Routes>
               </Suspense>
             </Router>

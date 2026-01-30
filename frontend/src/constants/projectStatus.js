@@ -2,13 +2,7 @@
  * Project status constants – labels, icons, and colors for project lifecycle states.
  */
 
-import {
-  Clock,
-  Circle,
-  CircleDot,
-  CheckCircle2,
-  X,
-} from '../icons';
+import { Clock, Circle, CircleDot, CheckCircle2, X } from '../icons';
 
 /** Map of project status key → { Icon, color } for rendering (e.g. activity timeline) */
 export const projectStatusIcons = {

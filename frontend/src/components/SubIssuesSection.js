@@ -19,8 +19,8 @@ import {
 import IssueCard from './IssueCard';
 
 const statusIcons = issueStatusIcons;
-const statusOptions = issueStatusOptions.filter(
-  (o) => ['backlog', 'todo', 'in_progress', 'in_review'].includes(o.value)
+const statusOptions = issueStatusOptions.filter((o) =>
+  ['backlog', 'todo', 'in_progress', 'in_review'].includes(o.value)
 );
 
 const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) => {

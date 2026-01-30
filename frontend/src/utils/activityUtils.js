@@ -26,7 +26,10 @@ export const getActivityIcon = (actionType, updateStatus = null, activityValue =
       if (activityValue && priorityIcons[activityValue]) {
         return priorityIcons[activityValue];
       }
-      return { Icon: priorityIcons.high?.Icon || priorityIcons.no_priority.Icon, color: 'text-text-tertiary' };
+      return {
+        Icon: priorityIcons.high?.Icon || priorityIcons.no_priority.Icon,
+        color: 'text-text-tertiary',
+      };
     case 'update_posted':
       if (updateStatus === 'on_track') {
         return { Icon: TrendingUp, color: 'text-green-400' };

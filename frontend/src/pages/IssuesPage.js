@@ -105,7 +105,11 @@ const IssuesPage = () => {
           <TabNavigation
             tabs={[
               { id: 'all', label: 'All issues', icon: <List className="h-4 w-4" /> },
-              { id: 'active', label: 'Active', icon: <CircleDot className="h-4 w-4 text-yellow-500" /> },
+              {
+                id: 'active',
+                label: 'Active',
+                icon: <CircleDot className="h-4 w-4 text-yellow-500" />,
+              },
               {
                 id: 'backlog',
                 label: 'Backlog',

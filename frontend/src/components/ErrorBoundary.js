@@ -8,10 +8,10 @@ import { Button } from './ui';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      hasError: false, 
+    this.state = {
+      hasError: false,
       error: null,
-      errorInfo: null 
+      errorInfo: null,
     };
   }
 
@@ -23,7 +23,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // Log error details
     console.error('Error Boundary caught an error:', error, errorInfo);
-    
+
     this.setState({ errorInfo });
 
     // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
@@ -68,9 +68,7 @@ class ErrorBoundary extends React.Component {
                   />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-text-primary mb-2">
-                Something went wrong
-              </h1>
+              <h1 className="text-2xl font-bold text-text-primary mb-2">Something went wrong</h1>
               <p className="text-text-secondary mb-4">
                 We're sorry, but something unexpected happened. Our team has been notified.
               </p>
@@ -86,27 +84,15 @@ class ErrorBoundary extends React.Component {
                 </details>
               )}
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={this.handleRetry}
-              >
+              <Button variant="secondary" size="md" onClick={this.handleRetry}>
                 Try Again
               </Button>
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={this.handleGoHome}
-              >
+              <Button variant="secondary" size="md" onClick={this.handleGoHome}>
                 Go to Home
               </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={this.handleReload}
-              >
+              <Button variant="primary" size="md" onClick={this.handleReload}>
                 Reload Page
               </Button>
             </div>
@@ -128,9 +114,9 @@ export const withErrorBoundary = (Component, fallback = null) => {
       <Component {...props} />
     </ErrorBoundary>
   );
-  
+
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name || 'Component'})`;
-  
+
   return WrappedComponent;
 };
 

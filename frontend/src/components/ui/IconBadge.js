@@ -8,8 +8,7 @@ const sizeStyles = {
   xl: 'w-7 h-7',
 };
 
-const baseStyles =
-  'rounded-md flex items-center justify-center flex-shrink-0 text-white';
+const baseStyles = 'rounded-md flex items-center justify-center flex-shrink-0 text-white';
 
 /**
  * Icon badge for team/project icons and small icon containers.
@@ -18,10 +17,7 @@ const baseStyles =
  */
 function IconBadge({ size = 'md', className, children, ...props }) {
   return (
-    <div
-      className={cn(baseStyles, sizeStyles[size], className)}
-      {...props}
-    >
+    <div className={cn(baseStyles, sizeStyles[size], className)} {...props}>
       {children}
     </div>
   );

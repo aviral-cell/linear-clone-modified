@@ -42,7 +42,11 @@ function DataTable({
             <div
               key={column.key}
               role="columnheader"
-              className={cn(tableHeaderStyles, 'px-2 py-2 text-text-tertiary', column.headerClassName)}
+              className={cn(
+                tableHeaderStyles,
+                'px-2 py-2 text-text-tertiary',
+                column.headerClassName
+              )}
               aria-label={column.ariaLabel || column.label || ''}
             >
               {column.label || null}

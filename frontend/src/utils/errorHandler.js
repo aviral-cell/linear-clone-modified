@@ -99,16 +99,11 @@ const logError = (error, context = {}) => {
  * @returns {Object} - Normalized error object
  */
 export const handleError = (error, options = {}) => {
-  const {
-    userMessage,
-    showToast = true,
-    toastType = 'error',
-    context = {},
-  } = options;
+  const { userMessage, showToast = true, toastType = 'error', context = {} } = options;
 
   // Normalize the error
   let normalizedError;
-  
+
   if (error instanceof AppError) {
     normalizedError = error;
   } else if (error.isApiError) {
