@@ -43,7 +43,7 @@ const IssueCard = memo(
       return (
         <div
           onClick={() => onClick(issue)}
-          className="group cursor-pointer rounded-md border border-border bg-background-card p-3 transition-all hover:border-border-hover"
+          className="group cursor-pointer rounded-md bg-background-card p-3 transition-colors hover:bg-background-hover"
         >
           {isSubIssue ? (
             <>
