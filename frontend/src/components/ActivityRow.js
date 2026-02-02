@@ -71,8 +71,7 @@ const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' 
   }
 
   // List layout: single line (icon + user + message + date)
-  const usernameClasses =
-    size === 'small' ? 'text-text-primary' : 'text-text-primary font-medium';
+  const usernameClasses = size === 'small' ? 'text-text-primary' : 'text-text-primary font-medium';
 
   return (
     <div className="flex items-start gap-2">

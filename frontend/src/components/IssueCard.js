@@ -49,8 +49,7 @@ const IssueCard = memo(
             <>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                  {issue.parent?.identifier || 'N/A'} ›{' '}
-                  {issue.parent?.title || 'Parent Issue'}
+                  {issue.parent?.identifier || 'N/A'} › {issue.parent?.title || 'Parent Issue'}
                 </span>
                 {issue.assignee && (
                   <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>

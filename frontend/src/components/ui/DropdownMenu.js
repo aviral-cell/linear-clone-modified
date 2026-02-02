@@ -47,16 +47,13 @@ function getPanelPlacement(triggerRect, align, panelWidth = ESTIMATED_PANEL_WIDT
   const spaceAbove = triggerRect.top;
   const placeAbove = spaceBelow < minBelow && spaceAbove >= Math.min(minAbove, spaceBelow);
 
-  const top = placeAbove
-    ? undefined
-    : triggerRect.bottom + GAP;
-  const bottom = placeAbove
-    ? vh - triggerRect.top + GAP
-    : undefined;
+  const top = placeAbove ? undefined : triggerRect.bottom + GAP;
+  const bottom = placeAbove ? vh - triggerRect.top + GAP : undefined;
 
   const pw = panelWidth || 180;
   const spaceOnRight = vw - triggerRect.right;
-  const useRight = align === 'right' || (spaceOnRight < pw + padding && triggerRect.left > spaceOnRight);
+  const useRight =
+    align === 'right' || (spaceOnRight < pw + padding && triggerRect.left > spaceOnRight);
 
   const left = useRight
     ? undefined
@@ -119,7 +116,11 @@ function DropdownMenu({
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const vw = window.innerWidth;
     const spaceOnRight = vw - triggerRect.right;
-    const newAlign = isVertical ? 'left' : (spaceOnRight < 196 && triggerRect.left > spaceOnRight ? 'right' : 'left');
+    const newAlign = isVertical
+      ? 'left'
+      : spaceOnRight < 196 && triggerRect.left > spaceOnRight
+        ? 'right'
+        : 'left';
     setAlign(newAlign);
   }, [open, isVertical]);
 
@@ -136,11 +137,19 @@ function DropdownMenu({
   }, [open]);
 
   // Compute placement during render when open (avoids flash; stays correct on resize/scroll via placeTick).
-  const triggerRect = open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
+  const triggerRect =
+    open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
   const renderAlign = triggerRect
-    ? (isVertical ? 'left' : (window.innerWidth - triggerRect.right < 196 && triggerRect.left > window.innerWidth - triggerRect.right ? 'right' : 'left'))
+    ? isVertical
+      ? 'left'
+      : window.innerWidth - triggerRect.right < 196 &&
+          triggerRect.left > window.innerWidth - triggerRect.right
+        ? 'right'
+        : 'left'
     : align;
-  const renderPlacement = triggerRect ? getPanelPlacement(triggerRect, renderAlign) : { top: 0, left: 0 };
+  const renderPlacement = triggerRect
+    ? getPanelPlacement(triggerRect, renderAlign)
+    : { top: 0, left: 0 };
 
   // Click outside: treat both trigger container and portaled panel as "inside"
   useEffect(() => {
@@ -183,12 +192,7 @@ function DropdownMenu({
   };
 
   const panelContent = open ? (
-    <div
-      ref={panelRef}
-      className={panelClasses}
-      style={panelStyle}
-      role="menu"
-    >
+    <div ref={panelRef} className={panelClasses} style={panelStyle} role="menu">
       {children}
     </div>
   ) : null;
@@ -256,7 +260,8 @@ function PopoverPortal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onOpenChange]);
 
-  const triggerRect = open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
+  const triggerRect =
+    open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
   const renderPlacement = triggerRect
     ? getPanelPlacement(triggerRect, 'left', 280, {
         minSpaceBelow: MIN_SPACE_BELOW_TALL,
