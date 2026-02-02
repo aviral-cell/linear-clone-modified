@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import SubIssuesSection from '../components/SubIssuesSection';
-import ActivityTimeline from '../components/ActivityTimeline';
+import IssueActivityTimeline from '../components/IssueActivityTimeline';
 import CommentsSection from '../components/CommentsSection';
 import CommentInput from '../components/CommentInput';
 import IssueSidebar from '../components/IssueSidebar';
@@ -147,7 +147,7 @@ const IssueDetailPage = () => {
     try {
       const targetIssueId = issueId || issue?._id;
       if (!targetIssueId) return;
-      const data = await api.activities.getByIssue(targetIssueId);
+      const data = await api.issueActivities.getByIssue(targetIssueId);
       setActivities(data.activities);
     } catch (error) {
       console.error('Error fetching activities:', error);
@@ -305,7 +305,7 @@ const IssueDetailPage = () => {
               users={users}
             />
 
-            <ActivityTimeline activities={activities} users={users} />
+            <IssueActivityTimeline activities={activities} users={users} />
 
             <CommentsSection
               comments={comments}

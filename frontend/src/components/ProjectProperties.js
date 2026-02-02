@@ -361,7 +361,10 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
-                className={cn(showStartDatePicker && 'border-accent', !startDate && 'text-text-tertiary')}
+                className={cn(
+                  showStartDatePicker && 'border-accent',
+                  !startDate && 'text-text-tertiary'
+                )}
                 onClick={() => setShowStartDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">
@@ -387,11 +390,7 @@ const ProjectProperties = ({
               />
               {startDate && (
                 <div className="px-3 pb-2">
-                  <Button
-                    variant="secondary"
-                    size="xs"
-                    onClick={() => handleStartDateChange(null)}
-                  >
+                  <Button variant="secondary" size="xs" onClick={() => handleStartDateChange(null)}>
                     Clear
                   </Button>
                 </div>
@@ -411,7 +410,10 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
-                className={cn(showTargetDatePicker && 'border-accent', !targetDate && 'text-text-tertiary')}
+                className={cn(
+                  showTargetDatePicker && 'border-accent',
+                  !targetDate && 'text-text-tertiary'
+                )}
                 onClick={() => setShowTargetDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">

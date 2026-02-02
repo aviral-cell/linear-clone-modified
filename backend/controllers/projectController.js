@@ -3,7 +3,7 @@ import Issue from '../models/Issue.js';
 import ProjectUpdate from '../models/ProjectUpdate.js';
 import ProjectActivity from '../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
-import { createProjectActivity } from '../utils/activityTracker.js';
+import { createProjectActivity } from '../utils/projectActivityTracker.js';
 
 const getIssueStats = async (projectIdOrIds) => {
   const isArray = Array.isArray(projectIdOrIds);
@@ -177,7 +177,7 @@ export const updateProject = async (req, res) => {
         await createProjectActivity(
           project._id,
           req.user._id,
-          'members_changed',
+          'updated_members',
           oldMemberIds,
           newMemberIds
         );
@@ -190,9 +190,9 @@ export const updateProject = async (req, res) => {
         project.lead = updates.leadId;
         await project.populate('lead', 'name email avatar');
         if (newLeadId) {
-          await createProjectActivity(project._id, req.user._id, 'lead_changed', null, project.lead);
+          await createProjectActivity(project._id, req.user._id, 'updated_lead', null, project.lead);
         } else {
-          await createProjectActivity(project._id, req.user._id, 'lead_cleared', oldLeadId, null);
+          await createProjectActivity(project._id, req.user._id, 'cleared_lead', oldLeadId, null);
         }
       }
     }
@@ -202,7 +202,7 @@ export const updateProject = async (req, res) => {
       if (oldTeamId !== newTeamId) {
         project.team = updates.teamId;
         await project.populate('team', 'name key icon');
-        await createProjectActivity(project._id, req.user._id, 'team_changed', null, project.team);
+        await createProjectActivity(project._id, req.user._id, 'updated_team', null, project.team);
       }
     }
 
@@ -212,7 +212,7 @@ export const updateProject = async (req, res) => {
       await createProjectActivity(
         project._id,
         req.user._id,
-        'status_changed',
+        'updated_status',
         project.status,
         otherUpdates.status
       );
@@ -222,7 +222,7 @@ export const updateProject = async (req, res) => {
       await createProjectActivity(
         project._id,
         req.user._id,
-        'priority_changed',
+        'updated_priority',
         project.priority,
         otherUpdates.priority
       );
@@ -236,12 +236,12 @@ export const updateProject = async (req, res) => {
           await createProjectActivity(
             project._id,
             req.user._id,
-            'target_date_set',
+            'set_target_date',
             null,
             newTargetDate
           );
         } else {
-          await createProjectActivity(project._id, req.user._id, 'target_date_cleared', oldTargetDate, null);
+          await createProjectActivity(project._id, req.user._id, 'cleared_target_date', oldTargetDate, null);
         }
       }
     }
@@ -254,23 +254,23 @@ export const updateProject = async (req, res) => {
           await createProjectActivity(
             project._id,
             req.user._id,
-            'start_date_set',
+            'set_start_date',
             null,
             newStartDate
           );
         } else {
-          await createProjectActivity(project._id, req.user._id, 'start_date_cleared', oldStartDate, null);
+          await createProjectActivity(project._id, req.user._id, 'cleared_start_date', oldStartDate, null);
         }
       }
     }
 
     if (otherUpdates.name !== undefined && otherUpdates.name !== project.name) {
-      await createProjectActivity(project._id, req.user._id, 'name_changed', project.name, otherUpdates.name);
+      await createProjectActivity(project._id, req.user._id, 'updated_name', project.name, otherUpdates.name);
       otherUpdates.identifier = generateProjectIdentifier(otherUpdates.name);
     }
 
     if (otherUpdates.summary !== undefined && otherUpdates.summary !== (project.summary || '')) {
-      await createProjectActivity(project._id, req.user._id, 'summary_changed', project.summary, otherUpdates.summary);
+      await createProjectActivity(project._id, req.user._id, 'updated_summary', project.summary, otherUpdates.summary);
     }
 
     Object.assign(project, otherUpdates);
@@ -357,7 +357,7 @@ export const getProjectUpdates = async (req, res) => {
 
         const windowActivities = activities.filter((activity) => {
           if (!activity.createdAt) return false;
-          if (activity.actionType === 'update_posted') return false;
+          if (activity.actionType === 'posted_update') return false;
           const activityTime = new Date(activity.createdAt);
           return activityTime > startTime && activityTime <= endTimeWithBuffer;
         });
@@ -373,7 +373,7 @@ export const getProjectUpdates = async (req, res) => {
 
       pendingActivities = activities.filter((activity) => {
         if (!activity.createdAt) return false;
-        if (activity.actionType === 'update_posted') return false;
+        if (activity.actionType === 'posted_update') return false;
         const activityTime = new Date(activity.createdAt);
         return activityTime > latestUpdateTimeWithBuffer;
       });
@@ -425,7 +425,7 @@ export const createProjectUpdate = async (req, res) => {
     await update.save();
     await update.populate('author', 'name email avatar');
 
-    await createProjectActivity(project._id, req.user._id, 'update_posted', null, null);
+    await createProjectActivity(project._id, req.user._id, 'posted_update', null, null);
 
     res.status(201).json({ update });
   } catch (error) {
