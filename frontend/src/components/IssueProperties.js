@@ -55,7 +55,7 @@ const IssueProperties = ({
     return (
       <>
         <User className="h-4 w-4 text-text-tertiary" />
-        <span>{isVertical ? 'Unassigned' : 'Assignee'}</span>
+        <span>Unassigned</span>
       </>
     );
   };
@@ -81,7 +81,7 @@ const IssueProperties = ({
     return (
       <>
         <FolderKanban className="w-4 h-4 text-text-tertiary" />
-        <span>{isVertical ? 'No project' : 'Project'}</span>
+        <span>No project</span>
       </>
     );
   };

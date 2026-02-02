@@ -7,6 +7,7 @@ import { getTeamIconDisplay } from '../utils/teamIcons';
 import { projectStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
+  Button,
   DropdownMenu,
   DropdownMenuItem,
   FieldTrigger,
@@ -115,7 +116,7 @@ const ProjectProperties = ({
     return (
       <>
         <User className="h-4 w-4 text-text-tertiary" />
-        <span>{isVertical ? 'Unassigned' : 'Lead'}</span>
+        <span>Unassigned</span>
       </>
     );
   };
@@ -141,7 +142,7 @@ const ProjectProperties = ({
     return (
       <>
         <Users className="w-4 h-4 text-text-tertiary" />
-        <span>{isVertical ? 'Unassigned' : 'Team'}</span>
+        <span>Team</span>
       </>
     );
   };
@@ -315,9 +316,7 @@ const ProjectProperties = ({
                   <span>
                     {selectedMembers.length > 0
                       ? `${selectedMembers.length} member${selectedMembers.length > 1 ? 's' : ''}`
-                      : isVertical
-                        ? 'No members'
-                        : 'Members'}
+                      : 'No members'}
                   </span>
                 </div>
                 <ChevronDown className="h-3.5 w-3.5 text-text-tertiary" />
@@ -362,17 +361,14 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
-                title={isVertical ? undefined : 'Start date'}
                 className={cn(showStartDatePicker && 'border-accent', !startDate && 'text-text-tertiary')}
                 onClick={() => setShowStartDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">
                   <CalendarClock className={`h-4 w-4 ${startDate ? '' : 'text-text-tertiary'}`} />
-                  {startDate ? (
-                    <span>{formatDateWithOrdinal(startDate)}</span>
-                  ) : isVertical ? (
-                    <span className="text-text-tertiary">No start date</span>
-                  ) : null}
+                  <span className={startDate ? '' : 'text-text-tertiary'}>
+                    {startDate ? formatDateWithOrdinal(startDate) : 'No start date'}
+                  </span>
                 </div>
               </FieldTrigger>
             }
@@ -389,6 +385,17 @@ const ProjectProperties = ({
                 inline
                 calendarClassName="react-datepicker-custom"
               />
+              {startDate && (
+                <div className="px-3 pb-2">
+                  <Button
+                    variant="secondary"
+                    size="xs"
+                    onClick={() => handleStartDateChange(null)}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              )}
             </div>
           </PopoverPortal>
         </PropertyField>
@@ -404,17 +411,14 @@ const ProjectProperties = ({
               <FieldTrigger
                 disabled={disabled}
                 fullWidth={isVertical}
-                title={isVertical ? undefined : 'Target date'}
                 className={cn(showTargetDatePicker && 'border-accent', !targetDate && 'text-text-tertiary')}
                 onClick={() => setShowTargetDatePicker((v) => !v)}
               >
                 <div className="flex items-center gap-2">
                   <CalendarCheck2 className={`h-4 w-4 ${targetDate ? '' : 'text-text-tertiary'}`} />
-                  {targetDate ? (
-                    <span>{formatDateWithOrdinal(targetDate)}</span>
-                  ) : isVertical ? (
-                    <span className="text-text-tertiary">No target date</span>
-                  ) : null}
+                  <span className={targetDate ? '' : 'text-text-tertiary'}>
+                    {targetDate ? formatDateWithOrdinal(targetDate) : 'No target date'}
+                  </span>
                 </div>
               </FieldTrigger>
             }
@@ -431,6 +435,17 @@ const ProjectProperties = ({
                 inline
                 calendarClassName="react-datepicker-custom"
               />
+              {targetDate && (
+                <div className="px-3 pb-2">
+                  <Button
+                    variant="secondary"
+                    size="xs"
+                    onClick={() => handleTargetDateChange(null)}
+                  >
+                    Clear
+                  </Button>
+                </div>
+              )}
             </div>
           </PopoverPortal>
         </PropertyField>

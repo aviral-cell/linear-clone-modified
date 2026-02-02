@@ -14,6 +14,7 @@ const variantStyles = {
 };
 
 const sizeStyles = {
+  xs: 'px-1.5 py-0.5 text-xs gap-1',
   sm: 'px-2 py-1 text-xs gap-1.5',
   md: 'px-3 py-1.5 text-xs gap-1.5',
   lg: 'px-4 py-2 text-sm gap-2',
@@ -26,7 +27,7 @@ const baseStyles =
 /**
  * Button primitive. Use variant and size for consistency.
  * @param {'primary'|'secondary'|'tertiary'|'ghost'|'hero'} [variant='primary']
- * @param {'sm'|'md'|'lg'|'xl'} [size='md']
+ * @param {'xs'|'sm'|'md'|'lg'|'xl'} [size='md']
  */
 function Button({
   variant = 'primary',
