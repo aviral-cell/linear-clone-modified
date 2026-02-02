@@ -9,6 +9,7 @@ import { ACTIVITY_LAYOUT, ACTIVITY_LIST_VARIANT } from '../constants';
  *
  * @param {Object} props
  * @param {Array} props.activities - Array of project activity objects from API
+ * @param {Array} [props.users=[]] - Array of user objects for resolving lead/member names
  * @param {string} [props.updateStatus=null] - Optional update status to apply to all activities (e.g., 'on_track', 'at_risk')
  * @param {Object} [props.updateStatusMap={}] - Map of activity IDs to their update statuses for posted_update icon resolution
  * @param {string} [props.variant='updates'] - Display variant: 'sidebar' (medium size) or 'updates' (small size)
@@ -16,6 +17,7 @@ import { ACTIVITY_LAYOUT, ACTIVITY_LIST_VARIANT } from '../constants';
  */
 const ActivityList = ({
   activities,
+  users = [],
   updateStatus = null,
   updateStatusMap = {},
   variant = ACTIVITY_LIST_VARIANT.UPDATES,
@@ -45,7 +47,10 @@ const ActivityList = ({
       {activities.map((activity) => (
         <ActivityRow
           key={activity._id}
-          item={normalizeProjectActivity(activity, completeUpdateStatusMap)}
+          item={normalizeProjectActivity(activity, {
+            users,
+            updateStatusMap: completeUpdateStatusMap,
+          })}
           layout={ACTIVITY_LAYOUT.LIST}
           size={size}
         />

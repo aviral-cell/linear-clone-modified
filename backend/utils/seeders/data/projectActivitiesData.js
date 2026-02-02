@@ -1,39 +1,25 @@
-const formatDateLabel = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  const day = d.getDate();
-  const daySuffix =
-    day === 1 || day === 21 || day === 31
-      ? 'st'
-      : day === 2 || day === 22
-        ? 'nd'
-        : day === 3 || day === 23
-          ? 'rd'
-          : 'th';
-  const month = d.toLocaleDateString('en-US', { month: 'short' });
-  return `${month} ${day}${daySuffix}`;
-};
-
-const formatStatusLabel = (status) => {
-  const statusMap = {
-    backlog: 'Backlog',
-    planned: 'Planned',
-    in_progress: 'In Progress',
-    completed: 'Completed',
-    cancelled: 'Canceled',
+/**
+ * Derive the field name from the action type
+ * @param {string} action - Action string (e.g., 'updated_lead', 'set_target_date')
+ * @returns {string|null} Field name or null for actions without a field
+ */
+const deriveFieldFromAction = (action) => {
+  const actionFieldMap = {
+    updated_status: 'status',
+    updated_priority: 'priority',
+    set_target_date: 'targetDate',
+    cleared_target_date: 'targetDate',
+    set_start_date: 'startDate',
+    cleared_start_date: 'startDate',
+    updated_lead: 'lead',
+    cleared_lead: 'lead',
+    updated_team: 'team',
+    updated_members: 'members',
+    updated_name: 'name',
+    updated_summary: 'summary',
+    posted_update: 'update',
   };
-  return statusMap[status] || status;
-};
-
-const formatPriorityLabel = (priority) => {
-  const priorityMap = {
-    no_priority: 'No priority',
-    urgent: 'Urgent',
-    high: 'High',
-    medium: 'Medium',
-    low: 'Low',
-  };
-  return priorityMap[priority] || priority;
+  return actionFieldMap[action] || null;
 };
 
 const calculateActivityTimestamp = (projectCreatedAt, projectUpdates, now, updateIndex = null) => {
@@ -102,68 +88,81 @@ export function getProjectActivitiesData(projects, users, updates = []) {
     let initialActivityIndex = -1;
     
     if (project.priority && project.priority !== 'no_priority') {
+      const action = 'updated_priority';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'updated_priority',
-        oldValue: 'no_priority',
-        newValue: project.priority,
-        description: `changed priority from ${formatPriorityLabel('no_priority')} to ${formatPriorityLabel(project.priority)}`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: 'no_priority',
+          newValue: project.priority,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     if (project.status && project.status !== 'backlog') {
+      const action = 'updated_status';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'updated_status',
-        oldValue: 'backlog',
-        newValue: project.status,
-        description: `changed status from ${formatStatusLabel('backlog')} to ${formatStatusLabel(project.status)}`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: 'backlog',
+          newValue: project.status,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     if (project.lead) {
-      const leadName = typeof project.lead === 'object' && project.lead?.name 
-        ? project.lead.name 
-        : 'User';
+      const action = 'updated_lead';
+      // Store the lead's ID - resolved to name in frontend using users list
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'updated_lead',
-        oldValue: null,
-        newValue: project.lead._id || project.lead,
-        description: `changed lead to ${leadName}`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: null,
+          newValue: project.lead._id || project.lead,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     if (project.targetDate) {
+      const action = 'set_target_date';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'set_target_date',
-        oldValue: null,
-        newValue: project.targetDate,
-        description: `set target date to ${formatDateLabel(project.targetDate)}`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: null,
+          newValue: project.targetDate,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     if (project.startDate) {
+      const action = 'set_start_date';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'set_start_date',
-        oldValue: null,
-        newValue: project.startDate,
-        description: `set start date to ${formatDateLabel(project.startDate)}`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: null,
+          newValue: project.startDate,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
@@ -171,46 +170,54 @@ export function getProjectActivitiesData(projects, users, updates = []) {
     
     if (project.members && project.members.length > 0) {
       const memberIds = project.members.map(m => m._id || m);
+      const action = 'updated_members';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'updated_members',
-        oldValue: [],
-        newValue: memberIds,
-        description: `changed members (${project.members.length} member${project.members.length !== 1 ? 's' : ''})`,
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: [],
+          newValue: memberIds,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     if (project.summary) {
+      const action = 'updated_summary';
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,
-        actionType: 'updated_summary',
-        oldValue: null,
-        newValue: project.summary,
-        description: 'updated summary',
+        action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: null,
+          newValue: project.summary,
+        },
         createdAt: getActivityTimestamp(initialActivityIndex),
       });
       initialActivityIndex++;
     }
     
     const additionalActivities = Math.min(Math.floor(daysSinceCreation / 7), 5);
-    const actionTypes = ['updated_status', 'updated_priority', 'updated_members', 'set_target_date'];
+    const actions = ['updated_status', 'updated_priority', 'updated_members', 'set_target_date'];
     const additionalUsers = users.filter(u => u._id.toString() !== project.creator.toString());
     
     for (let i = 0; i < additionalActivities; i++) {
-      const actionType = actionTypes[Math.floor(Math.random() * actionTypes.length)];
+      const action = actions[Math.floor(Math.random() * actions.length)];
       const user = additionalUsers[Math.floor(Math.random() * additionalUsers.length)] || project.creator;
       
       let activityData = {
         project: project._id,
         user: user._id || user,
-        actionType: actionType,
-        oldValue: null,
-        newValue: null,
-        description: '',
+        action: action,
+        changes: {
+          field: deriveFieldFromAction(action),
+          oldValue: null,
+          newValue: null,
+        },
         createdAt: null,
       };
       
@@ -223,15 +230,14 @@ export function getProjectActivitiesData(projects, users, updates = []) {
         activityData.createdAt = getActivityTimestamp(-1);
       }
       
-      switch (actionType) {
+      switch (action) {
         case 'updated_status':
           const statuses = ['backlog', 'planned', 'in_progress', 'completed'];
           const currentStatus = project.status || 'backlog';
           const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
           if (newStatus !== currentStatus) {
-            activityData.oldValue = currentStatus;
-            activityData.newValue = newStatus;
-            activityData.description = `changed status from ${formatStatusLabel(currentStatus)} to ${formatStatusLabel(newStatus)}`;
+            activityData.changes.oldValue = currentStatus;
+            activityData.changes.newValue = newStatus;
             activities.push(activityData);
           }
           break;
@@ -240,26 +246,23 @@ export function getProjectActivitiesData(projects, users, updates = []) {
           const currentPriority = project.priority || 'no_priority';
           const newPriority = priorities[Math.floor(Math.random() * priorities.length)];
           if (newPriority !== currentPriority) {
-            activityData.oldValue = currentPriority;
-            activityData.newValue = newPriority;
-            activityData.description = `changed priority from ${formatPriorityLabel(currentPriority)} to ${formatPriorityLabel(newPriority)}`;
+            activityData.changes.oldValue = currentPriority;
+            activityData.changes.newValue = newPriority;
             activities.push(activityData);
           }
           break;
         case 'updated_members':
           if (project.members && project.members.length > 0) {
             const memberIds = project.members.map(m => m._id || m);
-            activityData.oldValue = [];
-            activityData.newValue = memberIds;
-            activityData.description = `changed members (${memberIds.length} member${memberIds.length !== 1 ? 's' : ''})`;
+            activityData.changes.oldValue = [];
+            activityData.changes.newValue = memberIds;
             activities.push(activityData);
           }
           break;
         case 'set_target_date':
           if (project.targetDate) {
-            activityData.oldValue = null;
-            activityData.newValue = project.targetDate;
-            activityData.description = `set target date to ${formatDateLabel(project.targetDate)}`;
+            activityData.changes.oldValue = null;
+            activityData.changes.newValue = project.targetDate;
             activities.push(activityData);
           }
           break;

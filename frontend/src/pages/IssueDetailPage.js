@@ -326,7 +326,12 @@ const IssueDetailPage = () => {
               users={users}
             />
 
-            <IssueActivityTimeline activities={activities} users={users} />
+            <IssueActivityTimeline
+              activities={activities}
+              users={users}
+              projects={projects}
+              parentIssues={parentIssues}
+            />
 
             <CommentsSection
               comments={comments}

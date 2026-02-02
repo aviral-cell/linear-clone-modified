@@ -12,7 +12,7 @@ const projectActivitySchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    actionType: {
+    action: {
       type: String,
       required: true,
       enum: [
@@ -31,17 +31,10 @@ const projectActivitySchema = new mongoose.Schema(
         'posted_update',
       ],
     },
-    oldValue: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
-    },
-    newValue: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
-    },
-    description: {
-      type: String,
-      required: true,
+    changes: {
+      field: String,
+      oldValue: mongoose.Schema.Types.Mixed,
+      newValue: mongoose.Schema.Types.Mixed,
     },
   },
   {

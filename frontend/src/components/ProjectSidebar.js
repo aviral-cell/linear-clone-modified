@@ -39,6 +39,7 @@ const ProjectSidebar = ({
         {project?.identifier && (
           <ProjectActivity
             projectIdentifier={project.identifier}
+            users={users}
             refreshTrigger={activitiesRefreshTrigger}
             onSeeAll={onSeeAllActivities}
           />

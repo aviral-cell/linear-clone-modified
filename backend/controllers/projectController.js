@@ -357,7 +357,7 @@ export const getProjectUpdates = async (req, res) => {
 
         const windowActivities = activities.filter((activity) => {
           if (!activity.createdAt) return false;
-          if (activity.actionType === 'posted_update') return false;
+          if (activity.action === 'posted_update') return false;
           const activityTime = new Date(activity.createdAt);
           return activityTime > startTime && activityTime <= endTimeWithBuffer;
         });
@@ -373,7 +373,7 @@ export const getProjectUpdates = async (req, res) => {
 
       pendingActivities = activities.filter((activity) => {
         if (!activity.createdAt) return false;
-        if (activity.actionType === 'posted_update') return false;
+        if (activity.action === 'posted_update') return false;
         const activityTime = new Date(activity.createdAt);
         return activityTime > latestUpdateTimeWithBuffer;
       });

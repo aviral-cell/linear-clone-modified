@@ -114,10 +114,14 @@ const getIssueActivityIcon = (action, changes, users = []) => {
  * Build message text for issue activities
  * @param {string} action - Issue action type
  * @param {Object} changes - Changes object
- * @param {Array} users - Array of user objects
+ * @param {Object} options - Resolution options
+ * @param {Array} options.users - Array of user objects
+ * @param {Array} options.projects - Array of project objects for project resolution
+ * @param {Array} options.parentIssues - Array of parent issue objects for parent resolution
  * @returns {React.ReactNode} Message with optional formatted change
  */
-const buildIssueActivityMessage = (action, changes, users = []) => {
+const buildIssueActivityMessage = (action, changes, options = {}) => {
+  const { users = [], projects = [], parentIssues = [] } = options;
   const actionText = toDisplayAction(action);
 
   const simpleActions = ['updated_description', 'updated_title', 'added_comment'];
@@ -128,6 +132,8 @@ const buildIssueActivityMessage = (action, changes, users = []) => {
   if (!changes) return actionText;
 
   const isAssigneeChange = action.includes('assignee') || action.includes('assigned');
+  const isProjectChange = changes.field === 'project';
+  const isParentChange = changes.field === 'parent';
 
   const formatValue = (value) => {
     if (!value || value === 'null' || value === null) {
@@ -136,10 +142,26 @@ const buildIssueActivityMessage = (action, changes, users = []) => {
     if (typeof value === 'object' && value.name) {
       return value.name;
     }
+    if (typeof value === 'object' && value.identifier) {
+      return value.identifier;
+    }
     if (typeof value === 'string') {
+      // Resolve assignee from users
       if (isAssigneeChange && /^[0-9a-fA-F]{24}$/.test(value)) {
         const user = users.find((u) => u._id === value);
         return user ? user.name : 'User';
+      }
+
+      // Resolve project from projects list
+      if (isProjectChange && /^[0-9a-fA-F]{24}$/.test(value)) {
+        const project = projects.find((p) => p._id === value);
+        return project ? project.name || project.identifier : 'Unknown project';
+      }
+
+      // Resolve parent issue from parentIssues list
+      if (isParentChange && /^[0-9a-fA-F]{24}$/.test(value)) {
+        const parent = parentIssues.find((p) => p._id === value);
+        return parent ? parent.identifier || parent.title : 'Unknown issue';
       }
 
       return toDisplayAction(value).replace(/\b\w/g, (l) => l.toUpperCase());
@@ -161,12 +183,31 @@ const buildIssueActivityMessage = (action, changes, users = []) => {
 /**
  * Normalize an issue activity into the shared activity item format
  * @param {Object} activity - Issue activity object
- * @param {Array} users - Array of user objects for resolution
+ * @param {Array|Object} usersOrOptions - Array of user objects (backward compat) or options object
+ * @param {Object} [additionalOptions] - Additional options when first arg is users array
+ * @param {Array} [additionalOptions.projects] - Array of project objects for project resolution
+ * @param {Array} [additionalOptions.parentIssues] - Array of parent issue objects for parent resolution
  * @returns {NormalizedActivityItem} Normalized activity item
  */
-export const normalizeIssueActivity = (activity, users = []) => {
+export const normalizeIssueActivity = (activity, usersOrOptions = [], additionalOptions = {}) => {
+  // Support both old signature (activity, users) and new signature (activity, { users, projects, parentIssues })
+  let options;
+  if (Array.isArray(usersOrOptions)) {
+    // Old signature: (activity, users, { projects, parentIssues })
+    options = { users: usersOrOptions, ...additionalOptions };
+  } else {
+    // New signature: (activity, { users, projects, parentIssues })
+    options = usersOrOptions;
+  }
+
+  const { users = [], projects = [], parentIssues = [] } = options;
+
   const icon = getIssueActivityIcon(activity.action, activity.changes, users);
-  const message = buildIssueActivityMessage(activity.action, activity.changes, users);
+  const message = buildIssueActivityMessage(activity.action, activity.changes, {
+    users,
+    projects,
+    parentIssues,
+  });
 
   return {
     user: activity.user,
@@ -179,21 +220,43 @@ export const normalizeIssueActivity = (activity, users = []) => {
 
 /**
  * Normalize a project activity into the shared activity item format
- * @param {Object} activity - Project activity object
- * @param {Object} updateStatusMap - Map of activity IDs to update statuses (for posted_update icons)
+ * Uses unified shape: activity.action and activity.changes instead of actionType and top-level values
+ * @param {Object} activity - Project activity object (unified shape)
+ * @param {Object|Object} optionsOrUpdateStatusMap - Options object or legacy updateStatusMap
+ * @param {Array} [optionsOrUpdateStatusMap.users=[]] - Array of user objects for resolving lead names
+ * @param {Object} [optionsOrUpdateStatusMap.updateStatusMap={}] - Map of activity IDs to update statuses
  * @returns {NormalizedActivityItem} Normalized activity item
  */
-export const normalizeProjectActivity = (activity, updateStatusMap = {}) => {
+export const normalizeProjectActivity = (activity, optionsOrUpdateStatusMap = {}) => {
+  // Support both old signature (activity, updateStatusMap) and new signature (activity, { users, updateStatusMap })
+  let options;
+  if (
+    optionsOrUpdateStatusMap &&
+    typeof optionsOrUpdateStatusMap === 'object' &&
+    !Array.isArray(optionsOrUpdateStatusMap)
+  ) {
+    // Check if it's the new options format (has users or updateStatusMap key) or old format (direct map)
+    if ('users' in optionsOrUpdateStatusMap || 'updateStatusMap' in optionsOrUpdateStatusMap) {
+      options = optionsOrUpdateStatusMap;
+    } else {
+      // Old format: direct updateStatusMap
+      options = { users: [], updateStatusMap: optionsOrUpdateStatusMap };
+    }
+  } else {
+    options = { users: [], updateStatusMap: {} };
+  }
+
+  const { users = [], updateStatusMap = {} } = options;
   const activityUpdateStatus = updateStatusMap[activity._id] || null;
   const { Icon, color } = getProjectActivityIcon(
-    activity.actionType,
+    activity.action,
     activityUpdateStatus,
-    activity.newValue
+    activity.changes?.newValue
   );
 
   return {
     user: activity.user,
-    message: formatDescriptionWithBold(activity),
+    message: formatDescriptionWithBold(activity, users),
     icon: {
       type: 'icon',
       Icon,
