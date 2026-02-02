@@ -88,7 +88,7 @@ const formatChange = (action, changes, users = []) => {
   );
 };
 
-const ActivityTimeline = ({ activities, users = [] }) => {
+const IssueActivityTimeline = ({ activities, users = [] }) => {
   if (activities.length === 0) {
     return null;
   }
@@ -163,4 +163,4 @@ const ActivityTimeline = ({ activities, users = [] }) => {
   );
 };
 
-export default ActivityTimeline;
+export default IssueActivityTimeline;

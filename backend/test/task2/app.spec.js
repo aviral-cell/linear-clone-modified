@@ -6,13 +6,13 @@ import connectDatabase from '../../config/database.js';
 import User from '../../models/User.js';
 import Team from '../../models/Team.js';
 import Issue from '../../models/Issue.js';
-import Activity from '../../models/Activity.js';
+import IssueActivity from '../../models/IssueActivity.js';
 import { generateToken } from '../../middleware/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-const cleanupModels = async (models = [User, Team, Issue, Activity]) => {
+const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
@@ -69,7 +69,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
   });
 
   afterEach(async () => {
-    await Activity.deleteMany({});
+    await IssueActivity.deleteMany({});
   });
 
   after(async () => {
@@ -99,7 +99,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     const createdIssue = await Issue.findOne({ identifier: res.body.issue.identifier });
     expect(createdIssue).to.exist;
 
-    const activities = await Activity.find({ issue: createdIssue._id });
+    const activities = await IssueActivity.find({ issue: createdIssue._id });
     expect(activities).to.be.an('array').with.length(1);
     expect(activities[0]).to.have.property('action', 'created');
     expect(activities[0]).to.have.property('user');
@@ -127,7 +127,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res.body.issue).to.have.property('title', 'Updated Title');
     expect(res.body.issue).to.have.property('description', 'Updated Description');
 
-    const activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    const activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(2);
 
     const titleActivity = activities.find((a) => a.action === 'updated_title');
@@ -163,7 +163,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res.body).to.have.property('issue');
     expect(res.body.issue).to.have.property('status', 'in_progress');
 
-    const activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    const activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
     expect(activities[0]).to.have.property('action', 'updated_status');
     expect(activities[0]).to.have.property('changes');
@@ -188,7 +188,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res.body).to.have.property('issue');
     expect(res.body.issue).to.have.property('priority', 'high');
 
-    const activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    const activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
     expect(activities[0]).to.have.property('action', 'updated_priority');
     expect(activities[0]).to.have.property('changes');
@@ -215,7 +215,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res1.body.issue.assignee).to.exist;
     expect(res1.body.issue.assignee._id.toString()).to.equal(user._id.toString());
 
-    let activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    let activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
     expect(activities[0]).to.have.property('action', 'updated_assignee');
     expect(activities[0]).to.have.property('changes');
@@ -239,7 +239,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res2.body).to.have.property('issue');
     expect(res2.body.issue.assignee).to.be.null;
 
-    activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(2);
     expect(activities[0]).to.have.property('action', 'updated_assignee');
     expect(activities[0]).to.have.property('changes');
@@ -275,7 +275,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(res.body.issue).to.have.property('priority', 'high');
     expect(res.body.issue).to.have.property('title', 'Updated Title');
 
-    const activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    const activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(3);
 
     const actionTypes = activities.map((a) => a.action);
@@ -302,14 +302,14 @@ describe('Activity Tracker - Create and Update Issues', function() {
   });
 
   it('should return activities ordered by latest even when activities are created at the same time', async () => {
-    const activity1 = new Activity({
+    const activity1 = new IssueActivity({
       issue: issue._id,
       user: user._id,
       action: 'updated_status',
     });
     await activity1.save();
 
-    const activity2 = new Activity({
+    const activity2 = new IssueActivity({
       issue: issue._id,
       user: user._id,
       action: 'updated_priority',
@@ -319,7 +319,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     // Force same createdAt timestamp to test secondary sort
     // Using collection.updateMany to bypass Mongoose's immutable createdAt handling
     const sameDate = new Date('2024-01-01T00:00:00.000Z');
-    await Activity.collection.updateMany(
+    await IssueActivity.collection.updateMany(
       { _id: { $in: [activity1._id, activity2._id] } },
       { $set: { createdAt: sameDate } }
     );
@@ -357,7 +357,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(firstRes.body).to.have.property('issue');
     expect(firstRes.body.issue).to.have.property('status', 'in_progress');
 
-    let activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    let activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
     expect(activities[0]).to.have.property('action', 'updated_status');
     expect(activities[0]).to.have.property('changes');
@@ -376,7 +376,7 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(secondRes.body).to.have.property('issue');
     expect(secondRes.body.issue).to.have.property('status', 'in_progress');
 
-    activities = await Activity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
   });
 });

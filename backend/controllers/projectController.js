@@ -3,7 +3,7 @@ import Issue from '../models/Issue.js';
 import ProjectUpdate from '../models/ProjectUpdate.js';
 import ProjectActivity from '../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
-import { createProjectActivity } from '../utils/activityTracker.js';
+import { createProjectActivity } from '../utils/projectActivityTracker.js';
 
 const getIssueStats = async (projectIdOrIds) => {
   const isArray = Array.isArray(projectIdOrIds);

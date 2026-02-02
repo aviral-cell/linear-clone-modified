@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const activitySchema = new mongoose.Schema(
+const issueActivitySchema = new mongoose.Schema(
   {
     issue: {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,6 +41,6 @@ const activitySchema = new mongoose.Schema(
   }
 );
 
-activitySchema.index({ issue: 1, createdAt: -1 });
+issueActivitySchema.index({ issue: 1, createdAt: -1 });
 
-export default mongoose.model('Activity', activitySchema);
+export default mongoose.model('IssueActivity', issueActivitySchema);

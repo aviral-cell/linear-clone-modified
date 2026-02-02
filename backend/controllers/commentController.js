@@ -1,5 +1,5 @@
 import Comment from '../models/Comment.js';
-import Activity from '../models/Activity.js';
+import IssueActivity from '../models/IssueActivity.js';
 
 export const getCommentsByIssue = async (req, res) => {
   try {
@@ -41,7 +41,7 @@ export const createComment = async (req, res) => {
     await comment.save();
     await comment.populate('user', 'name email avatar');
 
-    const activity = new Activity({
+    const activity = new IssueActivity({
       issue: issueId,
       user: req.user._id,
       action: 'added_comment',
@@ -101,7 +101,7 @@ export const deleteComment = async (req, res) => {
 
     await comment.deleteOne();
 
-    const activity = new Activity({
+    const activity = new IssueActivity({
       issue: comment.issue,
       user: req.user._id,
       action: 'deleted_comment',

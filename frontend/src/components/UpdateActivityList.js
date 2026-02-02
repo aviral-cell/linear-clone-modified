@@ -3,7 +3,7 @@ import {
   getActivityIcon,
   formatDescriptionWithBold,
   formatActivityDate,
-} from '../utils/activityUtils';
+} from '../utils/projectActivityUtils';
 
 const UpdateActivityList = ({
   activities,
