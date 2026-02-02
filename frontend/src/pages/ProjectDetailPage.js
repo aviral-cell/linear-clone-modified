@@ -7,7 +7,7 @@ import ProjectProperties from '../components/ProjectProperties';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import UpdateCard from '../components/UpdateCard';
-import UpdateActivityList from '../components/UpdateActivityList';
+import ActivityList from '../components/ActivityList';
 import {
   Button,
   DetailPanel,
@@ -459,7 +459,7 @@ const ProjectDetailPage = () => {
                       onPostUpdate={handleCreateUpdate}
                       showPostButton={true}
                     />
-                    <UpdateActivityList activities={pendingActivities} />
+                    <ActivityList activities={pendingActivities} />
                   </div>
 
                   {updates.length === 0 ? (
@@ -479,7 +479,7 @@ const ProjectDetailPage = () => {
                               StatusIcon={StatusIcon}
                               formatDate={formatUpdateDate}
                             />
-                            <UpdateActivityList
+                            <ActivityList
                               activities={update.activities}
                               updateStatus={update.status}
                             />

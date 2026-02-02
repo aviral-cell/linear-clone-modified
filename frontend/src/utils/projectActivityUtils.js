@@ -118,9 +118,3 @@ export const formatDescriptionWithBold = (activity) => {
 
   return description;
 };
-
-export const formatActivityDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-};

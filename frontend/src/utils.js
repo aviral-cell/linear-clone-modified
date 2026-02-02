@@ -119,3 +119,9 @@ export const formatTime = (dateString, options = {}) => {
     timeZoneName: 'short',
   });
 };
+
+export const formatDateShort = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
