@@ -7,13 +7,13 @@ import User from '../../models/User.js';
 import Team from '../../models/Team.js';
 import Issue from '../../models/Issue.js';
 import Comment from '../../models/Comment.js';
-import Activity from '../../models/Activity.js';
+import IssueActivity from '../../models/IssueActivity.js';
 import { generateToken } from '../../middleware/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-const cleanupModels = async (models = [User, Team, Issue, Comment, Activity]) => {
+const cleanupModels = async (models = [User, Team, Issue, Comment, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
@@ -75,7 +75,7 @@ describe('Issue Comments Functionality Testing', () => {
   });
 
   afterEach(async () => {
-    await cleanupModels([Comment, Activity]);
+    await cleanupModels([Comment, IssueActivity]);
   });
 
   after(async () => {

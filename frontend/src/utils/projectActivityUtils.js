@@ -17,12 +17,12 @@ export { projectStatusIcons, priorityIcons };
 
 export const getActivityIcon = (actionType, updateStatus = null, activityValue = null) => {
   switch (actionType) {
-    case 'status_changed':
+    case 'updated_status':
       if (activityValue && projectStatusIcons[activityValue]) {
         return projectStatusIcons[activityValue];
       }
       return { Icon: CircleDot, color: 'text-yellow-400' };
-    case 'priority_changed':
+    case 'updated_priority':
       if (activityValue && priorityIcons[activityValue]) {
         return priorityIcons[activityValue];
       }
@@ -30,7 +30,7 @@ export const getActivityIcon = (actionType, updateStatus = null, activityValue =
         Icon: priorityIcons.high?.Icon || priorityIcons.no_priority.Icon,
         color: 'text-text-tertiary',
       };
-    case 'update_posted':
+    case 'posted_update':
       if (updateStatus === 'on_track') {
         return { Icon: TrendingUp, color: 'text-green-400' };
       }
@@ -41,21 +41,21 @@ export const getActivityIcon = (actionType, updateStatus = null, activityValue =
         return { Icon: TrendingDown, color: 'text-red-400' };
       }
       return { Icon: CheckCircle2, color: 'text-yellow-400' };
-    case 'start_date_set':
-    case 'start_date_cleared':
+    case 'set_start_date':
+    case 'cleared_start_date':
       return { Icon: CalendarClock, color: 'text-text-tertiary' };
-    case 'target_date_set':
-    case 'target_date_cleared':
+    case 'set_target_date':
+    case 'cleared_target_date':
       return { Icon: CalendarCheck2, color: 'text-text-tertiary' };
-    case 'lead_changed':
-    case 'lead_cleared':
+    case 'updated_lead':
+    case 'cleared_lead':
       return { Icon: User, color: 'text-text-tertiary' };
-    case 'team_changed':
+    case 'updated_team':
       return { Icon: Building2, color: 'text-text-tertiary' };
-    case 'members_changed':
+    case 'updated_members':
       return { Icon: Users, color: 'text-text-tertiary' };
-    case 'name_changed':
-    case 'summary_changed':
+    case 'updated_name':
+    case 'updated_summary':
       return { Icon: Edit, color: 'text-text-tertiary' };
     default:
       return { Icon: CircleDot, color: 'text-yellow-400' };
@@ -67,7 +67,7 @@ export const formatDescriptionWithBold = (activity) => {
 
   let valueToBold = '';
 
-  if (actionType === 'status_changed' || actionType === 'priority_changed') {
+  if (actionType === 'updated_status' || actionType === 'updated_priority') {
     const fromIndex = description.indexOf('from ');
     const toIndex = description.indexOf(' to ');
     if (fromIndex !== -1 && toIndex !== -1) {
@@ -82,22 +82,22 @@ export const formatDescriptionWithBold = (activity) => {
         </>
       );
     }
-  } else if (actionType === 'target_date_set' || actionType === 'start_date_set') {
+  } else if (actionType === 'set_target_date' || actionType === 'set_start_date') {
     const parts = description.split(' to ');
     if (parts.length === 2) {
       valueToBold = parts[1];
     }
-  } else if (actionType === 'name_changed') {
+  } else if (actionType === 'updated_name') {
     const parts = description.split(' to ');
     if (parts.length === 2) {
       valueToBold = parts[1];
     }
-  } else if (actionType === 'lead_changed' || actionType === 'team_changed') {
+  } else if (actionType === 'updated_lead' || actionType === 'updated_team') {
     const parts = description.split(' to ');
     if (parts.length === 2) {
       valueToBold = parts[1];
     }
-  } else if (actionType === 'members_changed') {
+  } else if (actionType === 'updated_members') {
     const match = description.match(/\(([^)]+)\)/);
     if (match) {
       valueToBold = match[0];
@@ -117,10 +117,4 @@ export const formatDescriptionWithBold = (activity) => {
   }
 
   return description;
-};
-
-export const formatActivityDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };

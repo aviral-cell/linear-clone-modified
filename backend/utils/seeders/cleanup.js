@@ -1,7 +1,7 @@
 import Project from '../../models/Project.js';
 import ProjectUpdate from '../../models/ProjectUpdate.js';
 import ProjectActivity from '../../models/ProjectActivity.js';
-import Activity from '../../models/Activity.js';
+import IssueActivity from '../../models/IssueActivity.js';
 import Comment from '../../models/Comment.js';
 import Issue from '../../models/Issue.js';
 import Team from '../../models/Team.js';
@@ -32,7 +32,7 @@ export async function clearAllData() {
   await Promise.all([
     ProjectUpdate.deleteMany({}),
     ProjectActivity.deleteMany({}),
-    Activity.deleteMany({}),
+    IssueActivity.deleteMany({}),
     Comment.deleteMany({}),
     Issue.deleteMany({}),
     Project.deleteMany({}),

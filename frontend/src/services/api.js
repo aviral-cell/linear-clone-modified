@@ -172,9 +172,9 @@ class ApiService {
   };
 
   // ==================
-  // ACTIVITIES ENDPOINTS
+  // ISSUE ACTIVITIES ENDPOINTS
   // ==================
-  activities = {
+  issueActivities = {
     getByIssue: (issueId) => this.get(`/api/activities/issue/${issueId}`),
   };
 }

@@ -1,5 +1,5 @@
 import Issue from '../../../models/Issue.js';
-import Activity from '../../../models/Activity.js';
+import IssueActivity from '../../../models/IssueActivity.js';
 import { issuesData } from '../data/issuesData.js';
 import { getSubIssuesData } from '../data/subIssuesData.js';
 
@@ -68,7 +68,7 @@ export async function seedIssues(teams, users, projects, creator) {
     insertedIssues.push(issue);
 
     // Create activity for issue creation
-    const activity = new Activity({
+    const activity = new IssueActivity({
       issue: issue._id,
       user: creator._id,
       action: 'created',
@@ -119,7 +119,7 @@ export async function seedIssues(teams, users, projects, creator) {
       insertedIssues.push(subIssue);
       subIssueCount++;
 
-      const activity = new Activity({
+      const activity = new IssueActivity({
         issue: subIssue._id,
         user: creator._id,
         action: 'created',

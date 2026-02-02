@@ -1,5 +1,5 @@
 import Issue from '../models/Issue.js';
-import Activity from '../models/Activity.js';
+import IssueActivity from '../models/IssueActivity.js';
 import Team from '../models/Team.js';
 
 export const getIssuesByTeam = async (req, res) => {
@@ -147,7 +147,7 @@ export const createIssue = async (req, res) => {
       { path: 'project', select: 'name identifier icon' },
     ]);
 
-    const activity = new Activity({
+    const activity = new IssueActivity({
       issue: issue._id,
       user: req.user._id,
       action: 'created',
@@ -234,7 +234,7 @@ export const updateIssue = async (req, res) => {
     ]);
 
     for (const change of changes) {
-      const activity = new Activity({
+      const activity = new IssueActivity({
         issue: issue._id,
         user: req.user._id,
         action: `updated_${change.field}`,

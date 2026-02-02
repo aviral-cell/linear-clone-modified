@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import UpdateActivityList from './UpdateActivityList';
+import ActivityList from './ActivityList';
+import { ACTIVITY_LIST_VARIANT } from '../constants';
 import { Button, CollapsibleSection } from './ui';
 
 const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
@@ -27,7 +28,7 @@ const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
         updates.forEach((update) => {
           const updateTime = new Date(update.createdAt).getTime();
           fetchedActivities.forEach((activity) => {
-            if (activity.actionType === 'update_posted' && activity.createdAt) {
+            if (activity.actionType === 'posted_update' && activity.createdAt) {
               const activityTime = new Date(activity.createdAt).getTime();
               const timeDiff = Math.abs(activityTime - updateTime);
               if (timeDiff < 10000) {
@@ -68,10 +69,10 @@ const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
       headerClassName="text-text-primary font-medium gap-1"
       contentClassName="mt-2"
     >
-      <UpdateActivityList
+      <ActivityList
         activities={activities.slice(0, 5)}
         updateStatusMap={updateStatusMap}
-        variant="sidebar"
+        variant={ACTIVITY_LIST_VARIANT.SIDEBAR}
       />
     </CollapsibleSection>
   );
