@@ -240,9 +240,9 @@ const IssueDetailPage = () => {
               />
             </div>
 
-            {issue.parentIssue &&
+            {issue.parent &&
               (() => {
-                const parentStatus = issue.parentIssue.status || 'todo';
+                const parentStatus = issue.parent.status || 'todo';
                 const statusConfig = issueStatusIcons[parentStatus] || issueStatusIcons.todo;
                 const StatusIcon = statusConfig.Icon;
                 return (
@@ -252,16 +252,16 @@ const IssueDetailPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => navigate(`/issue/${issue.parentIssue.identifier}`)}
+                        onClick={() => navigate(`/issue/${issue.parent.identifier}`)}
                         className="flex items-center gap-1.5 px-2 py-1 ml-1 text-text-primary rounded-md transition-colors group relative hover:bg-background-secondary"
                       >
                         <StatusIcon
                           className={`w-4 h-4 ${statusConfig.color} flex-shrink-0 relative z-10`}
                         />
                         <span className="font-mono text-text-tertiary relative z-10">
-                          {issue.parentIssue.identifier}
+                          {issue.parent.identifier}
                         </span>
-                        <span className="relative z-10">{issue.parentIssue.title}</span>
+                        <span className="relative z-10">{issue.parent.title}</span>
                       </Button>
                     </div>
                   </div>

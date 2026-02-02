@@ -28,6 +28,7 @@ yarn-error.log*
 *~
 .vscode/
 .cursor/
+.claude/
 
 # OS
 Thumbs.db

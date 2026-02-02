@@ -15,10 +15,10 @@ const IssueCard = memo(
     priorityLabel,
     showProject = false,
   }) {
-    const identifier = issue.parentIssue
-      ? issue.parentIssue.identifier || issue.identifier
+    const identifier = issue.parent
+      ? issue.parent.identifier || issue.identifier
       : issue.identifier;
-    const isSubIssue = Boolean(issue.parentIssue);
+    const isSubIssue = Boolean(issue.parent);
 
     if (variant === 'compact') {
       return (
@@ -49,8 +49,8 @@ const IssueCard = memo(
             <>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                  {issue.parentIssue?.identifier || 'N/A'} ›{' '}
-                  {issue.parentIssue?.title || 'Parent Issue'}
+                  {issue.parent?.identifier || 'N/A'} ›{' '}
+                  {issue.parent?.title || 'Parent Issue'}
                 </span>
                 {issue.assignee && (
                   <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>

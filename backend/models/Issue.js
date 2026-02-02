@@ -54,7 +54,7 @@ const issueSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    parentIssue: {
+    parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Issue',
       default: null,

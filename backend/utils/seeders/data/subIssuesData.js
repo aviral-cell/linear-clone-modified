@@ -12,7 +12,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Add token validation middleware',
@@ -22,7 +22,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('database') || title.includes('schema') || title.includes('query')) {
@@ -35,7 +35,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Create database migrations',
@@ -45,7 +45,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Add database indexes',
@@ -55,7 +55,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('ci/cd') || title.includes('pipeline') || title.includes('deployment')) {
@@ -68,7 +68,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Add automated testing',
@@ -78,7 +78,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Configure deployment stages',
@@ -88,7 +88,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('security') || title.includes('audit') || title.includes('vulnerability')) {
@@ -101,7 +101,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Review and fix security issues',
@@ -111,7 +111,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Implement security best practices',
@@ -121,7 +121,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('design system') || title.includes('components')) {
@@ -134,7 +134,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Document design tokens',
@@ -144,7 +144,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('mobile') || title.includes('responsive')) {
@@ -157,7 +157,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Optimize mobile performance',
@@ -167,7 +167,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('campaign') || title.includes('launch')) {
@@ -180,7 +180,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Schedule social media posts',
@@ -190,7 +190,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else if (title.includes('roadmap')) {
@@ -203,7 +203,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Gather stakeholder feedback',
@@ -213,7 +213,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   } else {
@@ -226,7 +226,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[0]?._id || users[0],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       },
       {
         title: 'Implementation',
@@ -236,7 +236,7 @@ export function getSubIssuesData(parentIssue, team, users) {
         team: team._id,
         assignee: users[1]?._id || users[1],
         creator: users[0]?._id || users[0],
-        parentIssue: parentIssue._id,
+        parent: parentIssue._id,
       }
     );
   }

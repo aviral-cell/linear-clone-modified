@@ -5,12 +5,12 @@ import Team from '../models/Team.js';
 export const getIssuesByTeam = async (req, res) => {
   try {
     const { teamId } = req.params;
-    const { status, parentIssue } = req.query;
+    const { status, parent } = req.query;
 
     const query = { team: teamId };
     if (status) query.status = status;
-    if (parentIssue !== undefined) {
-      query.parentIssue = parentIssue === 'null' ? null : parentIssue;
+    if (parent !== undefined) {
+      query.parent = parent === 'null' ? null : parent;
     }
 
     const issues = await Issue.find(query)
@@ -18,7 +18,7 @@ export const getIssuesByTeam = async (req, res) => {
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
       .populate('project', 'name identifier icon')
-      .populate('parentIssue', 'identifier title')
+      .populate('parent', 'identifier title')
       .sort({ createdAt: -1 });
 
     res.json({ issues });
@@ -49,7 +49,7 @@ export const getMyIssues = async (req, res) => {
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
       .populate('project', 'name identifier icon')
-      .populate('parentIssue', 'identifier title')
+      .populate('parent', 'identifier title')
       .sort({ createdAt: -1 });
 
     res.json({ issues });
@@ -68,13 +68,13 @@ export const getIssueByIdentifier = async (req, res) => {
       .populate('creator', 'name email avatar')
       .populate('team', 'name key icon')
       .populate('project', 'name identifier icon')
-      .populate('parentIssue', 'identifier title status');
+      .populate('parent', 'identifier title status');
 
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
     }
 
-    const subIssues = await Issue.find({ parentIssue: issue._id })
+    const subIssues = await Issue.find({ parent: issue._id })
       .populate('assignee', 'name email avatar')
       .populate('creator', 'name email avatar')
       .sort({ createdAt: -1 });
@@ -96,7 +96,7 @@ export const createIssue = async (req, res) => {
       teamId,
       projectId,
       assignee,
-      parentIssue,
+      parent,
       labels,
     } = req.body;
 
@@ -109,13 +109,13 @@ export const createIssue = async (req, res) => {
       return res.status(404).json({ message: 'Team not found' });
     }
 
-    if (parentIssue) {
-      const parent = await Issue.findById(parentIssue);
-      if (!parent) {
+    if (parent) {
+      const parentIssue = await Issue.findById(parent);
+      if (!parentIssue) {
         return res.status(404).json({ message: 'Parent issue not found' });
       }
 
-      if (parent.parentIssue) {
+      if (parentIssue.parent) {
         return res.status(400).json({
           message: 'Sub-issues cannot have another sub-issue',
         });
@@ -135,7 +135,7 @@ export const createIssue = async (req, res) => {
       project: projectId || null,
       assignee: assignee || null,
       creator: req.user._id,
-      parentIssue: parentIssue || null,
+      parent: parent || null,
       labels: labels || [],
     });
 

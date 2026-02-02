@@ -50,7 +50,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
         status,
         priority,
         assignee: assignee || null,
-        parentIssue: issue._id,
+        parent: issue._id,
       });
 
       setTitle('');
@@ -89,7 +89,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
             onToggle={setShowList}
             headerClassName="px-0 py-0 text-sm text-text-secondary hover:text-text-primary"
             actions={
-              !issue.parentIssue && (
+              !issue.parent && (
                 <IconButton
                   size="sm"
                   aria-label="Add sub-issue"
@@ -104,7 +104,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
               )
             }
           >
-            {showForm && !issue.parentIssue && (
+            {showForm && !issue.parent && (
               <div className="px-6 py-4 space-y-4 text-base bg-background-secondary rounded-md border border-border">
                 <Input
                   type="text"
@@ -322,7 +322,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
             )}
           </CollapsibleSection>
         </div>
-      ) : !issue.parentIssue ? (
+      ) : !issue.parent ? (
         <Button
           variant="ghost"
           size="md"
