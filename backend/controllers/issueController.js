@@ -176,6 +176,27 @@ export const updateIssue = async (req, res) => {
       delete updates.projectId;
     }
 
+    if (updates.parent !== undefined) {
+      const parentId = updates.parent === null ? null : updates.parent;
+      if (parentId) {
+        const parent = await Issue.findById(parentId);
+        if (!parent) {
+          return res.status(404).json({ message: 'Parent issue not found' });
+        }
+        if (parent.parent) {
+          return res.status(400).json({
+            message: 'Sub-issues cannot have another sub-issue',
+          });
+        }
+        if (parent._id.toString() === issue._id.toString()) {
+          return res.status(400).json({ message: 'Issue cannot be its own parent' });
+        }
+        if (parent.team.toString() !== issue.team.toString()) {
+          return res.status(400).json({ message: 'Parent must be in the same team' });
+        }
+      }
+    }
+
     const changes = [];
     const fieldsToTrack = [
       'status',
@@ -184,6 +205,7 @@ export const updateIssue = async (req, res) => {
       'title',
       'description',
       'project',
+      'parent',
     ];
 
     fieldsToTrack.forEach((field) => {
@@ -208,6 +230,7 @@ export const updateIssue = async (req, res) => {
       { path: 'creator', select: 'name email avatar' },
       { path: 'team', select: 'name key icon' },
       { path: 'project', select: 'name identifier icon' },
+      { path: 'parent', select: 'identifier title status' },
     ]);
 
     for (const change of changes) {

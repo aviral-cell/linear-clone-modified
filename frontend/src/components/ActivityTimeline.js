@@ -1,5 +1,5 @@
 import React from 'react';
-import { Circle, CircleDot, Edit3 } from '../icons';
+import { Circle, CircleDot, Edit3, Link2 } from '../icons';
 import { issueStatusIcons, priorityIcons } from '../constants';
 import { getAvatarColor, formatDateTime } from '../utils';
 import { ActivityDot, SectionTitle } from './ui';
@@ -40,6 +40,10 @@ const getActivityIcon = (action, changes, users = []) => {
     return { type: 'assignee', changes, users };
   }
 
+  if (action.includes('parent') || action.includes('parent')) {
+    return { Icon: Link2, color: 'text-text-tertiary', type: 'icon' };
+  }
+
   if (action.includes('title') || action.includes('description')) {
     return { Icon: Edit3, color: 'text-text-tertiary', type: 'icon' };
   }
@@ -64,6 +68,9 @@ const formatChange = (action, changes, users = []) => {
     }
     if (typeof value === 'object' && value.name) {
       return value.name;
+    }
+    if (typeof value === 'object' && value.identifier) {
+      return `${value.identifier} ${value.title || ''}`.trim();
     }
     if (typeof value === 'string') {
       if (isAssigneeChange && /^[0-9a-fA-F]{24}$/.test(value)) {

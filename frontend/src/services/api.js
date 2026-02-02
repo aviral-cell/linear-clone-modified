@@ -148,6 +148,11 @@ class ApiService {
   issues = {
     getByIdentifier: (identifier) => this.get(`/api/issues/${identifier}`),
 
+    getByTeam: (teamId, params = {}) => {
+      const q = new URLSearchParams(params).toString();
+      return this.get(`/api/issues/team/${teamId}${q ? `?${q}` : ''}`);
+    },
+
     create: (data) => this.post('/api/issues', data),
 
     update: (identifier, data) => this.put(`/api/issues/${identifier}`, data),

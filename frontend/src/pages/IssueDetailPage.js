@@ -26,6 +26,7 @@ const IssueDetailPage = () => {
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [parentIssues, setParentIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
   const [title, setTitle] = useState('');
@@ -93,9 +94,21 @@ const IssueDetailPage = () => {
       fetchActivities();
       if (issue.team) {
         fetchProjects(issue.team._id);
+        fetchParentIssues(issue.team._id, issue._id);
       }
     }
   }, [issue]);
+
+  const fetchParentIssues = async (teamId, currentIssueId) => {
+    try {
+      const data = await api.issues.getByTeam(teamId, { parent: 'null' });
+      const list = data.issues || [];
+      const filtered = list.filter((i) => i._id !== currentIssueId);
+      setParentIssues(filtered);
+    } catch (error) {
+      console.error('Error fetching parent issues:', error);
+    }
+  };
 
   const fetchProjects = async (teamId) => {
     try {
@@ -174,6 +187,12 @@ const IssueDetailPage = () => {
           ? projects.find((p) => p._id === updates.projectId)
           : null;
         setIssue((prev) => ({ ...prev, project: project || null }));
+      }
+      if (updates.parent !== undefined) {
+        const parentIssue = updates.parent
+          ? parentIssues.find((p) => p._id === updates.parent)
+          : null;
+        setIssue((prev) => ({ ...prev, parent: parentIssue || null }));
       }
 
       const data = await api.issues.update(identifier, updates);
@@ -295,6 +314,8 @@ const IssueDetailPage = () => {
                 showPriority={true}
                 showAssignee={true}
                 showProject={true}
+                showParent={true}
+                parentIssues={parentIssues}
               />
             </div>
 
@@ -325,7 +346,13 @@ const IssueDetailPage = () => {
           onClose={() => setIsRightSidebarOpen(false)}
           panelRef={sidebarRef}
         >
-          <IssueSidebar issue={issue} users={users} projects={projects} onUpdate={updateIssue} />
+          <IssueSidebar
+            issue={issue}
+            users={users}
+            projects={projects}
+            parentIssues={parentIssues}
+            onUpdate={updateIssue}
+          />
         </DetailPanel>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, User, FolderKanban } from '../icons';
+import { ChevronDown, User, FolderKanban, Link2, Search } from '../icons';
 import { getAvatarColor } from '../utils';
 import { cn } from '../utils/cn';
 import { issueStatusOptions, priorityOptions } from '../constants';
@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   FieldTrigger,
   IconBadge,
+  Input,
   PropertyField,
 } from './ui';
 
@@ -16,6 +17,7 @@ const IssueProperties = ({
   issue,
   users = [],
   projects = [],
+  parentIssues = [],
   onUpdate,
   disabled = false,
   variant = 'horizontal',
@@ -23,11 +25,14 @@ const IssueProperties = ({
   showPriority = true,
   showAssignee = true,
   showProject = true,
+  showParent = false,
 }) => {
   const [showStatusMenu, setShowStatusMenu] = useState(false);
   const [showPriorityMenu, setShowPriorityMenu] = useState(false);
   const [showAssigneeMenu, setShowAssigneeMenu] = useState(false);
   const [showProjectMenu, setShowProjectMenu] = useState(false);
+  const [showParentMenu, setShowParentMenu] = useState(false);
+  const [parentSearchQuery, setParentSearchQuery] = useState('');
 
   const isVertical = variant === 'vertical';
   const containerClasses = isVertical
@@ -82,6 +87,24 @@ const IssueProperties = ({
       <>
         <FolderKanban className="w-4 h-4 text-text-tertiary" />
         <span>No project</span>
+      </>
+    );
+  };
+
+  const renderParentContent = () => {
+    if (issue?.parent) {
+      return (
+        <>
+          <Link2 className="h-4 w-4 text-text-secondary flex-shrink-0" />
+          <span className="font-mono text-text-tertiary">{issue.parent.identifier}</span>
+          <span className="truncate">{issue.parent.title}</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <Link2 className="h-4 w-4 text-text-tertiary" />
+        <span>No parent</span>
       </>
     );
   };
@@ -280,6 +303,79 @@ const IssueProperties = ({
                 <span>{project.name}</span>
               </DropdownMenuItem>
             ))}
+          </DropdownMenu>
+        </PropertyField>
+      )}
+
+      {showParent && (
+        <PropertyField label="Parent" variant={variant}>
+          <DropdownMenu
+            open={showParentMenu}
+            onOpenChange={(open) => {
+              setShowParentMenu(open);
+              if (!open) setParentSearchQuery('');
+            }}
+            variant={variant}
+            minWidth="min-w-dropdown-lg"
+            maxHeight="max-h-60"
+            trigger={
+              <FieldTrigger
+                disabled={disabled}
+                fullWidth={isVertical}
+                onClick={() => setShowParentMenu((v) => !v)}
+              >
+                <div className="flex items-center gap-2 min-w-0">{renderParentContent()}</div>
+                <ChevronDown className="h-3.5 w-3.5 text-text-tertiary flex-shrink-0" />
+              </FieldTrigger>
+            }
+          >
+            <div
+              className="p-2 border-b border-border sticky top-0 bg-background-secondary z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Input.WithIcon
+                type="text"
+                value={parentSearchQuery}
+                onChange={(e) => setParentSearchQuery(e.target.value)}
+                placeholder="Search issues..."
+                variant="default"
+                className="text-sm h-8 py-2 pl-9 pr-3"
+                autoFocus
+              >
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-tertiary pointer-events-none" />
+              </Input.WithIcon>
+            </div>
+            <DropdownMenuItem
+              selected={!issue?.parent}
+              onClick={() => {
+                if (onUpdate) onUpdate({ parent: null });
+                setShowParentMenu(false);
+              }}
+            >
+              <Link2 className="h-4 w-4 text-text-primary" />
+              <span>No parent</span>
+            </DropdownMenuItem>
+            {parentIssues
+              .filter((p) => {
+                const q = parentSearchQuery.trim().toLowerCase();
+                if (!q) return true;
+                const id = (p.identifier || '').toLowerCase();
+                const title = (p.title || '').toLowerCase();
+                return id.includes(q) || title.includes(q);
+              })
+              .map((p) => (
+                <DropdownMenuItem
+                  key={p._id}
+                  selected={issue?.parent?._id === p._id}
+                  onClick={() => {
+                    if (onUpdate) onUpdate({ parent: p._id });
+                    setShowParentMenu(false);
+                  }}
+                >
+                  <span className="font-mono text-text-tertiary text-sm">{p.identifier}</span>
+                  <span className="truncate">{p.title}</span>
+                </DropdownMenuItem>
+              ))}
           </DropdownMenu>
         </PropertyField>
       )}
