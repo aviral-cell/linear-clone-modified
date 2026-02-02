@@ -27,7 +27,7 @@ const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
         updates.forEach((update) => {
           const updateTime = new Date(update.createdAt).getTime();
           fetchedActivities.forEach((activity) => {
-            if (activity.actionType === 'update_posted' && activity.createdAt) {
+            if (activity.actionType === 'posted_update' && activity.createdAt) {
               const activityTime = new Date(activity.createdAt).getTime();
               const timeDiff = Math.abs(activityTime - updateTime);
               if (timeDiff < 10000) {

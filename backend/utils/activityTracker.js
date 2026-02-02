@@ -42,46 +42,46 @@ export const createProjectActivity = async (projectId, userId, actionType, oldVa
   let description = '';
 
   switch (actionType) {
-    case 'status_changed':
+    case 'updated_status':
       description = `changed status from ${formatStatusLabel(oldValue)} to ${formatStatusLabel(newValue)}`;
       break;
-    case 'priority_changed':
+    case 'updated_priority':
       description = `changed priority from ${formatPriorityLabel(oldValue)} to ${formatPriorityLabel(newValue)}`;
       break;
-    case 'target_date_set':
+    case 'set_target_date':
       description = `set target date to ${formatDateLabel(newValue)}`;
       break;
-    case 'target_date_cleared':
+    case 'cleared_target_date':
       description = 'cleared target date';
       break;
-    case 'start_date_set':
+    case 'set_start_date':
       description = `set start date to ${formatDateLabel(newValue)}`;
       break;
-    case 'start_date_cleared':
+    case 'cleared_start_date':
       description = 'cleared start date';
       break;
-    case 'lead_changed':
+    case 'updated_lead':
       const leadName = typeof newValue === 'object' && newValue?.name ? newValue.name : (newValue || 'Unassigned');
       description = `changed lead to ${leadName}`;
       break;
-    case 'lead_cleared':
+    case 'cleared_lead':
       description = 'cleared lead';
       break;
-    case 'team_changed':
+    case 'updated_team':
       const teamName = typeof newValue === 'object' && newValue?.name ? newValue.name : (newValue || 'Unassigned');
       description = `changed team to ${teamName}`;
       break;
-    case 'members_changed':
+    case 'updated_members':
       const memberCount = Array.isArray(newValue) ? newValue.length : 0;
       description = `changed members (${memberCount} member${memberCount !== 1 ? 's' : ''})`;
       break;
-    case 'name_changed':
+    case 'updated_name':
       description = `changed name to ${newValue}`;
       break;
-    case 'summary_changed':
+    case 'updated_summary':
       description = 'updated summary';
       break;
-    case 'update_posted':
+    case 'posted_update':
       description = 'posted an update';
       break;
     default:
