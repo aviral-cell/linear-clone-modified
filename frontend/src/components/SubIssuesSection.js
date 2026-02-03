@@ -89,22 +89,20 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
             onToggle={setShowList}
             headerClassName="px-0 py-0 text-sm text-text-secondary hover:text-text-primary"
             actions={
-              !issue.parent && (
-                <IconButton
-                  size="sm"
-                  aria-label="Add sub-issue"
-                  onClick={() => {
-                    setShowForm(true);
-                    setShowList(true);
-                  }}
-                  className="text-text-tertiary hover:text-text-primary"
-                >
-                  <Plus className="w-4 h-4" />
-                </IconButton>
-              )
+              <IconButton
+                size="sm"
+                aria-label="Add sub-issue"
+                onClick={() => {
+                  setShowForm(true);
+                  setShowList(true);
+                }}
+                className="text-text-tertiary hover:text-text-primary"
+              >
+                <Plus className="w-4 h-4" />
+              </IconButton>
             }
           >
-            {showForm && !issue.parent && (
+            {showForm && (
               <div className="px-6 py-4 space-y-4 text-base bg-background-secondary rounded-md border border-border">
                 <Input
                   type="text"
@@ -322,7 +320,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
             )}
           </CollapsibleSection>
         </div>
-      ) : !issue.parent ? (
+      ) : (
         <Button
           variant="ghost"
           size="md"
@@ -332,7 +330,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
           <Plus className="h-4 w-4" />
           <span>Add sub-issue</span>
         </Button>
-      ) : null}
+      )}
     </div>
   );
 };

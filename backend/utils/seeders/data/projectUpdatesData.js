@@ -182,10 +182,12 @@ export function getProjectUpdatesData(projects, users, teams) {
       updateActivities.push({
         project: project._id,
         user: authors[i % authors.length]._id,
-        actionType: 'posted_update',
-        oldValue: null,
-        newValue: null,
-        description: 'posted an update',
+        action: 'posted_update',
+        changes: {
+          field: 'update',
+          oldValue: null,
+          newValue: null,
+        },
         createdAt: createdAt,
       });
     }

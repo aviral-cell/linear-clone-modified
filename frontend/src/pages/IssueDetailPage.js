@@ -30,6 +30,7 @@ const IssueDetailPage = () => {
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [parentIssues, setParentIssues] = useState([]);
   const [commentLoading, setCommentLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -91,9 +92,19 @@ const IssueDetailPage = () => {
       fetchActivities();
       if (issue.team) {
         fetchProjects(issue.team._id);
+        fetchParentIssues(issue.identifier);
       }
     }
   }, [issue]);
+
+  const fetchParentIssues = async (issueIdentifier) => {
+    try {
+      const data = await api.issues.getValidParents(issueIdentifier);
+      setParentIssues(data.validParents || []);
+    } catch (error) {
+      console.error('Error fetching valid parent issues:', error);
+    }
+  };
 
   const fetchProjects = async (teamId) => {
     try {
@@ -248,6 +259,8 @@ const IssueDetailPage = () => {
                 showPriority={true}
                 showAssignee={true}
                 showProject={true}
+                showParent={true}
+                parentIssues={parentIssues}
               />
             </div>
 
@@ -258,7 +271,12 @@ const IssueDetailPage = () => {
               users={users}
             />
 
-            <IssueActivityTimeline activities={activities} users={users} />
+            <IssueActivityTimeline
+              activities={activities}
+              users={users}
+              projects={projects}
+              parentIssues={parentIssues}
+            />
 
             <CommentsSection
               comments={comments}
@@ -278,7 +296,13 @@ const IssueDetailPage = () => {
           onClose={() => setIsRightSidebarOpen(false)}
           panelRef={sidebarRef}
         >
-          <IssueSidebar issue={issue} users={users} projects={projects} onUpdate={updateIssue} />
+          <IssueSidebar
+            issue={issue}
+            users={users}
+            projects={projects}
+            parentIssues={parentIssues}
+            onUpdate={updateIssue}
+          />
         </DetailPanel>
       </div>
     </div>

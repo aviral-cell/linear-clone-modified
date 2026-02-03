@@ -1,6 +1,10 @@
 import Issue from '../models/Issue.js';
 import IssueActivity from '../models/IssueActivity.js';
 import Team from '../models/Team.js';
+import {
+  validateParentChange,
+  getValidParentCandidates,
+} from '../utils/issueHierarchy.js';
 
 export const getIssuesByTeam = async (req, res) => {
   try {
@@ -115,9 +119,10 @@ export const createIssue = async (req, res) => {
         return res.status(404).json({ message: 'Parent issue not found' });
       }
 
-      if (parentIssue.parent) {
+      // Check team consistency
+      if (parentIssue.team.toString() !== teamId.toString()) {
         return res.status(400).json({
-          message: 'Sub-issues cannot have another sub-issue',
+          message: 'Parent must be in the same team',
         });
       }
     }
@@ -176,6 +181,27 @@ export const updateIssue = async (req, res) => {
       delete updates.projectId;
     }
 
+    if (updates.parent !== undefined) {
+      const parentId = updates.parent === null ? null : updates.parent;
+      if (parentId) {
+        const parent = await Issue.findById(parentId);
+        if (!parent) {
+          return res.status(404).json({ message: 'Parent issue not found' });
+        }
+
+        // Validate parent change using hierarchy utility
+        const validation = await validateParentChange(issue._id, parentId);
+        if (!validation.valid) {
+          return res.status(400).json({ message: validation.reason });
+        }
+
+        // Check team consistency
+        if (parent.team.toString() !== issue.team.toString()) {
+          return res.status(400).json({ message: 'Parent must be in the same team' });
+        }
+      }
+    }
+
     const changes = [];
     const fieldsToTrack = [
       'status',
@@ -184,6 +210,7 @@ export const updateIssue = async (req, res) => {
       'title',
       'description',
       'project',
+      'parent',
     ];
 
     fieldsToTrack.forEach((field) => {
@@ -208,6 +235,7 @@ export const updateIssue = async (req, res) => {
       { path: 'creator', select: 'name email avatar' },
       { path: 'team', select: 'name key icon' },
       { path: 'project', select: 'name identifier icon' },
+      { path: 'parent', select: 'identifier title status' },
     ]);
 
     for (const change of changes) {
@@ -223,6 +251,25 @@ export const updateIssue = async (req, res) => {
     res.json({ issue });
   } catch (error) {
     console.error('Update issue error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getValidParents = async (req, res) => {
+  try {
+    const { identifier } = req.params;
+
+    const issue = await Issue.findOne({ identifier });
+    if (!issue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    // Get valid parent candidates (excludes self and descendants)
+    const validParents = await getValidParentCandidates(issue._id);
+
+    res.json({ validParents });
+  } catch (error) {
+    console.error('Get valid parents error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

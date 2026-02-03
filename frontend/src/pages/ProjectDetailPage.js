@@ -459,7 +459,7 @@ const ProjectDetailPage = () => {
                       onPostUpdate={handleCreateUpdate}
                       showPostButton={true}
                     />
-                    <ActivityList activities={pendingActivities} />
+                    <ActivityList activities={pendingActivities} users={users} />
                   </div>
 
                   {updates.length === 0 ? (
@@ -481,6 +481,7 @@ const ProjectDetailPage = () => {
                             />
                             <ActivityList
                               activities={update.activities}
+                              users={users}
                               updateStatus={update.status}
                             />
                           </div>

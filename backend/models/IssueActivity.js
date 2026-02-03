@@ -27,6 +27,7 @@ const issueActivitySchema = new mongoose.Schema(
         'added_label',
         'removed_label',
         'updated_project',
+        'updated_parent',
       ],
     },
     changes: {

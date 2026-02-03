@@ -4,7 +4,7 @@ import ActivityList from './ActivityList';
 import { ACTIVITY_LIST_VARIANT } from '../constants';
 import { Button, CollapsibleSection } from './ui';
 
-const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
+const ProjectActivity = ({ projectIdentifier, users = [], refreshTrigger, onSeeAll }) => {
   const [activities, setActivities] = useState([]);
   const [updateStatusMap, setUpdateStatusMap] = useState({});
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
         updates.forEach((update) => {
           const updateTime = new Date(update.createdAt).getTime();
           fetchedActivities.forEach((activity) => {
-            if (activity.actionType === 'posted_update' && activity.createdAt) {
+            if (activity.action === 'posted_update' && activity.createdAt) {
               const activityTime = new Date(activity.createdAt).getTime();
               const timeDiff = Math.abs(activityTime - updateTime);
               if (timeDiff < 10000) {
@@ -71,6 +71,7 @@ const ProjectActivity = ({ projectIdentifier, refreshTrigger, onSeeAll }) => {
     >
       <ActivityList
         activities={activities.slice(0, 5)}
+        users={users}
         updateStatusMap={updateStatusMap}
         variant={ACTIVITY_LIST_VARIANT.SIDEBAR}
       />

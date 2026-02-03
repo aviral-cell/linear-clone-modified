@@ -4,7 +4,15 @@ import ActivityRow from './ActivityRow';
 import { normalizeIssueActivity } from '../utils/activityNormalizers';
 import { ACTIVITY_LAYOUT } from '../constants';
 
-const IssueActivityTimeline = ({ activities, users = [] }) => {
+/**
+ * IssueActivityTimeline component for displaying issue activity history
+ * @param {Object} props
+ * @param {Array} props.activities - Array of activity objects
+ * @param {Array} props.users - Array of user objects for assignee resolution
+ * @param {Array} props.projects - Array of project objects for project resolution
+ * @param {Array} props.parentIssues - Array of parent issue objects for parent resolution
+ */
+const IssueActivityTimeline = ({ activities, users = [], projects = [], parentIssues = [] }) => {
   if (activities.length === 0) {
     return null;
   }
@@ -21,7 +29,7 @@ const IssueActivityTimeline = ({ activities, users = [] }) => {
         {activities.map((activity) => (
           <ActivityRow
             key={activity._id}
-            item={normalizeIssueActivity(activity, users)}
+            item={normalizeIssueActivity(activity, { users, projects, parentIssues })}
             layout={ACTIVITY_LAYOUT.TIMELINE}
           />
         ))}

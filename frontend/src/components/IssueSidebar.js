@@ -3,7 +3,7 @@ import { getAvatarColor, formatDate } from '../utils';
 import { Avatar, Divider, Label } from './ui';
 import IssueProperties from './IssueProperties';
 
-const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
+const IssueSidebar = ({ issue, users, projects = [], parentIssues = [], onUpdate }) => {
   return (
     <div className="sidebar-content">
       <div className="sidebar-content-inner">
@@ -17,6 +17,8 @@ const IssueSidebar = ({ issue, users, projects = [], onUpdate }) => {
           showPriority={true}
           showAssignee={true}
           showProject={true}
+          showParent={true}
+          parentIssues={parentIssues}
         />
 
         <Divider />
