@@ -1,6 +1,12 @@
 import Issue from '../models/Issue.js';
 import IssueActivity from '../models/IssueActivity.js';
 import Team from '../models/Team.js';
+import {
+  validateParentChange,
+  getValidParentCandidates,
+  getDescendants,
+  getAncestors,
+} from '../utils/issueHierarchy.js';
 
 export const getIssuesByTeam = async (req, res) => {
   try {
@@ -115,9 +121,10 @@ export const createIssue = async (req, res) => {
         return res.status(404).json({ message: 'Parent issue not found' });
       }
 
-      if (parentIssue.parent) {
+      // Check team consistency
+      if (parentIssue.team.toString() !== teamId.toString()) {
         return res.status(400).json({
-          message: 'Sub-issues cannot have another sub-issue',
+          message: 'Parent must be in the same team',
         });
       }
     }
@@ -183,14 +190,14 @@ export const updateIssue = async (req, res) => {
         if (!parent) {
           return res.status(404).json({ message: 'Parent issue not found' });
         }
-        if (parent.parent) {
-          return res.status(400).json({
-            message: 'Sub-issues cannot have another sub-issue',
-          });
+
+        // Validate parent change using hierarchy utility
+        const validation = await validateParentChange(issue._id, parentId);
+        if (!validation.valid) {
+          return res.status(400).json({ message: validation.reason });
         }
-        if (parent._id.toString() === issue._id.toString()) {
-          return res.status(400).json({ message: 'Issue cannot be its own parent' });
-        }
+
+        // Check team consistency
         if (parent.team.toString() !== issue.team.toString()) {
           return res.status(400).json({ message: 'Parent must be in the same team' });
         }
@@ -246,6 +253,35 @@ export const updateIssue = async (req, res) => {
     res.json({ issue });
   } catch (error) {
     console.error('Update issue error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getValidParents = async (req, res) => {
+  try {
+    const { identifier } = req.params;
+
+    const issue = await Issue.findOne({ identifier });
+    if (!issue) {
+      return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    // Get valid parent candidates (excludes self and descendants)
+    const validParents = await getValidParentCandidates(issue._id);
+
+    // Get ancestors and descendants for hierarchy context
+    const ancestors = await getAncestors(issue._id);
+    const descendants = await getDescendants(issue._id);
+
+    res.json({
+      validParents,
+      hierarchy: {
+        ancestors,
+        descendants,
+      },
+    });
+  } catch (error) {
+    console.error('Get valid parents error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

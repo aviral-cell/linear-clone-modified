@@ -156,6 +156,8 @@ class ApiService {
     create: (data) => this.post('/api/issues', data),
 
     update: (identifier, data) => this.put(`/api/issues/${identifier}`, data),
+
+    getValidParents: (identifier) => this.get(`/api/issues/${identifier}/valid-parents`),
   };
 
   // ==================

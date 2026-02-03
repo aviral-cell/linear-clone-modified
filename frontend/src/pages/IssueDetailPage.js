@@ -94,19 +94,17 @@ const IssueDetailPage = () => {
       fetchActivities();
       if (issue.team) {
         fetchProjects(issue.team._id);
-        fetchParentIssues(issue.team._id, issue._id);
+        fetchParentIssues(issue.identifier);
       }
     }
   }, [issue]);
 
-  const fetchParentIssues = async (teamId, currentIssueId) => {
+  const fetchParentIssues = async (issueIdentifier) => {
     try {
-      const data = await api.issues.getByTeam(teamId, { parent: 'null' });
-      const list = data.issues || [];
-      const filtered = list.filter((i) => i._id !== currentIssueId);
-      setParentIssues(filtered);
+      const data = await api.issues.getValidParents(issueIdentifier);
+      setParentIssues(data.validParents || []);
     } catch (error) {
-      console.error('Error fetching parent issues:', error);
+      console.error('Error fetching valid parent issues:', error);
     }
   };
 
