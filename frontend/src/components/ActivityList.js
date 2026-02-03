@@ -28,7 +28,6 @@ const ActivityList = ({
   const containerClasses = isSidebar ? 'space-y-3' : 'activity-list';
   const size = isSidebar ? 'medium' : 'small';
 
-  // Build complete updateStatusMap including explicit updateStatus (non-mutating)
   const completeUpdateStatusMap =
     updateStatus && activities.length > 0
       ? activities.reduce(

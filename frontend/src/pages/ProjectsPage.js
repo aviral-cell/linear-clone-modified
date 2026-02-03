@@ -129,7 +129,6 @@ const ProjectsPage = () => {
         }
       }
 
-      // Build the endpoint with query params
       const params = new URLSearchParams();
       if (opts.status && opts.status !== 'all') {
         params.append('status', opts.status);

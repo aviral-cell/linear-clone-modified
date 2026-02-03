@@ -16,18 +16,13 @@ class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render shows the fallback UI
     return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log error details
     console.error('Error Boundary caught an error:', error, errorInfo);
 
     this.setState({ errorInfo });
-
-    // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
-    // Example: Sentry.captureException(error, { extra: errorInfo });
   }
 
   handleReload = () => {
@@ -44,7 +39,6 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }

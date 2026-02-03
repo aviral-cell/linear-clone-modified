@@ -9,7 +9,6 @@ const sizeStyles = {
   base: 'text-base',
 };
 
-// Semantic min-heights for different contexts (use Tailwind scale where possible)
 const minHeightStyles = {
   summary: 'min-h-[24px]',
   card: 'min-h-[56px]',
