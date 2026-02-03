@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { api } from '../services/api';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
 import { Button, LoadingScreen, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
 import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from '../icons';
+import { useTeams } from '../hooks';
 import toast from 'react-hot-toast';
 
 const IssuesPage = () => {
-  const [teams, setTeams] = useState([]);
+  const { teams, loading } = useTeams();
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [filter, setFilter] = useState('active');
-  const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
   const [viewMode, setViewMode] = useState('columns');
@@ -21,10 +20,6 @@ const IssuesPage = () => {
   const { teamKey, issuesFilter } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    fetchTeams();
-  }, []);
 
   useEffect(() => {
     if (teams.length > 0 && !teamKey) {
@@ -65,19 +60,6 @@ const IssuesPage = () => {
       next.set('view', mode);
     }
     setSearchParams(next);
-  };
-
-  const fetchTeams = async () => {
-    try {
-      setLoading(true);
-      const data = await api.teams.getAll();
-      setTeams(data.teams);
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-      toast.error('Failed to fetch teams');
-    } finally {
-      setLoading(false);
-    }
   };
 
   if (loading) {

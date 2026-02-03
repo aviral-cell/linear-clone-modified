@@ -14,6 +14,7 @@ import {
   TabNavigation,
 } from '../components/ui';
 import { Plus, FolderKanban } from '../icons';
+import { useTeams } from '../hooks';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
 import {
@@ -87,10 +88,9 @@ const formatDate = (date) => {
 const ProjectsPage = () => {
   const navigate = useNavigate();
   const { teamKey } = useParams();
-  const [teams, setTeams] = useState([]);
+  const { teams, loading } = useTeams();
   const [projects, setProjects] = useState([]);
   const [projectsWithUpdates, setProjectsWithUpdates] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [statusFilter] = useState('all');
   const [teamFilter, setTeamFilter] = useState(() => {
@@ -102,21 +102,8 @@ const ProjectsPage = () => {
   const teamsRef = useRef([]);
 
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const data = await api.teams.getAll();
-        setTeams(data.teams);
-        teamsRef.current = data.teams;
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-        toast.error('Failed to load workspace data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInitialData();
-  }, []);
+    teamsRef.current = teams;
+  }, [teams]);
 
   const fetchProjects = useCallback(async (opts = {}) => {
     try {
