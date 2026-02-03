@@ -14,16 +14,13 @@ import { seedComments } from './seeders/commentSeeder.js';
 export async function seed() {
   console.log('========= SEEDING DATA ==========');
   try {
-    // Connect to database
     await connectDatabase();
     console.log('✓ Connected to the database\n');
 
-    // Cleanup phase
     await dropOldIndexes();
     await clearAllData();
     console.log('');
 
-    // Seeding phase
     const users = await seedUsers();
     console.log('');
 
@@ -45,7 +42,6 @@ export async function seed() {
     await seedComments(issues, users);
     console.log('');
 
-    // Success message
     console.log('=================================');
     console.log('Data seeding completed successfully!');
     console.log('=================================');
@@ -58,14 +54,3 @@ export async function seed() {
     throw error;
   }
 }
-
-// Note: This file is typically imported and used by backend/utils/seed.js
-// If you want to run it directly, uncomment the following:
-// seed()
-//   .then(() => {
-//     process.exit(0);
-//   })
-//   .catch((error) => {
-//     console.error('Error in seed script:', error);
-//     process.exit(1);
-//   });

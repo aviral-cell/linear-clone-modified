@@ -17,7 +17,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
 };
 
 describe('Activity Tracker - Create and Update Issues', function() {
-  this.timeout(10000); // Increase timeout to 10 seconds for bcrypt hashing
+  this.timeout(10000);
 
   let user;
   let userToken;
@@ -35,7 +35,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
     
     await cleanupModels();
 
-    // Setup test user with hashed password
     const bcrypt = await import('bcrypt');
     const hashedPassword = await bcrypt.default.hash('password123', 12);
     
@@ -47,7 +46,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
     await user.save();
     userToken = generateToken(user._id);
 
-    // Setup test team and base issue for testing
     team = new Team({
       name: 'Test Team',
       key: 'TEST',
@@ -200,7 +198,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
   });
 
   it('should create an activity with action "updated_assignee" when issue assignee is updated', async () => {
-    // Test 1: Assign user to issue (null → user)
     await Issue.findByIdAndUpdate(issue._id, { assignee: null });
     issue = await Issue.findById(issue._id);
 
@@ -225,7 +222,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(activities[0]).to.have.property('user');
     expect(activities[0].user.toString()).to.equal(user._id.toString());
 
-    // Test 2: Remove assignee from issue (user → null)
     issue = await Issue.findById(issue._id);
     expect(issue.assignee.toString()).to.equal(user._id.toString());
 
@@ -316,8 +312,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
     });
     await activity2.save();
 
-    // Force same createdAt timestamp to test secondary sort
-    // Using collection.updateMany to bypass Mongoose's immutable createdAt handling
     const sameDate = new Date('2024-01-01T00:00:00.000Z');
     await IssueActivity.collection.updateMany(
       { _id: { $in: [activity1._id, activity2._id] } },
@@ -335,18 +329,14 @@ describe('Activity Tracker - Create and Update Issues', function() {
 
     const actions = res.body.activities.map((a) => a.action);
 
-    // When timestamps are equal, should have secondary sort
-    // activity2 was created after activity1, so it should appear first
     expect(actions[0]).to.equal('updated_priority');
     expect(actions[1]).to.equal('updated_status');
   });
 
   it('should create an activity for a changed field but not when updated to the same value', async () => {
-    // Ensure initial status is 'todo'
     await Issue.findByIdAndUpdate(issue._id, { status: 'todo' });
     issue = await Issue.findById(issue._id);
 
-    // First update: change status from 'todo' to 'in_progress' → should create activity
     const firstRes = await chai
       .request(app)
       .put(`/api/issues/${issue.identifier}`)
@@ -365,7 +355,6 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(activities[0].changes).to.have.property('oldValue', 'todo');
     expect(activities[0].changes).to.have.property('newValue', 'in_progress');
 
-    // Second update: set status to the same value 'in_progress' → should NOT create new activity
     const secondRes = await chai
       .request(app)
       .put(`/api/issues/${issue.identifier}`)

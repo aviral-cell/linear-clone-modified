@@ -55,7 +55,6 @@ import {
   LayoutPanelLeft,
 } from 'lucide-react';
 
-// Named exports for direct use
 export {
   AlertCircle,
   Ban,
@@ -107,7 +106,6 @@ export {
   LayoutPanelLeft,
 };
 
-// Standardized object for Icons.IconName usage
 export const Icons = {
   AlertCircle,
   Ban,

@@ -67,7 +67,6 @@ export async function seedIssues(teams, users, projects, creator) {
     await issue.save();
     insertedIssues.push(issue);
 
-    // Create activity for issue creation
     const activity = new IssueActivity({
       issue: issue._id,
       user: creator._id,
@@ -76,7 +75,6 @@ export async function seedIssues(teams, users, projects, creator) {
     await activity.save();
   }
 
-  // Seed sub-issues for high-effort issues
   const highEffortIssues = insertedIssues.filter((issue) => {
     const isHighPriority = issue.priority === 'urgent' || issue.priority === 'high';
     const isInProgress = issue.status === 'in_progress' || issue.status === 'in_review';

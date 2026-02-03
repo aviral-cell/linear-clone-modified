@@ -20,7 +20,6 @@ export {
   updateStatusIndicatorIcons,
 } from './updateStatus';
 
-// Activity rendering constants
 export const ACTIVITY_LAYOUT = {
   TIMELINE: 'timeline',
   LIST: 'list',
