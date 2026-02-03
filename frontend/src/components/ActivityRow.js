@@ -15,16 +15,13 @@ import { ActivityDot } from './ui';
 const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' }) => {
   const { user, message, icon, createdAt, dateFormat } = item;
 
-  // Format date based on dateFormat preference
   const formattedDate =
     dateFormat === ACTIVITY_DATE_FORMAT.RELATIVE
       ? formatDateTime(createdAt, { relative: true })
       : formatDateShort(createdAt);
 
-  // Render icon or avatar
   const renderIcon = () => {
     if (icon.type === 'avatar') {
-      // Avatar for timeline (assignee changes)
       return (
         <ActivityDot className={icon.avatarColor}>
           <span className="text-xs font-medium text-white">{icon.initial}</span>
@@ -32,11 +29,9 @@ const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' 
       );
     }
 
-    // Icon component
     const IconComponent = icon.Icon;
 
     if (layout === ACTIVITY_LAYOUT.TIMELINE) {
-      // Timeline: icon inside ActivityDot
       return (
         <ActivityDot>
           <IconComponent className={`w-4 h-4 ${icon.color}`} />
@@ -44,7 +39,6 @@ const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' 
       );
     }
 
-    // List: icon inline (no ActivityDot)
     const iconSize = size === 'small' ? 'w-3 h-3' : 'w-4 h-4';
     const containerSize = size === 'small' ? 'w-3 h-3' : 'w-4 h-4';
 
@@ -55,7 +49,6 @@ const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' 
     );
   };
 
-  // Timeline layout: two lines (message + date), with spine
   if (layout === ACTIVITY_LAYOUT.TIMELINE) {
     return (
       <div className="flex items-start gap-3 relative pl-0">
@@ -70,7 +63,6 @@ const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' 
     );
   }
 
-  // List layout: single line (icon + user + message + date)
   const usernameClasses = size === 'small' ? 'text-text-primary' : 'text-text-primary font-medium';
 
   return (

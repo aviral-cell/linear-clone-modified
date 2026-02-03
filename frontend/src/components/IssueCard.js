@@ -125,7 +125,6 @@ const IssueCard = memo(
     );
   },
   (prevProps, nextProps) => {
-    // Custom comparison for better performance
     return (
       prevProps.issue._id === nextProps.issue._id &&
       prevProps.issue.title === nextProps.issue.title &&

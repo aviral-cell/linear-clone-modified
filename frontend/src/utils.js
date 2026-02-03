@@ -1,12 +1,3 @@
-const generateBaseURL = () => {
-  const currentHost = window?.location?.host || 'localhost:8000';
-  const currentProtocol = window?.location?.protocol || 'http:';
-  const baseURL = `${currentProtocol}//${currentHost.replace('8000', '8080')}`;
-  return baseURL;
-};
-
-export const baseURL = generateBaseURL();
-
 const avatarColors = [
   'bg-purple-600',
   'bg-blue-600',
@@ -100,23 +91,6 @@ export const formatDate = (dateString, options = {}) => {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  });
-};
-
-export const formatTime = (dateString, options = {}) => {
-  if (!dateString) return '';
-
-  const date = new Date(dateString);
-  const timezone = options.timezone || 'local';
-
-  if (timezone === 'GMT' || timezone === 'UTC') {
-    return date.toUTCString().split(' ')[4];
-  }
-
-  return date.toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZoneName: 'short',
   });
 };
 

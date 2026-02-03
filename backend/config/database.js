@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const dbName = process.env.NODE_ENV === 'test' ? 'WorkflowDB_Test' : 'WorkflowDB';
 
 const connectionString =
-  `${process.env.MONGODB_BASE_URI}/${dbName}?appName=Cluster0`;
+  process.env.MONGODB_URI ||
+  `mongodb://127.0.0.1:27017/${dbName}?directConnection=true&serverSelectionTimeoutMS=2000`;
 
 const connectDatabase = async () => {
   try {

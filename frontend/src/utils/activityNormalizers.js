@@ -71,7 +71,6 @@ const getIssueActivityIcon = (action, changes, users = []) => {
       return { ...issueStatusIcons[newStatus], type: 'icon' };
     }
 
-    // Fallback for unknown status (matches original IssueActivityTimeline)
     return { Icon: CircleDot, color: 'text-yellow-500', type: 'icon' };
   }
 

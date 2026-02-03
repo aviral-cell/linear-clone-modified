@@ -5,11 +5,9 @@ import { cn } from '../../utils/cn';
 const GAP = 4;
 const MIN_SPACE_BELOW = 220;
 const MIN_SPACE_ABOVE = 180;
-/** Tall popovers (e.g. date picker calendar) need more room; prefer placing above if not enough below */
 const MIN_SPACE_BELOW_TALL = 360;
 const MIN_SPACE_ABOVE_TALL = 200;
 const PADDING_VIEWPORT = 16;
-/** On narrow viewports use slightly more padding so panels aren't clipped at screen edges */
 const PADDING_VIEWPORT_MOBILE = 20;
 const MOBILE_BREAKPOINT = 640;
 
@@ -110,7 +108,6 @@ function DropdownMenu({
   const [align, setAlign] = useState('left');
   const [, setPlaceTick] = useState(0);
 
-  // Sync align when opening.
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return;
     const triggerRect = triggerRef.current.getBoundingClientRect();
@@ -124,7 +121,6 @@ function DropdownMenu({
     setAlign(newAlign);
   }, [open, isVertical]);
 
-  // Resize/scroll: force re-render so we recompute placement from trigger rect.
   useEffect(() => {
     if (!open) return;
     const handle = () => setPlaceTick((t) => t + 1);
@@ -136,7 +132,6 @@ function DropdownMenu({
     };
   }, [open]);
 
-  // Compute placement during render when open (avoids flash; stays correct on resize/scroll via placeTick).
   const triggerRect =
     open && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null;
   const renderAlign = triggerRect
@@ -151,7 +146,6 @@ function DropdownMenu({
     ? getPanelPlacement(triggerRect, renderAlign)
     : { top: 0, left: 0 };
 
-  // Click outside: treat both trigger container and portaled panel as "inside"
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
@@ -165,7 +159,6 @@ function DropdownMenu({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open, onOpenChange]);
 
-  // Escape to close
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e) => {

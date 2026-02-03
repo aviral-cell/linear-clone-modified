@@ -17,25 +17,26 @@ import {
 } from '../components/ui';
 import { PanelRight } from '../icons';
 import { issueStatusIcons } from '../constants';
+import { useIssue, useUsers } from '../hooks';
 import toast from 'react-hot-toast';
 
 const IssueDetailPage = () => {
-  const [issue, setIssue] = useState(null);
-  const [subIssues, setSubIssues] = useState([]);
+  const { identifier } = useParams();
+  const navigate = useNavigate();
+  const { issue, subIssues, loading, refetch } = useIssue(identifier, {
+    onError: () => navigate('/')
+  });
+  const { users } = useUsers();
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [parentIssues, setParentIssues] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const sidebarRef = useRef(null);
-  const { identifier } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (window.innerWidth < 640) {
@@ -84,12 +85,9 @@ const IssueDetailPage = () => {
   }, [isRightSidebarOpen]);
 
   useEffect(() => {
-    fetchIssue();
-    fetchUsers();
-  }, [identifier]);
-
-  useEffect(() => {
     if (issue) {
+      setTitle(issue.title);
+      setDescription(issue.description);
       fetchComments();
       fetchActivities();
       if (issue.team) {
@@ -114,34 +112,6 @@ const IssueDetailPage = () => {
       setProjects(data.projects || []);
     } catch (error) {
       console.error('Error fetching projects:', error);
-    }
-  };
-
-  const fetchIssue = async (silent = false) => {
-    try {
-      if (!silent) setLoading(true);
-      const data = await api.issues.getByIdentifier(identifier);
-      setIssue(data.issue);
-      setSubIssues(data.subIssues || []);
-      setTitle(data.issue.title);
-      setDescription(data.issue.description);
-    } catch (error) {
-      console.error('Error fetching issue:', error);
-      if (!silent) {
-        toast.error('Issue not found');
-        navigate('/');
-      }
-    } finally {
-      if (!silent) setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const data = await api.users.getAll();
-      setUsers(data.users);
-    } catch (error) {
-      console.error('Error fetching users:', error);
     }
   };
 
@@ -170,36 +140,13 @@ const IssueDetailPage = () => {
     try {
       setSaving(true);
 
-      if (updates.status !== undefined) {
-        setIssue((prev) => ({ ...prev, status: updates.status }));
-      }
-      if (updates.priority !== undefined) {
-        setIssue((prev) => ({ ...prev, priority: updates.priority }));
-      }
-      if (updates.assignee !== undefined) {
-        const assignee = updates.assignee ? users.find((u) => u._id === updates.assignee) : null;
-        setIssue((prev) => ({ ...prev, assignee: assignee || null }));
-      }
-      if (updates.projectId !== undefined) {
-        const project = updates.projectId
-          ? projects.find((p) => p._id === updates.projectId)
-          : null;
-        setIssue((prev) => ({ ...prev, project: project || null }));
-      }
-      if (updates.parent !== undefined) {
-        const parentIssue = updates.parent
-          ? parentIssues.find((p) => p._id === updates.parent)
-          : null;
-        setIssue((prev) => ({ ...prev, parent: parentIssue || null }));
-      }
-
       const data = await api.issues.update(identifier, updates);
-      setIssue((prev) => ({ ...prev, ...data.issue }));
       toast.success('Issue updated');
       await fetchActivities(data.issue._id);
+      await refetch();
     } catch (error) {
       console.error('Error updating issue:', error);
-      await fetchIssue();
+      await refetch();
       toast.error('Failed to update issue');
     } finally {
       setSaving(false);
@@ -320,7 +267,7 @@ const IssueDetailPage = () => {
             <SubIssuesSection
               issue={issue}
               subIssues={subIssues}
-              onCreateSubIssue={() => fetchIssue(true)}
+              onCreateSubIssue={() => refetch()}
               users={users}
             />
 

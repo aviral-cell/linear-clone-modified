@@ -3,14 +3,12 @@
  * Handles all HTTP requests with consistent error handling and authentication
  */
 
-// Generate base URL dynamically based on current location
 const generateBaseURL = () => {
   const currentHost = window?.location?.host || 'localhost:8000';
   const currentProtocol = window?.location?.protocol || 'http:';
   return `${currentProtocol}//${currentHost.replace('8000', '8080')}`;
 };
 
-// API Error class for consistent error handling
 export class ApiError extends Error {
   constructor(message, status, code = null) {
     super(message);
@@ -21,18 +19,15 @@ export class ApiError extends Error {
   }
 }
 
-// API Service class
 class ApiService {
   constructor() {
     this.baseURL = generateBaseURL();
   }
 
-  // Get auth token from localStorage
   getToken() {
     return localStorage.getItem('token');
   }
 
-  // Core request method
   async request(endpoint, options = {}) {
     const token = this.getToken();
     const headers = {
@@ -49,7 +44,6 @@ class ApiService {
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, config);
 
-      // Handle non-JSON responses
       const contentType = response.headers.get('content-type');
       const isJson = contentType && contentType.includes('application/json');
 
@@ -62,7 +56,6 @@ class ApiService {
         throw new ApiError(errorMessage, response.status);
       }
 
-      // Return parsed JSON or null for empty responses
       if (isJson) {
         return await response.json();
       }
@@ -75,7 +68,6 @@ class ApiService {
     }
   }
 
-  // HTTP method helpers
   get(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'GET' });
   }
@@ -100,9 +92,6 @@ class ApiService {
     return this.request(endpoint, { ...options, method: 'DELETE' });
   }
 
-  // ==================
-  // AUTH ENDPOINTS
-  // ==================
   auth = {
     getCurrentUser: () => this.get('/api/auth/me'),
 
@@ -111,23 +100,14 @@ class ApiService {
     register: (email, password, name) => this.post('/api/auth/register', { email, password, name }),
   };
 
-  // ==================
-  // TEAMS ENDPOINTS
-  // ==================
   teams = {
     getAll: () => this.get('/api/teams'),
   };
 
-  // ==================
-  // USERS ENDPOINTS
-  // ==================
   users = {
     getAll: () => this.get('/api/users'),
   };
 
-  // ==================
-  // PROJECTS ENDPOINTS
-  // ==================
   projects = {
     getByTeam: (teamId) => this.get(`/api/projects?teamId=${teamId}`),
 
@@ -142,9 +122,6 @@ class ApiService {
     getActivities: (identifier) => this.get(`/api/projects/${identifier}/activities`),
   };
 
-  // ==================
-  // ISSUES ENDPOINTS
-  // ==================
   issues = {
     getByIdentifier: (identifier) => this.get(`/api/issues/${identifier}`),
 
@@ -160,9 +137,6 @@ class ApiService {
     getValidParents: (identifier) => this.get(`/api/issues/${identifier}/valid-parents`),
   };
 
-  // ==================
-  // COMMENTS ENDPOINTS
-  // ==================
   comments = {
     getByIssue: (issueId) => this.get(`/api/comments/issue/${issueId}`),
 
@@ -173,18 +147,13 @@ class ApiService {
     delete: (commentId) => this.delete(`/api/comments/${commentId}`),
   };
 
-  // ==================
-  // ISSUE ACTIVITIES ENDPOINTS
-  // ==================
   issueActivities = {
     getByIssue: (issueId) => this.get(`/api/activities/issue/${issueId}`),
   };
 }
 
-// Export singleton instance
 export const api = new ApiService();
 
-// Export baseURL for backward compatibility during migration
 export const baseURL = generateBaseURL();
 
 export default api;

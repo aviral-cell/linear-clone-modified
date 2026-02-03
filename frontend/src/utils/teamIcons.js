@@ -1,13 +1,13 @@
 import { Settings, Briefcase, Megaphone, Rocket } from '../icons';
 
-export const teamIcons = {
+const teamIcons = {
   '⚙️': Settings,
   '🎨': Briefcase,
   '📢': Megaphone,
   '🚀': Rocket,
 };
 
-export const teamColors = {
+const teamColors = {
   Engineering: 'bg-blue-600',
   Design: 'bg-purple-600',
   Marketing: 'bg-pink-600',

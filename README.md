@@ -217,3 +217,48 @@ This resets the database to initial state with fresh seed data.
    - Efficient database queries with population
    - Optimized re-renders
    - Lazy loading where applicable
+
+## Tickets
+
+Track implementation of code quality improvements and feature enhancements.
+
+| Ticket ID | Title | Priority | Status | Completed |
+|-----------|-------|----------|--------|-----------|
+| WORKFLOW-001 | Remove unused exports in frontend utils | Medium | ✅ Completed | 2026-02-03 |
+| WORKFLOW-002 | Remove unnecessary comments in frontend | Medium | ✅ Completed | 2026-02-03 |
+
+### Completed Tickets
+
+#### WORKFLOW-001: Remove unused exports in frontend utils
+**Completed:** 2026-02-03
+
+Cleaned up frontend utility files by removing unused exports per coding standards:
+
+Initial implementation:
+- Removed `isLegacyUpdateStatus` and `getDisplayUpdateStatus` from statusMapping.js
+- Removed entire errorHandler.js file (comprehensive error handling system was never integrated)
+- Converted `teamIcons` and `teamColors` to non-exported constants in teamIcons.js
+
+Comprehensive review findings:
+- Removed `baseURL` export from utils.js (duplicate, never imported)
+- Removed `formatTime()` function from utils.js (exported but never used)
+- Verified all remaining exports are actively used
+
+**Impact:** Improved code maintainability and reduced potential confusion about which utilities are actively used. Codebase now has zero unused exports.
+
+#### WORKFLOW-002: Remove unnecessary comments in frontend
+**Completed:** 2026-02-03
+
+Removed inline comments across entire codebase per coding standards that mandate code should be self-explanatory:
+
+Initial implementation (23 comments):
+- Frontend: ActivityList.js, ActivityRow.js, ErrorBoundary.js, IssueCard.js, DropdownMenu.js, Textarea.js, ProjectsPage.js, activityNormalizers.js
+
+Comprehensive review findings (44 additional comments):
+- Frontend: App.js, constants/index.js, icons/index.js, services/api.js
+- Backend: seeders/index.js, issueSeeder.js, test files
+- Removed commented-out code block from seeders
+
+**Total:** 67 inline comments removed
+
+**Impact:** Code remains clear through proper naming and structure, eliminating maintenance overhead of keeping comments in sync with code changes. Codebase now has zero inline comments in production code.

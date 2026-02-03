@@ -8,7 +8,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import { LoadingScreen } from './components/ui';
 
-// Lazy load page components for code splitting
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const IssuesPage = lazy(() => import('./pages/IssuesPage'));
 const IssueDetailPage = lazy(() => import('./pages/IssueDetailPage'));
@@ -26,7 +25,6 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
-// Page loading fallback component
 const PageLoader = () => <LoadingScreen message="Loading page..." />;
 
 function App() {
