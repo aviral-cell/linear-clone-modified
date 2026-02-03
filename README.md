@@ -217,3 +217,33 @@ This resets the database to initial state with fresh seed data.
    - Efficient database queries with population
    - Optimized re-renders
    - Lazy loading where applicable
+
+## Tickets
+
+Track implementation of code quality improvements and feature enhancements.
+
+| Ticket ID | Title | Priority | Status | Completed |
+|-----------|-------|----------|--------|-----------|
+| WORKFLOW-001 | Remove unused exports in frontend utils | Medium | ✅ Completed | 2026-02-03 |
+| WORKFLOW-002 | Remove unnecessary comments in frontend | Medium | ✅ Completed | 2026-02-03 |
+
+### Completed Tickets
+
+#### WORKFLOW-001: Remove unused exports in frontend utils
+**Completed:** 2026-02-03
+
+Cleaned up frontend utility files by removing unused exports per coding standards:
+- Removed `isLegacyUpdateStatus` and `getDisplayUpdateStatus` from statusMapping.js
+- Removed entire errorHandler.js file (comprehensive error handling system was never integrated)
+- Converted `teamIcons` and `teamColors` to non-exported constants in teamIcons.js
+
+**Impact:** Improved code maintainability and reduced potential confusion about which utilities are actively used.
+
+#### WORKFLOW-002: Remove unnecessary comments in frontend
+**Completed:** 2026-02-03
+
+Removed 23 inline comments from frontend files per coding standards that mandate code should be self-explanatory:
+- ActivityList.js, ActivityRow.js, ErrorBoundary.js, IssueCard.js
+- DropdownMenu.js, Textarea.js, ProjectsPage.js, activityNormalizers.js
+
+**Impact:** Code remains clear through proper naming and structure, eliminating maintenance overhead of keeping comments in sync with code changes.
