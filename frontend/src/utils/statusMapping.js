@@ -8,11 +8,3 @@ export const normalizeUpdateStatus = (status) => {
 
   return mapping[status] || status;
 };
-
-export const isLegacyUpdateStatus = (status) => {
-  return status === 'behind' || status === 'blocked';
-};
-
-export const getDisplayUpdateStatus = (status) => {
-  return normalizeUpdateStatus(status);
-};
