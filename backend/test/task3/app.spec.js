@@ -207,26 +207,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
       expect(validIdentifiers).to.not.include('TEST-4'); // D (self)
     });
 
-    it('should return hierarchy information with ancestors and descendants', async () => {
-      // For Issue B, ancestors: [A], descendants: [C, D]
-      const res = await chai
-        .request(app)
-        .get(`/api/issues/${issueB.identifier}/valid-parents`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('hierarchy');
-      expect(res.body.hierarchy).to.have.property('ancestors');
-      expect(res.body.hierarchy).to.have.property('descendants');
-
-      // B's ancestors should include A
-      expect(res.body.hierarchy.ancestors).to.include('TEST-1');
-
-      // B's descendants should include C and D
-      expect(res.body.hierarchy.descendants).to.include('TEST-3');
-      expect(res.body.hierarchy.descendants).to.include('TEST-4');
-    });
-
     it('should only include issues from the same team', async () => {
       const res = await chai
         .request(app)

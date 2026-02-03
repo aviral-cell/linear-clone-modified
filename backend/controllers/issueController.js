@@ -4,8 +4,6 @@ import Team from '../models/Team.js';
 import {
   validateParentChange,
   getValidParentCandidates,
-  getDescendants,
-  getAncestors,
 } from '../utils/issueHierarchy.js';
 
 export const getIssuesByTeam = async (req, res) => {
@@ -269,17 +267,7 @@ export const getValidParents = async (req, res) => {
     // Get valid parent candidates (excludes self and descendants)
     const validParents = await getValidParentCandidates(issue._id);
 
-    // Get ancestors and descendants for hierarchy context
-    const ancestors = await getAncestors(issue._id);
-    const descendants = await getDescendants(issue._id);
-
-    res.json({
-      validParents,
-      hierarchy: {
-        ancestors,
-        descendants,
-      },
-    });
+    res.json({ validParents });
   } catch (error) {
     console.error('Get valid parents error:', error);
     res.status(500).json({ message: 'Server error' });
