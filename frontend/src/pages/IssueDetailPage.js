@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import SubIssuesSection from '../components/SubIssuesSection';
@@ -23,8 +23,11 @@ import toast from 'react-hot-toast';
 const IssueDetailPage = () => {
   const { identifier } = useParams();
   const navigate = useNavigate();
+  const handleError = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
   const { issue, subIssues, loading, refetch } = useIssue(identifier, {
-    onError: () => navigate('/')
+    onError: handleError
   });
   const { users } = useUsers();
   const [comments, setComments] = useState([]);
@@ -84,6 +87,45 @@ const IssueDetailPage = () => {
     };
   }, [isRightSidebarOpen]);
 
+  const fetchParentIssues = useCallback(async (issueIdentifier) => {
+    try {
+      const data = await api.issues.getValidParents(issueIdentifier);
+      setParentIssues(data.validParents || []);
+    } catch (error) {
+      console.error('Error fetching valid parent issues:', error);
+    }
+  }, []);
+
+  const fetchProjects = useCallback(async (teamId) => {
+    try {
+      const data = await api.projects.getByTeam(teamId);
+      setProjects(data.projects || []);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  }, []);
+
+  const fetchComments = useCallback(async () => {
+    if (!issue?._id) return;
+    try {
+      const data = await api.comments.getByIssue(issue._id);
+      setComments(data.comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  }, [issue?._id]);
+
+  const fetchActivities = useCallback(async (issueId = null) => {
+    try {
+      const targetIssueId = issueId || issue?._id;
+      if (!targetIssueId) return;
+      const data = await api.issueActivities.getByIssue(targetIssueId);
+      setActivities(data.activities);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  }, [issue?._id]);
+
   useEffect(() => {
     if (issue) {
       setTitle(issue.title);
@@ -95,45 +137,7 @@ const IssueDetailPage = () => {
         fetchParentIssues(issue.identifier);
       }
     }
-  }, [issue]);
-
-  const fetchParentIssues = async (issueIdentifier) => {
-    try {
-      const data = await api.issues.getValidParents(issueIdentifier);
-      setParentIssues(data.validParents || []);
-    } catch (error) {
-      console.error('Error fetching valid parent issues:', error);
-    }
-  };
-
-  const fetchProjects = async (teamId) => {
-    try {
-      const data = await api.projects.getByTeam(teamId);
-      setProjects(data.projects || []);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-    }
-  };
-
-  const fetchComments = async () => {
-    try {
-      const data = await api.comments.getByIssue(issue._id);
-      setComments(data.comments);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
-  const fetchActivities = async (issueId = null) => {
-    try {
-      const targetIssueId = issueId || issue?._id;
-      if (!targetIssueId) return;
-      const data = await api.issueActivities.getByIssue(targetIssueId);
-      setActivities(data.activities);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-    }
-  };
+  }, [issue, fetchComments, fetchActivities, fetchProjects, fetchParentIssues]);
 
   const updateIssue = async (updates) => {
     if (!issue) return;

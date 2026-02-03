@@ -17,7 +17,6 @@ export async function seed() {
     await connectDatabase();
     console.log('✓ Connected to the database\n');
 
-    await dropOldIndexes();
     await clearAllData();
     console.log('');
 
