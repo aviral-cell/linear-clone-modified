@@ -3,13 +3,12 @@ configuration:
     has_webserver: true
     readonly_paths:
         - backend/test/*
-        - backend/utils/movies.js
         - backend/config/database.js
-        - README.md
         - setup.sh
     ide_config:
         default_open_files:
-            - README.md
+            - backend/app.js
+            - frontend/src/App.js
         project_menu:
             run: npm start
             install: npm run prestart
