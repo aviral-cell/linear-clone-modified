@@ -25,3 +25,4 @@ export { default as SectionTitle } from './SectionTitle';
 export { default as TabNavigation } from './TabNavigation';
 export { default as ActivityDot } from './ActivityDot';
 export { default as PageHeader } from './PageHeader';
+export { default as PageLayout } from './PageLayout';
