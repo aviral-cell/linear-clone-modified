@@ -24,3 +24,4 @@ export { default as CollapsibleSection } from './CollapsibleSection';
 export { default as SectionTitle } from './SectionTitle';
 export { default as TabNavigation } from './TabNavigation';
 export { default as ActivityDot } from './ActivityDot';
+export { default as PageHeader } from './PageHeader';
