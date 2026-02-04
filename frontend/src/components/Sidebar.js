@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { Avatar, Button, IconBadge, IconButton } from './ui';
-import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban } from '../icons';
+import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban, Shield } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
@@ -25,6 +25,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     teamKey &&
     issuesFilter;
   const isMyIssuesPage = location.pathname.startsWith('/my-issues');
+  const isAdminLogsPage = location.pathname === '/admin/logs';
   const [isTeamsSectionExpanded, setIsTeamsSectionExpanded] = useState(true);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
@@ -99,6 +100,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
+  const handleAdminLogsClick = () => {
+    navigate('/admin/logs');
     if (isMobile) {
       closeSidebar();
     }
@@ -275,6 +283,32 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
             </div>
           </div>
         </div>
+
+        {user?.isAdmin && (
+          <div className="mt-2 border-t border-border pt-2">
+            <div className={`px-6 py-1 ${isCollapsed ? 'hidden' : ''}`}>
+              <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
+                Admin
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAdminLogsClick}
+              className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
+              } ${
+                isAdminLogsPage
+                  ? 'text-text-primary bg-background-tertiary rounded-md'
+                  : 'text-text-secondary'
+              }`}
+              title="API Logs"
+            >
+              <Shield className="w-4 h-4 flex-shrink-0" />
+              {!isCollapsed && <span>API Logs</span>}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className={`border-t border-border py-3 ${isCollapsed ? 'px-2' : 'px-4 md:px-6'}`}>
