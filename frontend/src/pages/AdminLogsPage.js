@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAdminLogs } from '../hooks/useAdminLogs';
 import LogsTable from '../components/admin/LogsTable';
+import LogFilters from '../components/admin/LogFilters';
+import LogDetailsModal from '../components/admin/LogDetailsModal';
 import { Button, LoadingScreen } from '../components/ui';
 import Header from '../components/Header';
 import { ShieldAlert, ChevronLeft, ChevronRight } from '../icons';
@@ -13,26 +15,45 @@ const AdminLogsPage = () => {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [selectedLogId, setSelectedLogId] = useState(null);
+  const [filterParams, setFilterParams] = useState({});
 
-  // Build params with current page
+  // Build params with current page and filters
   const params = useMemo(
     () => ({
       page,
       limit: 50,
+      ...filterParams,
     }),
-    [page]
+    [page, filterParams]
   );
 
   const { logs, pagination, loading, error, refetch } = useAdminLogs(params);
 
-  // Handle log click - will be used for modal in 103F
+  // Handle log click to open details modal
   const handleLogClick = useCallback((log) => {
     setSelectedLogId(log._id);
+  }, []);
+
+  // Handle close modal
+  const handleCloseModal = useCallback(() => {
+    setSelectedLogId(null);
   }, []);
 
   // Handle page change
   const handlePageChange = useCallback((newPage) => {
     setPage(newPage);
+  }, []);
+
+  // Handle filter apply
+  const handleApplyFilters = useCallback((filters) => {
+    setFilterParams(filters);
+    setPage(1); // Reset to first page when filters change
+  }, []);
+
+  // Handle filter clear
+  const handleClearFilters = useCallback(() => {
+    setFilterParams({});
+    setPage(1);
   }, []);
 
   // Access denied view for non-admin users
@@ -90,8 +111,15 @@ const AdminLogsPage = () => {
         </div>
       </div>
 
-      {/* Logs Table */}
+      {/* Filters and Logs Table */}
       <div className="flex-1 overflow-auto p-6">
+        {/* Filters */}
+        <LogFilters
+          onApplyFilters={handleApplyFilters}
+          onClearFilters={handleClearFilters}
+        />
+
+        {/* Logs Table */}
         <div className="bg-background-secondary rounded-lg border border-border overflow-hidden">
           <LogsTable logs={logs} onLogClick={handleLogClick} />
         </div>
@@ -136,17 +164,9 @@ const AdminLogsPage = () => {
         </div>
       )}
 
-      {/* Log Details Modal will be added in 103F */}
+      {/* Log Details Modal */}
       {selectedLogId && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background-secondary rounded-lg p-6 max-w-lg">
-            <p className="text-text-primary mb-4">Log ID: {selectedLogId}</p>
-            <p className="text-text-secondary text-sm mb-4">
-              Full log details modal will be implemented in WORKFLOW-103F
-            </p>
-            <Button onClick={() => setSelectedLogId(null)}>Close</Button>
-          </div>
-        </div>
+        <LogDetailsModal logId={selectedLogId} onClose={handleCloseModal} />
       )}
     </div>
   );
