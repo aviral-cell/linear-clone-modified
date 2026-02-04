@@ -6,18 +6,19 @@ import Header from '../components/Header';
 import { LoadingScreen, TabNavigation, Button } from '../components/ui';
 import { IssueFilterDropdown } from '../components/issues';
 import { Plus, CircleDashed, CircleDot, List, LayoutPanelLeft, LayoutList } from '../icons';
-import { useTeams, useUsers, useIssueFilters } from '../hooks';
+import { useTeams, useUsers, useProjects, useIssueFilters } from '../hooks';
 import toast from 'react-hot-toast';
 
 const IssuesPage = () => {
   const { teams, loading } = useTeams();
   const { users } = useUsers();
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const { projects } = useProjects(selectedTeam?._id);
   const {
     filters: advancedFilters,
     toggleFilterValue,
     activeFilterCount,
   } = useIssueFilters();
-  const [selectedTeam, setSelectedTeam] = useState(null);
   const [filter, setFilter] = useState('active');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
@@ -113,6 +114,7 @@ const IssuesPage = () => {
               filters={advancedFilters}
               onToggleFilter={toggleFilterValue}
               users={users}
+              projects={projects}
               activeFilterCount={activeFilterCount}
             />
             <div className="flex items-center border border-border rounded-md">

@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 
-const FILTER_KEYS = ['status', 'priority', 'assignee', 'creator'];
+const FILTER_KEYS = ['status', 'priority', 'assignee', 'creator', 'project'];
 
 export const useIssueFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();

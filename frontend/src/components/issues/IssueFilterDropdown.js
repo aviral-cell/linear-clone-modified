@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Filter, ChevronRight, Check, User } from '../../icons';
+import { Filter, ChevronRight, Check, User, FolderKanban } from '../../icons';
 import { Button, Avatar } from '../ui';
 import DropdownMenu from '../ui/DropdownMenu';
 import { issueStatusOptions } from '../../constants/issueStatus';
@@ -11,6 +11,7 @@ const FilterDropdown = ({
   filters,
   onToggleFilter,
   users = [],
+  projects = [],
   activeFilterCount = 0,
 }) => {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,17 @@ const FilterDropdown = ({
       })),
     },
     {
+      key: 'priority',
+      label: 'Priority',
+      icon: priorityOptions[0].Icon,
+      options: priorityOptions.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+        Icon: opt.Icon,
+        color: opt.color,
+      })),
+    },
+    {
       key: 'assignee',
       label: 'Assignee',
       icon: User,
@@ -45,6 +57,15 @@ const FilterDropdown = ({
       })),
     },
     {
+      key: 'project',
+      label: 'Project',
+      icon: FolderKanban,
+      options: projects.map((project) => ({
+        value: project._id,
+        label: project.name,
+      })),
+    },
+    {
       key: 'creator',
       label: 'Creator',
       icon: User,
@@ -52,17 +73,6 @@ const FilterDropdown = ({
         value: user._id,
         label: user.name,
         userId: user._id,
-      })),
-    },
-    {
-      key: 'priority',
-      label: 'Priority',
-      icon: priorityOptions[0].Icon,
-      options: priorityOptions.map((opt) => ({
-        value: opt.value,
-        label: opt.label,
-        Icon: opt.Icon,
-        color: opt.color,
       })),
     },
   ];
