@@ -14,11 +14,7 @@ const IssuesPage = () => {
   const { users } = useUsers();
   const [selectedTeam, setSelectedTeam] = useState(null);
   const { projects } = useProjects(selectedTeam?._id);
-  const {
-    filters: advancedFilters,
-    toggleFilterValue,
-    activeFilterCount,
-  } = useIssueFilters();
+  const { filters: advancedFilters, toggleFilterValue, activeFilterCount } = useIssueFilters();
   const [filter, setFilter] = useState('active');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);

@@ -104,15 +104,14 @@ const FilterDropdown = ({
     >
       <div className="py-1">
         {filterOptions.map((filter) => (
-          <div
-            key={filter.key}
-            className="relative"
-          >
+          <div key={filter.key} className="relative">
             <button
               type="button"
               className={cn(
                 'w-full px-3 py-2 flex items-center justify-between text-sm text-text-primary',
-                activeSubmenu === filter.key ? 'bg-background-tertiary' : 'hover:bg-background-tertiary'
+                activeSubmenu === filter.key
+                  ? 'bg-background-tertiary'
+                  : 'hover:bg-background-tertiary'
               )}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={() => setActiveSubmenu(activeSubmenu === filter.key ? null : filter.key)}
@@ -128,9 +127,7 @@ const FilterDropdown = ({
             </button>
 
             {activeSubmenu === filter.key && filter.options.length > 0 && (
-              <div
-                className="absolute left-full top-0 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-dropdown max-h-60 overflow-y-auto"
-              >
+              <div className="absolute left-full top-0 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-dropdown max-h-60 overflow-y-auto">
                 {filter.options.map((option) => (
                   <button
                     key={option.value}
