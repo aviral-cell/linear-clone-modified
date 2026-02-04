@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, ChevronRight, Check, User } from '../../icons';
 import { Button, Avatar } from '../ui';
 import DropdownMenu from '../ui/DropdownMenu';
@@ -15,6 +15,12 @@ const FilterDropdown = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
+
+  useEffect(() => {
+    if (!open) {
+      setActiveSubmenu(null);
+    }
+  }, [open]);
 
   const filterOptions = [
     {
@@ -74,7 +80,7 @@ const FilterDropdown = ({
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <Button variant="secondary" size="sm" className="gap-2">
+        <Button variant="secondary" size="sm" className="gap-2" onClick={() => setOpen(!open)}>
           <Filter className="h-4 w-4" />
           <span>Filter</span>
           {activeFilterCount > 0 && (
@@ -87,23 +93,19 @@ const FilterDropdown = ({
       minWidth="min-w-[200px]"
     >
       <div className="py-1">
-        <div className="px-3 py-2 flex items-center justify-between text-sm text-text-secondary">
-          <span>Add Filter...</span>
-          <kbd className="px-1.5 py-0.5 text-xs bg-background-tertiary rounded">F</kbd>
-        </div>
-
-        <div className="border-t border-border my-1" />
-
         {filterOptions.map((filter) => (
           <div
             key={filter.key}
             className="relative"
-            onMouseEnter={() => setActiveSubmenu(filter.key)}
-            onMouseLeave={() => setActiveSubmenu(null)}
           >
             <button
               type="button"
-              className="w-full px-3 py-2 flex items-center justify-between text-sm hover:bg-background-tertiary text-text-primary"
+              className={cn(
+                'w-full px-3 py-2 flex items-center justify-between text-sm text-text-primary',
+                activeSubmenu === filter.key ? 'bg-background-tertiary' : 'hover:bg-background-tertiary'
+              )}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={() => setActiveSubmenu(activeSubmenu === filter.key ? null : filter.key)}
             >
               <div className="flex items-center gap-2">
                 {filter.icon && <filter.icon className="h-4 w-4 text-text-tertiary" />}
@@ -116,12 +118,15 @@ const FilterDropdown = ({
             </button>
 
             {activeSubmenu === filter.key && filter.options.length > 0 && (
-              <div className="absolute left-full top-0 ml-1 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-dropdown max-h-60 overflow-y-auto">
+              <div
+                className="absolute left-full top-0 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-dropdown max-h-60 overflow-y-auto"
+              >
                 {filter.options.map((option) => (
                   <button
                     key={option.value}
                     type="button"
                     className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-background-tertiary text-text-primary"
+                    onMouseDown={(e) => e.stopPropagation()}
                     onClick={() => handleToggle(filter.key, option.value)}
                   >
                     <div

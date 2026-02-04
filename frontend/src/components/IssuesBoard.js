@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from '../icons';
 import { api } from '../services/api';
@@ -8,12 +8,13 @@ import { Button } from './ui';
 import toast from 'react-hot-toast';
 
 const statusConfig = issueStatusConfig;
+const EMPTY_FILTERS = {};
 
 const IssuesBoard = ({
   team,
   project,
   filter,
-  advancedFilters = {},
+  advancedFilters = EMPTY_FILTERS,
   refreshTrigger,
   view = 'columns',
   hideEmptyStatuses = false,
@@ -23,6 +24,7 @@ const IssuesBoard = ({
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const filtersKey = useMemo(() => JSON.stringify(advancedFilters), [advancedFilters]);
 
   const fetchIssues = React.useCallback(async () => {
     if (!team && !project && !userFilter) return;
@@ -61,7 +63,7 @@ const IssuesBoard = ({
     } finally {
       setLoading(false);
     }
-  }, [team, project, userFilter, advancedFilters]);
+  }, [team, project, userFilter, filtersKey]);
 
   useEffect(() => {
     fetchIssues();

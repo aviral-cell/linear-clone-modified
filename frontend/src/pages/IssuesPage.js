@@ -3,9 +3,9 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
-import { LoadingScreen, TabNavigation } from '../components/ui';
-import { FilterDropdown, DisplayDropdown } from '../components/issues';
-import { Plus, CircleDashed, CircleDot, List } from '../icons';
+import { LoadingScreen, TabNavigation, Button } from '../components/ui';
+import { IssueFilterDropdown } from '../components/issues';
+import { Plus, CircleDashed, CircleDot, List, LayoutPanelLeft, LayoutList } from '../icons';
 import { useTeams, useUsers, useIssueFilters } from '../hooks';
 import toast from 'react-hot-toast';
 
@@ -109,13 +109,32 @@ const IssuesPage = () => {
           />
 
           <div className="flex items-center justify-between px-4 md:px-6 py-2 border-b border-border">
-            <FilterDropdown
+            <IssueFilterDropdown
               filters={advancedFilters}
               onToggleFilter={toggleFilterValue}
               users={users}
               activeFilterCount={activeFilterCount}
             />
-            <DisplayDropdown viewMode={viewMode} onViewChange={handleViewChange} />
+            <div className="flex items-center border border-border rounded-md">
+              <Button
+                variant="secondary"
+                size="sm"
+                className={`rounded-r-none border-0 ${viewMode === 'columns' ? 'bg-background-tertiary' : ''}`}
+                onClick={() => handleViewChange('columns')}
+                title="Board view"
+              >
+                <LayoutPanelLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                className={`rounded-l-none border-0 ${viewMode === 'list' ? 'bg-background-tertiary' : ''}`}
+                onClick={() => handleViewChange('list')}
+                title="List view"
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
