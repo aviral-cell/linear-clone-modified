@@ -11,6 +11,7 @@ import issueRoutes from './routes/issueRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import apiLogger from './middleware/apiLogger.js';
 
 const PORT = process.env.PORT || 8080;
@@ -33,6 +34,7 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
