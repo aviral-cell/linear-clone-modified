@@ -84,7 +84,6 @@ const apiLogSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for common queries
 apiLogSchema.index({ isSlow: 1, isError: 1 });
 apiLogSchema.index({ timestamp: -1, statusCode: 1 });
 

@@ -1,6 +1,5 @@
 import ApiLog from '../models/ApiLog.js';
 
-// Fields to remove from logged data
 const SENSITIVE_FIELDS = [
   'password',
   'token',
@@ -13,15 +12,9 @@ const SENSITIVE_FIELDS = [
   'confirmPassword',
 ];
 
-// Maximum body size to log (10KB)
 const MAX_BODY_SIZE = 10 * 1024;
-
-// Slow request threshold (1000ms)
 const SLOW_THRESHOLD = 1000;
 
-/**
- * Sanitize an object by removing sensitive fields
- */
 const sanitizeObject = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
 
@@ -43,9 +36,6 @@ const sanitizeObject = (obj) => {
   return sanitized;
 };
 
-/**
- * Sanitize headers by removing sensitive ones
- */
 const sanitizeHeaders = (headers) => {
   if (!headers) return {};
 
@@ -61,9 +51,6 @@ const sanitizeHeaders = (headers) => {
   return sanitized;
 };
 
-/**
- * Truncate large bodies
- */
 const truncateBody = (body) => {
   if (!body) return null;
 
@@ -80,9 +67,6 @@ const truncateBody = (body) => {
   return typeof body === 'string' ? body : sanitizeObject(body);
 };
 
-/**
- * Get client IP address
- */
 const getClientIp = (req) => {
   return (
     req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
@@ -94,31 +78,23 @@ const getClientIp = (req) => {
   );
 };
 
-/**
- * API Logger Middleware
- * Captures all HTTP requests and responses for monitoring and debugging
- */
 const apiLogger = (req, res, next) => {
-  // Skip logging for health check endpoints
   if (req.path === '/health' || req.path === '/') {
     return next();
   }
 
   const startTime = Date.now();
 
-  // Capture original response methods
   const originalJson = res.json.bind(res);
   const originalSend = res.send.bind(res);
 
   let responseBody = null;
 
-  // Override res.json to capture response body
   res.json = (body) => {
     responseBody = body;
     return originalJson(body);
   };
 
-  // Override res.send to capture response body
   res.send = (body) => {
     if (typeof body === 'string') {
       try {
@@ -132,12 +108,10 @@ const apiLogger = (req, res, next) => {
     return originalSend(body);
   };
 
-  // Log when response finishes
   res.on('finish', () => {
     const responseTime = Date.now() - startTime;
     const statusCode = res.statusCode;
 
-    // Use setImmediate for non-blocking async logging
     setImmediate(async () => {
       try {
         const logData = {
@@ -154,7 +128,7 @@ const apiLogger = (req, res, next) => {
           requestBody: truncateBody(sanitizeObject(req.body)),
           queryParams: sanitizeObject(req.query),
           responseBody: truncateBody(responseBody),
-          errorMessage: statusCode >= 400 ? responseBody?.message || null : null,
+          errorMessage: statusCode >= 400 ? responseBody?.message || responseBody?.error || null : null,
           errorStack: null,
           isSlow: responseTime > SLOW_THRESHOLD,
           isError: statusCode >= 400,
@@ -162,7 +136,6 @@ const apiLogger = (req, res, next) => {
 
         await ApiLog.create(logData);
       } catch (error) {
-        // Log error but don't crash the app
         console.error('[API Logger] Failed to save log:', error.message);
       }
     });

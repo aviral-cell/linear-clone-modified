@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../services/adminApi';
 
-/**
- * Custom hook for fetching and managing admin logs
- */
 export const useAdminLogs = (initialParams = {}) => {
   const [logs, setLogs] = useState([]);
   const [pagination, setPagination] = useState(null);

@@ -1,11 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { Button, Input } from '../ui';
+import { Button } from '../ui';
 import { ChevronDown, ChevronRight, Search, X } from '../../icons';
-import { cn } from '../../utils/cn';
 
-/**
- * LogFilters component for filtering API logs
- */
 const LogFilters = ({ onApplyFilters, onClearFilters }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
@@ -19,16 +15,13 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
     isError: false,
   });
 
-  // Handle filter change
   const handleFilterChange = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
-  // Apply filters
   const handleApply = useCallback(() => {
     const filterParams = { ...filters };
 
-    // Convert date range presets to actual dates
     if (filters.dateRange && filters.dateRange !== 'custom') {
       const now = new Date();
       const startDate = new Date();
@@ -45,7 +38,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
       filterParams.endDate = now.toISOString();
     }
 
-    // Remove empty values
     const cleanParams = Object.fromEntries(
       Object.entries(filterParams).filter(
         ([key, v]) =>
@@ -53,14 +45,12 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
       )
     );
 
-    // Convert booleans to strings for query params
     if (filters.isSlow) cleanParams.isSlow = 'true';
     if (filters.isError) cleanParams.isError = 'true';
 
     onApplyFilters(cleanParams);
   }, [filters, onApplyFilters]);
 
-  // Clear all filters
   const handleClear = useCallback(() => {
     const clearedFilters = {
       dateRange: '',
@@ -76,7 +66,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
     onClearFilters();
   }, [onClearFilters]);
 
-  // Count active filters
   const activeFilterCount = Object.entries(filters).filter(
     ([key, v]) =>
       v !== '' && v !== false && key !== 'dateRange' && (key !== 'dateRange' || v !== '7days')
@@ -84,7 +73,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
   return (
     <div className="bg-background-secondary rounded-lg border border-border mb-4">
-      {/* Header */}
       <button
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-background-tertiary/50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -117,11 +105,9 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
         </div>
       </button>
 
-      {/* Filter Controls */}
       {isExpanded && (
         <div className="px-4 pb-4 border-t border-border pt-4">
           <div className="grid grid-cols-3 gap-4 mb-4">
-            {/* Date Range */}
             <div>
               <label className="block text-xs font-medium text-text-tertiary mb-1.5">
                 Date Range
@@ -139,7 +125,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
               </select>
             </div>
 
-            {/* HTTP Method */}
             <div>
               <label className="block text-xs font-medium text-text-tertiary mb-1.5">
                 Method
@@ -158,7 +143,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
               </select>
             </div>
 
-            {/* Status Code */}
             <div>
               <label className="block text-xs font-medium text-text-tertiary mb-1.5">
                 Status Code
@@ -177,7 +161,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             </div>
           </div>
 
-          {/* Custom Date Range */}
           {filters.dateRange === 'custom' && (
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -205,7 +188,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             </div>
           )}
 
-          {/* Search */}
           <div className="mb-4">
             <label className="block text-xs font-medium text-text-tertiary mb-1.5">
               Search
@@ -230,7 +212,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             </div>
           </div>
 
-          {/* Checkboxes */}
           <div className="flex gap-6 mb-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -256,7 +237,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             </label>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-2">
             <Button onClick={handleApply}>Apply Filters</Button>
             <Button variant="secondary" onClick={handleClear}>

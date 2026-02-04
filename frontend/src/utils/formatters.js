@@ -1,10 +1,3 @@
-/**
- * Utility functions for formatting data in the admin UI
- */
-
-/**
- * Format a date string to a human-readable format
- */
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleString('en-US', {
@@ -17,9 +10,6 @@ export const formatDate = (dateString) => {
   });
 };
 
-/**
- * Format a date string to relative time (e.g., "5m ago")
- */
 export const formatRelativeTime = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -34,9 +24,6 @@ export const formatRelativeTime = (dateString) => {
   return formatDate(dateString);
 };
 
-/**
- * Format JSON object for display with proper indentation
- */
 export const formatJSON = (obj) => {
   if (obj === null || obj === undefined) return 'null';
   try {
@@ -46,9 +33,6 @@ export const formatJSON = (obj) => {
   }
 };
 
-/**
- * Format file size in human-readable format
- */
 export const formatFileSize = (bytes) => {
   if (bytes === null || bytes === undefined) return '-';
   if (bytes < 1024) return `${bytes} B`;
@@ -56,18 +40,12 @@ export const formatFileSize = (bytes) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-/**
- * Format response time with appropriate unit
- */
 export const formatResponseTime = (ms) => {
   if (ms === null || ms === undefined) return '-';
   if (ms < 1000) return `${ms}ms`;
   return `${(ms / 1000).toFixed(2)}s`;
 };
 
-/**
- * Truncate a string to a maximum length
- */
 export const truncateString = (str, maxLength = 100) => {
   if (!str) return '';
   if (str.length <= maxLength) return str;

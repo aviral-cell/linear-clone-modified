@@ -1,9 +1,6 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 
-/**
- * Get color class based on HTTP status code
- */
 const getStatusColor = (statusCode) => {
   if (statusCode >= 200 && statusCode < 300) return 'success';
   if (statusCode >= 300 && statusCode < 400) return 'info';
@@ -12,9 +9,6 @@ const getStatusColor = (statusCode) => {
   return 'default';
 };
 
-/**
- * Color classes for different status types
- */
 const colorClasses = {
   success: 'bg-green-500/20 text-green-400 border-green-500/30',
   info: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -23,9 +17,6 @@ const colorClasses = {
   default: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
 };
 
-/**
- * StatusBadge component for displaying HTTP status codes
- */
 const StatusBadge = ({ statusCode, className }) => {
   const colorType = getStatusColor(statusCode);
 
@@ -42,9 +33,6 @@ const StatusBadge = ({ statusCode, className }) => {
   );
 };
 
-/**
- * MethodBadge component for displaying HTTP methods
- */
 const methodColors = {
   GET: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   POST: 'bg-green-500/20 text-green-400 border-green-500/30',

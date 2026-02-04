@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { adminApi } from '../services/adminApi';
 
-/**
- * Custom hook for fetching log statistics and analytics
- */
 export const useLogStats = (dateRange = {}) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -3,9 +3,6 @@ import { DataTable } from '../ui';
 import StatusBadge, { MethodBadge } from './StatusBadge';
 import { cn } from '../../utils/cn';
 
-/**
- * Format timestamp for display
- */
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString('en-US', {
@@ -17,18 +14,12 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-/**
- * Format response time with slow indicator
- */
 const ResponseTime = ({ time, isSlow }) => (
   <span className={cn('font-mono text-xs', isSlow && 'text-orange-400 font-semibold')}>
     {time}ms {isSlow && <span title="Slow request">!</span>}
   </span>
 );
 
-/**
- * LogsTable component for displaying API logs
- */
 const LogsTable = ({ logs, onLogClick, className }) => {
   const columns = [
     {

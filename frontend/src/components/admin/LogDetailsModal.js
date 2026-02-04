@@ -6,16 +6,12 @@ import { Button, Spinner } from '../ui';
 import { X, AlertCircle } from '../../icons';
 import { cn } from '../../utils/cn';
 
-/**
- * LogDetailsModal - Modal for viewing detailed log information
- */
 const LogDetailsModal = ({ logId, onClose }) => {
   const [log, setLog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copiedField, setCopiedField] = useState(null);
 
-  // Fetch log details
   useEffect(() => {
     if (!logId) return;
 
@@ -36,7 +32,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
     fetchLog();
   }, [logId]);
 
-  // Handle ESC key to close modal
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose();
@@ -45,7 +40,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
     return () => window.removeEventListener('keydown', handleEsc);
   }, [onClose]);
 
-  // Copy to clipboard
   const copyToClipboard = useCallback(async (text, field) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -67,7 +61,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
         className="bg-background-secondary rounded-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold text-text-primary">Log Details</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -75,7 +68,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
           </Button>
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-auto p-6">
           {loading && (
             <div className="flex items-center justify-center py-12">
@@ -92,7 +84,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
 
           {log && !loading && (
             <div className="space-y-6">
-              {/* Overview */}
               <Section title="Overview">
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Method">
@@ -120,7 +111,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 </div>
               </Section>
 
-              {/* Request Details */}
               <Section title="Request Details">
                 {log.queryParams && Object.keys(log.queryParams).length > 0 && (
                   <DetailBlock
@@ -151,7 +141,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 )}
               </Section>
 
-              {/* Response Details */}
               {log.responseBody && (
                 <Section title="Response Details">
                   <DetailBlock
@@ -163,7 +152,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 </Section>
               )}
 
-              {/* Error Details */}
               {log.isError && (log.errorMessage || log.errorStack) && (
                 <Section title="Error Details">
                   {log.errorMessage && (
@@ -187,7 +175,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 </Section>
               )}
 
-              {/* Metadata */}
               <Section title="Metadata">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <Field label="IP Address">
@@ -210,7 +197,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex justify-end">
           <Button onClick={onClose}>Close</Button>
         </div>
@@ -219,9 +205,6 @@ const LogDetailsModal = ({ logId, onClose }) => {
   );
 };
 
-/**
- * Section component for grouping related fields
- */
 const Section = ({ title, children }) => (
   <div>
     <h3 className="text-sm font-semibold text-text-primary mb-3 uppercase tracking-wide">
@@ -231,9 +214,6 @@ const Section = ({ title, children }) => (
   </div>
 );
 
-/**
- * Field component for label/value pairs
- */
 const Field = ({ label, children, className }) => (
   <div className={className}>
     <div className="text-xs text-text-tertiary mb-1">{label}</div>
@@ -241,9 +221,6 @@ const Field = ({ label, children, className }) => (
   </div>
 );
 
-/**
- * DetailBlock component for displaying JSON/code blocks with copy button
- */
 const DetailBlock = ({ title, content, onCopy, copied }) => (
   <div className="mb-4">
     <div className="flex items-center justify-between mb-2">

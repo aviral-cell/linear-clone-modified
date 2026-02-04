@@ -3,11 +3,7 @@ import cleanupOldLogs from './utils/logCleanup.js';
 
 let cleanupJob = null;
 
-/**
- * Start all scheduled jobs
- */
 export const startScheduler = () => {
-  // Run cleanup daily at 2:00 AM
   cleanupJob = schedule.scheduleJob('0 2 * * *', async () => {
     console.log('[Scheduler] Running daily log cleanup...');
     try {
@@ -24,9 +20,6 @@ export const startScheduler = () => {
   console.log('  - Log cleanup: Daily at 2:00 AM');
 };
 
-/**
- * Stop all scheduled jobs
- */
 export const stopScheduler = () => {
   if (cleanupJob) {
     cleanupJob.cancel();

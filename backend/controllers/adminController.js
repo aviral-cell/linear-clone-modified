@@ -1,9 +1,5 @@
 import ApiLog from '../models/ApiLog.js';
 
-/**
- * GET /api/admin/logs
- * Get paginated, filtered, searchable logs
- */
 export const getAdminLogs = async (req, res) => {
   try {
     const {
@@ -21,7 +17,6 @@ export const getAdminLogs = async (req, res) => {
       sortOrder = 'desc',
     } = req.query;
 
-    // Build filter
     const filter = {};
 
     if (method) {
@@ -40,7 +35,6 @@ export const getAdminLogs = async (req, res) => {
       filter.isError = true;
     }
 
-    // Status code filtering (supports "4xx", "5xx", or specific code)
     if (statusCode) {
       if (statusCode === '2xx') {
         filter.statusCode = { $gte: 200, $lt: 300 };
@@ -55,7 +49,6 @@ export const getAdminLogs = async (req, res) => {
       }
     }
 
-    // Date range filtering
     if (startDate || endDate) {
       filter.timestamp = {};
       if (startDate) {
@@ -66,7 +59,6 @@ export const getAdminLogs = async (req, res) => {
       }
     }
 
-    // Search in multiple fields
     if (search) {
       filter.$or = [
         { path: { $regex: search, $options: 'i' } },
@@ -75,16 +67,13 @@ export const getAdminLogs = async (req, res) => {
       ];
     }
 
-    // Pagination
     const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)));
     const skip = (pageNum - 1) * limitNum;
 
-    // Sort
     const sortDirection = sortOrder === 'asc' ? 1 : -1;
     const sort = { [sortBy]: sortDirection };
 
-    // Execute query with selected fields for list view
     const [logs, totalLogs] = await Promise.all([
       ApiLog.find(filter)
         .select('timestamp method path statusCode responseTime userEmail userId ipAddress isSlow isError')
@@ -110,19 +99,14 @@ export const getAdminLogs = async (req, res) => {
     });
   } catch (error) {
     console.error('Get admin logs error:', error);
-    res.status(500).json({ message: 'Failed to fetch logs' });
+    res.status(500).json({ error: 'Failed to fetch logs' });
   }
 };
 
-/**
- * GET /api/admin/logs/stats
- * Get analytics and statistics about API logs
- */
 export const getAdminLogStats = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    // Build date filter
     const dateFilter = {};
     if (startDate || endDate) {
       dateFilter.timestamp = {};
@@ -134,7 +118,6 @@ export const getAdminLogStats = async (req, res) => {
       }
     }
 
-    // Get general stats
     const generalStats = await ApiLog.aggregate([
       { $match: dateFilter },
       {
@@ -148,7 +131,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    // Get status code distribution
     const statusDistribution = await ApiLog.aggregate([
       { $match: dateFilter },
       {
@@ -169,7 +151,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    // Get top endpoints
     const topEndpoints = await ApiLog.aggregate([
       { $match: dateFilter },
       {
@@ -191,7 +172,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    // Get top users
     const topUsers = await ApiLog.aggregate([
       { $match: { ...dateFilter, userId: { $ne: null } } },
       {
@@ -213,7 +193,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    // Get requests over time (last 30 days by default)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const timeFilter = startDate ? dateFilter : { timestamp: { $gte: thirtyDaysAgo } };
@@ -238,7 +217,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    // Format response
     const stats = generalStats[0] || { totalRequests: 0, avgResponseTime: 0, errorCount: 0, slowCount: 0 };
     const statusCodeDistribution = {};
     statusDistribution.forEach((item) => {
@@ -259,14 +237,10 @@ export const getAdminLogStats = async (req, res) => {
     });
   } catch (error) {
     console.error('Get admin log stats error:', error);
-    res.status(500).json({ message: 'Failed to fetch log statistics' });
+    res.status(500).json({ error: 'Failed to fetch log statistics' });
   }
 };
 
-/**
- * GET /api/admin/logs/:id
- * Get detailed information for a single log
- */
 export const getAdminLogById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -274,37 +248,31 @@ export const getAdminLogById = async (req, res) => {
     const log = await ApiLog.findById(id).lean();
 
     if (!log) {
-      return res.status(404).json({ message: 'Log not found' });
+      return res.status(404).json({ error: 'Log not found' });
     }
 
     res.json({ log });
   } catch (error) {
     console.error('Get admin log by ID error:', error);
     if (error.name === 'CastError') {
-      return res.status(400).json({ message: 'Invalid log ID format' });
+      return res.status(400).json({ error: 'Invalid log ID format' });
     }
-    res.status(500).json({ message: 'Failed to fetch log details' });
+    res.status(500).json({ error: 'Failed to fetch log details' });
   }
 };
 
-/**
- * DELETE /api/admin/logs/cleanup
- * Manually trigger log cleanup (delete old logs)
- */
 export const cleanupOldLogs = async (req, res) => {
   try {
     const { olderThanDays = 90 } = req.query;
 
     const days = parseInt(olderThanDays, 10);
     if (isNaN(days) || days < 1) {
-      return res.status(400).json({ message: 'Invalid olderThanDays parameter' });
+      return res.status(400).json({ error: 'Invalid olderThanDays parameter' });
     }
 
-    // Calculate cutoff date
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
-    // Delete old logs
     const result = await ApiLog.deleteMany({
       timestamp: { $lt: cutoffDate },
     });
@@ -316,6 +284,6 @@ export const cleanupOldLogs = async (req, res) => {
     });
   } catch (error) {
     console.error('Cleanup old logs error:', error);
-    res.status(500).json({ message: 'Failed to cleanup logs' });
+    res.status(500).json({ error: 'Failed to cleanup logs' });
   }
 };

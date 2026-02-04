@@ -10,7 +10,6 @@ import {
 
 const router = express.Router();
 
-// All routes require authentication + admin authorization
 router.get('/logs', authenticate, adminAuth, getAdminLogs);
 router.get('/logs/stats', authenticate, adminAuth, getAdminLogStats);
 router.get('/logs/:id', authenticate, adminAuth, getAdminLogById);
