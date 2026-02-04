@@ -121,6 +121,68 @@
   .mobile-tablet {
     @apply block lg:hidden;
   }
+
+  /* Semantic spacing - stack (vertical) */
+  .stack-tight {
+    @apply space-y-1;
+  }
+  .stack-compact {
+    @apply space-y-2;
+  }
+  .stack-default {
+    @apply space-y-3;
+  }
+  .stack-relaxed {
+    @apply space-y-4;
+  }
+  .stack-loose {
+    @apply space-y-6;
+  }
+
+  /* Semantic spacing - inline (horizontal) */
+  .inline-tight {
+    @apply space-x-1;
+  }
+  .inline-compact {
+    @apply space-x-2;
+  }
+  .inline-default {
+    @apply space-x-3;
+  }
+  .inline-relaxed {
+    @apply space-x-4;
+  }
+
+  /* Semantic spacing - gap variants */
+  .gap-tight {
+    @apply gap-1;
+  }
+  .gap-compact {
+    @apply gap-2;
+  }
+  .gap-default {
+    @apply gap-3;
+  }
+  .gap-relaxed {
+    @apply gap-4;
+  }
+  .gap-loose {
+    @apply gap-6;
+  }
+
+  /* Semantic spacing - padding variants */
+  .padding-compact {
+    @apply p-2;
+  }
+  .padding-default {
+    @apply p-3;
+  }
+  .padding-relaxed {
+    @apply p-4;
+  }
+  .padding-loose {
+    @apply p-6;
+  }
 }
 
 @layer utilities {

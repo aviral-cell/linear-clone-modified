@@ -4,6 +4,15 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      spacing: {
+        'space-xs': '0.25rem',
+        'space-sm': '0.5rem',
+        'space-md': '0.75rem',
+        'space-lg': '1rem',
+        'space-xl': '1.5rem',
+        'space-2xl': '2rem',
+        'space-3xl': '3rem',
+      },
       fontFamily: {
         sans: [
           'Inter',
