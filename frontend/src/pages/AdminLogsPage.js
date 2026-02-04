@@ -4,20 +4,18 @@ import { useAdminLogs } from '../hooks/useAdminLogs';
 import LogsTable from '../components/admin/LogsTable';
 import LogFilters from '../components/admin/LogFilters';
 import LogDetailsModal from '../components/admin/LogDetailsModal';
-import { Button, LoadingScreen } from '../components/ui';
+import LogsAnalytics from '../components/admin/LogsAnalytics';
+import { Button, LoadingScreen, TabNavigation } from '../components/ui';
 import Header from '../components/Header';
-import { ShieldAlert, ChevronLeft, ChevronRight } from '../icons';
+import { ShieldAlert, ChevronLeft, ChevronRight, List, BarChart3 } from '../icons';
 
-/**
- * AdminLogsPage - Main admin logs viewing page
- */
 const AdminLogsPage = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('logs');
   const [page, setPage] = useState(1);
   const [selectedLogId, setSelectedLogId] = useState(null);
   const [filterParams, setFilterParams] = useState({});
 
-  // Build params with current page and filters
   const params = useMemo(
     () => ({
       page,
@@ -29,34 +27,28 @@ const AdminLogsPage = () => {
 
   const { logs, pagination, loading, error, refetch } = useAdminLogs(params);
 
-  // Handle log click to open details modal
   const handleLogClick = useCallback((log) => {
     setSelectedLogId(log._id);
   }, []);
 
-  // Handle close modal
   const handleCloseModal = useCallback(() => {
     setSelectedLogId(null);
   }, []);
 
-  // Handle page change
   const handlePageChange = useCallback((newPage) => {
     setPage(newPage);
   }, []);
 
-  // Handle filter apply
   const handleApplyFilters = useCallback((filters) => {
     setFilterParams(filters);
-    setPage(1); // Reset to first page when filters change
+    setPage(1);
   }, []);
 
-  // Handle filter clear
   const handleClearFilters = useCallback(() => {
     setFilterParams({});
     setPage(1);
   }, []);
 
-  // Access denied view for non-admin users
   if (!user?.isAdmin) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6">
@@ -71,110 +63,106 @@ const AdminLogsPage = () => {
     );
   }
 
-  // Loading state
-  if (loading && logs.length === 0) {
-    return <LoadingScreen />;
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="flex-1 flex flex-col p-6">
-        <Header fallbackText="API Logs" />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6 max-w-md text-center">
-            <p className="text-red-400 mb-4">Error loading logs: {error}</p>
-            <Button onClick={() => refetch(params)}>Retry</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="bg-background">
         <Header fallbackText="API Logs" />
-      </div>
-
-      {/* Stats Summary */}
-      <div className="px-6 py-4 bg-background border-b border-border">
-        <div className="grid grid-cols-4 gap-4">
-          <StatCard
-            label="Total Logs"
-            value={pagination?.totalLogs?.toLocaleString() || '0'}
-          />
-          <StatCard label="Current Page" value={pagination?.page || 1} />
-          <StatCard label="Per Page" value={pagination?.limit || 50} />
-          <StatCard label="Total Pages" value={pagination?.totalPages || 1} />
-        </div>
-      </div>
-
-      {/* Filters and Logs Table */}
-      <div className="flex-1 overflow-auto p-6">
-        {/* Filters */}
-        <LogFilters
-          onApplyFilters={handleApplyFilters}
-          onClearFilters={handleClearFilters}
+        <TabNavigation
+          tabs={[
+            { id: 'logs', label: 'Logs', icon: <List className="h-4 w-4" /> },
+            { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="h-4 w-4" /> },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
-
-        {/* Logs Table */}
-        <div className="bg-background-secondary rounded-lg border border-border overflow-hidden">
-          <LogsTable logs={logs} onLogClick={handleLogClick} />
-        </div>
-
-        {/* Empty State */}
-        {logs.length === 0 && !loading && (
-          <div className="flex items-center justify-center py-12">
-            <p className="text-text-tertiary">No logs found</p>
-          </div>
-        )}
       </div>
 
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="px-6 py-4 bg-background border-t border-border flex items-center justify-between">
-          <div className="text-sm text-text-secondary">
-            Showing {logs.length} of {pagination.totalLogs} logs
+      {activeTab === 'logs' ? (
+        <>
+          <div className="px-6 py-4 bg-background border-b border-border">
+            <div className="grid grid-cols-4 gap-4">
+              <StatCard
+                label="Total Logs"
+                value={pagination?.totalLogs?.toLocaleString() || '0'}
+              />
+              <StatCard label="Current Page" value={pagination?.page || 1} />
+              <StatCard label="Per Page" value={pagination?.limit || 50} />
+              <StatCard label="Total Pages" value={pagination?.totalPages || 1} />
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => handlePageChange(page - 1)}
-              disabled={!pagination.hasPrevPage || loading}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
-            <span className="px-4 py-2 text-sm text-text-primary">
-              Page {pagination.page} of {pagination.totalPages}
-            </span>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => handlePageChange(page + 1)}
-              disabled={!pagination.hasNextPage || loading}
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
 
-      {/* Log Details Modal */}
-      {selectedLogId && (
-        <LogDetailsModal logId={selectedLogId} onClose={handleCloseModal} />
+          <div className="flex-1 overflow-auto p-6">
+            <LogFilters
+              onApplyFilters={handleApplyFilters}
+              onClearFilters={handleClearFilters}
+            />
+
+            {loading && logs.length === 0 ? (
+              <LoadingScreen />
+            ) : error ? (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6 text-center">
+                <p className="text-red-400 mb-4">Error loading logs: {error}</p>
+                <Button onClick={() => refetch(params)}>Retry</Button>
+              </div>
+            ) : (
+              <>
+                <div className="bg-background-secondary rounded-lg border border-border overflow-hidden">
+                  <LogsTable logs={logs} onLogClick={handleLogClick} />
+                </div>
+
+                {logs.length === 0 && (
+                  <div className="flex items-center justify-center py-12">
+                    <p className="text-text-tertiary">No logs found</p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {pagination && pagination.totalPages > 1 && (
+            <div className="px-6 py-4 bg-background border-t border-border flex items-center justify-between">
+              <div className="text-sm text-text-secondary">
+                Showing {logs.length} of {pagination.totalLogs} logs
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={!pagination.hasPrevPage || loading}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <span className="px-4 py-2 text-sm text-text-primary">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={!pagination.hasNextPage || loading}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {selectedLogId && (
+            <LogDetailsModal logId={selectedLogId} onClose={handleCloseModal} />
+          )}
+        </>
+      ) : (
+        <div className="flex-1 overflow-auto p-6">
+          <LogsAnalytics />
+        </div>
       )}
     </div>
   );
 };
 
-/**
- * StatCard component for displaying summary statistics
- */
 const StatCard = ({ label, value }) => (
   <div className="bg-background-secondary rounded-lg p-4 border border-border">
     <div className="text-xs text-text-tertiary uppercase tracking-wide mb-1">{label}</div>
