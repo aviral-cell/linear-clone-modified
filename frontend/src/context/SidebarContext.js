@@ -10,7 +10,14 @@ export const useSidebar = () => {
   return context;
 };
 
-const SIDEBAR_TOGGLE_BREAKPOINT = 768;
+const BREAKPOINTS = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+};
+
+const SIDEBAR_TOGGLE_BREAKPOINT = BREAKPOINTS.md;
 
 export const SidebarProvider = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -21,7 +28,7 @@ export const SidebarProvider = ({ children }) => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      const mobile = width < 640;
+      const mobile = width < BREAKPOINTS.sm;
       setIsMobile(mobile);
       setShowSidebarToggle(width <= SIDEBAR_TOGGLE_BREAKPOINT);
       if (!mobile) {

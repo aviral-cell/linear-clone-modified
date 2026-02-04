@@ -107,6 +107,26 @@
   .activity-list {
     @apply mt-2 mb-4 pl-4 border-l border-border space-y-2;
   }
+
+  /* Responsive visibility helpers */
+  .mobile-only {
+    @apply block md:hidden;
+  }
+  .tablet-up {
+    @apply hidden md:block;
+  }
+  .desktop-up {
+    @apply hidden lg:block;
+  }
+  .mobile-tablet {
+    @apply block lg:hidden;
+  }
+}
+
+@layer utilities {
+  .truncate-mobile {
+    @apply truncate md:overflow-visible md:whitespace-normal;
+  }
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
