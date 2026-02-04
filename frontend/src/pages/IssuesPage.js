@@ -3,15 +3,18 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import IssuesBoard from '../components/IssuesBoard';
 import CreateIssueModal from '../components/CreateIssueModal';
 import Header from '../components/Header';
-import { Button, LoadingScreen, TabNavigation } from '../components/ui';
-import { cn } from '../utils/cn';
-import { Plus, CircleDashed, CircleDot, List, LayoutList, LayoutPanelLeft } from '../icons';
-import { useTeams } from '../hooks';
+import { LoadingScreen, TabNavigation, Button } from '../components/ui';
+import { IssueFilterDropdown } from '../components/issues';
+import { Plus, CircleDashed, CircleDot, List, LayoutPanelLeft, LayoutList } from '../icons';
+import { useTeams, useUsers, useProjects, useIssueFilters } from '../hooks';
 import toast from 'react-hot-toast';
 
 const IssuesPage = () => {
   const { teams, loading } = useTeams();
+  const { users } = useUsers();
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const { projects } = useProjects(selectedTeam?._id);
+  const { filters: advancedFilters, toggleFilterValue, activeFilterCount } = useIssueFilters();
   const [filter, setFilter] = useState('active');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [issuesRefreshTrigger, setIssuesRefreshTrigger] = useState(0);
@@ -100,38 +103,37 @@ const IssuesPage = () => {
             ]}
             activeTab={filter}
             onTabChange={(tabId) => selectedTeam && navigate(`/team/${selectedTeam.key}/${tabId}`)}
-            actions={
-              <div className="flex flex-shrink-0 items-center gap-1.5">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'p-1.5',
-                    viewMode === 'columns' &&
-                      'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => handleViewChange('columns')}
-                  title="Board view"
-                >
-                  <LayoutPanelLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  className={cn(
-                    'p-1.5',
-                    viewMode === 'list' && 'border-accent bg-background-tertiary text-text-primary'
-                  )}
-                  onClick={() => handleViewChange('list')}
-                  title="List view"
-                >
-                  <LayoutList className="h-4 w-4" />
-                </Button>
-              </div>
-            }
           />
+
+          <div className="flex items-center justify-between px-4 md:px-6 py-2 border-b border-border">
+            <IssueFilterDropdown
+              filters={advancedFilters}
+              onToggleFilter={toggleFilterValue}
+              users={users}
+              projects={projects}
+              activeFilterCount={activeFilterCount}
+            />
+            <div className="flex items-center border border-border rounded-md">
+              <Button
+                variant="secondary"
+                size="sm"
+                className={`rounded-r-none border-0 ${viewMode === 'columns' ? 'bg-background-tertiary' : ''}`}
+                onClick={() => handleViewChange('columns')}
+                title="Board view"
+              >
+                <LayoutPanelLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                className={`rounded-l-none border-0 ${viewMode === 'list' ? 'bg-background-tertiary' : ''}`}
+                onClick={() => handleViewChange('list')}
+                title="List view"
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="page-content">
@@ -139,6 +141,7 @@ const IssuesPage = () => {
             <IssuesBoard
               team={selectedTeam}
               filter={filter}
+              advancedFilters={advancedFilters}
               refreshTrigger={issuesRefreshTrigger}
               view={viewMode}
               hideEmptyStatuses={filter !== 'all'}

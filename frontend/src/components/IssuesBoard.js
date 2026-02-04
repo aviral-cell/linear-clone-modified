@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from '../icons';
 import { api } from '../services/api';
@@ -8,11 +8,13 @@ import { Button } from './ui';
 import toast from 'react-hot-toast';
 
 const statusConfig = issueStatusConfig;
+const EMPTY_FILTERS = {};
 
 const IssuesBoard = ({
   team,
   project,
   filter,
+  advancedFilters = EMPTY_FILTERS,
   refreshTrigger,
   view = 'columns',
   hideEmptyStatuses = false,
@@ -22,6 +24,7 @@ const IssuesBoard = ({
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const filtersKey = useMemo(() => JSON.stringify(advancedFilters), [advancedFilters]);
 
   const fetchIssues = React.useCallback(async () => {
     if (!team && !project && !userFilter) return;
@@ -35,7 +38,22 @@ const IssuesBoard = ({
       } else if (userFilter) {
         data = await api.get(`/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`);
       } else {
-        data = await api.get(`/api/issues/team/${team._id}`);
+        const params = new URLSearchParams();
+        if (advancedFilters.status?.length > 0) {
+          params.set('status', advancedFilters.status.join(','));
+        }
+        if (advancedFilters.priority?.length > 0) {
+          params.set('priority', advancedFilters.priority.join(','));
+        }
+        if (advancedFilters.assignee?.length > 0) {
+          params.set('assignee', advancedFilters.assignee.join(','));
+        }
+        if (advancedFilters.creator?.length > 0) {
+          params.set('creator', advancedFilters.creator.join(','));
+        }
+        const queryString = params.toString();
+        const url = `/api/issues/team/${team._id}${queryString ? `?${queryString}` : ''}`;
+        data = await api.get(url);
       }
 
       setIssues(data.issues);
@@ -45,7 +63,7 @@ const IssuesBoard = ({
     } finally {
       setLoading(false);
     }
-  }, [team, project, userFilter]);
+  }, [team, project, userFilter, filtersKey]);
 
   useEffect(() => {
     fetchIssues();

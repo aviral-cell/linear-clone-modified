@@ -3,5 +3,6 @@ export { useIssue } from './useIssue';
 export { useProjects } from './useProjects';
 export { useUsers } from './useUsers';
 export { useDebounce } from './useDebounce';
+export { useIssueFilters } from './useIssueFilters';
 export { useAdminLogs } from './useAdminLogs';
 export { useLogStats } from './useLogStats';
