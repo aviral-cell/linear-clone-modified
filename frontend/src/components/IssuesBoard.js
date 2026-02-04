@@ -13,6 +13,7 @@ const IssuesBoard = ({
   team,
   project,
   filter,
+  advancedFilters = {},
   refreshTrigger,
   view = 'columns',
   hideEmptyStatuses = false,
@@ -35,7 +36,22 @@ const IssuesBoard = ({
       } else if (userFilter) {
         data = await api.get(`/api/issues/my-issues${userFilter ? `?filter=${userFilter}` : ''}`);
       } else {
-        data = await api.get(`/api/issues/team/${team._id}`);
+        const params = new URLSearchParams();
+        if (advancedFilters.status?.length > 0) {
+          params.set('status', advancedFilters.status.join(','));
+        }
+        if (advancedFilters.priority?.length > 0) {
+          params.set('priority', advancedFilters.priority.join(','));
+        }
+        if (advancedFilters.assignee?.length > 0) {
+          params.set('assignee', advancedFilters.assignee.join(','));
+        }
+        if (advancedFilters.creator?.length > 0) {
+          params.set('creator', advancedFilters.creator.join(','));
+        }
+        const queryString = params.toString();
+        const url = `/api/issues/team/${team._id}${queryString ? `?${queryString}` : ''}`;
+        data = await api.get(url);
       }
 
       setIssues(data.issues);
@@ -45,7 +61,7 @@ const IssuesBoard = ({
     } finally {
       setLoading(false);
     }
-  }, [team, project, userFilter]);
+  }, [team, project, userFilter, advancedFilters]);
 
   useEffect(() => {
     fetchIssues();
