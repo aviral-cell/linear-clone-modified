@@ -9,28 +9,31 @@ export const useIssue = (identifier, options = {}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchIssue = useCallback(async (isSilent = false) => {
-    if (!identifier) return;
+  const fetchIssue = useCallback(
+    async (isSilent = false) => {
+      if (!identifier) return;
 
-    try {
-      if (!isSilent) setLoading(true);
-      setError(null);
-      const data = await api.issues.getByIdentifier(identifier);
-      setIssue(data.issue);
-      setSubIssues(data.subIssues || []);
-    } catch (err) {
-      console.error('Error fetching issue:', err);
-      setError(err);
-      if (!isSilent && !silent) {
-        toast.error('Issue not found');
+      try {
+        if (!isSilent) setLoading(true);
+        setError(null);
+        const data = await api.issues.getByIdentifier(identifier);
+        setIssue(data.issue);
+        setSubIssues(data.subIssues || []);
+      } catch (err) {
+        console.error('Error fetching issue:', err);
+        setError(err);
+        if (!isSilent && !silent) {
+          toast.error('Issue not found');
+        }
+        if (onError) {
+          onError(err);
+        }
+      } finally {
+        if (!isSilent) setLoading(false);
       }
-      if (onError) {
-        onError(err);
-      }
-    } finally {
-      if (!isSilent) setLoading(false);
-    }
-  }, [identifier, silent, onError]);
+    },
+    [identifier, silent, onError]
+  );
 
   useEffect(() => {
     fetchIssue();

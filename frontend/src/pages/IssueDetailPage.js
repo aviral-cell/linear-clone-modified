@@ -27,7 +27,7 @@ const IssueDetailPage = () => {
     navigate('/');
   }, [navigate]);
   const { issue, subIssues, loading, refetch } = useIssue(identifier, {
-    onError: handleError
+    onError: handleError,
   });
   const { users } = useUsers();
   const [comments, setComments] = useState([]);
@@ -115,16 +115,19 @@ const IssueDetailPage = () => {
     }
   }, [issue?._id]);
 
-  const fetchActivities = useCallback(async (issueId = null) => {
-    try {
-      const targetIssueId = issueId || issue?._id;
-      if (!targetIssueId) return;
-      const data = await api.issueActivities.getByIssue(targetIssueId);
-      setActivities(data.activities);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-    }
-  }, [issue?._id]);
+  const fetchActivities = useCallback(
+    async (issueId = null) => {
+      try {
+        const targetIssueId = issueId || issue?._id;
+        if (!targetIssueId) return;
+        const data = await api.issueActivities.getByIssue(targetIssueId);
+        setActivities(data.activities);
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
+    },
+    [issue?._id]
+  );
 
   useEffect(() => {
     if (issue) {
