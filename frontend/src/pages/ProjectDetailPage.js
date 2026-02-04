@@ -339,7 +339,7 @@ const ProjectDetailPage = () => {
 
         <div className="flex-1 flex overflow-hidden relative">
           <div className="page-content">
-            <div className="w-full px-4 md:px-6 py-6">
+            <div className="page-container-full py-6">
               {activeTab === 'overview' && (
                 <>
                   <div className="mb-6 flex items-start gap-3">

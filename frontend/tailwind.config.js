@@ -93,6 +93,9 @@ module.exports = {
       },
       maxWidth: {
         'dropdown-viewport': 'calc(100vw - 2rem)',
+        'container-narrow': '768px',
+        'container-default': '1152px',
+        'container-wide': '1280px',
       },
     },
   },

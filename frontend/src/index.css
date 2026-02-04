@@ -11,6 +11,23 @@
 /* Rounded convention: rounded-md for cards, dropdowns, buttons; rounded-lg for modals and large empty states; rounded-xl for login card. */
 /* Remaining global component classes (layout only): modal-*, overlay-backdrop, dropdown-panel*, sidebar-content*, filter-bar*, page-content, activity-list. Prefer UI primitives (Button, Card, Input, etc.) for components. */
 @layer components {
+  /* Page container patterns */
+  .page-container {
+    @apply w-full mx-auto px-4 md:px-6 lg:px-8;
+  }
+  .page-container-narrow {
+    @apply page-container max-w-3xl;
+  }
+  .page-container-default {
+    @apply page-container max-w-6xl;
+  }
+  .page-container-wide {
+    @apply page-container max-w-7xl;
+  }
+  .page-container-full {
+    @apply page-container max-w-none;
+  }
+
   /* Modal and overlay patterns */
   .modal-backdrop {
     @apply fixed inset-0 bg-black/60 flex items-center justify-center z-modal p-4;

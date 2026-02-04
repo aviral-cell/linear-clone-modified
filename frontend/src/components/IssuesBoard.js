@@ -94,7 +94,7 @@ const IssuesBoard = ({
   if (view === 'list') {
     return (
       <div className="flex-1 overflow-auto bg-background">
-        <div className="max-w-5xl mx-auto py-3">
+        <div className="page-container-default py-3">
           {filteredStatuses.map((status) => {
             const statusIssues = getIssuesByStatus(status);
             if (hideEmptyStatuses && statusIssues.length === 0) {

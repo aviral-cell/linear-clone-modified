@@ -193,7 +193,7 @@ const IssueDetailPage = () => {
 
       <div className="flex-1 flex overflow-hidden relative">
         <div className="page-content">
-          <div className="max-w-3xl mx-auto px-6 py-3.5 lg:py-6 lg:mt-2">
+          <div className="page-container-narrow py-4 lg:py-6">
             <div>
               <EditableTitle
                 value={title}
