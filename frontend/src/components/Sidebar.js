@@ -284,7 +284,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           </div>
         </div>
 
-        {user?.isAdmin && (
+        {user?.role === 'admin' && (
           <div className="mt-2 border-t border-border pt-2">
             <div className={`px-6 py-1 ${isCollapsed ? 'hidden' : ''}`}>
               <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">

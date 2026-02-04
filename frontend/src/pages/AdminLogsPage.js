@@ -49,7 +49,7 @@ const AdminLogsPage = () => {
     setPage(1);
   }, []);
 
-  if (!user?.isAdmin) {
+  if (user?.role !== 'admin') {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="text-center max-w-md">
