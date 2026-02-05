@@ -14,7 +14,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import apiLogRoutes from './routes/apiLogRoutes.js';
 import apiLogger from './middleware/apiLogger.js';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 dotenv.config();
