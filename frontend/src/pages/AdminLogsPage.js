@@ -79,24 +79,14 @@ const AdminLogsPage = () => {
 
       {activeTab === 'logs' ? (
         <>
-          <div className="px-6 py-4 bg-background border-b border-border">
-            <div className="grid grid-cols-4 gap-4">
-              <StatCard
-                label="Total Logs"
-                value={pagination?.totalLogs?.toLocaleString() || '0'}
-              />
-              <StatCard label="Current Page" value={pagination?.page || 1} />
-              <StatCard label="Per Page" value={pagination?.limit || 50} />
-              <StatCard label="Total Pages" value={pagination?.totalPages || 1} />
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex items-center justify-between px-4 md:px-6 py-2 border-b border-border bg-background">
             <LogFilters
               onApplyFilters={handleApplyFilters}
               onClearFilters={handleClearFilters}
             />
+          </div>
 
+          <div className="flex-1 overflow-auto p-6">
             {loading && logs.length === 0 ? (
               <LoadingScreen />
             ) : error ? (
@@ -162,12 +152,5 @@ const AdminLogsPage = () => {
     </div>
   );
 };
-
-const StatCard = ({ label, value }) => (
-  <div className="bg-background-secondary rounded-lg p-4 border border-border">
-    <div className="text-xs text-text-tertiary uppercase tracking-wide mb-1">{label}</div>
-    <div className="text-xl font-bold text-text-primary">{value}</div>
-  </div>
-);
 
 export default AdminLogsPage;

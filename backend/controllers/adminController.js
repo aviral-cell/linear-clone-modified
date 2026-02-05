@@ -193,30 +193,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     ]);
 
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const timeFilter = startDate ? dateFilter : { timestamp: { $gte: thirtyDaysAgo } };
-
-    const requestsOverTime = await ApiLog.aggregate([
-      { $match: timeFilter },
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } },
-          count: { $sum: 1 },
-          avgResponseTime: { $avg: '$responseTime' },
-        },
-      },
-      { $sort: { _id: 1 } },
-      {
-        $project: {
-          date: '$_id',
-          count: 1,
-          avgResponseTime: { $round: ['$avgResponseTime', 0] },
-          _id: 0,
-        },
-      },
-    ]);
-
     const stats = generalStats[0] || { totalRequests: 0, avgResponseTime: 0, errorCount: 0, slowCount: 0 };
     const statusCodeDistribution = {};
     statusDistribution.forEach((item) => {
@@ -232,7 +208,6 @@ export const getAdminLogStats = async (req, res) => {
         statusCodeDistribution,
         topEndpoints,
         topUsers,
-        requestsOverTime,
       },
     });
   } catch (error) {

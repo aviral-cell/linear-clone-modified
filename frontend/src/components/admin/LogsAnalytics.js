@@ -9,8 +9,6 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  LineChart,
-  Line,
   ResponsiveContainer,
 } from 'recharts';
 import { useLogStats } from '../../hooks/useLogStats';
@@ -116,72 +114,35 @@ const LogsAnalytics = () => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <ChartCard title="Status Code Distribution">
-          {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name.split(' ')[0]} ${(percent * 100).toFixed(0)}%`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-[250px] flex items-center justify-center text-text-tertiary">
-              No data
-            </div>
-          )}
-        </ChartCard>
-
-        <ChartCard title="Requests Over Time">
-          {stats.requestsOverTime?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={stats.requestsOverTime}>
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 12, fill: '#9ca3af' }}
-                  tickFormatter={(value) => value.slice(5)}
-                />
-                <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1f2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="count"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  name="Requests"
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-[250px] flex items-center justify-center text-text-tertiary">
-              No data
-            </div>
-          )}
-        </ChartCard>
-      </div>
+      <ChartCard title="Status Code Distribution">
+        {pieData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) =>
+                  `${name.split(' ')[0]} ${(percent * 100).toFixed(0)}%`
+                }
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[250px] flex items-center justify-center text-text-tertiary">
+            No data
+          </div>
+        )}
+      </ChartCard>
 
       <ChartCard title="Top Endpoints by Request Count">
         {stats.topEndpoints?.length > 0 ? (
