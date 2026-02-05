@@ -9,8 +9,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
   const containerRef = useRef(null);
   const [filters, setFilters] = useState({
     dateRange: '7days',
-    startDate: '',
-    endDate: '',
     method: '',
     statusCode: '',
     search: '',
@@ -42,7 +40,7 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
   const handleApply = useCallback(() => {
     const filterParams = { ...filters };
 
-    if (filters.dateRange && filters.dateRange !== 'custom') {
+    if (filters.dateRange) {
       const now = new Date();
       const startDate = new Date();
 
@@ -74,8 +72,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
   const handleClear = useCallback(() => {
     const clearedFilters = {
       dateRange: '7days',
-      startDate: '',
-      endDate: '',
       method: '',
       statusCode: '',
       search: '',
@@ -96,7 +92,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
     { value: 'today', label: 'Today' },
     { value: '7days', label: 'Last 7 days' },
     { value: '30days', label: 'Last 30 days' },
-    { value: 'custom', label: 'Custom' },
   ];
 
   const methodOptions = [
@@ -143,11 +138,28 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
       {open && (
         <div className="absolute top-full left-0 mt-1 w-[280px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-50">
-          {/* Header with Add Filter hint */}
-          <div className="px-3 py-2 flex items-center justify-between text-sm text-text-secondary border-b border-border">
-            <span>Add Filter...</span>
-            <kbd className="px-1.5 py-0.5 text-xs bg-background-tertiary rounded">F</kbd>
+          <div className="px-3 py-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
+              <input
+                type="text"
+                placeholder="Search by path, email, or IP..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+                className="w-full bg-background border border-border rounded pl-10 pr-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent"
+              />
+              {filters.search && (
+                <button
+                  onClick={() => handleFilterChange('search', '')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="h-4 w-4 text-text-tertiary hover:text-text-primary" />
+                </button>
+              )}
+            </div>
           </div>
+
+          <div className="border-t border-border my-1" />
 
           {/* Date Range Filter */}
           <div className="relative">
@@ -262,80 +274,30 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
           <div className="border-t border-border my-1" />
 
-          {/* Search Filter */}
-          <div className="px-3 py-2">
-            <label className="block text-xs font-medium text-text-tertiary mb-1.5">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-tertiary" />
-              <input
-                type="text"
-                placeholder="Path, email, IP..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full bg-background border border-border rounded pl-10 pr-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              {filters.search && (
-                <button
-                  onClick={() => handleFilterChange('search', '')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                  <X className="h-4 w-4 text-text-tertiary hover:text-text-primary" />
-                </button>
-              )}
+          <button
+            className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-background-tertiary"
+            onClick={() => handleFilterChange('isSlow', !filters.isSlow)}
+          >
+            <div className={cn(
+              'w-4 h-4 border rounded flex items-center justify-center',
+              filters.isSlow ? 'bg-accent border-accent' : 'border-border'
+            )}>
+              {filters.isSlow && <Check className="h-3 w-3 text-white" />}
             </div>
-          </div>
-
-          {/* Checkbox Filters */}
-          <div className="px-3 py-2 space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.isSlow}
-                onChange={(e) => handleFilterChange('isSlow', e.target.checked)}
-                className="rounded border-border text-accent focus:ring-accent"
-              />
-              <span className="text-sm text-text-secondary">Slow requests (&gt;1s)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.isError}
-                onChange={(e) => handleFilterChange('isError', e.target.checked)}
-                className="rounded border-border text-accent focus:ring-accent"
-              />
-              <span className="text-sm text-text-secondary">Errors (4xx/5xx)</span>
-            </label>
-          </div>
-
-          {/* Custom Date Range (conditionally shown) */}
-          {filters.dateRange === 'custom' && (
-            <div className="px-3 py-2 space-y-2 border-t border-border">
-              <div>
-                <label className="block text-xs font-medium text-text-tertiary mb-1.5">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                  className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-text-tertiary mb-1.5">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                  className="w-full bg-background border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
-                />
-              </div>
+            <span>Slow requests (&gt;1s)</span>
+          </button>
+          <button
+            className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-background-tertiary"
+            onClick={() => handleFilterChange('isError', !filters.isError)}
+          >
+            <div className={cn(
+              'w-4 h-4 border rounded flex items-center justify-center',
+              filters.isError ? 'bg-accent border-accent' : 'border-border'
+            )}>
+              {filters.isError && <Check className="h-3 w-3 text-white" />}
             </div>
-          )}
+            <span>Errors (4xx/5xx)</span>
+          </button>
 
           <div className="border-t border-border my-1" />
 
