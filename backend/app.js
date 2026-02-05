@@ -11,14 +11,17 @@ import issueRoutes from './routes/issueRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import apiLogRoutes from './routes/apiLogRoutes.js';
+import apiLogger from './middleware/apiLogger.js';
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 dotenv.config();
 
 app.use(express.json());
 app.use(cors());
+app.use(apiLogger);
 
 app.get('/', (req, res) => {
   res.send('Workflow Backend API is running successfully!');
@@ -31,6 +34,7 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/admin', apiLogRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

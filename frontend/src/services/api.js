@@ -4,9 +4,9 @@
  */
 
 const generateBaseURL = () => {
-  const currentHost = window?.location?.host || 'localhost:8000';
+  const currentHost = window?.location?.host || 'localhost:3000';
   const currentProtocol = window?.location?.protocol || 'http:';
-  return `${currentProtocol}//${currentHost.replace('8000', '8080')}`;
+  return `${currentProtocol}//${currentHost.replace('3000', '3001')}`;
 };
 
 export class ApiError extends Error {

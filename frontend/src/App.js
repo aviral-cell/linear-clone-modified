@@ -14,6 +14,7 @@ const IssueDetailPage = lazy(() => import('./pages/IssueDetailPage'));
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const MyIssuesPage = lazy(() => import('./pages/MyIssuesPage'));
+const AdminLogsPage = lazy(() => import('./pages/AdminLogsPage'));
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -109,6 +110,16 @@ function App() {
                       <PrivateRoute>
                         <Layout>
                           <IssueDetailPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/logs"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <AdminLogsPage />
                         </Layout>
                       </PrivateRoute>
                     }
