@@ -127,7 +127,7 @@ const FilterDropdown = ({
             </button>
 
             {activeSubmenu === filter.key && filter.options.length > 0 && (
-              <div className="absolute left-full top-0 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 z-dropdown max-h-60 overflow-y-auto">
+              <div className="absolute left-full top-0 min-w-[200px] bg-background-secondary border border-border rounded-md shadow-lg py-1 ml-1 z-dropdown max-h-60 overflow-y-auto">
                 {filter.options.map((option) => (
                   <button
                     key={option.value}
