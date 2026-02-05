@@ -110,32 +110,30 @@ const AdminLogsPage = () => {
           </div>
 
           {pagination && pagination.totalPages > 1 && (
-            <div className="px-6 py-4 bg-background border-t border-border flex items-center justify-between">
-              <div className="text-sm text-text-secondary">
-                Showing {logs.length} of {pagination.totalLogs} logs
-              </div>
-              <div className="flex items-center gap-2">
+            <div className="px-6 py-2 bg-background border-t border-border flex items-center justify-between">
+              <div className="flex items-center gap-1">
                 <Button
-                  variant="secondary"
+                  variant="ghost"
                   size="sm"
                   onClick={() => handlePageChange(page - 1)}
                   disabled={!pagination.hasPrevPage || loading}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
+                  <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="px-4 py-2 text-sm text-text-primary">
-                  Page {pagination.page} of {pagination.totalPages}
+                <span className="px-2 text-sm text-text-primary">
+                  {pagination.page} / {pagination.totalPages}
                 </span>
                 <Button
-                  variant="secondary"
+                  variant="ghost"
                   size="sm"
                   onClick={() => handlePageChange(page + 1)}
                   disabled={!pagination.hasNextPage || loading}
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
+              </div>
+              <div className="text-xs text-text-tertiary">
+                Showing {logs.length} of {pagination.totalLogs}
               </div>
             </div>
           )}
