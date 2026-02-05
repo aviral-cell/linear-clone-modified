@@ -5,14 +5,12 @@ import {
   getAdminLogs,
   getAdminLogById,
   getAdminLogStats,
-  cleanupOldLogs,
-} from '../controllers/adminController.js';
+} from '../controllers/apiLogController.js';
 
 const router = express.Router();
 
 router.get('/logs', authenticate, adminAuth, getAdminLogs);
 router.get('/logs/stats', authenticate, adminAuth, getAdminLogStats);
 router.get('/logs/:id', authenticate, adminAuth, getAdminLogById);
-router.delete('/logs/cleanup', authenticate, adminAuth, cleanupOldLogs);
 
 export default router;

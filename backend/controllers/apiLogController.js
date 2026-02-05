@@ -236,29 +236,3 @@ export const getAdminLogById = async (req, res) => {
   }
 };
 
-export const cleanupOldLogs = async (req, res) => {
-  try {
-    const { olderThanDays = 90 } = req.query;
-
-    const days = parseInt(olderThanDays, 10);
-    if (isNaN(days) || days < 1) {
-      return res.status(400).json({ error: 'Invalid olderThanDays parameter' });
-    }
-
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - days);
-
-    const result = await ApiLog.deleteMany({
-      timestamp: { $lt: cutoffDate },
-    });
-
-    res.json({
-      message: 'Log cleanup completed',
-      deletedCount: result.deletedCount,
-      olderThanDate: cutoffDate.toISOString(),
-    });
-  } catch (error) {
-    console.error('Cleanup old logs error:', error);
-    res.status(500).json({ error: 'Failed to cleanup logs' });
-  }
-};

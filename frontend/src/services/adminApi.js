@@ -23,9 +23,6 @@ export const adminApi = {
     return api.get(`/api/admin/logs/stats${queryString ? `?${queryString}` : ''}`);
   },
 
-  cleanupLogs: (olderThanDays = 90) => {
-    return api.delete(`/api/admin/logs/cleanup?olderThanDays=${olderThanDays}`);
-  },
 };
 
 export default adminApi;

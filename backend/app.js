@@ -11,11 +11,10 @@ import issueRoutes from './routes/issueRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
+import apiLogRoutes from './routes/apiLogRoutes.js';
 import apiLogger from './middleware/apiLogger.js';
-import { startScheduler, stopScheduler } from './scheduler.js';
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 dotenv.config();
@@ -35,7 +34,7 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', apiLogRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -58,31 +57,13 @@ app.use((err, req, res, next) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  connectDatabase()
-    .then(() => {
-      // Start scheduled jobs after database connection
-      startScheduler();
-    })
-    .catch((err) => {
-      console.error('Database connection failed:', err);
-      process.exit(1);
-    });
+  connectDatabase().catch((err) => {
+    console.error('Database connection failed:', err);
+    process.exit(1);
+  });
 
   app.listen(PORT, () => {
     console.log(`Workflow Backend server is running on port: ${PORT}`);
-  });
-
-  // Graceful shutdown handlers
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully...');
-    stopScheduler();
-    process.exit(0);
-  });
-
-  process.on('SIGINT', () => {
-    console.log('SIGINT received, shutting down gracefully...');
-    stopScheduler();
-    process.exit(0);
   });
 }
 
