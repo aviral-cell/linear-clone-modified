@@ -103,6 +103,26 @@ export const getAdminLogs = async (req, res) => {
   }
 };
 
+export const getAdminLogById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const log = await ApiLog.findById(id).lean();
+
+    if (!log) {
+      return res.status(404).json({ error: 'Log not found' });
+    }
+
+    res.json({ log });
+  } catch (error) {
+    console.error('Get admin log by ID error:', error);
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid log ID format' });
+    }
+    res.status(500).json({ error: 'Failed to fetch log details' });
+  }
+};
+
 export const getAdminLogStats = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
@@ -215,24 +235,3 @@ export const getAdminLogStats = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch log statistics' });
   }
 };
-
-export const getAdminLogById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const log = await ApiLog.findById(id).lean();
-
-    if (!log) {
-      return res.status(404).json({ error: 'Log not found' });
-    }
-
-    res.json({ log });
-  } catch (error) {
-    console.error('Get admin log by ID error:', error);
-    if (error.name === 'CastError') {
-      return res.status(400).json({ error: 'Invalid log ID format' });
-    }
-    res.status(500).json({ error: 'Failed to fetch log details' });
-  }
-};
-
