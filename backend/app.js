@@ -34,7 +34,7 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/api/admin', apiLogRoutes);
+app.use('/api/admin/logs', apiLogRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
