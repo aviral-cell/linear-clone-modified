@@ -9,8 +9,8 @@ import {
 
 const router = express.Router();
 
-router.get('/logs', authenticate, adminAuth, getAdminLogs);
-router.get('/logs/:id', authenticate, adminAuth, getAdminLogById);
-router.get('/logs/stats', authenticate, adminAuth, getAdminLogStats);
+router.get('/', authenticate, adminAuth, getAdminLogs);
+router.get('/stats', authenticate, adminAuth, getAdminLogStats);
+router.get('/:id', authenticate, adminAuth, getAdminLogById);
 
 export default router;
