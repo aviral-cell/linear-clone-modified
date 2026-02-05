@@ -93,7 +93,7 @@ const LogsAnalytics = () => {
           open={dateDropdownOpen}
           onOpenChange={setDateDropdownOpen}
           trigger={
-            <FieldTrigger>
+            <FieldTrigger onClick={() => setDateDropdownOpen((prev) => !prev)}>
               {DATE_OPTIONS.find((o) => o.value === dateRange)?.label}
             </FieldTrigger>
           }
