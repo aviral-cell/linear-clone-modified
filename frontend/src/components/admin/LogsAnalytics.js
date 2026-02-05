@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useLogStats } from '../../hooks/useLogStats';
-import { Spinner } from '../ui';
+import { Spinner, DropdownMenu, DropdownMenuItem, FieldTrigger } from '../ui';
 import { AlertCircle } from '../../icons';
 
 const COLORS = {
@@ -22,8 +22,15 @@ const COLORS = {
   '5xx': '#ef4444',
 };
 
+const DATE_OPTIONS = [
+  { value: 'today', label: 'Today' },
+  { value: '7days', label: 'Last 7 days' },
+  { value: '30days', label: 'Last 30 days' },
+];
+
 const LogsAnalytics = () => {
   const [dateRange, setDateRange] = useState('7days');
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
 
   const dateParams = useMemo(() => {
     const now = new Date();
@@ -82,15 +89,29 @@ const LogsAnalytics = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-text-primary">Analytics Dashboard</h2>
-        <select
-          value={dateRange}
-          onChange={(e) => setDateRange(e.target.value)}
-          className="bg-background border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
+        <DropdownMenu
+          open={dateDropdownOpen}
+          onOpenChange={setDateDropdownOpen}
+          trigger={
+            <FieldTrigger>
+              {DATE_OPTIONS.find((o) => o.value === dateRange)?.label}
+            </FieldTrigger>
+          }
+          minWidth="min-w-[160px]"
         >
-          <option value="today">Today</option>
-          <option value="7days">Last 7 days</option>
-          <option value="30days">Last 30 days</option>
-        </select>
+          {DATE_OPTIONS.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              selected={dateRange === option.value}
+              onClick={() => {
+                setDateRange(option.value);
+                setDateDropdownOpen(false);
+              }}
+            >
+              {option.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenu>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
