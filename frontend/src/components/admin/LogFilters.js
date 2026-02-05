@@ -83,8 +83,7 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
   }, [onClearFilters]);
 
   const activeFilterCount = Object.entries(filters).filter(
-    ([key, v]) =>
-      v !== '' && v !== false && key !== 'dateRange' && (key !== 'dateRange' || v !== '7days')
+    ([key, v]) => v !== '' && v !== false && key !== 'dateRange'
   ).length;
 
   const dateRangeOptions = [

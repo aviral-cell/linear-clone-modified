@@ -136,7 +136,9 @@ const LogDetailsModal = ({ logId, onClose }) => {
                     copied={copiedField === 'body'}
                   />
                 )}
-                {!log.queryParams && !log.requestHeaders && !log.requestBody && (
+                {(!log.queryParams || Object.keys(log.queryParams).length === 0) &&
+                  (!log.requestHeaders || Object.keys(log.requestHeaders).length === 0) &&
+                  !log.requestBody && (
                   <p className="text-text-tertiary text-sm">No request data available</p>
                 )}
               </Section>
