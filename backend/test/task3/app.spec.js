@@ -151,226 +151,187 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     await mongoose.connection.close();
   });
 
-  // ============================================
-  // GET /api/issues/:identifier/valid-parents
-  // ============================================
+  it('should return valid parent candidates excluding self and all descendants', async () => {
+    const res = await chai
+      .request(app)
+      .get(`/api/issues/${issueA.identifier}/valid-parents`)
+      .set('Authorization', `Bearer ${userToken}`);
 
-  describe('GET /api/issues/:identifier/valid-parents', () => {
-    it('should return valid parent candidates excluding self and all descendants', async () => {
-      // For Issue A, valid parents should exclude: A (self), B, C, D (descendants)
-      // Should include: E (standalone in same team)
-      const res = await chai
-        .request(app)
-        .get(`/api/issues/${issueA.identifier}/valid-parents`)
-        .set('Authorization', `Bearer ${userToken}`);
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('validParents');
+    expect(res.body.validParents).to.be.an('array');
 
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('validParents');
-      expect(res.body.validParents).to.be.an('array');
+    const validIdentifiers = res.body.validParents.map((p) => p.identifier);
 
-      const validIdentifiers = res.body.validParents.map((p) => p.identifier);
-
-      // Should NOT include self (A) or descendants (B, C, D)
-      expect(validIdentifiers).to.not.include('TEST-1'); // A (self)
-      expect(validIdentifiers).to.not.include('TEST-2'); // B (child)
-      expect(validIdentifiers).to.not.include('TEST-3'); // C (grandchild)
-      expect(validIdentifiers).to.not.include('TEST-4'); // D (great-grandchild)
-
-      // Should include standalone issue E
-      expect(validIdentifiers).to.include('TEST-5');
-
-      // Should NOT include issue from different team
-      expect(validIdentifiers).to.not.include('OTHER-1');
-    });
-
-    it('should return ancestors and siblings as valid parent candidates', async () => {
-      // For Issue D (deepest), valid parents should include: A, B, C (ancestors) and E (sibling of A)
-      const res = await chai
-        .request(app)
-        .get(`/api/issues/${issueD.identifier}/valid-parents`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('validParents');
-
-      const validIdentifiers = res.body.validParents.map((p) => p.identifier);
-
-      // Should include ancestors
-      expect(validIdentifiers).to.include('TEST-1'); // A (great-grandparent)
-      expect(validIdentifiers).to.include('TEST-2'); // B (grandparent)
-      expect(validIdentifiers).to.include('TEST-3'); // C (current parent)
-
-      // Should include sibling of A
-      expect(validIdentifiers).to.include('TEST-5'); // E
-
-      // Should NOT include self
-      expect(validIdentifiers).to.not.include('TEST-4'); // D (self)
-    });
-
-    it('should only include issues from the same team', async () => {
-      const res = await chai
-        .request(app)
-        .get(`/api/issues/${issueE.identifier}/valid-parents`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('validParents');
-
-      const validIdentifiers = res.body.validParents.map((p) => p.identifier);
-
-      // Should include issues from same team (TEST-*)
-      expect(validIdentifiers).to.include('TEST-1');
-      expect(validIdentifiers).to.include('TEST-2');
-      expect(validIdentifiers).to.include('TEST-3');
-      expect(validIdentifiers).to.include('TEST-4');
-
-      // Should NOT include issues from different team
-      expect(validIdentifiers).to.not.include('OTHER-1');
-
-      // Should NOT include self
-      expect(validIdentifiers).to.not.include('TEST-5');
-    });
-
-    it('should return 404 for non-existent issue identifier', async () => {
-      const res = await chai
-        .request(app)
-        .get('/api/issues/NONEXISTENT-999/valid-parents')
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(res).to.have.status(404);
-      expect(res.body).to.have.property('message', 'Issue not found');
-    });
-
-    it('should return 401 when called without authentication', async () => {
-      const res = await chai.request(app).get(`/api/issues/${issueA.identifier}/valid-parents`);
-
-      expect(res).to.have.status(401);
-    });
+    expect(validIdentifiers).to.not.include('TEST-1');
+    expect(validIdentifiers).to.not.include('TEST-2');
+    expect(validIdentifiers).to.not.include('TEST-3');
+    expect(validIdentifiers).to.not.include('TEST-4');
+    expect(validIdentifiers).to.include('TEST-5');
+    expect(validIdentifiers).to.not.include('OTHER-1');
   });
 
-  // ============================================
-  // PUT /api/issues/:identifier (parent updates)
-  // ============================================
+  it('should return ancestors and siblings as valid parent candidates', async () => {
+    const res = await chai
+      .request(app)
+      .get(`/api/issues/${issueD.identifier}/valid-parents`)
+      .set('Authorization', `Bearer ${userToken}`);
 
-  describe('PUT /api/issues/:identifier - Circular Reference Prevention', () => {
-    it('should reject setting an issue as its own parent (self-parenting)', async () => {
-      const res = await chai
-        .request(app)
-        .put(`/api/issues/${issueA.identifier}`)
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({ parent: issueA._id.toString() });
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('validParents');
 
-      expect(res).to.have.status(400);
-      expect(res.body).to.have.property('message');
-      expect(res.body.message.toLowerCase()).to.include('own parent');
-    });
+    const validIdentifiers = res.body.validParents.map((p) => p.identifier);
 
-    it('should reject setting a direct child as parent (direct circular reference)', async () => {
-      // Try to set B (child of A) as parent of A → would create A ↔ B cycle
-      const res = await chai
-        .request(app)
-        .put(`/api/issues/${issueA.identifier}`)
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({ parent: issueB._id.toString() });
+    expect(validIdentifiers).to.include('TEST-1');
+    expect(validIdentifiers).to.include('TEST-2');
+    expect(validIdentifiers).to.include('TEST-3');
+    expect(validIdentifiers).to.include('TEST-5');
+    expect(validIdentifiers).to.not.include('TEST-4');
+  });
 
-      expect(res).to.have.status(400);
-      expect(res.body).to.have.property('message');
-      expect(res.body.message.toLowerCase()).to.satisfy(
-        (msg) => msg.includes('circular') || msg.includes('descendant')
-      );
-    });
+  it('should only include issues from the same team', async () => {
+    const res = await chai
+      .request(app)
+      .get(`/api/issues/${issueE.identifier}/valid-parents`)
+      .set('Authorization', `Bearer ${userToken}`);
 
-    it('should reject setting an indirect descendant as parent (deep circular reference)', async () => {
-      // Try to set D (great-grandchild of A) as parent of A → would create cycle
-      const res = await chai
-        .request(app)
-        .put(`/api/issues/${issueA.identifier}`)
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({ parent: issueD._id.toString() });
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('validParents');
 
-      expect(res).to.have.status(400);
-      expect(res.body).to.have.property('message');
-      expect(res.body.message.toLowerCase()).to.satisfy(
-        (msg) => msg.includes('circular') || msg.includes('descendant')
-      );
-    });
+    const validIdentifiers = res.body.validParents.map((p) => p.identifier);
 
-    it('should allow updating parent to a valid issue (sibling)', async () => {
-      // Set E as parent of D (E is not in D's hierarchy)
-      const res = await chai
-        .request(app)
-        .put(`/api/issues/${issueD.identifier}`)
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({ parent: issueE._id.toString() });
+    expect(validIdentifiers).to.include('TEST-1');
+    expect(validIdentifiers).to.include('TEST-2');
+    expect(validIdentifiers).to.include('TEST-3');
+    expect(validIdentifiers).to.include('TEST-4');
+    expect(validIdentifiers).to.not.include('OTHER-1');
+    expect(validIdentifiers).to.not.include('TEST-5');
+  });
 
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('issue');
-      expect(res.body.issue.parent).to.exist;
+  it('should return 404 for non-existent issue identifier', async () => {
+    const res = await chai
+      .request(app)
+      .get('/api/issues/NONEXISTENT-999/valid-parents')
+      .set('Authorization', `Bearer ${userToken}`);
 
-      // Verify in database
-      const updatedIssue = await Issue.findById(issueD._id);
-      expect(updatedIssue.parent.toString()).to.equal(issueE._id.toString());
-    });
+    expect(res).to.have.status(404);
+    expect(res.body).to.have.property('message', 'Issue not found');
+  });
 
-    it('should allow removing parent (set to null)', async () => {
-      // Remove parent from D (currently C)
-      const res = await chai
-        .request(app)
-        .put(`/api/issues/${issueD.identifier}`)
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({ parent: null });
+  it('should return 401 when called without authentication', async () => {
+    const res = await chai.request(app).get(`/api/issues/${issueA.identifier}/valid-parents`);
 
-      expect(res).to.have.status(200);
-      expect(res.body).to.have.property('issue');
-      expect(res.body.issue.parent).to.be.null;
+    expect(res).to.have.status(401);
+  });
 
-      // Verify in database
-      const updatedIssue = await Issue.findById(issueD._id);
-      expect(updatedIssue.parent).to.be.null;
-    });
+  it('should reject setting an issue as its own parent (self-parenting)', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueA.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: issueA._id.toString() });
 
-    it('should allow creating n-level deep sub-issues via API', async () => {
-      // Create a 5th level issue (child of D)
-      const createRes = await chai
-        .request(app)
-        .post('/api/issues')
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({
-          title: 'Issue G (Child of D - 5th level)',
-          description: 'Fifth level deep',
-          teamId: team._id.toString(),
-          status: 'todo',
-          parent: issueD._id.toString(),
-        });
+    expect(res).to.have.status(400);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message.toLowerCase()).to.include('own parent');
+  });
 
-      expect(createRes).to.have.status(201);
-      expect(createRes.body).to.have.property('issue');
-      expect(createRes.body.issue).to.have.property('identifier');
+  it('should reject setting a direct child as parent (direct circular reference)', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueA.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: issueB._id.toString() });
 
-      // Verify the parent is set correctly
-      const createdIssue = await Issue.findOne({ identifier: createRes.body.issue.identifier });
-      expect(createdIssue).to.exist;
-      expect(createdIssue.parent.toString()).to.equal(issueD._id.toString());
+    expect(res).to.have.status(400);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message.toLowerCase()).to.satisfy(
+      (msg) => msg.includes('circular') || msg.includes('descendant')
+    );
+  });
 
-      // Create a 6th level issue (child of the 5th level issue)
-      const createRes2 = await chai
-        .request(app)
-        .post('/api/issues')
-        .set('Authorization', `Bearer ${userToken}`)
-        .send({
-          title: 'Issue H (Child of G - 6th level)',
-          description: 'Sixth level deep',
-          teamId: team._id.toString(),
-          status: 'todo',
-          parent: createdIssue._id.toString(),
-        });
+  it('should reject setting an indirect descendant as parent (deep circular reference)', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueA.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: issueD._id.toString() });
 
-      expect(createRes2).to.have.status(201);
-      expect(createRes2.body).to.have.property('issue');
+    expect(res).to.have.status(400);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message.toLowerCase()).to.satisfy(
+      (msg) => msg.includes('circular') || msg.includes('descendant')
+    );
+  });
 
-      const level6Issue = await Issue.findOne({ identifier: createRes2.body.issue.identifier });
-      expect(level6Issue).to.exist;
-      expect(level6Issue.parent.toString()).to.equal(createdIssue._id.toString());
-    });
+  it('should allow updating parent to a valid issue (sibling)', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueD.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: issueE._id.toString() });
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('issue');
+    expect(res.body.issue.parent).to.exist;
+
+    const updatedIssue = await Issue.findById(issueD._id);
+    expect(updatedIssue.parent.toString()).to.equal(issueE._id.toString());
+  });
+
+  it('should allow removing parent (set to null)', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueD.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: null });
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('issue');
+    expect(res.body.issue.parent).to.be.null;
+
+    const updatedIssue = await Issue.findById(issueD._id);
+    expect(updatedIssue.parent).to.be.null;
+  });
+
+  it('should allow creating n-level deep sub-issues via API', async () => {
+    const createRes = await chai
+      .request(app)
+      .post('/api/issues')
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        title: 'Issue G (Child of D - 5th level)',
+        description: 'Fifth level deep',
+        teamId: team._id.toString(),
+        status: 'todo',
+        parent: issueD._id.toString(),
+      });
+
+    expect(createRes).to.have.status(201);
+    expect(createRes.body).to.have.property('issue');
+    expect(createRes.body.issue).to.have.property('identifier');
+
+    const createdIssue = await Issue.findOne({ identifier: createRes.body.issue.identifier });
+    expect(createdIssue).to.exist;
+    expect(createdIssue.parent.toString()).to.equal(issueD._id.toString());
+
+    const createRes2 = await chai
+      .request(app)
+      .post('/api/issues')
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({
+        title: 'Issue H (Child of G - 6th level)',
+        description: 'Sixth level deep',
+        teamId: team._id.toString(),
+        status: 'todo',
+        parent: createdIssue._id.toString(),
+      });
+
+    expect(createRes2).to.have.status(201);
+    expect(createRes2.body).to.have.property('issue');
+
+    const level6Issue = await Issue.findOne({ identifier: createRes2.body.issue.identifier });
+    expect(level6Issue).to.exist;
+    expect(level6Issue.parent.toString()).to.equal(createdIssue._id.toString());
   });
 });
