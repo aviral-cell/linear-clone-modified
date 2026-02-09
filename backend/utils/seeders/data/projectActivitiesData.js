@@ -1,8 +1,3 @@
-/**
- * Derive the field name from the action type
- * @param {string} action - Action string (e.g., 'updated_lead', 'set_target_date')
- * @returns {string|null} Field name or null for actions without a field
- */
 const deriveFieldFromAction = (action) => {
   const actionFieldMap = {
     updated_status: 'status',
@@ -121,7 +116,6 @@ export function getProjectActivitiesData(projects, users, updates = []) {
     
     if (project.lead) {
       const action = 'updated_lead';
-      // Store the lead's ID - resolved to name in frontend using users list
       activities.push({
         project: project._id,
         user: project.creator._id || project.creator,

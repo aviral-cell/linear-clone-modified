@@ -24,13 +24,12 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
   let team;
   let teamB;
 
-  // Issues for hierarchy testing: A → B → C → D (4 levels deep)
-  let issueA; // Root issue
-  let issueB; // Child of A
-  let issueC; // Child of B (grandchild of A)
-  let issueD; // Child of C (great-grandchild of A)
-  let issueE; // Standalone issue (no parent, same team)
-  let issueF; // Issue in different team
+  let issueA;
+  let issueB;
+  let issueC;
+  let issueD;
+  let issueE;
+  let issueF;
 
   before(async () => {
     process.env.NODE_ENV = 'test';
@@ -43,7 +42,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
 
     await cleanupModels();
 
-    // Setup test user
     const bcrypt = await import('bcrypt');
     const hashedPassword = await bcrypt.default.hash('password123', 12);
 
@@ -55,7 +53,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     await user.save();
     userToken = generateToken(user._id);
 
-    // Setup teams
     team = new Team({
       name: 'Test Team',
       key: 'TEST',
@@ -72,11 +69,9 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
   });
 
   beforeEach(async () => {
-    // Clean issues and activities before each test
     await Issue.deleteMany({});
     await IssueActivity.deleteMany({});
 
-    // Create hierarchy: A → B → C → D
     issueA = new Issue({
       identifier: 'TEST-1',
       title: 'Issue A (Root)',
@@ -121,7 +116,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     });
     await issueD.save();
 
-    // Standalone issue in same team
     issueE = new Issue({
       identifier: 'TEST-5',
       title: 'Issue E (Standalone)',
@@ -133,7 +127,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     });
     await issueE.save();
 
-    // Issue in different team
     issueF = new Issue({
       identifier: 'OTHER-1',
       title: 'Issue F (Different Team)',

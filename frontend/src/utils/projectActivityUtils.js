@@ -15,9 +15,6 @@ import { projectStatusIcons, priorityIcons } from '../constants';
 
 export { projectStatusIcons, priorityIcons };
 
-/**
- * Format status value to human-readable label
- */
 const formatStatusLabel = (status) => {
   const statusMap = {
     backlog: 'Backlog',
@@ -29,9 +26,6 @@ const formatStatusLabel = (status) => {
   return statusMap[status] || status;
 };
 
-/**
- * Format priority value to human-readable label
- */
 const formatPriorityLabel = (priority) => {
   const priorityMap = {
     no_priority: 'No priority',
@@ -43,9 +37,6 @@ const formatPriorityLabel = (priority) => {
   return priorityMap[priority] || priority;
 };
 
-/**
- * Format date value to human-readable label
- */
 const formatDateLabel = (date) => {
   if (!date) return '';
   const d = new Date(date);
@@ -62,14 +53,6 @@ const formatDateLabel = (date) => {
   return `${month} ${day}${daySuffix}`;
 };
 
-/**
- * Get icon configuration for project activities
- * Uses unified shape: action instead of actionType, activityValue from changes.newValue
- * @param {string} action - Activity action (e.g., 'updated_status', 'posted_update')
- * @param {string|null} updateStatus - Update status for posted_update actions
- * @param {*} activityValue - The newValue from changes (for status/priority icons)
- * @returns {Object} Icon configuration with Icon component and color class
- */
 export const getActivityIcon = (action, updateStatus = null, activityValue = null) => {
   switch (action) {
     case 'updated_status':
@@ -117,12 +100,6 @@ export const getActivityIcon = (action, updateStatus = null, activityValue = nul
   }
 };
 
-/**
- * Resolve a user ID to a user name using the users list
- * @param {string} userId - User ID (24-char hex string)
- * @param {Array} users - Array of user objects
- * @returns {string} User name or fallback
- */
 const resolveUserName = (userId, users = []) => {
   if (!userId) return 'Unassigned';
   if (typeof userId === 'object' && userId.name) return userId.name;
@@ -133,14 +110,6 @@ const resolveUserName = (userId, users = []) => {
   return userId || 'Unassigned';
 };
 
-/**
- * Build project activity message from action and changes
- * Messages are built in the UI from action and changes (no backend description)
- * Lead/team values are resolved using the users list (consistent with issue activity assignee resolution)
- * @param {Object} activity - Activity object with action and changes
- * @param {Array} users - Array of user objects for resolving lead names
- * @returns {React.ReactNode} Formatted message with bold spans
- */
 export const buildProjectActivityMessage = (activity, users = []) => {
   const { action, changes } = activity;
   const oldValue = changes?.oldValue;
@@ -184,7 +153,6 @@ export const buildProjectActivityMessage = (activity, users = []) => {
       return 'cleared start date';
 
     case 'updated_lead': {
-      // Resolve lead ID to name using users list (consistent with assignee resolution)
       const leadName = resolveUserName(newValue, users);
       return (
         <>
@@ -197,7 +165,6 @@ export const buildProjectActivityMessage = (activity, users = []) => {
       return 'cleared lead';
 
     case 'updated_team': {
-      // Team is stored as name string from populated document
       const teamName =
         typeof newValue === 'object' && newValue?.name ? newValue.name : newValue || 'Unassigned';
       return (
@@ -236,6 +203,3 @@ export const buildProjectActivityMessage = (activity, users = []) => {
       return 'updated project';
   }
 };
-
-// Keep backward compatibility alias
-export const formatDescriptionWithBold = buildProjectActivityMessage;

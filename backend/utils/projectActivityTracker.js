@@ -1,10 +1,5 @@
 import ProjectActivity from '../models/ProjectActivity.js';
 
-/**
- * Derive the field name from the action type
- * @param {string} action - Action string (e.g., 'updated_lead', 'set_target_date')
- * @returns {string|null} Field name or null for actions without a field
- */
 const deriveFieldFromAction = (action) => {
   const actionFieldMap = {
     updated_status: 'status',
@@ -24,17 +19,9 @@ const deriveFieldFromAction = (action) => {
   return actionFieldMap[action] || null;
 };
 
-/**
- * Normalize value for storage - extracts ID from populated documents
- * Values are resolved to human-readable text in the frontend using passed lists
- * (consistent with how issue activities handle assignee, project, parent)
- * @param {*} value - The value to normalize
- * @returns {*} Normalized value (ID for refs, original value otherwise)
- */
 const normalizeValueForStorage = (value) => {
   if (!value) return value;
 
-  // For populated documents, extract the ID
   if (typeof value === 'object' && value._id) {
     return value._id;
   }
