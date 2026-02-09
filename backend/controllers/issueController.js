@@ -145,7 +145,6 @@ export const createIssue = async (req, res) => {
         return res.status(404).json({ message: 'Parent issue not found' });
       }
 
-      // Check team consistency
       if (parentIssue.team.toString() !== teamId.toString()) {
         return res.status(400).json({
           message: 'Parent must be in the same team',
@@ -215,13 +214,11 @@ export const updateIssue = async (req, res) => {
           return res.status(404).json({ message: 'Parent issue not found' });
         }
 
-        // Validate parent change using hierarchy utility
         const validation = await validateParentChange(issue._id, parentId);
         if (!validation.valid) {
           return res.status(400).json({ message: validation.reason });
         }
 
-        // Check team consistency
         if (parent.team.toString() !== issue.team.toString()) {
           return res.status(400).json({ message: 'Parent must be in the same team' });
         }
@@ -321,7 +318,6 @@ export const getValidParents = async (req, res) => {
       return res.status(404).json({ message: 'Issue not found' });
     }
 
-    // Get valid parent candidates (excludes self and descendants)
     const validParents = await getValidParentCandidates(issue._id);
 
     res.json({ validParents });
