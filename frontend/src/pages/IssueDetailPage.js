@@ -26,7 +26,7 @@ const IssueDetailPage = () => {
   const handleError = useCallback(() => {
     navigate('/');
   }, [navigate]);
-  const { issue, subIssues, loading, refetch } = useIssue(identifier, {
+  const { issue, subIssues, isSubscribed, setIsSubscribed, loading, refetch } = useIssue(identifier, {
     onError: handleError,
   });
   const { users } = useUsers();
@@ -175,6 +175,17 @@ const IssueDetailPage = () => {
     }
   };
 
+  const handleToggleSubscribe = async () => {
+    try {
+      const data = await api.issues.toggleSubscribe(identifier);
+      setIsSubscribed(data.subscribed);
+      toast.success(data.subscribed ? 'Subscribed to issue' : 'Unsubscribed from issue');
+    } catch (error) {
+      console.error('Error toggling subscription:', error);
+      toast.error('Failed to update subscription');
+    }
+  };
+
   if (loading) {
     return <LoadingScreen message="Loading..." />;
   }
@@ -283,6 +294,8 @@ const IssueDetailPage = () => {
               users={users}
               projects={projects}
               parentIssues={parentIssues}
+              isSubscribed={isSubscribed}
+              onToggleSubscribe={handleToggleSubscribe}
             />
 
             <CommentsSection

@@ -7,6 +7,8 @@
 import {
   AlertCircle,
   Ban,
+  Bell,
+  BellOff,
   BarChart2,
   BarChart3,
   BarChart4,
@@ -64,6 +66,8 @@ import {
 export {
   AlertCircle,
   Ban,
+  Bell,
+  BellOff,
   BarChart2,
   BarChart3,
   BarChart4,
@@ -121,6 +125,8 @@ export {
 export const Icons = {
   AlertCircle,
   Ban,
+  Bell,
+  BellOff,
   BarChart2,
   BarChart3,
   BarChart4,

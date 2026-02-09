@@ -6,6 +6,7 @@ export const useIssue = (identifier, options = {}) => {
   const { silent = false, onError } = options;
   const [issue, setIssue] = useState(null);
   const [subIssues, setSubIssues] = useState([]);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +20,7 @@ export const useIssue = (identifier, options = {}) => {
         const data = await api.issues.getByIdentifier(identifier);
         setIssue(data.issue);
         setSubIssues(data.subIssues || []);
+        setIsSubscribed(data.isSubscribed || false);
       } catch (err) {
         console.error('Error fetching issue:', err);
         setError(err);
@@ -43,5 +45,5 @@ export const useIssue = (identifier, options = {}) => {
     return fetchIssue(isSilent);
   };
 
-  return { issue, subIssues, loading, error, refetch };
+  return { issue, subIssues, isSubscribed, setIsSubscribed, loading, error, refetch };
 };

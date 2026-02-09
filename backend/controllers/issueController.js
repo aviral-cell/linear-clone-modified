@@ -62,6 +62,8 @@ export const getMyIssues = async (req, res) => {
       query = { creator: userId };
     } else if (filter === 'assigned') {
       query = { assignee: userId };
+    } else if (filter === 'subscribed') {
+      query = { subscribers: userId };
     } else {
       query = {
         $or: [{ creator: userId }, { assignee: userId }],
@@ -103,7 +105,11 @@ export const getIssueByIdentifier = async (req, res) => {
       .populate('creator', 'name email avatar')
       .sort({ createdAt: -1 });
 
-    res.json({ issue, subIssues });
+    const isSubscribed = issue.subscribers.some(
+      (sub) => sub.toString() === req.user._id.toString()
+    );
+
+    res.json({ issue, subIssues, isSubscribed });
   } catch (error) {
     console.error('Get issue error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -272,6 +278,37 @@ export const updateIssue = async (req, res) => {
   } catch (error) {
     console.error('Update issue error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const toggleSubscribe = async (req, res) => {
+  try {
+    const { identifier } = req.params;
+    const userId = req.user._id;
+
+    const issue = await Issue.findOne({ identifier });
+    if (!issue) {
+      return res.status(404).json({ error: 'Issue not found' });
+    }
+
+    const isSubscribed = issue.subscribers.some(
+      (sub) => sub.toString() === userId.toString()
+    );
+
+    if (isSubscribed) {
+      issue.subscribers.pull(userId);
+    } else {
+      issue.subscribers.push(userId);
+    }
+
+    await issue.save();
+
+    res.json({
+      subscribed: !isSubscribed,
+    });
+  } catch (error) {
+    console.error('Toggle subscribe error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 

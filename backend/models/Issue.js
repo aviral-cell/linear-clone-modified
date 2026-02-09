@@ -68,6 +68,12 @@ const issueSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+    subscribers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,
@@ -79,5 +85,6 @@ issueSchema.index({ team: 1, status: 1 });
 issueSchema.index({ identifier: 1 });
 issueSchema.index({ project: 1, status: 1 });
 issueSchema.index({ parent: 1 });
+issueSchema.index({ subscribers: 1 });
 
 export default mongoose.model('Issue', issueSchema);

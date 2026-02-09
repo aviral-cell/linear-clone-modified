@@ -4,7 +4,7 @@ import IssuesBoard from '../components/IssuesBoard';
 import Header from '../components/Header';
 import { Button, TabNavigation } from '../components/ui';
 import { cn } from '../utils/cn';
-import { LayoutList, LayoutPanelLeft, UserPlus, FileText } from '../icons';
+import { LayoutList, LayoutPanelLeft, UserPlus, FileText, Bell } from '../icons';
 
 const MyIssuesPage = () => {
   const [filter, setFilter] = useState('assigned');
@@ -32,6 +32,7 @@ const MyIssuesPage = () => {
             tabs={[
               { id: 'assigned', label: 'Assigned', icon: <UserPlus className="h-4 w-4" /> },
               { id: 'created', label: 'Created', icon: <FileText className="h-4 w-4" /> },
+              { id: 'subscribed', label: 'Subscribed', icon: <Bell className="h-4 w-4" /> },
             ]}
             activeTab={filter}
             onTabChange={(tabId) => navigate(`/my-issues/${tabId}`)}
