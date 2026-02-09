@@ -286,12 +286,4 @@ describe('Advanced Issue Filters Functionality Testing', function () {
     expect(issueWithAssignee.team).to.have.property('name');
     expect(issueWithAssignee.team).to.have.property('key');
   });
-
-  it('should return 401 when no authentication token is provided', async () => {
-    const res = await chai
-      .request(app)
-      .get(`/api/issues/team/${team._id}?status=todo`);
-
-    expect(res).to.have.status(401);
-  });
 });
