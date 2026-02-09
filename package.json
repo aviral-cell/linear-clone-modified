@@ -12,7 +12,8 @@
     "seed": "cd backend && node utils/seed.js",
     "test:task1": "cd backend && npm run test:task1",
     "test:task2": "cd backend && npm run test:task2",
-    "test:task3": "cd backend && npm run test:task3"
+    "test:task3": "cd backend && npm run test:task3",
+    "test:task4": "cd backend && npm run test:task4"
   },
   "dependencies": {
     "concurrently": "7.6.0"
