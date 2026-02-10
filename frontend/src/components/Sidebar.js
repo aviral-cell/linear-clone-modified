@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { Avatar, Button, IconBadge, IconButton } from './ui';
-import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban, Shield } from '../icons';
+import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban, Shield, Users } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
@@ -26,6 +26,7 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     issuesFilter;
   const isMyIssuesPage = location.pathname.startsWith('/my-issues');
   const isAdminLogsPage = location.pathname === '/admin/logs';
+  const isAdminTeamsPage = location.pathname.startsWith('/admin/teams');
   const [isTeamsSectionExpanded, setIsTeamsSectionExpanded] = useState(true);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
@@ -107,6 +108,13 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
   const handleAdminLogsClick = () => {
     navigate('/admin/logs');
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
+  const handleAdminTeamsClick = () => {
+    navigate('/admin/teams');
     if (isMobile) {
       closeSidebar();
     }
@@ -291,6 +299,22 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                 Admin
               </span>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAdminTeamsClick}
+              className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
+              } ${
+                isAdminTeamsPage
+                  ? 'text-text-primary bg-background-tertiary rounded-md'
+                  : 'text-text-secondary'
+              }`}
+              title="Teams"
+            >
+              <Users className="w-4 h-4 flex-shrink-0" />
+              {!isCollapsed && <span>Teams</span>}
+            </Button>
             <Button
               variant="ghost"
               size="sm"
