@@ -1,4 +1,4 @@
-import connectDatabase from './config/database.js';
+import connectDatabase from '../config/database.js';
 
 console.log('Testing MongoDB connection...');
 console.log('Connection string:', process.env.MONGODB_BASE_URI?.replace(/\/\/.*:.*@/, '//***:***@'));
