@@ -1,4 +1,4 @@
-import { NotFoundError, BadRequestError } from '../utils/AppError.js';
+import { NotFoundError, BadRequestError } from '../utils/appError.js';
 import Project from '../models/Project.js';
 import Issue from '../models/Issue.js';
 import ProjectUpdate, { PROJECT_UPDATE_STATUSES } from '../models/ProjectUpdate.js';
@@ -6,7 +6,7 @@ import { ISSUE_POPULATE } from '../utils/issuePopulates.js';
 import ProjectActivity from '../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
 import { getProjectStats } from './projectStatsService.js';
-import { createProjectActivity } from '../utils/projectActivityTracker.js';
+import { createProjectActivity } from './projectActivityTracker.js';
 import {
   getProjectActivities as getActivities,
   groupActivitiesWithUpdates

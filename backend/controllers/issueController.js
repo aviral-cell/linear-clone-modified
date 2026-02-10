@@ -7,9 +7,9 @@ import {
   getDepth,
   getMaxSubtreeDepth,
   MAX_DEPTH,
-} from '../utils/issueHierarchy.js';
+} from '../services/issueHierarchy.js';
 import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
-import { BadRequestError, NotFoundError } from '../utils/AppError.js';
+import { BadRequestError, NotFoundError } from '../utils/appError.js';
 
 export const getIssuesByTeam = async (req, res) => {
   const { teamId } = req.params;
