@@ -1,12 +1,12 @@
 import connectDatabase from '../../config/database.js';
 import { dropOldIndexes, clearAllData } from './cleanup.js';
-import { seedUsers } from './seeders/userSeeder.js';
-import { seedTeams } from './seeders/teamSeeder.js';
-import { seedProjects } from './seeders/projectSeeder.js';
-import { seedProjectUpdates } from './seeders/projectUpdateSeeder.js';
-import { seedProjectActivities } from './seeders/projectActivitySeeder.js';
-import { seedIssues } from './seeders/issueSeeder.js';
-import { seedComments } from './seeders/commentSeeder.js';
+import { seedUsers } from './runners/userSeeder.js';
+import { seedTeams } from './runners/teamSeeder.js';
+import { seedProjects } from './runners/projectSeeder.js';
+import { seedProjectUpdates } from './runners/projectUpdateSeeder.js';
+import { seedProjectActivities } from './runners/projectActivitySeeder.js';
+import { seedIssues } from './runners/issueSeeder.js';
+import { seedComments } from './runners/commentSeeder.js';
 
 /**
  * Main seeder function that orchestrates the entire seeding process
