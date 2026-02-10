@@ -10,6 +10,7 @@ import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
 import {
   Button,
+  ConfirmDialog,
   DetailPanel,
   EditableTextarea,
   EditableTitle,
@@ -39,6 +40,7 @@ const IssueDetailPage = () => {
   const [description, setDescription] = useState('');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -186,6 +188,16 @@ const IssueDetailPage = () => {
     }
   };
 
+  const handleDeleteIssue = async () => {
+    try {
+      await api.issues.delete(identifier);
+      toast.success('Issue deleted');
+      navigate(`/team/${issue.team.key}/all`);
+    } catch (error) {
+      toast.error('Failed to delete issue');
+    }
+  };
+
   if (loading) {
     return <LoadingScreen message="Loading..." />;
   }
@@ -322,9 +334,19 @@ const IssueDetailPage = () => {
             projects={projects}
             parentIssues={parentIssues}
             onUpdate={updateIssue}
+            onDelete={() => setShowDeleteConfirm(true)}
           />
         </DetailPanel>
       </div>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteIssue}
+        title="Delete issue"
+        message="This will permanently delete this issue and all its sub-issues. This action cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   );
 };

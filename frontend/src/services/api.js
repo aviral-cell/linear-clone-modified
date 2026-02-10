@@ -137,6 +137,8 @@ class ApiService {
     getValidParents: (identifier) => this.get(`/api/issues/${identifier}/valid-parents`),
     
     toggleSubscribe: (identifier) => this.post(`/api/issues/${identifier}/subscribe`),
+
+    delete: (identifier) => this.delete(`/api/issues/${identifier}`),
   };
 
   comments = {
