@@ -1,6 +1,6 @@
 import Comment from '../models/Comment.js';
 import IssueActivity from '../models/IssueActivity.js';
-import { BadRequestError, NotFoundError, ForbiddenError } from '../utils/AppError.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '../utils/appError.js';
 
 export const getCommentsByIssue = async (req, res) => {
   const { issueId } = req.params;

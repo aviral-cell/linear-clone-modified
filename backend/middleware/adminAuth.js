@@ -1,4 +1,4 @@
-import { UnauthorizedError, ForbiddenError } from '../utils/AppError.js';
+import { UnauthorizedError, ForbiddenError } from '../utils/appError.js';
 
 export const adminAuth = (req, res, next) => {
   if (!req.user) {
