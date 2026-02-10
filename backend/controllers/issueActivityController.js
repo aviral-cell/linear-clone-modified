@@ -10,7 +10,6 @@ export const getIssueActivities = async (req, res) => {
 
     res.json({ activities });
   } catch (error) {
-    console.error('Get issue activities error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

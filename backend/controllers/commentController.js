@@ -18,7 +18,6 @@ export const getCommentsByIssue = async (req, res) => {
 
     res.json({ comments: commentsWithOwner });
   } catch (error) {
-    console.error('Get comments error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -50,7 +49,6 @@ export const createComment = async (req, res) => {
 
     res.status(201).json({ comment });
   } catch (error) {
-    console.error('Create comment error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -81,7 +79,6 @@ export const updateComment = async (req, res) => {
 
     res.json({ comment });
   } catch (error) {
-    console.error('Update comment error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -110,7 +107,6 @@ export const deleteComment = async (req, res) => {
 
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
-    console.error('Delete comment error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

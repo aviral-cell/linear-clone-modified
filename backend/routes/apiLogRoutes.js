@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
-import adminAuth from '../middleware/adminAuth.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 import {
   getAdminLogs,
   getAdminLogById,

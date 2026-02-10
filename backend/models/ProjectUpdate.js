@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+export const PROJECT_UPDATE_STATUSES = ['on_track', 'at_risk', 'off_track'];
+
 const projectUpdateSchema = new mongoose.Schema(
   {
     project: {
@@ -19,7 +21,7 @@ const projectUpdateSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['on_track', 'at_risk', 'off_track'],
+      enum: PROJECT_UPDATE_STATUSES,
       required: true,
       nullable: false
     },

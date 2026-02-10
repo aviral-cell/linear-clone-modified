@@ -7,7 +7,7 @@ import {
   getClientIp,
 } from '../utils/apiLoggerUtils.js';
 
-const apiLogger = (req, res, next) => {
+export const apiLogger = (req, res, next) => {
   if (req.path === '/health' || req.path === '/') {
     return next();
   }
@@ -64,13 +64,10 @@ const apiLogger = (req, res, next) => {
         };
 
         await ApiLog.create(logData);
-      } catch (error) {
-        console.error('[API Logger] Failed to save log:', error.message);
+      } catch {
       }
     });
   });
 
   next();
 };
-
-export default apiLogger;

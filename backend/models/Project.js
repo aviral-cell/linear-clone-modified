@@ -1,5 +1,15 @@
 import mongoose from 'mongoose';
 
+export const PROJECT_STATUSES = [
+  'backlog',
+  'planned',
+  'in_progress',
+  'completed',
+  'cancelled',
+];
+
+export const PROJECT_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
+
 const projectSchema = new mongoose.Schema(
   {
     name: {
@@ -23,18 +33,12 @@ const projectSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: [
-        'backlog',
-        'planned',
-        'in_progress',
-        'completed',
-        'cancelled',
-      ],
+      enum: PROJECT_STATUSES,
       default: 'backlog',
     },
     priority: {
       type: String,
-      enum: ['no_priority', 'urgent', 'high', 'medium', 'low'],
+      enum: PROJECT_PRIORITIES,
       default: 'no_priority',
     },
     team: {

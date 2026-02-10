@@ -1,11 +1,12 @@
 import Project from '../models/Project.js';
 import Issue from '../models/Issue.js';
-import ProjectUpdate from '../models/ProjectUpdate.js';
+import ProjectUpdate, { PROJECT_UPDATE_STATUSES } from '../models/ProjectUpdate.js';
+import { ISSUE_POPULATE } from '../utils/issuePopulates.js';
 import ProjectActivity from '../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
 import { getProjectStats } from './projectStatsService.js';
+import { createProjectActivity } from '../utils/projectActivityTracker.js';
 import {
-  createProjectActivity,
   getProjectActivities as getActivities,
   groupActivitiesWithUpdates
 } from './projectActivityService.js';
@@ -113,11 +114,7 @@ export const getProjectIssues = async (identifier) => {
   }
 
   const issues = await Issue.find({ project: project._id })
-    .populate('assignee', 'name email avatar')
-    .populate('creator', 'name email avatar')
-    .populate('team', 'name key icon')
-    .populate('project', 'name identifier icon')
-    .populate('parent', 'identifier title')
+    .populate(ISSUE_POPULATE)
     .sort({ createdAt: -1 });
 
   return issues;
@@ -146,7 +143,7 @@ export const getProjectUpdates = async (identifier, includeActivities = false) =
 
 export const createProjectUpdate = async (identifier, updateData, userId) => {
   const { content, status } = updateData;
-  const validStatuses = ['on_track', 'at_risk', 'off_track'];
+  const validStatuses = PROJECT_UPDATE_STATUSES;
 
   if (!content || !content.trim()) {
     throw new Error('Content and status are required');

@@ -34,7 +34,6 @@ export const register = async (req, res) => {
       user: user.toPublicProfile(),
     });
   } catch (error) {
-    console.error('Register error:', error);
     res.status(500).json({ message: 'Server error during registration' });
   }
 };
@@ -67,7 +66,6 @@ export const login = async (req, res) => {
       user: user.toPublicProfile(),
     });
   } catch (error) {
-    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error during login' });
   }
 };
@@ -76,7 +74,6 @@ export const getCurrentUser = async (req, res) => {
   try {
     res.json({ user: req.user.toPublicProfile() });
   } catch (error) {
-    console.error('Get current user error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

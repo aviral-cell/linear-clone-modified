@@ -1,4 +1,4 @@
-import { createProjectActivity } from './projectActivityService.js';
+import { createProjectActivity } from '../utils/projectActivityTracker.js';
 import { generateProjectIdentifier } from '../utils/projectUtils.js';
 
 const handleMemberUpdate = async (project, updates, userId) => {

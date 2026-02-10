@@ -1,5 +1,17 @@
 import mongoose from 'mongoose';
 
+export const ISSUE_STATUSES = [
+  'backlog',
+  'todo',
+  'in_progress',
+  'in_review',
+  'done',
+  'cancelled',
+  'duplicate',
+];
+
+export const ISSUE_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
+
 const issueSchema = new mongoose.Schema(
   {
     identifier: {
@@ -18,20 +30,12 @@ const issueSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: [
-        'backlog',
-        'todo',
-        'in_progress',
-        'in_review',
-        'done',
-        'cancelled',
-        'duplicate',
-      ],
+      enum: ISSUE_STATUSES,
       default: 'todo',
     },
     priority: {
       type: String,
-      enum: ['no_priority', 'urgent', 'high', 'medium', 'low'],
+      enum: ISSUE_PRIORITIES,
       default: 'no_priority',
     },
     team: {

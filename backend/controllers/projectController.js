@@ -6,7 +6,6 @@ export const listProjects = async (req, res) => {
     const projects = await projectService.listProjects({ status, teamId, creatorId });
     res.json({ projects });
   } catch (error) {
-    console.error('List projects error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -16,7 +15,6 @@ export const createProject = async (req, res) => {
     const project = await projectService.createProject(req.body, req.user._id);
     res.status(201).json({ project });
   } catch (error) {
-    console.error('Create project error:', error);
     if (error.message === 'Name and team are required') {
       return res.status(400).json({ message: error.message });
     }
@@ -33,7 +31,6 @@ export const getProjectByIdentifier = async (req, res) => {
     const result = await projectService.getProjectByIdentifier(identifier);
     res.json(result);
   } catch (error) {
-    console.error('Get project error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -47,7 +44,6 @@ export const updateProject = async (req, res) => {
     const project = await projectService.updateProject(identifier, req.body, req.user._id);
     res.json({ project });
   } catch (error) {
-    console.error('Update project error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -64,7 +60,6 @@ export const getProjectIssues = async (req, res) => {
     const issues = await projectService.getProjectIssues(identifier);
     res.json({ issues });
   } catch (error) {
-    console.error('Get project issues error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -79,7 +74,6 @@ export const getProjectUpdates = async (req, res) => {
     const result = await projectService.getProjectUpdates(identifier, includeActivities);
     res.json(result);
   } catch (error) {
-    console.error('Get project updates error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -93,7 +87,6 @@ export const createProjectUpdate = async (req, res) => {
     const update = await projectService.createProjectUpdate(identifier, req.body, req.user._id);
     res.status(201).json({ update });
   } catch (error) {
-    console.error('Create project update error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }
@@ -114,7 +107,6 @@ export const getProjectActivities = async (req, res) => {
     const activities = await projectService.getProjectActivities(identifier, limit);
     res.json({ activities });
   } catch (error) {
-    console.error('Get project activities error:', error);
     if (error.message === 'Project not found') {
       return res.status(404).json({ message: error.message });
     }

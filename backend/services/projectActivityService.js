@@ -1,9 +1,4 @@
 import ProjectActivity from '../models/ProjectActivity.js';
-import { createProjectActivity as createActivity } from '../utils/projectActivityTracker.js';
-
-export const createProjectActivity = async (projectId, userId, action, oldValue, newValue) => {
-  return await createActivity(projectId, userId, action, oldValue, newValue);
-};
 
 export const getProjectActivities = async (projectId, options = {}) => {
   const { limit = 50, skip = 0 } = options;

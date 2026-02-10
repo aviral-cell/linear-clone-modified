@@ -12,7 +12,7 @@ import commentRoutes from './routes/commentRoutes.js';
 import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import apiLogRoutes from './routes/apiLogRoutes.js';
-import apiLogger from './middleware/apiLogger.js';
+import { apiLogger } from './middleware/apiLogger.js';
 
 const PORT = process.env.PORT || 8080;
 const app = express();

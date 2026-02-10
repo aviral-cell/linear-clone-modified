@@ -5,7 +5,6 @@ export const getAllTeams = async (req, res) => {
     const teams = await Team.find().populate('members', 'name email avatar');
     res.json({ teams });
   } catch (error) {
-    console.error('Get teams error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

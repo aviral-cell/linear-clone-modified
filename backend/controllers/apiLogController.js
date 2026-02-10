@@ -98,7 +98,6 @@ export const getAdminLogs = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get admin logs error:', error);
     res.status(500).json({ error: 'Failed to fetch logs' });
   }
 };
@@ -115,7 +114,6 @@ export const getAdminLogById = async (req, res) => {
 
     res.json({ log });
   } catch (error) {
-    console.error('Get admin log by ID error:', error);
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid log ID format' });
     }
@@ -231,7 +229,6 @@ export const getAdminLogStats = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get admin log stats error:', error);
     res.status(500).json({ error: 'Failed to fetch log statistics' });
   }
 };

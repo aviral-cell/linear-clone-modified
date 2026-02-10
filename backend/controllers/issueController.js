@@ -5,6 +5,7 @@ import {
   validateParentChange,
   getValidParentCandidates,
 } from '../utils/issueHierarchy.js';
+import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
 
 export const getIssuesByTeam = async (req, res) => {
   try {
@@ -38,16 +39,11 @@ export const getIssuesByTeam = async (req, res) => {
     }
 
     const issues = await Issue.find(query)
-      .populate('assignee', 'name email avatar')
-      .populate('creator', 'name email avatar')
-      .populate('team', 'name key icon')
-      .populate('project', 'name identifier icon')
-      .populate('parent', 'identifier title')
+      .populate(ISSUE_POPULATE)
       .sort({ createdAt: -1 });
 
     res.json({ issues });
   } catch (error) {
-    console.error('Get issues error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -71,16 +67,11 @@ export const getMyIssues = async (req, res) => {
     }
 
     const issues = await Issue.find(query)
-      .populate('assignee', 'name email avatar')
-      .populate('creator', 'name email avatar')
-      .populate('team', 'name key icon')
-      .populate('project', 'name identifier icon')
-      .populate('parent', 'identifier title')
+      .populate(ISSUE_POPULATE)
       .sort({ createdAt: -1 });
 
     res.json({ issues });
   } catch (error) {
-    console.error('Get my issues error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -90,11 +81,7 @@ export const getIssueByIdentifier = async (req, res) => {
     const { identifier } = req.params;
 
     const issue = await Issue.findOne({ identifier })
-      .populate('assignee', 'name email avatar')
-      .populate('creator', 'name email avatar')
-      .populate('team', 'name key icon')
-      .populate('project', 'name identifier icon')
-      .populate('parent', 'identifier title status');
+      .populate(ISSUE_POPULATE_DETAIL);
 
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
@@ -111,7 +98,6 @@ export const getIssueByIdentifier = async (req, res) => {
 
     res.json({ issue, subIssues, isSubscribed });
   } catch (error) {
-    console.error('Get issue error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -170,12 +156,7 @@ export const createIssue = async (req, res) => {
     });
 
     await issue.save();
-    await issue.populate([
-      { path: 'assignee', select: 'name email avatar' },
-      { path: 'creator', select: 'name email avatar' },
-      { path: 'team', select: 'name key icon' },
-      { path: 'project', select: 'name identifier icon' },
-    ]);
+    await issue.populate(ISSUE_POPULATE);
 
     const activity = new IssueActivity({
       issue: issue._id,
@@ -186,7 +167,6 @@ export const createIssue = async (req, res) => {
 
     res.status(201).json({ issue });
   } catch (error) {
-    console.error('Create issue error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -240,7 +220,7 @@ export const updateIssue = async (req, res) => {
       if (updates[field] === undefined) {
         return;
       }
-      if (String(issue[field]) == String(updates[field])) {
+      if (String(issue[field]) === String(updates[field])) {
         return;
       }
       changes.push({
@@ -253,13 +233,7 @@ export const updateIssue = async (req, res) => {
     Object.assign(issue, updates);
     await issue.save();
 
-    await issue.populate([
-      { path: 'assignee', select: 'name email avatar' },
-      { path: 'creator', select: 'name email avatar' },
-      { path: 'team', select: 'name key icon' },
-      { path: 'project', select: 'name identifier icon' },
-      { path: 'parent', select: 'identifier title status' },
-    ]);
+    await issue.populate(ISSUE_POPULATE_DETAIL);
 
     for (const change of changes) {
       const activity = new IssueActivity({
@@ -273,7 +247,6 @@ export const updateIssue = async (req, res) => {
 
     res.json({ issue });
   } catch (error) {
-    console.error('Update issue error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -285,7 +258,7 @@ export const toggleSubscribe = async (req, res) => {
 
     const issue = await Issue.findOne({ identifier });
     if (!issue) {
-      return res.status(404).json({ error: 'Issue not found' });
+      return res.status(404).json({ message: 'Issue not found' });
     }
 
     const isSubscribed = issue.subscribers.some(
@@ -304,8 +277,7 @@ export const toggleSubscribe = async (req, res) => {
       subscribed: !isSubscribed,
     });
   } catch (error) {
-    console.error('Toggle subscribe error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -322,7 +294,6 @@ export const getValidParents = async (req, res) => {
 
     res.json({ validParents });
   } catch (error) {
-    console.error('Get valid parents error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

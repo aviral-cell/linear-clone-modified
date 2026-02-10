@@ -1,4 +1,4 @@
-const adminAuth = (req, res, next) => {
+export const adminAuth = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
@@ -9,5 +9,3 @@ const adminAuth = (req, res, next) => {
 
   next();
 };
-
-export default adminAuth;
