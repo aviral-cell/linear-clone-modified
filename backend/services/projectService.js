@@ -1,3 +1,4 @@
+import { AppError } from '../utils/AppError.js';
 import Project from '../models/Project.js';
 import Issue from '../models/Issue.js';
 import ProjectUpdate, { PROJECT_UPDATE_STATUSES } from '../models/ProjectUpdate.js';
@@ -50,7 +51,7 @@ export const listProjects = async (filters = {}) => {
 export const getProjectByIdentifier = async (identifier) => {
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   await project.populate([
@@ -69,7 +70,7 @@ export const createProject = async (projectData, userId) => {
   const { name, description, summary, status, priority, teamId, leadId, startDate, targetDate, memberIds, creatorId } = projectData;
 
   if (!name || !teamId) {
-    throw new Error('Name and team are required');
+    throw new AppError(400, 'Name and team are required');
   }
 
   const project = new Project({
@@ -101,7 +102,7 @@ export const createProject = async (projectData, userId) => {
 export const updateProject = async (identifier, updates, userId) => {
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   return await updateProjectWithTracking(project, updates, userId);
@@ -110,7 +111,7 @@ export const updateProject = async (identifier, updates, userId) => {
 export const getProjectIssues = async (identifier) => {
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   const issues = await Issue.find({ project: project._id })
@@ -123,7 +124,7 @@ export const getProjectIssues = async (identifier) => {
 export const getProjectUpdates = async (identifier, includeActivities = false) => {
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   const updates = await ProjectUpdate.find({ project: project._id })
@@ -146,16 +147,16 @@ export const createProjectUpdate = async (identifier, updateData, userId) => {
   const validStatuses = PROJECT_UPDATE_STATUSES;
 
   if (!content || !content.trim()) {
-    throw new Error('Content and status are required');
+    throw new AppError(400, 'Content and status are required');
   }
 
   if (status && !validStatuses.includes(status)) {
-    throw new Error('Invalid status value, must be one of: ' + validStatuses.join(', '));
+    throw new AppError(400, 'Invalid status value, must be one of: ' + validStatuses.join(', '));
   }
 
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   const update = new ProjectUpdate({
@@ -175,7 +176,7 @@ export const createProjectUpdate = async (identifier, updateData, userId) => {
 export const getProjectActivities = async (identifier, limit = 50) => {
   const project = await Project.findOne({ identifier });
   if (!project) {
-    throw new Error('Project not found');
+    throw new AppError(404, 'Project not found');
   }
 
   return await getActivities(project._id, { limit: parseInt(limit) });

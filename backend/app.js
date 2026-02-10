@@ -13,11 +13,12 @@ import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import apiLogRoutes from './routes/apiLogRoutes.js';
 import { apiLogger } from './middleware/apiLogger.js';
+import { errorHandler } from './middleware/errorHandler.js';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 const app = express();
-
-dotenv.config();
 
 app.use(express.json());
 app.use(cors());
@@ -36,25 +37,7 @@ app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/admin/logs', apiLogRoutes);
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-
-  if (err.name === 'ValidationError') {
-    const messages = Object.values(err.errors).map((e) => e.message);
-    return res.status(400).json({ message: messages.join(', ') });
-  }
-
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyPattern)[0];
-    return res.status(400).json({ message: `${field} already exists` });
-  }
-
-  if (err.name === 'CastError') {
-    return res.status(400).json({ message: 'Invalid ID format' });
-  }
-
-  res.status(err.status || 500).send(err.message || 'Internal Server Error');
-});
+app.use(errorHandler);
 
 if (process.env.NODE_ENV !== 'test') {
   connectDatabase().catch((err) => {
