@@ -4,6 +4,9 @@ import Team from '../models/Team.js';
 import {
   validateParentChange,
   getValidParentCandidates,
+  getDepth,
+  getMaxSubtreeDepth,
+  MAX_DEPTH,
 } from '../utils/issueHierarchy.js';
 import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
 
@@ -136,6 +139,13 @@ export const createIssue = async (req, res) => {
           message: 'Parent must be in the same team',
         });
       }
+
+      const parentDepth = await getDepth(parent);
+      if (parentDepth >= MAX_DEPTH) {
+        return res.status(400).json({
+          message: `Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`,
+        });
+      }
     }
 
     const count = await Issue.countDocuments({ team: teamId });
@@ -201,6 +211,14 @@ export const updateIssue = async (req, res) => {
 
         if (parent.team.toString() !== issue.team.toString()) {
           return res.status(400).json({ message: 'Parent must be in the same team' });
+        }
+
+        const parentDepth = await getDepth(parentId);
+        const subtreeDepth = await getMaxSubtreeDepth(issue._id);
+        if (parentDepth + 1 + subtreeDepth > MAX_DEPTH) {
+          return res.status(400).json({
+            message: `Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`,
+          });
         }
       }
     }

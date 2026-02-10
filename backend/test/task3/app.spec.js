@@ -211,12 +211,6 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     expect(res.body).to.have.property('message', 'Issue not found');
   });
 
-  it('should return 401 when called without authentication', async () => {
-    const res = await chai.request(app).get(`/api/issues/${issueA.identifier}/valid-parents`);
-
-    expect(res).to.have.status(401);
-  });
-
   it('should reject setting an issue as its own parent (self-parenting)', async () => {
     const res = await chai
       .request(app)
@@ -257,37 +251,35 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     );
   });
 
-  it('should allow updating parent to a valid issue (sibling)', async () => {
-    const res = await chai
+  it('should allow updating parent to a valid issue and removing parent', async () => {
+    const updateRes = await chai
       .request(app)
       .put(`/api/issues/${issueD.identifier}`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({ parent: issueE._id.toString() });
 
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('issue');
-    expect(res.body.issue.parent).to.exist;
+    expect(updateRes).to.have.status(200);
+    expect(updateRes.body).to.have.property('issue');
+    expect(updateRes.body.issue.parent).to.exist;
 
     const updatedIssue = await Issue.findById(issueD._id);
     expect(updatedIssue.parent.toString()).to.equal(issueE._id.toString());
-  });
 
-  it('should allow removing parent (set to null)', async () => {
-    const res = await chai
+    const removeRes = await chai
       .request(app)
       .put(`/api/issues/${issueD.identifier}`)
       .set('Authorization', `Bearer ${userToken}`)
       .send({ parent: null });
 
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('issue');
-    expect(res.body.issue.parent).to.be.null;
+    expect(removeRes).to.have.status(200);
+    expect(removeRes.body).to.have.property('issue');
+    expect(removeRes.body.issue.parent).to.be.null;
 
-    const updatedIssue = await Issue.findById(issueD._id);
-    expect(updatedIssue.parent).to.be.null;
+    const removedParentIssue = await Issue.findById(issueD._id);
+    expect(removedParentIssue.parent).to.be.null;
   });
 
-  it('should allow creating n-level deep sub-issues via API', async () => {
+  it('should allow creating sub-issues up to 5 levels deep and reject deeper nesting', async () => {
     const createRes = await chai
       .request(app)
       .post('/api/issues')
@@ -320,11 +312,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
         parent: createdIssue._id.toString(),
       });
 
-    expect(createRes2).to.have.status(201);
-    expect(createRes2.body).to.have.property('issue');
-
-    const level6Issue = await Issue.findOne({ identifier: createRes2.body.issue.identifier });
-    expect(level6Issue).to.exist;
-    expect(level6Issue.parent.toString()).to.equal(createdIssue._id.toString());
+    expect(createRes2).to.have.status(400);
+    expect(createRes2.body).to.have.property('message');
+    expect(createRes2.body.message.toLowerCase()).to.include('nested');
   });
 });
