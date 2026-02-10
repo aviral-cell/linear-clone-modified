@@ -1,9 +1,11 @@
 import Issue from '../models/Issue.js';
+import Comment from '../models/Comment.js';
 import IssueActivity from '../models/IssueActivity.js';
 import Team from '../models/Team.js';
 import {
   validateParentChange,
   getValidParentCandidates,
+  getDescendants,
   getDepth,
   getMaxSubtreeDepth,
   MAX_DEPTH,
@@ -267,6 +269,27 @@ export const toggleSubscribe = async (req, res) => {
 
   res.json({
     subscribed: !isSubscribed,
+  });
+};
+
+export const deleteIssue = async (req, res) => {
+  const { identifier } = req.params;
+
+  const issue = await Issue.findOne({ identifier });
+  if (!issue) {
+    throw new NotFoundError('Issue not found');
+  }
+
+  const descendantIds = await getDescendants(issue._id);
+  const allIds = [issue._id, ...descendantIds];
+
+  await Comment.deleteMany({ issue: { $in: allIds } });
+  await IssueActivity.deleteMany({ issue: { $in: allIds } });
+  await Issue.deleteMany({ _id: { $in: allIds } });
+
+  res.json({
+    message: 'Issue deleted successfully',
+    deletedCount: allIds.length,
   });
 };
 

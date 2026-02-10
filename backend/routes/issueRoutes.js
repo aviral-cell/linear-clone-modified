@@ -4,6 +4,7 @@ import {
   getIssueByIdentifier,
   createIssue,
   updateIssue,
+  deleteIssue,
   getMyIssues,
   getValidParents,
   toggleSubscribe,
@@ -19,5 +20,6 @@ router.post('/:identifier/subscribe', authenticate, toggleSubscribe);
 router.get('/:identifier', authenticate, getIssueByIdentifier);
 router.post('/', authenticate, createIssue);
 router.put('/:identifier', authenticate, updateIssue);
+router.delete('/:identifier', authenticate, deleteIssue);
 
 export default router;
