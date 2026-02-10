@@ -9,6 +9,7 @@ import {
   MAX_DEPTH,
 } from '../utils/issueHierarchy.js';
 import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
+import { BadRequestError, NotFoundError } from '../utils/AppError.js';
 
 export const getIssuesByTeam = async (req, res) => {
   const { teamId } = req.params;
@@ -78,7 +79,7 @@ export const getIssueByIdentifier = async (req, res) => {
     .populate(ISSUE_POPULATE_DETAIL);
 
   if (!issue) {
-    return res.status(404).json({ message: 'Issue not found' });
+    throw new NotFoundError('Issue not found');
   }
 
   const subIssues = await Issue.find({ parent: issue._id })
@@ -107,31 +108,27 @@ export const createIssue = async (req, res) => {
   } = req.body;
 
   if (!title || !teamId) {
-    return res.status(400).json({ message: 'Title and team are required' });
+    throw new BadRequestError('Title and team are required');
   }
 
   const team = await Team.findById(teamId);
   if (!team) {
-    return res.status(404).json({ message: 'Team not found' });
+    throw new NotFoundError('Team not found');
   }
 
   if (parent) {
     const parentIssue = await Issue.findById(parent);
     if (!parentIssue) {
-      return res.status(404).json({ message: 'Parent issue not found' });
+      throw new NotFoundError('Parent issue not found');
     }
 
     if (parentIssue.team.toString() !== teamId.toString()) {
-      return res.status(400).json({
-        message: 'Parent must be in the same team',
-      });
+      throw new BadRequestError('Parent must be in the same team');
     }
 
     const parentDepth = await getDepth(parent);
     if (parentDepth >= MAX_DEPTH) {
-      return res.status(400).json({
-        message: `Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`,
-      });
+      throw new BadRequestError(`Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`);
     }
   }
 
@@ -171,7 +168,7 @@ export const updateIssue = async (req, res) => {
 
   const issue = await Issue.findOne({ identifier });
   if (!issue) {
-    return res.status(404).json({ message: 'Issue not found' });
+    throw new NotFoundError('Issue not found');
   }
 
   if (updates.projectId !== undefined) {
@@ -184,24 +181,22 @@ export const updateIssue = async (req, res) => {
     if (parentId) {
       const parent = await Issue.findById(parentId);
       if (!parent) {
-        return res.status(404).json({ message: 'Parent issue not found' });
+        throw new NotFoundError('Parent issue not found');
       }
 
       const validation = await validateParentChange(issue._id, parentId);
       if (!validation.valid) {
-        return res.status(400).json({ message: validation.reason });
+        throw new BadRequestError(validation.reason);
       }
 
       if (parent.team.toString() !== issue.team.toString()) {
-        return res.status(400).json({ message: 'Parent must be in the same team' });
+        throw new BadRequestError('Parent must be in the same team');
       }
 
       const parentDepth = await getDepth(parentId);
       const subtreeDepth = await getMaxSubtreeDepth(issue._id);
       if (parentDepth + 1 + subtreeDepth > MAX_DEPTH) {
-        return res.status(400).json({
-          message: `Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`,
-        });
+        throw new BadRequestError(`Sub-issues cannot be nested more than ${MAX_DEPTH} levels deep`);
       }
     }
   }
@@ -255,7 +250,7 @@ export const toggleSubscribe = async (req, res) => {
 
   const issue = await Issue.findOne({ identifier });
   if (!issue) {
-    return res.status(404).json({ message: 'Issue not found' });
+    throw new NotFoundError('Issue not found');
   }
 
   const isSubscribed = issue.subscribers.some(
@@ -280,7 +275,7 @@ export const getValidParents = async (req, res) => {
 
   const issue = await Issue.findOne({ identifier });
   if (!issue) {
-    return res.status(404).json({ message: 'Issue not found' });
+    throw new NotFoundError('Issue not found');
   }
 
   const validParents = await getValidParentCandidates(issue._id);

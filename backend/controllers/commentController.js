@@ -1,5 +1,6 @@
 import Comment from '../models/Comment.js';
 import IssueActivity from '../models/IssueActivity.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '../utils/AppError.js';
 
 export const getCommentsByIssue = async (req, res) => {
   const { issueId } = req.params;
@@ -23,7 +24,7 @@ export const createComment = async (req, res) => {
   const { content } = req.body;
 
   if (!content || !content.trim()) {
-    return res.status(400).json({ message: 'Content is required' });
+    throw new BadRequestError('Content is required');
   }
 
   const comment = new Comment({
@@ -50,16 +51,16 @@ export const updateComment = async (req, res) => {
   const { content } = req.body;
 
   if (!content || !content.trim()) {
-    return res.status(400).json({ message: 'Content is required' });
+    throw new BadRequestError('Content is required');
   }
 
   const comment = await Comment.findById(id);
   if (!comment) {
-    return res.status(404).json({ message: 'Comment not found' });
+    throw new NotFoundError('Comment not found');
   }
 
   if (comment.user.toString() !== req.user._id.toString()) {
-    return res.status(403).json({ message: 'Not authorized' });
+    throw new ForbiddenError('Not authorized');
   }
 
   comment.content = content.trim();
@@ -76,11 +77,11 @@ export const deleteComment = async (req, res) => {
 
   const comment = await Comment.findById(id);
   if (!comment) {
-    return res.status(404).json({ message: 'Comment not found' });
+    throw new NotFoundError('Comment not found');
   }
 
   if (comment.user.toString() !== req.user._id.toString()) {
-    return res.status(403).json({ message: 'Not authorized' });
+    throw new ForbiddenError('Not authorized');
   }
 
   await comment.deleteOne();

@@ -1,17 +1,18 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import { generateToken } from '../middleware/auth.js';
+import { BadRequestError, UnauthorizedError } from '../utils/AppError.js';
 
 export const register = async (req, res) => {
   const { email, password, name } = req.body;
 
   if (!email || !password || !name) {
-    return res.status(400).json({ message: 'All fields are required' });
+    throw new BadRequestError('All fields are required');
   }
 
   const existingUser = await User.findByEmail(email);
   if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
+    throw new BadRequestError('User already exists');
   }
 
   const salt = await bcrypt.genSalt(12);
@@ -38,19 +39,17 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: 'Email and password are required' });
+    throw new BadRequestError('Email and password are required');
   }
 
   const user = await User.findByEmail(email);
   if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+    throw new UnauthorizedError('Invalid credentials');
   }
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+    throw new UnauthorizedError('Invalid credentials');
   }
 
   const token = generateToken(user._id);

@@ -1,10 +1,12 @@
+import { UnauthorizedError, ForbiddenError } from '../utils/AppError.js';
+
 export const adminAuth = (req, res, next) => {
   if (!req.user) {
-    return res.status(401).json({ error: 'Authentication required' });
+    throw new UnauthorizedError('Authentication required');
   }
 
   if (req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Admin access required' });
+    throw new ForbiddenError('Admin access required');
   }
 
   next();

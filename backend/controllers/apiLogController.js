@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
 import ApiLog from '../models/ApiLog.js';
+import { BadRequestError, NotFoundError } from '../utils/AppError.js';
 
 export const getAdminLogs = async (req, res) => {
   const {
@@ -102,14 +102,14 @@ export const getAdminLogs = async (req, res) => {
 export const getAdminLogById = async (req, res) => {
   const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: 'Invalid log ID format' });
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+    throw new BadRequestError('Invalid log ID format');
   }
 
   const log = await ApiLog.findById(id).lean();
 
   if (!log) {
-    return res.status(404).json({ error: 'Log not found' });
+    throw new NotFoundError('Log not found');
   }
 
   res.json({ log });

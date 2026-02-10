@@ -80,7 +80,7 @@ describe('API Logger Functionality Testing', function () {
       .set('Authorization', `Bearer ${regularToken}`);
 
     expect(resRegular).to.have.status(403);
-    expect(resRegular.body).to.have.property('error', 'Admin access required');
+    expect(resRegular.body).to.have.property('message', 'Admin access required');
 
     const resNoAuth = await chai
       .request(app)
@@ -211,7 +211,7 @@ describe('API Logger Functionality Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resNotFound).to.have.status(404);
-    expect(resNotFound.body).to.have.property('error', 'Log not found');
+    expect(resNotFound.body).to.have.property('message', 'Log not found');
 
     const resInvalid = await chai
       .request(app)
@@ -219,7 +219,7 @@ describe('API Logger Functionality Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resInvalid).to.have.status(400);
-    expect(resInvalid.body).to.have.property('error', 'Invalid log ID format');
+    expect(resInvalid.body).to.have.property('message', 'Invalid log ID format');
   });
 
   it('should filter logs by HTTP method', async () => {
