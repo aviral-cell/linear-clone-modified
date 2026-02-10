@@ -7,7 +7,7 @@ import User from '../../models/User.js';
 import Team from '../../models/Team.js';
 import Issue from '../../models/Issue.js';
 import IssueActivity from '../../models/IssueActivity.js';
-import { generateToken } from '../../middleware/auth.js';
+import { generateToken } from '../../utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;

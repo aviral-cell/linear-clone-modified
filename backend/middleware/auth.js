@@ -32,6 +32,3 @@ export const authenticate = async (req, res, next) => {
   }
 };
 
-export const generateToken = (userId) => {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
-};

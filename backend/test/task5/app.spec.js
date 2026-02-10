@@ -6,7 +6,7 @@ import connectDatabase from '../../config/database.js';
 import User from '../../models/User.js';
 import Team from '../../models/Team.js';
 import Issue from '../../models/Issue.js';
-import { generateToken } from '../../middleware/auth.js';
+import { generateToken } from '../../utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;

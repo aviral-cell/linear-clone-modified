@@ -5,7 +5,7 @@ import app from '../../app.js';
 import connectDatabase from '../../config/database.js';
 import User from '../../models/User.js';
 import ApiLog from '../../models/ApiLog.js';
-import { generateToken } from '../../middleware/auth.js';
+import { generateToken } from '../../utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;

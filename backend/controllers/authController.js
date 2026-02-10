@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
-import { generateToken } from '../middleware/auth.js';
-import { BadRequestError, UnauthorizedError } from '../utils/AppError.js';
+import { generateToken } from '../utils/auth.js';
+import { BadRequestError, UnauthorizedError } from '../utils/appError.js';
 
 export const register = async (req, res) => {
   const { email, password, name } = req.body;
