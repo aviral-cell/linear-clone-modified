@@ -23,7 +23,7 @@ const projectUpdateSchema = new mongoose.Schema(
       type: String,
       enum: PROJECT_UPDATE_STATUSES,
       required: true,
-      nullable: false
+      nullable: false,
     },
   },
   {
@@ -36,4 +36,3 @@ projectUpdateSchema.index({ project: 1, createdAt: -1 });
 projectUpdateSchema.index({ author: 1 });
 
 export default mongoose.model('ProjectUpdate', projectUpdateSchema);
-

@@ -40,5 +40,7 @@ export const getProjectStats = async (projectIdOrIds) => {
     );
   }
 
-  return statsByProject[projectIdOrIds.toString()] || { statusCounts: {}, totalIssues: 0, doneIssues: 0 };
+  return (
+    statsByProject[projectIdOrIds.toString()] || { statusCounts: {}, totalIssues: 0, doneIssues: 0 }
+  );
 };

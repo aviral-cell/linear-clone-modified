@@ -29,17 +29,17 @@ describe('Issue Comments Functionality Testing', () => {
   before(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
-    
+
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name;
     if (dbName && !dbName.includes('Test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
-    
+
     await cleanupModels();
 
     const bcrypt = await import('bcrypt');
     const hashedPassword = await bcrypt.default.hash('password123', 12);
-    
+
     ownerUser = new User({
       email: 'owner@test.com',
       password: hashedPassword,
@@ -120,11 +120,9 @@ describe('Issue Comments Functionality Testing', () => {
       expect(comment).to.have.property('isOwner').that.is.a('boolean');
     });
 
-    const ownerComments = resAsOwner.body.comments.filter(
-      (c) => c.content.includes('by owner')
-    );
-    const otherUserComments = resAsOwner.body.comments.filter(
-      (c) => c.content.includes('by other user')
+    const ownerComments = resAsOwner.body.comments.filter((c) => c.content.includes('by owner'));
+    const otherUserComments = resAsOwner.body.comments.filter((c) =>
+      c.content.includes('by other user')
     );
 
     ownerComments.forEach((comment) => {
@@ -147,11 +145,11 @@ describe('Issue Comments Functionality Testing', () => {
       expect(comment).to.have.property('isOwner').that.is.a('boolean');
     });
 
-    const ownerCommentsForOtherUser = resAsOtherUser.body.comments.filter(
-      (c) => c.content.includes('by owner')
+    const ownerCommentsForOtherUser = resAsOtherUser.body.comments.filter((c) =>
+      c.content.includes('by owner')
     );
-    const otherUserCommentsForOtherUser = resAsOtherUser.body.comments.filter(
-      (c) => c.content.includes('by other user')
+    const otherUserCommentsForOtherUser = resAsOtherUser.body.comments.filter((c) =>
+      c.content.includes('by other user')
     );
 
     ownerCommentsForOtherUser.forEach((comment) => {
@@ -260,9 +258,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     expect(updateRes).to.have.status(401);
 
-    const deleteRes = await chai
-      .request(app)
-      .delete(`/api/comments/${comment1._id}`);
+    const deleteRes = await chai.request(app).delete(`/api/comments/${comment1._id}`);
 
     expect(deleteRes).to.have.status(401);
 
@@ -270,4 +266,3 @@ describe('Issue Comments Functionality Testing', () => {
     expect(existingComment).to.exist;
   });
 });
-

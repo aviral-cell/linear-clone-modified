@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Activity Tracker - Create and Update Issues', function() {
+describe('Activity Tracker - Create and Update Issues', function () {
   this.timeout(10000);
 
   let user;
@@ -27,17 +27,17 @@ describe('Activity Tracker - Create and Update Issues', function() {
   before(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
-    
+
     const dbName = mongoose.connection.db?.databaseName;
     if (dbName && !dbName.includes('Test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
-    
+
     await cleanupModels();
 
     const bcrypt = await import('bcrypt');
     const hashedPassword = await bcrypt.default.hash('password123', 12);
-    
+
     user = new User({
       email: 'testuser@test.com',
       password: hashedPassword,
@@ -369,4 +369,3 @@ describe('Activity Tracker - Create and Update Issues', function() {
     expect(activities).to.be.an('array').with.length(1);
   });
 });
-

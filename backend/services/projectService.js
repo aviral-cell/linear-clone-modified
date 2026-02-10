@@ -9,7 +9,7 @@ import { getProjectStats } from './projectStatsService.js';
 import { createProjectActivity } from './projectActivityTracker.js';
 import {
   getProjectActivities as getActivities,
-  groupActivitiesWithUpdates
+  groupActivitiesWithUpdates,
 } from './projectActivityService.js';
 import { updateProjectWithTracking } from './projectUpdateService.js';
 
@@ -67,7 +67,19 @@ export const getProjectByIdentifier = async (identifier) => {
 };
 
 export const createProject = async (projectData, userId) => {
-  const { name, description, summary, status, priority, teamId, leadId, startDate, targetDate, memberIds, creatorId } = projectData;
+  const {
+    name,
+    description,
+    summary,
+    status,
+    priority,
+    teamId,
+    leadId,
+    startDate,
+    targetDate,
+    memberIds,
+    creatorId,
+  } = projectData;
 
   if (!name || !teamId) {
     throw new BadRequestError('Name and team are required');

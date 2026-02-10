@@ -55,20 +55,20 @@ export const validateParentChange = async (issueId, newParentId) => {
   if (issueId.toString() === newParentId.toString()) {
     return {
       valid: false,
-      reason: 'Issue cannot be its own parent'
+      reason: 'Issue cannot be its own parent',
     };
   }
 
   const descendants = await getDescendants(issueId);
 
   const isDescendant = descendants.some(
-    descendantId => descendantId.toString() === newParentId.toString()
+    (descendantId) => descendantId.toString() === newParentId.toString()
   );
 
   if (isDescendant) {
     return {
       valid: false,
-      reason: 'Cannot set parent to a descendant issue (would create circular reference)'
+      reason: 'Cannot set parent to a descendant issue (would create circular reference)',
     };
   }
 
@@ -93,15 +93,15 @@ export const getValidParentCandidates = async (issueId) => {
     .populate('assignee', 'name email avatar')
     .sort({ createdAt: -1 });
 
-    const subtreeDepth = await getMaxSubtreeDepth(issueId);
+  const subtreeDepth = await getMaxSubtreeDepth(issueId);
 
-    const validParents = [];
-    for (const candidate of candidates) {
-      const candidateDepth = await getDepth(candidate._id);
-      if (candidateDepth + 1 + subtreeDepth <= MAX_DEPTH) {
-        validParents.push(candidate);
-      }
+  const validParents = [];
+  for (const candidate of candidates) {
+    const candidateDepth = await getDepth(candidate._id);
+    if (candidateDepth + 1 + subtreeDepth <= MAX_DEPTH) {
+      validParents.push(candidate);
     }
+  }
 
   return validParents;
 };

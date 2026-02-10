@@ -23,5 +23,3 @@ router.post('/:identifier/updates', authenticate, createProjectUpdate);
 router.get('/:identifier/activities', authenticate, getProjectActivities);
 
 export default router;
-
-

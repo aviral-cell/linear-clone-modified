@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || 'workflow-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'workflow-secret-key-change-in-production';
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -31,4 +30,3 @@ export const authenticate = async (req, res, next) => {
     return res.status(500).json({ message: 'Authentication error' });
   }
 };
-

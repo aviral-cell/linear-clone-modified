@@ -10,7 +10,7 @@ import { getProjectActivitiesData } from '../data/projectActivitiesData.js';
  */
 export async function seedProjectActivities(projects, users, updates = []) {
   console.log('Seeding project activities...');
-  
+
   const populatedProjects = await Promise.all(
     projects.map(async (project) => {
       const populated = await project.populate([
@@ -21,9 +21,9 @@ export async function seedProjectActivities(projects, users, updates = []) {
       return populated;
     })
   );
-  
+
   const activitiesData = getProjectActivitiesData(populatedProjects, users, updates);
-  
+
   const insertedActivities = [];
   for (const activityData of activitiesData) {
     const activity = new ProjectActivity(activityData);
