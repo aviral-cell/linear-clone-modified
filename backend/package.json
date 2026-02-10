@@ -12,6 +12,7 @@
     "test:task2": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task2.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task2/*.js --exit",
     "test:task3": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task3.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task3/*.js --exit",
     "test:task4": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task4.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task4/*.js --exit",
+    "test:task5": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task5.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task5/*.js --exit",
     "test:task6": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task6.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=config.json test/task6/*.js --exit"
   },
   "dependencies": {
