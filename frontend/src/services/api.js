@@ -102,6 +102,15 @@ class ApiService {
 
   teams = {
     getAll: () => this.get('/api/teams'),
+    getByIdentifier: (identifier) => this.get(`/api/teams/${identifier}`),
+    create: (data) => this.post('/api/teams', data),
+    update: (identifier, data) => this.put(`/api/teams/${identifier}`, data),
+    remove: (identifier) => this.delete(`/api/teams/${identifier}`),
+    getMembers: (identifier) => this.get(`/api/teams/${identifier}/members`),
+    addMembers: (identifier, userIds) =>
+      this.post(`/api/teams/${identifier}/members`, { userIds }),
+    removeMember: (identifier, userId) =>
+      this.delete(`/api/teams/${identifier}/members/${userId}`),
   };
 
   users = {
