@@ -41,9 +41,7 @@ export const getIssuesByTeam = async (req, res) => {
     query.parent = parent === 'null' ? null : parent;
   }
 
-  const issues = await Issue.find(query)
-    .populate(ISSUE_POPULATE)
-    .sort({ createdAt: -1 });
+  const issues = await Issue.find(query).populate(ISSUE_POPULATE).sort({ createdAt: -1 });
 
   res.json({ issues });
 };
@@ -65,9 +63,7 @@ export const getMyIssues = async (req, res) => {
     };
   }
 
-  const issues = await Issue.find(query)
-    .populate(ISSUE_POPULATE)
-    .sort({ createdAt: -1 });
+  const issues = await Issue.find(query).populate(ISSUE_POPULATE).sort({ createdAt: -1 });
 
   res.json({ issues });
 };
@@ -75,8 +71,7 @@ export const getMyIssues = async (req, res) => {
 export const getIssueByIdentifier = async (req, res) => {
   const { identifier } = req.params;
 
-  const issue = await Issue.findOne({ identifier })
-    .populate(ISSUE_POPULATE_DETAIL);
+  const issue = await Issue.findOne({ identifier }).populate(ISSUE_POPULATE_DETAIL);
 
   if (!issue) {
     throw new NotFoundError('Issue not found');
@@ -87,25 +82,14 @@ export const getIssueByIdentifier = async (req, res) => {
     .populate('creator', 'name email avatar')
     .sort({ createdAt: -1 });
 
-  const isSubscribed = issue.subscribers.some(
-    (sub) => sub.toString() === req.user._id.toString()
-  );
+  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === req.user._id.toString());
 
   res.json({ issue, subIssues, isSubscribed });
 };
 
 export const createIssue = async (req, res) => {
-  const {
-    title,
-    description,
-    status,
-    priority,
-    teamId,
-    projectId,
-    assignee,
-    parent,
-    labels,
-  } = req.body;
+  const { title, description, status, priority, teamId, projectId, assignee, parent, labels } =
+    req.body;
 
   if (!title || !teamId) {
     throw new BadRequestError('Title and team are required');
@@ -253,9 +237,7 @@ export const toggleSubscribe = async (req, res) => {
     throw new NotFoundError('Issue not found');
   }
 
-  const isSubscribed = issue.subscribers.some(
-    (sub) => sub.toString() === userId.toString()
-  );
+  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === userId.toString());
 
   if (isSubscribed) {
     issue.subscribers.pull(userId);

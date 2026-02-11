@@ -9,13 +9,7 @@ const handleMemberUpdate = async (project, updates, userId) => {
 
   if (JSON.stringify(oldMemberIds) !== JSON.stringify(newMemberIds)) {
     project.members = updates.memberIds;
-    await createProjectActivity(
-      project._id,
-      userId,
-      'updated_members',
-      oldMemberIds,
-      newMemberIds
-    );
+    await createProjectActivity(project._id, userId, 'updated_members', oldMemberIds, newMemberIds);
   }
 };
 
@@ -90,13 +84,9 @@ export const updateProjectWithTracking = async (project, updates, userId) => {
 
   const fieldUpdates = {};
 
-  const statusUpdate = await handleFieldUpdate(
-    project,
-    'status',
-    otherUpdates.status,
-    userId,
-    { update: 'updated_status' }
-  );
+  const statusUpdate = await handleFieldUpdate(project, 'status', otherUpdates.status, userId, {
+    update: 'updated_status',
+  });
   if (statusUpdate) Object.assign(fieldUpdates, statusUpdate);
 
   const priorityUpdate = await handleFieldUpdate(
@@ -127,18 +117,20 @@ export const updateProjectWithTracking = async (project, updates, userId) => {
   if (startDateUpdate) Object.assign(fieldUpdates, startDateUpdate);
 
   if (otherUpdates.name !== undefined && otherUpdates.name !== project.name) {
-    await createProjectActivity(project._id, userId, 'updated_name', project.name, otherUpdates.name);
+    await createProjectActivity(
+      project._id,
+      userId,
+      'updated_name',
+      project.name,
+      otherUpdates.name
+    );
     fieldUpdates.name = otherUpdates.name;
     fieldUpdates.identifier = generateProjectIdentifier(otherUpdates.name);
   }
 
-  const summaryUpdate = await handleFieldUpdate(
-    project,
-    'summary',
-    otherUpdates.summary,
-    userId,
-    { update: 'updated_summary' }
-  );
+  const summaryUpdate = await handleFieldUpdate(project, 'summary', otherUpdates.summary, userId, {
+    update: 'updated_summary',
+  });
   if (summaryUpdate) Object.assign(fieldUpdates, summaryUpdate);
 
   Object.assign(project, fieldUpdates);

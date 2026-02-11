@@ -8,6 +8,8 @@
     "start": "nodemon --delay 2500ms --exec babel-node app.js",
     "seed": "node utils/seed.js",
     "test:db": "node scripts/test-db-connection.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test:task1": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task1.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task1/*.js --exit",
     "test:task2": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task2.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task2/*.js --exit",
     "test:task3": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task3.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task3/*.js --exit",
@@ -36,6 +38,7 @@
     "@babel/core": "7.21.3",
     "@babel/node": "7.20.7",
     "@babel/preset-env": "7.20.2",
-    "nodemon": "2.0.22"
+    "nodemon": "2.0.22",
+    "prettier": "^3.8.1"
   }
 }

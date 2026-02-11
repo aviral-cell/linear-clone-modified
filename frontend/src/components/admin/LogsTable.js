@@ -27,9 +27,7 @@ const LogsTable = ({ logs, onLogClick, className }) => {
       label: 'Time',
       headerClassName: 'text-left',
       cellClassName: 'text-text-secondary',
-      render: (row) => (
-        <span className="font-mono text-xs">{formatTimestamp(row.timestamp)}</span>
-      ),
+      render: (row) => <span className="font-mono text-xs">{formatTimestamp(row.timestamp)}</span>,
     },
     {
       key: 'method',
@@ -91,10 +89,7 @@ const LogsTable = ({ logs, onLogClick, className }) => {
       gridTemplateClass="grid-cols-[140px_70px_1fr_70px_70px_150px_120px]"
       className={cn('bg-background-secondary rounded-lg', className)}
       headerClassName="bg-background-tertiary"
-      rowClassName={cn(
-        'cursor-pointer',
-        'hover:bg-background-tertiary/50'
-      )}
+      rowClassName={cn('cursor-pointer', 'hover:bg-background-tertiary/50')}
     />
   );
 };

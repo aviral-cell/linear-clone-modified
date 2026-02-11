@@ -70,20 +70,14 @@ const LogsAnalytics = () => {
   }
 
   if (!stats) {
-    return (
-      <div className="text-center py-12 text-text-tertiary">
-        No analytics data available
-      </div>
-    );
+    return <div className="text-center py-12 text-text-tertiary">No analytics data available</div>;
   }
 
-  const pieData = Object.entries(stats.statusCodeDistribution || {}).map(
-    ([key, value]) => ({
-      name: `${key} ${key === '2xx' ? 'Success' : key === '4xx' ? 'Client Error' : key === '5xx' ? 'Server Error' : ''}`,
-      value,
-      color: COLORS[key] || '#6b7280',
-    })
-  );
+  const pieData = Object.entries(stats.statusCodeDistribution || {}).map(([key, value]) => ({
+    name: `${key} ${key === '2xx' ? 'Success' : key === '4xx' ? 'Client Error' : key === '5xx' ? 'Server Error' : ''}`,
+    value,
+    color: COLORS[key] || '#6b7280',
+  }));
 
   return (
     <div className="space-y-6">
@@ -115,14 +109,8 @@ const LogsAnalytics = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <SummaryCard
-          title="Total Requests"
-          value={stats.totalRequests?.toLocaleString() || '0'}
-        />
-        <SummaryCard
-          title="Avg Response Time"
-          value={`${stats.averageResponseTime || 0}ms`}
-        />
+        <SummaryCard title="Total Requests" value={stats.totalRequests?.toLocaleString() || '0'} />
+        <SummaryCard title="Avg Response Time" value={`${stats.averageResponseTime || 0}ms`} />
         <SummaryCard
           title="Error Rate"
           value={`${stats.errorRate || 0}%`}
@@ -175,9 +163,7 @@ const LogsAnalytics = () => {
                 dataKey="path"
                 tick={{ fontSize: 11, fill: '#9ca3af' }}
                 width={200}
-                tickFormatter={(value) =>
-                  value.length > 30 ? value.slice(0, 30) + '...' : value
-                }
+                tickFormatter={(value) => (value.length > 30 ? value.slice(0, 30) + '...' : value)}
               />
               <Tooltip
                 contentStyle={{
@@ -217,9 +203,7 @@ const LogsAnalytics = () => {
               <tbody>
                 {stats.topUsers.slice(0, 10).map((user, index) => (
                   <tr key={user.userId || index} className="border-b border-border/50">
-                    <td className="px-4 py-3 text-sm text-text-secondary">
-                      #{index + 1}
-                    </td>
+                    <td className="px-4 py-3 text-sm text-text-secondary">#{index + 1}</td>
                     <td className="px-4 py-3 text-sm text-text-primary">
                       {user.userEmail || 'Anonymous'}
                     </td>
@@ -243,14 +227,8 @@ const LogsAnalytics = () => {
 
 const SummaryCard = ({ title, value, isNegative }) => (
   <div className="bg-background-secondary rounded-lg p-4 border border-border">
-    <div className="text-xs text-text-tertiary uppercase tracking-wide mb-1">
-      {title}
-    </div>
-    <div
-      className={`text-2xl font-bold ${
-        isNegative ? 'text-red-400' : 'text-text-primary'
-      }`}
-    >
+    <div className="text-xs text-text-tertiary uppercase tracking-wide mb-1">{title}</div>
+    <div className={`text-2xl font-bold ${isNegative ? 'text-red-400' : 'text-text-primary'}`}>
       {value}
     </div>
   </div>

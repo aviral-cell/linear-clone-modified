@@ -22,7 +22,6 @@ export const adminApi = {
     ).toString();
     return api.get(`/api/admin/logs/stats${queryString ? `?${queryString}` : ''}`);
   },
-
 };
 
 export default adminApi;

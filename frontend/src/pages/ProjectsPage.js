@@ -7,6 +7,7 @@ import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
 import {
   Avatar,
+  Button,
   DataTable,
   EmptyState,
   IconBadge,
@@ -218,9 +219,12 @@ const ProjectsPage = () => {
         <div className="bg-background">
           <Header
             fallbackText="Projects"
-            primaryActionLabel="Add Project"
-            PrimaryActionIcon={Plus}
-            onPrimaryActionClick={handleOpenNewProject}
+            actions={
+              <Button variant="secondary" size="sm" onClick={handleOpenNewProject}>
+                <Plus className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Add Project</span>
+              </Button>
+            }
           />
 
           <TabNavigation

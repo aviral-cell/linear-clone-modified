@@ -58,8 +58,7 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
     const cleanParams = Object.fromEntries(
       Object.entries(filterParams).filter(
-        ([key, v]) =>
-          v !== '' && v !== false && v !== 'all' && key !== 'dateRange'
+        ([key, v]) => v !== '' && v !== false && v !== 'all' && key !== 'dateRange'
       )
     );
 
@@ -120,12 +119,7 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
   return (
     <div ref={containerRef} className="relative">
-      <Button
-        variant="secondary"
-        size="sm"
-        className="gap-2"
-        onClick={handleTriggerClick}
-      >
+      <Button variant="secondary" size="sm" className="gap-2" onClick={handleTriggerClick}>
         <Filter className="h-4 w-4" />
         <span>Filter</span>
         {activeFilterCount > 0 && (
@@ -277,10 +271,12 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-background-tertiary"
             onClick={() => handleFilterChange('isSlow', !filters.isSlow)}
           >
-            <div className={cn(
-              'w-4 h-4 border rounded flex items-center justify-center',
-              filters.isSlow ? 'bg-accent border-accent' : 'border-border'
-            )}>
+            <div
+              className={cn(
+                'w-4 h-4 border rounded flex items-center justify-center',
+                filters.isSlow ? 'bg-accent border-accent' : 'border-border'
+              )}
+            >
               {filters.isSlow && <Check className="h-3 w-3 text-white" />}
             </div>
             <span>Slow requests (&gt;1s)</span>
@@ -289,10 +285,12 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             className="w-full px-3 py-2 flex items-center gap-2 text-sm hover:bg-background-tertiary"
             onClick={() => handleFilterChange('isError', !filters.isError)}
           >
-            <div className={cn(
-              'w-4 h-4 border rounded flex items-center justify-center',
-              filters.isError ? 'bg-accent border-accent' : 'border-border'
-            )}>
+            <div
+              className={cn(
+                'w-4 h-4 border rounded flex items-center justify-center',
+                filters.isError ? 'bg-accent border-accent' : 'border-border'
+              )}
+            >
               {filters.isError && <Check className="h-3 w-3 text-white" />}
             </div>
             <span>Errors (4xx/5xx)</span>
@@ -306,12 +304,7 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
               Apply
             </Button>
             {activeFilterCount > 0 && (
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={handleClear}
-                className="flex-1"
-              >
+              <Button size="sm" variant="secondary" onClick={handleClear} className="flex-1">
                 Clear
               </Button>
             )}

@@ -58,7 +58,11 @@ export function getSubIssuesData(parentIssue, team, users) {
         parent: parentIssue._id,
       }
     );
-  } else if (title.includes('ci/cd') || title.includes('pipeline') || title.includes('deployment')) {
+  } else if (
+    title.includes('ci/cd') ||
+    title.includes('pipeline') ||
+    title.includes('deployment')
+  ) {
     subIssues.push(
       {
         title: 'Setup GitHub Actions workflow',
@@ -91,7 +95,11 @@ export function getSubIssuesData(parentIssue, team, users) {
         parent: parentIssue._id,
       }
     );
-  } else if (title.includes('security') || title.includes('audit') || title.includes('vulnerability')) {
+  } else if (
+    title.includes('security') ||
+    title.includes('audit') ||
+    title.includes('vulnerability')
+  ) {
     subIssues.push(
       {
         title: 'Run security vulnerability scan',

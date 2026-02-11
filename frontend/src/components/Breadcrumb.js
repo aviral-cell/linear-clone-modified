@@ -1,16 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTeams } from '../context/TeamsContext';
 import { getTeamIconDisplay } from '../utils/teamIcons';
 import { Button, IconBadge } from './ui';
 
-const Breadcrumb = ({
+const Breadcrumb = memo(function Breadcrumb({
   fallbackText = null,
   team = null,
   issueKey = null,
   projectName = null,
   onTeamClick = null,
-}) => {
+  menu = null,
+}) {
   const { teams, loading } = useTeams();
   const { teamKey } = useParams();
   const navigate = useNavigate();
@@ -24,13 +25,6 @@ const Breadcrumb = ({
     }
     return null;
   }, [team, teamKey, teams]);
-
-  const truncateProjectName = (name) => {
-    if (!name) return '';
-    const maxLength = 40;
-    if (name.length <= maxLength) return name;
-    return name.substring(0, maxLength) + '...';
-  };
 
   if (loading) {
     return null;
@@ -62,7 +56,7 @@ const Breadcrumb = ({
           <span className="text-sm">{icon}</span>
         )}
       </IconBadge>
-      <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
+      <div className="flex items-center gap-1.5 min-w-0 flex-1">
         <Button
           variant="ghost"
           size="sm"
@@ -79,7 +73,7 @@ const Breadcrumb = ({
               className="text-text-secondary text-sm leading-normal truncate min-w-0"
               title={projectName}
             >
-              {truncateProjectName(projectName)}
+              {projectName}
             </span>
           </>
         )}
@@ -91,9 +85,12 @@ const Breadcrumb = ({
             </span>
           </>
         )}
+        {menu}
       </div>
     </nav>
   );
-};
+});
+
+Breadcrumb.displayName = 'Breadcrumb';
 
 export default Breadcrumb;

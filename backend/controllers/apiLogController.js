@@ -76,7 +76,9 @@ export const getAdminLogs = async (req, res) => {
 
   const [logs, totalLogs] = await Promise.all([
     ApiLog.find(filter)
-      .select('timestamp method path statusCode responseTime userEmail userId ipAddress isSlow isError')
+      .select(
+        'timestamp method path statusCode responseTime userEmail userId ipAddress isSlow isError'
+      )
       .sort(sort)
       .skip(skip)
       .limit(limitNum)
@@ -149,9 +151,18 @@ export const getAdminLogStats = async (req, res) => {
         _id: {
           $switch: {
             branches: [
-              { case: { $and: [{ $gte: ['$statusCode', 200] }, { $lt: ['$statusCode', 300] }] }, then: '2xx' },
-              { case: { $and: [{ $gte: ['$statusCode', 300] }, { $lt: ['$statusCode', 400] }] }, then: '3xx' },
-              { case: { $and: [{ $gte: ['$statusCode', 400] }, { $lt: ['$statusCode', 500] }] }, then: '4xx' },
+              {
+                case: { $and: [{ $gte: ['$statusCode', 200] }, { $lt: ['$statusCode', 300] }] },
+                then: '2xx',
+              },
+              {
+                case: { $and: [{ $gte: ['$statusCode', 300] }, { $lt: ['$statusCode', 400] }] },
+                then: '3xx',
+              },
+              {
+                case: { $and: [{ $gte: ['$statusCode', 400] }, { $lt: ['$statusCode', 500] }] },
+                then: '4xx',
+              },
               { case: { $gte: ['$statusCode', 500] }, then: '5xx' },
             ],
             default: 'other',
@@ -204,7 +215,12 @@ export const getAdminLogStats = async (req, res) => {
     },
   ]);
 
-  const stats = generalStats[0] || { totalRequests: 0, avgResponseTime: 0, errorCount: 0, slowCount: 0 };
+  const stats = generalStats[0] || {
+    totalRequests: 0,
+    avgResponseTime: 0,
+    errorCount: 0,
+    slowCount: 0,
+  };
   const statusCodeDistribution = {};
   statusDistribution.forEach((item) => {
     statusCodeDistribution[item._id] = item.count;
@@ -214,8 +230,14 @@ export const getAdminLogStats = async (req, res) => {
     stats: {
       totalRequests: stats.totalRequests,
       averageResponseTime: Math.round(stats.avgResponseTime || 0),
-      errorRate: stats.totalRequests > 0 ? Number(((stats.errorCount / stats.totalRequests) * 100).toFixed(1)) : 0,
-      slowRequestRate: stats.totalRequests > 0 ? Number(((stats.slowCount / stats.totalRequests) * 100).toFixed(1)) : 0,
+      errorRate:
+        stats.totalRequests > 0
+          ? Number(((stats.errorCount / stats.totalRequests) * 100).toFixed(1))
+          : 0,
+      slowRequestRate:
+        stats.totalRequests > 0
+          ? Number(((stats.slowCount / stats.totalRequests) * 100).toFixed(1))
+          : 0,
       statusCodeDistribution,
       topEndpoints,
       topUsers,

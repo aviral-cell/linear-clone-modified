@@ -138,12 +138,14 @@ const getTeamSpecificUpdates = (teamKey, projectName) => {
     ],
   };
 
-  return updateTemplates[teamKey] || [
-    {
-      content: `Making good progress on ${projectName}. All milestones on track.`,
-      status: 'on_track',
-    },
-  ];
+  return (
+    updateTemplates[teamKey] || [
+      {
+        content: `Making good progress on ${projectName}. All milestones on track.`,
+        status: 'on_track',
+      },
+    ]
+  );
 };
 
 export function getProjectUpdatesData(projects, users, teams) {
@@ -152,23 +154,29 @@ export function getProjectUpdatesData(projects, users, teams) {
   const now = Date.now();
 
   projects.forEach((project, index) => {
-    const team = teams.find(t => t._id.toString() === project.team.toString());
+    const team = teams.find((t) => t._id.toString() === project.team.toString());
     const teamKey = team?.key || 'ENG';
     const teamUpdates = getTeamSpecificUpdates(teamKey, project.name);
-    
-    const projectAge = project.createdAt ? (now - new Date(project.createdAt).getTime()) : 30 * 24 * 60 * 60 * 1000;
+
+    const projectAge = project.createdAt
+      ? now - new Date(project.createdAt).getTime()
+      : 30 * 24 * 60 * 60 * 1000;
     const numUpdates = Math.min(Math.floor(projectAge / (7 * 24 * 60 * 60 * 1000)), 8);
     const actualUpdates = Math.max(numUpdates, 3);
-    
+
     const authorIndex = index % users.length;
-    const authors = [users[authorIndex], users[(authorIndex + 1) % users.length], users[(authorIndex + 2) % users.length]];
-    
+    const authors = [
+      users[authorIndex],
+      users[(authorIndex + 1) % users.length],
+      users[(authorIndex + 2) % users.length],
+    ];
+
     for (let i = 0; i < actualUpdates; i++) {
       const template = teamUpdates[i % teamUpdates.length];
       const daysAgo = (actualUpdates - i) * 7 + Math.floor(Math.random() * 3);
       const hoursAgo = Math.floor(Math.random() * 24);
       const createdAt = new Date(now - (daysAgo * 24 + hoursAgo) * 60 * 60 * 1000);
-      
+
       const updateData = {
         project: project._id,
         author: authors[i % authors.length]._id,
@@ -176,9 +184,9 @@ export function getProjectUpdatesData(projects, users, teams) {
         status: template.status,
         createdAt: createdAt,
       };
-      
+
       updates.push(updateData);
-      
+
       updateActivities.push({
         project: project._id,
         user: authors[i % authors.length]._id,
