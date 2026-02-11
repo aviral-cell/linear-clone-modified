@@ -18,7 +18,7 @@ import {
   EditableTitle,
   LoadingScreen,
 } from '../components/ui';
-import { Bell, BellOff, Ellipsis, PanelRight, PanelRightClose } from '../icons';
+import { Bell, BellOff, Ellipsis, PanelRight, PanelRightClose, Trash2 } from '../icons';
 import { issueStatusIcons } from '../constants';
 import { useIssue, useUsers } from '../hooks';
 import toast from 'react-hot-toast';
@@ -247,6 +247,15 @@ const IssueDetailPage = () => {
                 )}
                 {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setShowDeleteConfirm(true);
+                  setOptionsOpen(false);
+                }}
+              >
+                <Trash2 className="h-4 w-4 text-text-secondary" />
+                Delete issue
+              </DropdownMenuItem>
             </DropdownMenu>
           }
           actions={
@@ -385,7 +394,6 @@ const IssueDetailPage = () => {
             projects={projects}
             parentIssues={parentIssues}
             onUpdate={updateIssue}
-            onDelete={() => setShowDeleteConfirm(true)}
           />
         </DetailPanel>
       </div>
@@ -395,7 +403,7 @@ const IssueDetailPage = () => {
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={handleDeleteIssue}
         title="Delete issue"
-        message="This will permanently delete this issue and all its sub-issues. This action cannot be undone."
+        message="This will permanently delete this issue and all its sub-issues, including their comments and activities. This action cannot be undone."
         confirmLabel="Delete"
       />
     </div>
