@@ -19,7 +19,7 @@ import {
   SectionTitle,
   TabNavigation,
 } from '../components/ui';
-import { FolderKanban, FileText, List, Clock, Plus, PanelRight } from '../icons';
+import { FolderKanban, FileText, List, Clock, Plus, PanelRight, PanelRightClose } from '../icons';
 import toast from 'react-hot-toast';
 import { normalizeUpdateStatus } from '../utils/statusMapping';
 import { updateStatusOptions, getUpdateStatusConfig } from '../constants';
@@ -316,9 +316,22 @@ const ProjectDetailPage = () => {
                 navigate('/projects/all');
               }
             }}
-            panelOpenerIcon={PanelRight}
-            onPanelOpenerClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-            isPanelOpen={isRightSidebarOpen}
+            actions={
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2"
+                onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+                title={isRightSidebarOpen ? 'Close panel' : 'Open panel'}
+                aria-label={isRightSidebarOpen ? 'Close panel' : 'Open panel'}
+              >
+                {isRightSidebarOpen ? (
+                  <PanelRightClose className="h-5 w-5 text-text-primary" />
+                ) : (
+                  <PanelRight className="h-5 w-5" />
+                )}
+              </Button>
+            }
           />
 
           <TabNavigation

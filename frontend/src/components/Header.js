@@ -1,23 +1,17 @@
 import React, { memo } from 'react';
 import { PanelLeftClose, PanelRightClose } from '../icons';
 import { useSidebar } from '../context/SidebarContext';
-import { cn } from '../utils/cn';
 import Breadcrumb from './Breadcrumb';
 import { Button } from './ui';
 
 const Header = memo(function Header({
   fallbackText,
-  primaryActionLabel,
-  PrimaryActionIcon,
-  onPrimaryActionClick,
   team,
   issueKey,
   projectName,
   onTeamClick,
-  panelOpenerIcon: PanelOpenerIcon,
-  onPanelOpenerClick,
-  isPanelOpen,
-  hidePanelIconOnLarge = false,
+  menu,
+  actions,
 }) {
   const { isCollapsed, isMobile, isDrawerOpen, showSidebarToggle, toggleSidebar } = useSidebar();
 
@@ -48,35 +42,14 @@ const Header = memo(function Header({
             issueKey={issueKey}
             projectName={projectName}
             onTeamClick={onTeamClick}
+            menu={menu}
           />
         </div>
       </div>
 
-      <div className="flex flex-shrink-0 items-center gap-1.5">
-        {PrimaryActionIcon && onPrimaryActionClick && (
-          <Button variant="secondary" size="sm" onClick={onPrimaryActionClick}>
-            <PrimaryActionIcon className="h-3.5 w-3.5" />
-            {primaryActionLabel && <span className="hidden sm:inline">{primaryActionLabel}</span>}
-          </Button>
-        )}
-        {PanelOpenerIcon && onPanelOpenerClick && (
-          <Button
-            key="panel-toggle-button"
-            variant="ghost"
-            size="sm"
-            className={cn('p-2', hidePanelIconOnLarge && 'lg:hidden')}
-            onClick={onPanelOpenerClick}
-            title={isPanelOpen ? 'Close panel' : 'Open panel'}
-            aria-label={isPanelOpen ? 'Close panel' : 'Open panel'}
-          >
-            {isPanelOpen ? (
-              <PanelRightClose className="h-5 w-5 text-text-primary" />
-            ) : (
-              <PanelOpenerIcon className="h-5 w-5" />
-            )}
-          </Button>
-        )}
-      </div>
+      {actions && (
+        <div className="flex flex-shrink-0 items-center gap-1.5">{actions}</div>
+      )}
     </header>
   );
 });
