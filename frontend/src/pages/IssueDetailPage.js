@@ -26,9 +26,12 @@ const IssueDetailPage = () => {
   const handleError = useCallback(() => {
     navigate('/');
   }, [navigate]);
-  const { issue, subIssues, isSubscribed, setIsSubscribed, loading, refetch } = useIssue(identifier, {
-    onError: handleError,
-  });
+  const { issue, subIssues, isSubscribed, setIsSubscribed, loading, refetch } = useIssue(
+    identifier,
+    {
+      onError: handleError,
+    }
+  );
   const { users } = useUsers();
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);

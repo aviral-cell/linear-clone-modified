@@ -26,7 +26,9 @@ const ListPageLayout = ({
               key={tab.id}
               variant="secondary"
               size="sm"
-              className={activeTab === tab.id ? 'border-accent bg-background-tertiary text-text-primary' : ''}
+              className={
+                activeTab === tab.id ? 'border-accent bg-background-tertiary text-text-primary' : ''
+              }
               onClick={() => onTabChange(tab.id)}
             >
               {tab.icon}

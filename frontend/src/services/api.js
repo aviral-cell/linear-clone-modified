@@ -135,7 +135,7 @@ class ApiService {
     update: (identifier, data) => this.put(`/api/issues/${identifier}`, data),
 
     getValidParents: (identifier) => this.get(`/api/issues/${identifier}/valid-parents`),
-    
+
     toggleSubscribe: (identifier) => this.post(`/api/issues/${identifier}/subscribe`),
   };
 

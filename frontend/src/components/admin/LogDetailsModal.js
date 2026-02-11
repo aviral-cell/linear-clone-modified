@@ -98,9 +98,7 @@ const LogDetailsModal = ({ logId, onClose }) => {
                       {log.isSlow && ' (Slow)'}
                     </span>
                   </Field>
-                  <Field label="User">
-                    {log.userEmail || 'Anonymous'}
-                  </Field>
+                  <Field label="User">{log.userEmail || 'Anonymous'}</Field>
                 </div>
                 <div className="mt-4">
                   <Field label="Path">
@@ -139,8 +137,8 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 {(!log.queryParams || Object.keys(log.queryParams).length === 0) &&
                   (!log.requestHeaders || Object.keys(log.requestHeaders).length === 0) &&
                   !log.requestBody && (
-                  <p className="text-text-tertiary text-sm">No request data available</p>
-                )}
+                    <p className="text-text-tertiary text-sm">No request data available</p>
+                  )}
               </Section>
 
               {log.responseBody && (
@@ -158,9 +156,7 @@ const LogDetailsModal = ({ logId, onClose }) => {
                 <Section title="Error Details">
                   {log.errorMessage && (
                     <div className="mb-4">
-                      <div className="text-sm font-medium text-red-400 mb-2">
-                        Error Message
-                      </div>
+                      <div className="text-sm font-medium text-red-400 mb-2">Error Message</div>
                       <div className="bg-red-500/10 border border-red-500/30 p-3 rounded text-sm text-red-300">
                         {log.errorMessage}
                       </div>
@@ -182,9 +178,7 @@ const LogDetailsModal = ({ logId, onClose }) => {
                   <Field label="IP Address">
                     <span className="font-mono">{log.ipAddress || '-'}</span>
                   </Field>
-                  <Field label="Timestamp">
-                    {formatDate(log.timestamp)}
-                  </Field>
+                  <Field label="Timestamp">{formatDate(log.timestamp)}</Field>
                   <Field label="Log ID" className="col-span-2">
                     <span className="font-mono text-xs">{log._id}</span>
                   </Field>
