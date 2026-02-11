@@ -8,7 +8,7 @@ export function getCommentsData(issueId, users) {
     {
       issue: issueId,
       user: users[2]._id,
-      content: 'Agreed! I\'ll start with the basic connection setup.',
+      content: "Agreed! I'll start with the basic connection setup.",
     },
     {
       issue: issueId,

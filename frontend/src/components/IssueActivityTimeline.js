@@ -27,11 +27,7 @@ const IssueActivityTimeline = ({
             title={isSubscribed ? 'Unsubscribe from issue' : 'Subscribe to issue'}
             className="flex items-center gap-1.5 text-text-secondary hover:text-text-primary"
           >
-            {isSubscribed ? (
-              <BellOff className="h-4 w-4" />
-            ) : (
-              <Bell className="h-4 w-4" />
-            )}
+            {isSubscribed ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
             <span>{isSubscribed ? 'Unsubscribe' : 'Subscribe'}</span>
           </Button>
         )}

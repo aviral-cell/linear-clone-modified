@@ -12,11 +12,13 @@ import {
   Button,
   ConfirmDialog,
   DetailPanel,
+  DropdownMenu,
+  DropdownMenuItem,
   EditableTextarea,
   EditableTitle,
   LoadingScreen,
 } from '../components/ui';
-import { PanelRight } from '../icons';
+import { Bell, BellOff, Ellipsis, PanelRight, PanelRightClose } from '../icons';
 import { issueStatusIcons } from '../constants';
 import { useIssue, useUsers } from '../hooks';
 import toast from 'react-hot-toast';
@@ -27,9 +29,12 @@ const IssueDetailPage = () => {
   const handleError = useCallback(() => {
     navigate('/');
   }, [navigate]);
-  const { issue, subIssues, isSubscribed, setIsSubscribed, loading, refetch } = useIssue(identifier, {
-    onError: handleError,
-  });
+  const { issue, subIssues, isSubscribed, setIsSubscribed, loading, refetch } = useIssue(
+    identifier,
+    {
+      onError: handleError,
+    }
+  );
   const { users } = useUsers();
   const [comments, setComments] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -39,6 +44,7 @@ const IssueDetailPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const sidebarRef = useRef(null);
@@ -211,9 +217,54 @@ const IssueDetailPage = () => {
           team={issue.team}
           issueKey={issue.identifier}
           onTeamClick={() => navigate(`/team/${issue.team.key}/all`)}
-          panelOpenerIcon={PanelRight}
-          onPanelOpenerClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-          isPanelOpen={isRightSidebarOpen}
+          menu={
+            <DropdownMenu
+              open={optionsOpen}
+              onOpenChange={setOptionsOpen}
+              minWidth="min-w-dropdown-sm"
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-1.5"
+                  aria-label="Options"
+                  onClick={() => setOptionsOpen(!optionsOpen)}
+                >
+                  <Ellipsis className="h-4 w-4" />
+                </Button>
+              }
+            >
+              <DropdownMenuItem
+                onClick={() => {
+                  handleToggleSubscribe();
+                  setOptionsOpen(false);
+                }}
+              >
+                {isSubscribed ? (
+                  <BellOff className="h-4 w-4 text-text-secondary" />
+                ) : (
+                  <Bell className="h-4 w-4 text-text-secondary" />
+                )}
+                {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+              </DropdownMenuItem>
+            </DropdownMenu>
+          }
+          actions={
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-2"
+              onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+              title={isRightSidebarOpen ? 'Close panel' : 'Open panel'}
+              aria-label={isRightSidebarOpen ? 'Close panel' : 'Open panel'}
+            >
+              {isRightSidebarOpen ? (
+                <PanelRightClose className="h-5 w-5 text-text-primary" />
+              ) : (
+                <PanelRight className="h-5 w-5" />
+              )}
+            </Button>
+          }
         />
       </div>
 

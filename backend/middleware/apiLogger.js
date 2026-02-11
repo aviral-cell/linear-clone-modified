@@ -57,15 +57,15 @@ export const apiLogger = (req, res, next) => {
           requestBody: truncateBody(sanitizeObject(req.body)),
           queryParams: sanitizeObject(req.query),
           responseBody: truncateBody(responseBody),
-          errorMessage: statusCode >= 400 ? responseBody?.message || responseBody?.error || null : null,
+          errorMessage:
+            statusCode >= 400 ? responseBody?.message || responseBody?.error || null : null,
           errorStack: null,
           isSlow: responseTime > SLOW_THRESHOLD,
           isError: statusCode >= 400,
         };
 
         await ApiLog.create(logData);
-      } catch {
-      }
+      } catch {}
     });
   });
 

@@ -82,9 +82,7 @@ describe('API Logger Functionality Testing', function () {
     expect(resRegular).to.have.status(403);
     expect(resRegular.body).to.have.property('message', 'Admin access required');
 
-    const resNoAuth = await chai
-      .request(app)
-      .get('/api/admin/logs');
+    const resNoAuth = await chai.request(app).get('/api/admin/logs');
 
     expect(resNoAuth).to.have.status(401);
   });
@@ -92,12 +90,9 @@ describe('API Logger Functionality Testing', function () {
   it('should create API logs automatically for requests', async () => {
     await ApiLog.deleteMany({});
 
-    await chai
-      .request(app)
-      .get('/api/admin/logs')
-      .set('Authorization', `Bearer ${adminToken}`);
+    await chai.request(app).get('/api/admin/logs').set('Authorization', `Bearer ${adminToken}`);
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const logs = await ApiLog.find({});
     expect(logs).to.have.length.greaterThan(0);
@@ -240,7 +235,7 @@ describe('API Logger Functionality Testing', function () {
     expect(res).to.have.status(200);
     expect(res.body.logs.length).to.be.at.least(2);
 
-    const postLogs = res.body.logs.filter(log => log.method === 'POST');
+    const postLogs = res.body.logs.filter((log) => log.method === 'POST');
     expect(postLogs.length).to.be.at.least(2);
     postLogs.forEach((log) => {
       expect(log.method).to.equal('POST');
@@ -497,7 +492,7 @@ describe('API Logger Functionality Testing', function () {
     expect(resPath).to.have.status(200);
     expect(resPath.body.logs.length).to.be.at.least(1);
 
-    const matchingLog = resPath.body.logs.find(log => log.ipAddress === '10.20.30.40');
+    const matchingLog = resPath.body.logs.find((log) => log.ipAddress === '10.20.30.40');
     expect(matchingLog).to.exist;
     expect(matchingLog.path).to.include('users');
     expect(matchingLog.userEmail).to.equal('specific@example.com');

@@ -80,10 +80,7 @@ const AdminLogsPage = () => {
       {activeTab === 'logs' ? (
         <>
           <div className="flex items-center justify-between px-4 md:px-6 py-2 border-b border-border bg-background">
-            <LogFilters
-              onApplyFilters={handleApplyFilters}
-              onClearFilters={handleClearFilters}
-            />
+            <LogFilters onApplyFilters={handleApplyFilters} onClearFilters={handleClearFilters} />
           </div>
 
           <div className="flex-1 overflow-auto p-6">
@@ -138,9 +135,7 @@ const AdminLogsPage = () => {
             </div>
           )}
 
-          {selectedLogId && (
-            <LogDetailsModal logId={selectedLogId} onClose={handleCloseModal} />
-          )}
+          {selectedLogId && <LogDetailsModal logId={selectedLogId} onClose={handleCloseModal} />}
         </>
       ) : (
         <div className="flex-1 overflow-auto p-6">

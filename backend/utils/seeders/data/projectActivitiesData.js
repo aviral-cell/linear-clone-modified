@@ -26,7 +26,7 @@ const calculateActivityTimestamp = (projectCreatedAt, projectUpdates, now, updat
     }
     return new Date(projectCreatedAt.getTime() + 2 * 60 * 60 * 1000);
   }
-  
+
   if (updateIndex === null || updateIndex === -1) {
     const firstUpdateTime = new Date(projectUpdates[0].createdAt).getTime();
     const timeBetween = firstUpdateTime - projectCreatedAt.getTime();
@@ -36,7 +36,7 @@ const calculateActivityTimestamp = (projectCreatedAt, projectUpdates, now, updat
     }
     return new Date(firstUpdateTime - 1000);
   }
-  
+
   if (updateIndex >= projectUpdates.length - 1) {
     const lastUpdateTime = new Date(projectUpdates[projectUpdates.length - 1].createdAt).getTime();
     const timeSinceLastUpdate = now - lastUpdateTime;
@@ -46,7 +46,7 @@ const calculateActivityTimestamp = (projectCreatedAt, projectUpdates, now, updat
     }
     return new Date(lastUpdateTime + 1000);
   }
-  
+
   const currentUpdateTime = new Date(projectUpdates[updateIndex].createdAt).getTime();
   const nextUpdateTime = new Date(projectUpdates[updateIndex + 1].createdAt).getTime();
   const timeBetween = nextUpdateTime - currentUpdateTime;
@@ -60,28 +60,29 @@ const calculateActivityTimestamp = (projectCreatedAt, projectUpdates, now, updat
 export function getProjectActivitiesData(projects, users, updates = []) {
   const activities = [];
   const now = Date.now();
-  
+
   const updatesByProject = {};
-  updates.forEach(update => {
+  updates.forEach((update) => {
     const projectId = update.project.toString();
     if (!updatesByProject[projectId]) {
       updatesByProject[projectId] = [];
     }
     updatesByProject[projectId].push(update);
   });
-  
+
   projects.forEach((project, index) => {
     const createdAt = new Date(project.createdAt || now);
     const projectAge = now - createdAt.getTime();
     const daysSinceCreation = Math.floor(projectAge / (24 * 60 * 60 * 1000));
-    
+
     const projectUpdates = updatesByProject[project._id.toString()] || [];
     projectUpdates.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    
-    const getActivityTimestamp = (updateIndex) => calculateActivityTimestamp(createdAt, projectUpdates, now, updateIndex);
-    
+
+    const getActivityTimestamp = (updateIndex) =>
+      calculateActivityTimestamp(createdAt, projectUpdates, now, updateIndex);
+
     let initialActivityIndex = -1;
-    
+
     if (project.priority && project.priority !== 'no_priority') {
       const action = 'updated_priority';
       activities.push({
@@ -97,7 +98,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.status && project.status !== 'backlog') {
       const action = 'updated_status';
       activities.push({
@@ -113,7 +114,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.lead) {
       const action = 'updated_lead';
       activities.push({
@@ -129,7 +130,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.targetDate) {
       const action = 'set_target_date';
       activities.push({
@@ -145,7 +146,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.startDate) {
       const action = 'set_start_date';
       activities.push({
@@ -161,9 +162,9 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.members && project.members.length > 0) {
-      const memberIds = project.members.map(m => m._id || m);
+      const memberIds = project.members.map((m) => m._id || m);
       const action = 'updated_members';
       activities.push({
         project: project._id,
@@ -178,7 +179,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     if (project.summary) {
       const action = 'updated_summary';
       activities.push({
@@ -194,15 +195,16 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       });
       initialActivityIndex++;
     }
-    
+
     const additionalActivities = Math.min(Math.floor(daysSinceCreation / 7), 5);
     const actions = ['updated_status', 'updated_priority', 'updated_members', 'set_target_date'];
-    const additionalUsers = users.filter(u => u._id.toString() !== project.creator.toString());
-    
+    const additionalUsers = users.filter((u) => u._id.toString() !== project.creator.toString());
+
     for (let i = 0; i < additionalActivities; i++) {
       const action = actions[Math.floor(Math.random() * actions.length)];
-      const user = additionalUsers[Math.floor(Math.random() * additionalUsers.length)] || project.creator;
-      
+      const user =
+        additionalUsers[Math.floor(Math.random() * additionalUsers.length)] || project.creator;
+
       let activityData = {
         project: project._id,
         user: user._id || user,
@@ -214,7 +216,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
         },
         createdAt: null,
       };
-      
+
       if (projectUpdates.length > 1) {
         const updateIndex = Math.min(i, projectUpdates.length - 2);
         activityData.createdAt = getActivityTimestamp(updateIndex);
@@ -223,7 +225,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       } else {
         activityData.createdAt = getActivityTimestamp(-1);
       }
-      
+
       switch (action) {
         case 'updated_status':
           const statuses = ['backlog', 'planned', 'in_progress', 'completed'];
@@ -247,7 +249,7 @@ export function getProjectActivitiesData(projects, users, updates = []) {
           break;
         case 'updated_members':
           if (project.members && project.members.length > 0) {
-            const memberIds = project.members.map(m => m._id || m);
+            const memberIds = project.members.map((m) => m._id || m);
             activityData.changes.oldValue = [];
             activityData.changes.newValue = memberIds;
             activities.push(activityData);
@@ -263,6 +265,6 @@ export function getProjectActivitiesData(projects, users, updates = []) {
       }
     }
   });
-  
+
   return activities.sort((a, b) => b.createdAt - a.createdAt);
 }

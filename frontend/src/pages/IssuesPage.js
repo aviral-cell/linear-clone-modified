@@ -75,16 +75,23 @@ const IssuesPage = () => {
         <div className="bg-background">
           <Header
             fallbackText={null}
-            primaryActionLabel="Add Issue"
-            PrimaryActionIcon={Plus}
-            onPrimaryActionClick={() => {
-              if (selectedTeam) {
-                setInitialStatus('todo');
-                setShowCreateModal(true);
-              } else {
-                toast.error('Please select a team first');
-              }
-            }}
+            actions={
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  if (selectedTeam) {
+                    setInitialStatus('todo');
+                    setShowCreateModal(true);
+                  } else {
+                    toast.error('Please select a team first');
+                  }
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Add Issue</span>
+              </Button>
+            }
           />
 
           <TabNavigation
