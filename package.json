@@ -18,7 +18,7 @@
     "test:task6": "cd backend && npm run test:task6"
   },
   "dependencies": {
-    "concurrently": "7.6.0"
+    "concurrently": "9.2.1"
   }
 }
 
