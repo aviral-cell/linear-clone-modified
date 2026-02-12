@@ -1,6 +1,6 @@
-import Team from '../models/Team.js';
+import * as teamService from '../services/teamService.js';
 
 export const getAllTeams = async (req, res) => {
-  const teams = await Team.find().populate('members', 'name email avatar');
+  const teams = await teamService.getAllTeams();
   res.json({ teams });
 };

@@ -2,12 +2,15 @@ import * as projectService from '../services/projectService.js';
 
 export const listProjects = async (req, res) => {
   const { status, teamId, creatorId } = req.query;
-  const projects = await projectService.listProjects({ status, teamId, creatorId });
+  const filters = { status, teamId, creatorId };
+  const projects = await projectService.listProjects(filters);
   res.json({ projects });
 };
 
 export const createProject = async (req, res) => {
-  const project = await projectService.createProject(req.body, req.user._id);
+  const fields = req.body;
+  const userId = req.user._id;
+  const project = await projectService.createProject(fields, userId);
   res.status(201).json({ project });
 };
 
@@ -19,7 +22,9 @@ export const getProjectByIdentifier = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   const { identifier } = req.params;
-  const project = await projectService.updateProject(identifier, req.body, req.user._id);
+  const updates = req.body;
+  const userId = req.user._id;
+  const project = await projectService.updateProject(identifier, updates, userId);
   res.json({ project });
 };
 
@@ -38,13 +43,16 @@ export const getProjectUpdates = async (req, res) => {
 
 export const createProjectUpdate = async (req, res) => {
   const { identifier } = req.params;
-  const update = await projectService.createProjectUpdate(identifier, req.body, req.user._id);
+  const { content, status } = req.body;
+  const userId = req.user._id;
+  const fields = { content, status };
+  const update = await projectService.createProjectUpdate(identifier, fields, userId);
   res.status(201).json({ update });
 };
 
 export const getProjectActivities = async (req, res) => {
   const { identifier } = req.params;
-  const { limit = 50 } = req.query;
+  const { limit } = req.query;
   const activities = await projectService.getProjectActivities(identifier, limit);
   res.json({ activities });
 };

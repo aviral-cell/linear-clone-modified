@@ -66,7 +66,7 @@ export const getProjectByIdentifier = async (identifier) => {
   return { project, metrics };
 };
 
-export const createProject = async (projectData, userId) => {
+export const createProject = async (fields, userId) => {
   const {
     name,
     description,
@@ -79,7 +79,7 @@ export const createProject = async (projectData, userId) => {
     targetDate,
     memberIds,
     creatorId,
-  } = projectData;
+  } = fields;
 
   if (!name || !teamId) {
     throw new BadRequestError('Name and team are required');
@@ -154,8 +154,8 @@ export const getProjectUpdates = async (identifier, includeActivities = false) =
   return groupActivitiesWithUpdates(updates, activities, project);
 };
 
-export const createProjectUpdate = async (identifier, updateData, userId) => {
-  const { content, status } = updateData;
+export const createProjectUpdate = async (identifier, fields, userId) => {
+  const { content, status } = fields;
   const validStatuses = PROJECT_UPDATE_STATUSES;
 
   if (!content || !content.trim()) {

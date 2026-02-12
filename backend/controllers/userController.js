@@ -1,6 +1,6 @@
-import User from '../models/User.js';
+import * as userService from '../services/userService.js';
 
 export const getAllUsers = async (req, res) => {
-  const users = await User.find().select('-password');
+  const users = await userService.getAllUsers();
   res.json({ users });
 };
