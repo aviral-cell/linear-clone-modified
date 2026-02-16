@@ -122,7 +122,9 @@ const LoginPage = () => {
               </Label>
               <Input.WithIcon
                 id="password"
-                type="password"
+                type="text"
+                autoComplete="off"
+                style={{ WebkitTextSecurity: 'disc', textSecurity: 'disc' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
