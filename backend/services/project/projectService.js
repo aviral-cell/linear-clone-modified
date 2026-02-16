@@ -6,8 +6,8 @@ import { ISSUE_POPULATE } from '../../utils/issuePopulates.js';
 import ProjectActivity from '../../models/ProjectActivity.js';
 import { generateProjectIdentifier } from '../../utils/projectUtils.js';
 import { getProjectStats } from './projectStatsService.js';
-import { createProjectActivity } from './projectActivityTracker.js';
 import {
+  createProjectActivity,
   getProjectActivities as getActivities,
   groupActivitiesWithUpdates,
 } from './projectActivityService.js';
