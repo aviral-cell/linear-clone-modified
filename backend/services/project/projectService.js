@@ -48,24 +48,6 @@ export const listProjects = async (filters = {}) => {
   return enriched;
 };
 
-export const getProjectByIdentifier = async (identifier) => {
-  const project = await Project.findOne({ identifier });
-  if (!project) {
-    throw new NotFoundError('Project not found');
-  }
-
-  await project.populate([
-    { path: 'team', select: 'name key icon' },
-    { path: 'lead', select: 'name email avatar' },
-    { path: 'members', select: 'name email avatar' },
-    { path: 'creator', select: 'name email avatar' },
-  ]);
-
-  const metrics = await getProjectStats(project._id);
-
-  return { project, metrics };
-};
-
 export const createProject = async (fields, userId) => {
   const {
     name,
@@ -109,6 +91,24 @@ export const createProject = async (fields, userId) => {
   ]);
 
   return project;
+};
+
+export const getProjectByIdentifier = async (identifier) => {
+  const project = await Project.findOne({ identifier });
+  if (!project) {
+    throw new NotFoundError('Project not found');
+  }
+
+  await project.populate([
+    { path: 'team', select: 'name key icon' },
+    { path: 'lead', select: 'name email avatar' },
+    { path: 'members', select: 'name email avatar' },
+    { path: 'creator', select: 'name email avatar' },
+  ]);
+
+  const metrics = await getProjectStats(project._id);
+
+  return { project, metrics };
 };
 
 export const updateProject = async (identifier, updates, userId) => {
