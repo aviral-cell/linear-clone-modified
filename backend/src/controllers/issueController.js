@@ -1,4 +1,5 @@
 import * as issueService from '../services/issue/issueService.js';
+import * as issueActivityService from '../services/issue/issueActivityService.js';
 import * as commentService from '../services/issue/commentService.js';
 
 export const getMyIssues = async (req, res) => {
@@ -51,7 +52,7 @@ export const toggleSubscribe = async (req, res) => {
 
 export const getIssueActivities = async (req, res) => {
   const { identifier } = req.params;
-  const activities = await issueService.getIssueActivities(identifier);
+  const activities = await issueActivityService.getIssueActivities(identifier);
   res.json({ activities });
 };
 
