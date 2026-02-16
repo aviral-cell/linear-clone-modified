@@ -11,8 +11,9 @@ export const authenticate = async (req, res, next) => {
     throw new UnauthorizedError('Authentication required');
   }
 
+  let decoded;
   try {
-    var decoded = jwt.verify(token, JWT_SECRET);
+    decoded = jwt.verify(token, JWT_SECRET);
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       throw new UnauthorizedError('Token expired');
