@@ -1,6 +1,6 @@
-import Issue from '../models/Issue.js';
-import IssueActivity from '../models/IssueActivity.js';
-import Team from '../models/Team.js';
+import Issue from '../../models/Issue.js';
+import IssueActivity from '../../models/IssueActivity.js';
+import Team from '../../models/Team.js';
 import {
   validateParentChange,
   getValidParentCandidates,
@@ -8,8 +8,8 @@ import {
   getMaxSubtreeDepth,
   MAX_DEPTH,
 } from './issueHierarchy.js';
-import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
-import { BadRequestError, NotFoundError } from '../utils/appError.js';
+import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../../utils/issuePopulates.js';
+import { BadRequestError, NotFoundError } from '../../utils/appError.js';
 
 export const getIssues = async (filters = {}) => {
   const { teamId, status, priority, assignee, creator, parent } = filters;

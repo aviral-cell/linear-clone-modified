@@ -1,7 +1,7 @@
-import Comment from '../models/Comment.js';
-import Issue from '../models/Issue.js';
-import IssueActivity from '../models/IssueActivity.js';
-import { BadRequestError, NotFoundError, ForbiddenError } from '../utils/appError.js';
+import Comment from '../../models/Comment.js';
+import Issue from '../../models/Issue.js';
+import IssueActivity from '../../models/IssueActivity.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '../../utils/appError.js';
 
 const findIssueByIdentifier = async (identifier) => {
   const issue = await Issue.findOne({ identifier });

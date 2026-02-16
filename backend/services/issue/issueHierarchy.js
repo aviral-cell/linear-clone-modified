@@ -1,4 +1,4 @@
-import Issue from '../models/Issue.js';
+import Issue from '../../models/Issue.js';
 
 export const MAX_DEPTH = 5;
 

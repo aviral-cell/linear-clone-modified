@@ -1,5 +1,5 @@
 import { createProjectActivity } from './projectActivityTracker.js';
-import { generateProjectIdentifier } from '../utils/projectUtils.js';
+import { generateProjectIdentifier } from '../../utils/projectUtils.js';
 
 const handleMemberUpdate = async (project, updates, userId) => {
   if (updates.memberIds === undefined) return;

@@ -1,6 +1,6 @@
-import IssueActivity from '../models/IssueActivity.js';
-import Issue from '../models/Issue.js';
-import { NotFoundError } from '../utils/appError.js';
+import IssueActivity from '../../models/IssueActivity.js';
+import Issue from '../../models/Issue.js';
+import { NotFoundError } from '../../utils/appError.js';
 
 export const getIssueActivities = async (identifier) => {
   const issue = await Issue.findOne({ identifier });

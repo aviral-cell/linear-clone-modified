@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-import User from '../models/User.js';
-import { generateToken } from '../utils/auth.js';
-import { BadRequestError, UnauthorizedError } from '../utils/appError.js';
+import User from '../../models/User.js';
+import { generateToken } from '../../utils/auth.js';
+import { BadRequestError, UnauthorizedError } from '../../utils/appError.js';
 
 export const register = async (email, password, name) => {
   if (!email || !password || !name) {

@@ -1,4 +1,4 @@
-import ProjectActivity from '../models/ProjectActivity.js';
+import ProjectActivity from '../../models/ProjectActivity.js';
 
 const deriveFieldFromAction = (action) => {
   const actionFieldMap = {

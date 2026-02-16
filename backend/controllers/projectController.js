@@ -1,4 +1,4 @@
-import * as projectService from '../services/projectService.js';
+import * as projectService from '../services/project/projectService.js';
 
 export const listProjects = async (req, res) => {
   const { status, teamId, creatorId } = req.query;

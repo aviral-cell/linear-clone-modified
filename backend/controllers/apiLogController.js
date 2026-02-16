@@ -1,4 +1,4 @@
-import * as apiLogService from '../services/apiLogService.js';
+import * as apiLogService from '../services/admin/apiLogService.js';
 
 export const getAdminLogs = async (req, res) => {
   const filters = req.query;

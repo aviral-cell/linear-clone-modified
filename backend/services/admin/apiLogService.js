@@ -1,5 +1,5 @@
-import ApiLog from '../models/ApiLog.js';
-import { BadRequestError, NotFoundError } from '../utils/appError.js';
+import ApiLog from '../../models/ApiLog.js';
+import { BadRequestError, NotFoundError } from '../../utils/appError.js';
 
 export const getLogs = async (filters = {}) => {
   const {

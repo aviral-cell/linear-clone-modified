@@ -1,4 +1,4 @@
-import ProjectActivity from '../models/ProjectActivity.js';
+import ProjectActivity from '../../models/ProjectActivity.js';
 
 export const getProjectActivities = async (projectId, options = {}) => {
   const { limit = 50, skip = 0 } = options;
