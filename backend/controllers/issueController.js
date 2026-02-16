@@ -1,10 +1,8 @@
 import * as issueService from '../services/issueService.js';
 
-export const getIssuesByTeam = async (req, res) => {
-  const { teamId } = req.params;
-  const { status, priority, assignee, creator, parent } = req.query;
-  const filters = { status, priority, assignee, creator, parent };
-  const issues = await issueService.getIssuesByTeam(teamId, filters);
+export const getIssues = async (req, res) => {
+  const filters = req.query;
+  const issues = await issueService.getIssues(filters);
   res.json({ issues });
 };
 

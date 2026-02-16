@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  getIssuesByTeam,
+  getIssues,
   getIssueByIdentifier,
   createIssue,
   updateIssue,
@@ -20,7 +20,7 @@ import { authenticate } from '../middleware/auth.js';
 const router = express.Router();
 
 router.get('/my-issues', authenticate, getMyIssues);
-router.get('/team/:teamId', authenticate, getIssuesByTeam);
+router.get('/', authenticate, getIssues);
 router.get('/:identifier/valid-parents', authenticate, getValidParents);
 router.get('/:identifier/comments', authenticate, getCommentsByIssue);
 router.get('/:identifier/activities', authenticate, getIssueActivities);

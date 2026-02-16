@@ -11,10 +11,11 @@ import {
 import { ISSUE_POPULATE, ISSUE_POPULATE_DETAIL } from '../utils/issuePopulates.js';
 import { BadRequestError, NotFoundError } from '../utils/appError.js';
 
-export const getIssuesByTeam = async (teamId, filters = {}) => {
-  const { status, priority, assignee, creator, parent } = filters;
+export const getIssues = async (filters = {}) => {
+  const { teamId, status, priority, assignee, creator, parent } = filters;
 
-  const query = { team: teamId };
+  const query = {};
+  if (teamId) query.team = teamId;
 
   if (status) {
     const statuses = status.split(',');

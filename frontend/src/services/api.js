@@ -126,8 +126,8 @@ class ApiService {
     getByIdentifier: (identifier) => this.get(`/api/issues/${identifier}`),
 
     getByTeam: (teamId, params = {}) => {
-      const q = new URLSearchParams(params).toString();
-      return this.get(`/api/issues/team/${teamId}${q ? `?${q}` : ''}`);
+      const q = new URLSearchParams({ teamId, ...params }).toString();
+      return this.get(`/api/issues?${q}`);
     },
 
     create: (data) => this.post('/api/issues', data),
