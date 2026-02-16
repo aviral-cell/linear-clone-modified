@@ -2,13 +2,6 @@ import Project from '../../../models/Project.js';
 import { generateProjectIdentifier } from '../../projectUtils.js';
 import { getProjectsData } from '../data/projectsData.js';
 
-/**
- * Seeds projects into the database
- * @param {Array} teams - Array of team documents
- * @param {Array} users - Array of user documents
- * @param {Object} creator - User document to set as creator
- * @returns {Promise<Array>} Array of inserted project documents
- */
 export async function seedProjects(teams, users, creator) {
   console.log('Seeding projects...');
   const projectsData = getProjectsData(teams, users, creator);

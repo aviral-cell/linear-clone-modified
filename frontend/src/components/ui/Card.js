@@ -9,10 +9,6 @@ const variants = {
   tertiary: 'bg-background-tertiary',
 };
 
-/**
- * Card primitive. Use for containers, modals inner, comment boxes.
- * @param {'default'|'secondary'|'tertiary'} [variant='default']
- */
 function Card({ variant = 'default', className, children, ...props }) {
   return (
     <div className={cn(cardBase, variants[variant], className)} {...props}>
@@ -21,9 +17,6 @@ function Card({ variant = 'default', className, children, ...props }) {
   );
 }
 
-/**
- * Inner card: padded content area (e.g. comment/input container).
- */
 function CardInner({ className, children, ...props }) {
   return (
     <div

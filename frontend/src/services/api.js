@@ -1,8 +1,3 @@
-/**
- * Centralized API Service
- * Handles all HTTP requests with consistent error handling and authentication
- */
-
 const generateBaseURL = () => {
   const currentHost = window?.location?.host || 'localhost:8000';
   const currentProtocol = window?.location?.protocol || 'http:';

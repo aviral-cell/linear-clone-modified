@@ -3,18 +3,6 @@ import { ChevronDown, ChevronRight } from '../../icons';
 import { cn } from '../../utils/cn';
 import Button from './Button';
 
-/**
- * Collapsible section with optional actions.
- * @param {React.ReactNode} title
- * @param {boolean} [expanded]
- * @param {boolean} [defaultExpanded=true]
- * @param {(next: boolean) => void} [onToggle]
- * @param {React.ReactNode} [actions]
- * @param {boolean} [showChevron=true]
- * @param {string} [className]
- * @param {string} [headerClassName]
- * @param {string} [contentClassName]
- */
 function CollapsibleSection({
   title,
   expanded,

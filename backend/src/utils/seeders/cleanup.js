@@ -7,9 +7,6 @@ import Issue from '../../models/Issue.js';
 import Team from '../../models/Team.js';
 import User from '../../models/User.js';
 
-/**
- * Drops old indexes that may cause conflicts
- */
 export async function dropOldIndexes() {
   console.log('Dropping old indexes...');
   try {
@@ -24,9 +21,6 @@ export async function dropOldIndexes() {
   }
 }
 
-/**
- * Clears all existing data from the database
- */
 export async function clearAllData() {
   console.log('Flushing all existing data...');
   await Promise.all([

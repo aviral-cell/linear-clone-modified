@@ -3,15 +3,6 @@ import { formatDateTime, formatDateShort } from '../utils';
 import { ACTIVITY_LAYOUT, ACTIVITY_DATE_FORMAT } from '../constants';
 import { ActivityDot } from './ui';
 
-/**
- * Shared activity row component for rendering a single activity
- * Works with both timeline and list layouts
- *
- * @param {Object} props
- * @param {Object} props.item - Normalized activity item
- * @param {'timeline'|'list'} props.layout - Layout variant (timeline or list)
- * @param {'small'|'medium'} [props.size='medium'] - Size variant for list layout
- */
 const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' }) => {
   const { user, message, icon, createdAt, dateFormat } = item;
 

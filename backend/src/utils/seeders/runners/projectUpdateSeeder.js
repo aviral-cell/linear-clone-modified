@@ -2,13 +2,6 @@ import ProjectUpdate from '../../../models/ProjectUpdate.js';
 import ProjectActivity from '../../../models/ProjectActivity.js';
 import { getProjectUpdatesData } from '../data/projectUpdatesData.js';
 
-/**
- * Seeds project updates into the database
- * @param {Array} projects - Array of project documents
- * @param {Array} users - Array of user documents
- * @param {Array} teams - Array of team documents
- * @returns {Promise<Object>} Object containing inserted updates and update activities
- */
 export async function seedProjectUpdates(projects, users, teams) {
   console.log('Seeding project updates...');
   const { updates, updateActivities } = getProjectUpdatesData(projects, users, teams);

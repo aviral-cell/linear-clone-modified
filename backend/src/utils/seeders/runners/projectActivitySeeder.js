@@ -1,13 +1,6 @@
 import ProjectActivity from '../../../models/ProjectActivity.js';
 import { getProjectActivitiesData } from '../data/projectActivitiesData.js';
 
-/**
- * Seeds project activities into the database
- * @param {Array} projects - Array of project documents
- * @param {Array} users - Array of user documents
- * @param {Array} updates - Array of update documents to interleave activities with
- * @returns {Promise<Array>} Array of inserted project activity documents
- */
 export async function seedProjectActivities(projects, users, updates = []) {
   console.log('Seeding project activities...');
 

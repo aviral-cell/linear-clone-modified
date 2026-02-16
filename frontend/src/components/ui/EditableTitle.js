@@ -11,14 +11,6 @@ const sizeClasses = {
 
 const titleStyles = 'font-semibold text-text-primary pb-2';
 
-/**
- * Inline editable title. Always shows an input so the user can click anywhere to edit.
- * @param {string} value
- * @param {(newValue: string) => void} onSave
- * @param {string} [placeholder]
- * @param {string} [className]
- * @param {'sm'|'md'|'lg'|'xl'} [size='lg']
- */
 function EditableTitle({ value, onSave, placeholder, className, size = 'lg' }) {
   const [draft, setDraft] = useState(value ?? '');
 

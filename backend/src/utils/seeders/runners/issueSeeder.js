@@ -3,14 +3,6 @@ import IssueActivity from '../../../models/IssueActivity.js';
 import { issuesData } from '../data/issuesData.js';
 import { getSubIssuesData } from '../data/subIssuesData.js';
 
-/**
- * Seeds issues into the database
- * @param {Array} teams - Array of team documents
- * @param {Array} users - Array of user documents
- * @param {Array} projects - Array of project documents
- * @param {Object} creator - User document to set as creator
- * @returns {Promise<Array>} Array of inserted issue documents
- */
 export async function seedIssues(teams, users, projects, creator) {
   console.log('Seeding issues...');
   const insertedIssues = [];

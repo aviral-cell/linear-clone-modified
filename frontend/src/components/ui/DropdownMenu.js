@@ -11,11 +11,6 @@ const PADDING_VIEWPORT = 16;
 const PADDING_VIEWPORT_MOBILE = 20;
 const MOBILE_BREAKPOINT = 640;
 
-/**
- * Returns panel position classes for dropdown (horizontal layout with optional right-align).
- * Used for in-flow panels (e.g. date pickers in ProjectProperties). For DropdownMenu panel
- * we use fixed positioning in a portal instead.
- */
 export function getDropdownPanelClasses(isVertical, options = {}) {
   const { minWidth = 'min-w-dropdown-md', align = 'left' } = options;
   if (isVertical) {
@@ -27,14 +22,6 @@ export function getDropdownPanelClasses(isVertical, options = {}) {
 
 const ESTIMATED_PANEL_WIDTH = 200;
 
-/**
- * Compute fixed position for portaled dropdown panel from trigger rect and viewport.
- * Uses estimated panel size when actual size not yet available.
- * @param {DOMRect} triggerRect
- * @param {string} align - 'left' | 'right'
- * @param {number} [panelWidth]
- * @param {{ minSpaceBelow?: number, minSpaceAbove?: number }} [options] - For tall panels (e.g. date picker) pass larger minSpaceBelow so we place above when needed.
- */
 function getPanelPlacement(triggerRect, align, panelWidth = ESTIMATED_PANEL_WIDTH, options = {}) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -63,9 +50,6 @@ function getPanelPlacement(triggerRect, align, panelWidth = ESTIMATED_PANEL_WIDT
   return { top, bottom, left, right };
 }
 
-/**
- * Compute max-height so a portaled panel stays inside the viewport.
- */
 function getPanelMaxHeight(triggerRect, placement) {
   const vh = window.innerHeight;
   if (placement.top != null) {
@@ -77,20 +61,6 @@ function getPanelMaxHeight(triggerRect, placement) {
   return vh - PADDING_VIEWPORT * 2;
 }
 
-/**
- * Dropdown menu: wrapper with click-outside and panel alignment.
- * Renders the panel in a portal with fixed positioning so it is not clipped by
- * sidebar, modal, or overflow. Used on all pages (IssueProperties, SubIssuesSection,
- * UpdateCard, ProjectProperties, ProjectModal, CreateIssueModal).
- *
- * @param {boolean} open
- * @param {(open: boolean) => void} onOpenChange
- * @param {React.ReactNode} trigger - The trigger button (e.g. FieldTrigger)
- * @param {React.ReactNode} children - Panel content (e.g. list of DropdownMenuItem)
- * @param {'vertical'|'horizontal'} [variant='horizontal']
- * @param {string} [minWidth='min-w-dropdown-md']
- * @param {string} [maxHeight] - e.g. 'max-h-64', 'max-h-60'
- */
 function DropdownMenu({
   open,
   onOpenChange,
@@ -198,17 +168,6 @@ function DropdownMenu({
   );
 }
 
-/**
- * Popover portal: renders panel in a portal with fixed positioning (same as DropdownMenu).
- * Use for date pickers and other popover content that should not be clipped by sidebar/modal/overflow.
- *
- * @param {boolean} open
- * @param {(open: boolean) => void} onOpenChange
- * @param {React.ReactNode} trigger - The trigger element (e.g. FieldTrigger)
- * @param {React.ReactNode} children - Panel content (e.g. DatePicker wrapper)
- * @param {string} [minWidth='min-w-[280px]']
- * @param {string} [className]
- */
 function PopoverPortal({
   open,
   onOpenChange,

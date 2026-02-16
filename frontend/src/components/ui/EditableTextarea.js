@@ -2,14 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '../../utils/cn';
 import Textarea from './Textarea';
 
-/**
- * Inline editable textarea. Always shows a textarea so the user can click anywhere to edit.
- * @param {string} value
- * @param {(newValue: string) => void} onSave
- * @param {string} [placeholder]
- * @param {string} [className]
- * @param {string} [minHeight='none']
- */
 function EditableTextarea({ value, onSave, placeholder, className, minHeight = 'none' }) {
   const [draft, setDraft] = useState(value ?? '');
 

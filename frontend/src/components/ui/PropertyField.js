@@ -2,10 +2,6 @@ import React, { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
 import Label from './Label';
 
-/**
- * Wraps a single property row: label + content. Use for issue/project properties.
- * @param {'vertical'|'horizontal'} [variant='horizontal'] - vertical shows label above/left; horizontal hides label (e.g. in filter bar)
- */
 const PropertyField = forwardRef(function PropertyField(
   { label, variant = 'horizontal', className, children, ...props },
   ref

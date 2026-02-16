@@ -8,17 +8,10 @@ const variantStyles = {
     'w-full bg-transparent text-text-primary focus:outline-none placeholder:text-text-tertiary',
 };
 
-/**
- * Input primitive. Use for standard form inputs; supports leading icon via wrapper.
- * @param {'default'|'transparent'} [variant='default'] - transparent for inline editing
- */
 function Input({ variant = 'default', className, ...props }) {
   return <input className={cn(variantStyles[variant], className)} {...props} />;
 }
 
-/**
- * Wrapper for input with leading icon. Renders children (icon) + input in relative container.
- */
 function InputWithIcon({ children, className, ...props }) {
   return (
     <div className="relative">

@@ -8,9 +8,6 @@ import { seedProjectActivities } from './runners/projectActivitySeeder.js';
 import { seedIssues } from './runners/issueSeeder.js';
 import { seedComments } from './runners/commentSeeder.js';
 
-/**
- * Main seeder function that orchestrates the entire seeding process
- */
 export async function seed() {
   console.log('========= SEEDING DATA ==========');
   try {
