@@ -8,8 +8,6 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import issueRoutes from './routes/issueRoutes.js';
-import commentRoutes from './routes/commentRoutes.js';
-import issueActivityRoutes from './routes/issueActivityRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import apiLogRoutes from './routes/apiLogRoutes.js';
 import { apiLogger } from './middleware/apiLogger.js';
@@ -32,8 +30,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/issues', issueRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/activities', issueActivityRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/admin/logs', apiLogRoutes);
 

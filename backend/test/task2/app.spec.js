@@ -320,7 +320,7 @@ describe('Activity Tracker - Create and Update Issues', function () {
 
     const res = await chai
       .request(app)
-      .get(`/api/activities/issue/${issue._id}`)
+      .get(`/api/issues/${issue.identifier}/activities`)
       .set('Authorization', `Bearer ${userToken}`);
 
     expect(res).to.have.status(200);
