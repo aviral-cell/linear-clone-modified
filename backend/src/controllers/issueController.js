@@ -10,8 +10,8 @@ export const getMyIssues = async (req, res) => {
 };
 
 export const getIssues = async (req, res) => {
-  const { teamId, status, priority, assignee, creator, parent } = req.query
-  const filters = { teamId, status, priority, assignee, creator, parent }
+  const { teamId, status, priority, assignee, creator, parent } = req.query;
+  const filters = { teamId, status, priority, assignee, creator, parent };
   const issues = await issueService.getIssues(filters);
   res.json({ issues });
 };

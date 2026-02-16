@@ -249,4 +249,3 @@ export const toggleSubscribe = async (identifier, userId) => {
 
   return { subscribed: !isSubscribed };
 };
-
