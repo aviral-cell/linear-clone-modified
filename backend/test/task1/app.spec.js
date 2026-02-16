@@ -258,7 +258,9 @@ describe('Issue Comments Functionality Testing', () => {
 
     expect(updateRes).to.have.status(401);
 
-    const deleteRes = await chai.request(app).delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`);
+    const deleteRes = await chai
+      .request(app)
+      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`);
 
     expect(deleteRes).to.have.status(401);
 
