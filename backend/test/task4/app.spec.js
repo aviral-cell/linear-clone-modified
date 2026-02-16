@@ -1,13 +1,13 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import app from '../../app.js';
-import connectDatabase from '../../config/database.js';
-import User from '../../models/User.js';
-import Team from '../../models/Team.js';
-import Issue from '../../models/Issue.js';
-import IssueActivity from '../../models/IssueActivity.js';
-import { generateToken } from '../../utils/auth.js';
+import app from '../../src/app.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import Team from '../../src/models/Team.js';
+import Issue from '../../src/models/Issue.js';
+import IssueActivity from '../../src/models/IssueActivity.js';
+import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -141,7 +141,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should filter issues by single and multiple comma-separated status values', async () => {
     const singleRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?status=todo`)
+      .get(`/api/issues?teamId=${team._id}&status=todo`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(singleRes).to.have.status(200);
@@ -153,7 +153,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
 
     const multiRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?status=in_progress,done`)
+      .get(`/api/issues?teamId=${team._id}&status=in_progress,done`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(multiRes).to.have.status(200);
@@ -166,7 +166,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should filter issues by single and multiple comma-separated priority values', async () => {
     const singleRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?priority=high`)
+      .get(`/api/issues?teamId=${team._id}&priority=high`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(singleRes).to.have.status(200);
@@ -179,7 +179,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
 
     const multiRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?priority=urgent,low`)
+      .get(`/api/issues?teamId=${team._id}&priority=urgent,low`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(multiRes).to.have.status(200);
@@ -192,7 +192,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should filter issues by assignee user ID', async () => {
     const res = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?assignee=${userA._id}`)
+      .get(`/api/issues?teamId=${team._id}&assignee=${userA._id}`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(res).to.have.status(200);
@@ -209,7 +209,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should filter issues by creator user ID', async () => {
     const res = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?creator=${userB._id}`)
+      .get(`/api/issues?teamId=${team._id}&creator=${userB._id}`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(res).to.have.status(200);
@@ -225,7 +225,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should filter issues by parent=null for root issues and by specific parent ID for children', async () => {
     const nullRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?parent=null`)
+      .get(`/api/issues?teamId=${team._id}&parent=null`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(nullRes).to.have.status(200);
@@ -236,7 +236,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
 
     const parentRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?parent=${parentIssue._id}`)
+      .get(`/api/issues?teamId=${team._id}&parent=${parentIssue._id}`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(parentRes).to.have.status(200);
@@ -248,7 +248,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should apply multiple filters simultaneously and return empty array when no match', async () => {
     const combinedRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?status=todo&priority=high`)
+      .get(`/api/issues?teamId=${team._id}&status=todo&priority=high`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(combinedRes).to.have.status(200);
@@ -262,7 +262,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
 
     const emptyRes = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}?status=cancelled&priority=urgent`)
+      .get(`/api/issues?teamId=${team._id}&status=cancelled&priority=urgent`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(emptyRes).to.have.status(200);
@@ -272,7 +272,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
   it('should return all team issues with populated fields when no filters are applied', async () => {
     const res = await chai
       .request(app)
-      .get(`/api/issues/team/${team._id}`)
+      .get(`/api/issues?teamId=${team._id}`)
       .set('Authorization', `Bearer ${tokenA}`);
 
     expect(res).to.have.status(200);

@@ -1,10 +1,5 @@
-/**
- * Priority constants – labels, icons, and colors for issue/update priority.
- */
-
 import { Minus, AlertCircle, BarChart2, BarChart3, BarChart4 } from '../icons';
 
-/** Map of priority key → { Icon, color } for rendering */
 export const priorityIcons = {
   no_priority: { Icon: Minus, color: 'text-text-tertiary' },
   urgent: { Icon: AlertCircle, color: 'text-red-500' },
@@ -13,7 +8,6 @@ export const priorityIcons = {
   low: { Icon: BarChart2, color: 'text-text-tertiary' },
 };
 
-/** Options array for dropdowns: { value, label, Icon, color } */
 export const priorityOptions = [
   { value: 'no_priority', label: 'No priority', Icon: Minus, color: 'text-text-tertiary' },
   { value: 'urgent', label: 'Urgent', Icon: AlertCircle, color: 'text-red-500' },
@@ -22,7 +16,6 @@ export const priorityOptions = [
   { value: 'low', label: 'Low', Icon: BarChart2, color: 'text-text-tertiary' },
 ];
 
-/** Config map for board/UI: priority key → { label, icon, color } */
 export const priorityConfig = {
   no_priority: { label: 'Set priority', icon: Minus, color: 'text-text-tertiary' },
   urgent: { label: 'Urgent', icon: AlertCircle, color: 'text-red-500' },

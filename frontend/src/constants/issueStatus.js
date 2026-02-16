@@ -1,10 +1,5 @@
-/**
- * Issue status constants – labels, icons, and colors for issue workflow states.
- */
-
 import { CircleDashed, Circle, CircleDot, CheckCircle2, XCircle } from '../icons';
 
-/** Map of issue status key → { Icon, color } for rendering */
 export const issueStatusIcons = {
   backlog: { Icon: CircleDashed, color: 'text-text-tertiary' },
   todo: { Icon: Circle, color: 'text-text-secondary' },
@@ -15,7 +10,6 @@ export const issueStatusIcons = {
   duplicate: { Icon: XCircle, color: 'text-text-tertiary' },
 };
 
-/** Options array for dropdowns: { value, label, Icon, color } */
 export const issueStatusOptions = [
   { value: 'backlog', label: 'Backlog', Icon: CircleDashed, color: 'text-text-tertiary' },
   { value: 'todo', label: 'Todo', Icon: Circle, color: 'text-text-secondary' },
@@ -26,7 +20,6 @@ export const issueStatusOptions = [
   { value: 'duplicate', label: 'Duplicate', Icon: XCircle, color: 'text-text-tertiary' },
 ];
 
-/** Config map for board/UI: status key → { label, icon, color } */
 export const issueStatusConfig = {
   backlog: { label: 'Backlog', icon: CircleDashed, color: 'text-text-tertiary' },
   todo: { label: 'Todo', icon: Circle, color: 'text-text-secondary' },

@@ -2,15 +2,6 @@ import React from 'react';
 import { cn } from '../../utils/cn';
 import Button from './Button';
 
-/**
- * Tab navigation wrapper for filter bars.
- * @param {Array<{ id: string, label: string, icon?: React.ReactNode, count?: number }>} tabs
- * @param {string} activeTab
- * @param {(tabId: string) => void} onTabChange
- * @param {React.ReactNode} [actions]
- * @param {string} [className]
- * @param {string} [tabsClassName]
- */
 function TabNavigation({ tabs = [], activeTab, onTabChange, actions, className, tabsClassName }) {
   return (
     <section aria-label="Tabs" className={cn('filter-bar', className)}>

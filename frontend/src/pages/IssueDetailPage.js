@@ -114,28 +114,24 @@ const IssueDetailPage = () => {
   }, []);
 
   const fetchComments = useCallback(async () => {
-    if (!issue?._id) return;
+    if (!issue?.identifier) return;
     try {
-      const data = await api.comments.getByIssue(issue._id);
+      const data = await api.comments.getByIssue(issue.identifier);
       setComments(data.comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
-  }, [issue?._id]);
+  }, [issue?.identifier]);
 
-  const fetchActivities = useCallback(
-    async (issueId = null) => {
-      try {
-        const targetIssueId = issueId || issue?._id;
-        if (!targetIssueId) return;
-        const data = await api.issueActivities.getByIssue(targetIssueId);
-        setActivities(data.activities);
-      } catch (error) {
-        console.error('Error fetching activities:', error);
-      }
-    },
-    [issue?._id]
-  );
+  const fetchActivities = useCallback(async () => {
+    if (!issue?.identifier) return;
+    try {
+      const data = await api.issueActivities.getByIssue(issue.identifier);
+      setActivities(data.activities);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  }, [issue?.identifier]);
 
   useEffect(() => {
     if (issue) {
@@ -157,7 +153,7 @@ const IssueDetailPage = () => {
 
       const data = await api.issues.update(identifier, updates);
       toast.success('Issue updated');
-      await fetchActivities(data.issue._id);
+      await fetchActivities();
       await refetch();
     } catch (error) {
       console.error('Error updating issue:', error);
@@ -171,7 +167,7 @@ const IssueDetailPage = () => {
   const handleAddComment = async (content) => {
     setCommentLoading(true);
     try {
-      await api.comments.create(issue._id, content);
+      await api.comments.create(issue.identifier, content);
       fetchComments();
       fetchActivities();
       toast.success('Comment added');
@@ -371,6 +367,7 @@ const IssueDetailPage = () => {
             />
 
             <CommentsSection
+              identifier={identifier}
               comments={comments}
               onEditComment={fetchComments}
               onDeleteComment={() => {

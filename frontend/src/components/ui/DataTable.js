@@ -4,15 +4,6 @@ import { cn } from '../../utils/cn';
 const tableHeaderStyles = 'text-[13px] leading-[14px] font-medium tracking-tight';
 const tableCellStyles = 'text-table-cell font-normal';
 
-/**
- * DataTable primitive for grid-based tables.
- * @param {Array<{ key: string, label?: string, ariaLabel?: string, headerClassName?: string, cellClassName?: string, render?: (row: any) => React.ReactNode }>} columns
- * @param {Array<any>} data
- * @param {(row: any, index: number) => string|number} [getRowKey]
- * @param {(row: any) => void} [onRowClick]
- * @param {string} [gridTemplateClass]
- * @param {boolean} [stickyHeader=true]
- */
 function DataTable({
   columns = [],
   data = [],

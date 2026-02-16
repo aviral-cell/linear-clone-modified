@@ -1,10 +1,5 @@
-/**
- * Project update status constants – on_track, at_risk, off_track.
- */
-
 import { TrendingUp, AlertCircle, TrendingDown, Check } from '../icons';
 
-/** Options array for update status dropdown: value, label, icon, color, bgColor, borderColor */
 export const updateStatusOptions = [
   {
     value: 'on_track',
@@ -32,7 +27,6 @@ export const updateStatusOptions = [
   },
 ];
 
-/** Get config for a given update status (uses normalizeUpdateStatus from statusMapping for display) */
 export function getUpdateStatusConfig(displayStatus) {
   const config = updateStatusOptions.find((opt) => opt.value === displayStatus);
   if (config) {
@@ -53,7 +47,6 @@ export function getUpdateStatusConfig(displayStatus) {
   };
 }
 
-/** Icons/labels for project list update indicators */
 export const updateStatusIndicatorIcons = {
   on_track: { icon: TrendingUp, color: 'text-green-400' },
   at_risk: { icon: AlertCircle, color: 'text-yellow-400' },

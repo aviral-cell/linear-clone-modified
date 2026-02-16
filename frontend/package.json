@@ -6,40 +6,27 @@
     "start": "cross-env PORT=8000 BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix",
     "format": "prettier \"src/**/*.{js,jsx,ts,tsx,css,md}\" --write",
     "format:check": "prettier \"src/**/*.{js,jsx,ts,tsx,css,md}\" --check"
   },
   "dependencies": {
-    "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "13.4.0",
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.24",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.462.0",
-    "postcss": "^8.5.5",
+    "lucide-react": "^0.563.0",
+    "postcss": "^8.5.6",
     "react": "18.2.0",
     "react-datepicker": "^9.1.0",
     "react-dom": "18.2.0",
-    "react-hot-toast": "^2.4.1",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
     "recharts": "^3.7.0",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^3.4.17",
-    "web-vitals": "2.1.4"
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
-    "@testing-library/user-event": "^14.6.1",
     "cross-env": "^7.0.3",
-    "jest-junit": "15.0.0",
-    "prettier": "^3.0.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "prettier": "^3.8.1"
   },
   "browserslist": {
     "production": [

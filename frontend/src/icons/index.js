@@ -1,9 +1,3 @@
-/**
- * Central icon module – all app icons are imported from lucide-react and re-exported here.
- * Use: import { Icons } from '../icons' → Icons.Check, Icons.ChevronDown
- * Or:  import { ChevronDown, Check } from '../icons'
- */
-
 import {
   AlertCircle,
   Ban,

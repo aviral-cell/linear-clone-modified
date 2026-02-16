@@ -3,18 +3,6 @@ import ActivityRow from './ActivityRow';
 import { normalizeProjectActivity } from '../utils/activityNormalizers';
 import { ACTIVITY_LAYOUT, ACTIVITY_LIST_VARIANT } from '../constants';
 
-/**
- * Renders a list of project activities in compact list format
- * Used in project sidebar and project Updates tab
- *
- * @param {Object} props
- * @param {Array} props.activities - Array of project activity objects from API
- * @param {Array} [props.users=[]] - Array of user objects for resolving lead/member names
- * @param {string} [props.updateStatus=null] - Optional update status to apply to all activities (e.g., 'on_track', 'at_risk')
- * @param {Object} [props.updateStatusMap={}] - Map of activity IDs to their update statuses for posted_update icon resolution
- * @param {string} [props.variant='updates'] - Display variant: 'sidebar' (medium size) or 'updates' (small size)
- * @returns {React.ReactElement|null} Rendered activity list or null if no activities
- */
 const ActivityList = ({
   activities,
   users = [],

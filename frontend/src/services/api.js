@@ -1,8 +1,3 @@
-/**
- * Centralized API Service
- * Handles all HTTP requests with consistent error handling and authentication
- */
-
 const generateBaseURL = () => {
   const currentHost = window?.location?.host || 'localhost:8000';
   const currentProtocol = window?.location?.protocol || 'http:';
@@ -126,8 +121,8 @@ class ApiService {
     getByIdentifier: (identifier) => this.get(`/api/issues/${identifier}`),
 
     getByTeam: (teamId, params = {}) => {
-      const q = new URLSearchParams(params).toString();
-      return this.get(`/api/issues/team/${teamId}${q ? `?${q}` : ''}`);
+      const q = new URLSearchParams({ teamId, ...params }).toString();
+      return this.get(`/api/issues?${q}`);
     },
 
     create: (data) => this.post('/api/issues', data),
@@ -142,17 +137,19 @@ class ApiService {
   };
 
   comments = {
-    getByIssue: (issueId) => this.get(`/api/comments/issue/${issueId}`),
+    getByIssue: (identifier) => this.get(`/api/issues/${identifier}/comments`),
 
-    create: (issueId, content) => this.post(`/api/comments/issue/${issueId}`, { content }),
+    create: (identifier, content) => this.post(`/api/issues/${identifier}/comments`, { content }),
 
-    update: (commentId, content) => this.put(`/api/comments/${commentId}`, { content }),
+    update: (identifier, commentId, content) =>
+      this.put(`/api/issues/${identifier}/comments/${commentId}`, { content }),
 
-    delete: (commentId) => this.delete(`/api/comments/${commentId}`),
+    delete: (identifier, commentId) =>
+      this.delete(`/api/issues/${identifier}/comments/${commentId}`),
   };
 
   issueActivities = {
-    getByIssue: (issueId) => this.get(`/api/activities/issue/${issueId}`),
+    getByIssue: (identifier) => this.get(`/api/issues/${identifier}/activities`),
   };
 }
 

@@ -7,11 +7,6 @@ const sizeClasses = {
   lg: 'text-base font-semibold text-text-primary',
 };
 
-/**
- * Section title text.
- * @param {'sm'|'md'|'lg'} [size='sm']
- * @param {'h2'|'h3'|'div'|'span'} [as='h2']
- */
 function SectionTitle({ size = 'sm', as = 'h2', className, children }) {
   const Component = as;
   return <Component className={cn(sizeClasses[size], className)}>{children}</Component>;
