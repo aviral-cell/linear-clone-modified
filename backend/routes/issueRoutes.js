@@ -7,14 +7,12 @@ import {
   getMyIssues,
   getValidParents,
   toggleSubscribe,
-} from '../controllers/issueController.js';
-import {
   getCommentsByIssue,
   createComment,
   updateComment,
   deleteComment,
-} from '../controllers/commentController.js';
-import { getIssueActivities } from '../controllers/issueActivityController.js';
+  getIssueActivities,
+} from '../controllers/issueController.js';
 import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
