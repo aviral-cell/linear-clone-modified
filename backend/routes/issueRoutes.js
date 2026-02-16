@@ -1,17 +1,17 @@
 import express from 'express';
 import {
-  getIssues,
-  getIssueByIdentifier,
-  createIssue,
-  updateIssue,
   getMyIssues,
+  getIssues,
+  createIssue,
+  getIssueByIdentifier,
+  updateIssue,
   getValidParents,
   toggleSubscribe,
+  getIssueActivities,
   getCommentsByIssue,
   createComment,
   updateComment,
   deleteComment,
-  getIssueActivities,
 } from '../controllers/issueController.js';
 import { authenticate } from '../middleware/auth.js';
 
@@ -19,15 +19,15 @@ const router = express.Router();
 
 router.get('/my-issues', authenticate, getMyIssues);
 router.get('/', authenticate, getIssues);
+router.post('/', authenticate, createIssue);
+router.get('/:identifier', authenticate, getIssueByIdentifier);
+router.put('/:identifier', authenticate, updateIssue);
 router.get('/:identifier/valid-parents', authenticate, getValidParents);
-router.get('/:identifier/comments', authenticate, getCommentsByIssue);
-router.get('/:identifier/activities', authenticate, getIssueActivities);
 router.post('/:identifier/subscribe', authenticate, toggleSubscribe);
+router.get('/:identifier/activities', authenticate, getIssueActivities);
+router.get('/:identifier/comments', authenticate, getCommentsByIssue);
 router.post('/:identifier/comments', authenticate, createComment);
 router.put('/:identifier/comments/:id', authenticate, updateComment);
 router.delete('/:identifier/comments/:id', authenticate, deleteComment);
-router.get('/:identifier', authenticate, getIssueByIdentifier);
-router.post('/', authenticate, createIssue);
-router.put('/:identifier', authenticate, updateIssue);
 
 export default router;
