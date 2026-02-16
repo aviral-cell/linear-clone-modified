@@ -29,7 +29,7 @@ describe('Activity Tracker - Create and Update Issues', function () {
     await connectDatabase();
 
     const dbName = mongoose.connection.db?.databaseName;
-    if (dbName && !dbName.includes('Test')) {
+    if (dbName && !dbName.includes('test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
 
