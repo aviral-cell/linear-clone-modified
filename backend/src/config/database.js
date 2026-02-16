@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const dbName = process.env.NODE_ENV === 'test' ? 'WorkflowDB_Test' : 'WorkflowDB';
+const dbName = process.env.NODE_ENV === 'test' ? 'workflow_db_test' : 'workflow_db';
 
 const connectionString =
   process.env.MONGODB_URI ||
