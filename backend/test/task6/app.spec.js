@@ -1,11 +1,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import app from '../../app.js';
-import connectDatabase from '../../config/database.js';
-import User from '../../models/User.js';
-import ApiLog from '../../models/ApiLog.js';
-import { generateToken } from '../../utils/auth.js';
+import app from '../../src/app.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import ApiLog from '../../src/models/ApiLog.js';
+import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;

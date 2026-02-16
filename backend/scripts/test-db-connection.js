@@ -1,4 +1,4 @@
-import connectDatabase from '../config/database.js';
+import connectDatabase from '../src/config/database.js';
 
 console.log('Testing MongoDB connection...');
 console.log(

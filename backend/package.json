@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prestart": "npm install && node utils/seed.js",
-    "start": "nodemon --delay 2500ms --exec babel-node app.js",
-    "seed": "node utils/seed.js",
+    "prestart": "npm install && node src/utils/seed.js",
+    "start": "nodemon --delay 2500ms --exec babel-node src/app.js",
+    "seed": "node src/utils/seed.js",
     "test:db": "node scripts/test-db-connection.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
