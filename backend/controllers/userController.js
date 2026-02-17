@@ -1,6 +1,20 @@
 import User from '../models/User.js';
+import Team from '../models/Team.js';
 
 export const getAllUsers = async (req, res) => {
-  const users = await User.find().select('-password');
-  res.json({ users });
+  const [users, teamCounts] = await Promise.all([
+    User.find().select('-password'),
+    Team.aggregate([{ $unwind: '$members' }, { $group: { _id: '$members', count: { $sum: 1 } } }]),
+  ]);
+
+  const teamCountMap = Object.fromEntries(
+    teamCounts.map((entry) => [entry._id.toString(), entry.count])
+  );
+
+  const enriched = users.map((user) => ({
+    ...user.toObject(),
+    teamCount: teamCountMap[user._id.toString()] || 0,
+  }));
+
+  res.json({ users: enriched });
 };
