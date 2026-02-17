@@ -10,6 +10,7 @@ export { default as EmptyState } from './EmptyState';
 export { default as LoadingScreen } from './LoadingScreen';
 export { default as IconButton } from './IconButton';
 export { default as IconBadge } from './IconBadge';
+export { default as TeamDisplay } from './TeamDisplay';
 export { default as FieldTrigger } from './FieldTrigger';
 export { default as PropertyField } from './PropertyField';
 export { default as DropdownMenu, PopoverPortal } from './DropdownMenu';

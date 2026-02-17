@@ -15,8 +15,9 @@ const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const MyIssuesPage = lazy(() => import('./pages/MyIssuesPage'));
 const AdminLogsPage = lazy(() => import('./pages/AdminLogsPage'));
-const TeamManagementPage = lazy(() => import('./pages/TeamManagementPage'));
+const TeamsPage = lazy(() => import('./pages/TeamsPage'));
 const TeamDetailPage = lazy(() => import('./pages/TeamDetailPage'));
+const MembersPage = lazy(() => import('./pages/MembersPage'));
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -131,17 +132,27 @@ function App() {
                     element={
                       <PrivateRoute>
                         <Layout>
-                          <TeamManagementPage />
+                          <TeamsPage />
                         </Layout>
                       </PrivateRoute>
                     }
                   />
                   <Route
-                    path="/admin/teams/:identifier"
+                    path="/admin/team/:teamKey/members"
                     element={
                       <PrivateRoute>
                         <Layout>
                           <TeamDetailPage />
+                        </Layout>
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/members"
+                    element={
+                      <PrivateRoute>
+                        <Layout>
+                          <MembersPage />
                         </Layout>
                       </PrivateRoute>
                     }

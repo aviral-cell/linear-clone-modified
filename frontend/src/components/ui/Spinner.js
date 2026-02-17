@@ -7,10 +7,6 @@ const sizeClasses = {
   lg: 'h-6 w-6',
 };
 
-/**
- * Spinner primitive for loading states.
- * @param {'sm'|'md'|'lg'} [size='md']
- */
 function Spinner({ size = 'md', className, ...props }) {
   return (
     <svg

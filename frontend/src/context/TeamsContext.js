@@ -36,46 +36,11 @@ export const TeamsProvider = ({ children }) => {
     }
   }, [token, fetchTeams]);
 
-  const createTeam = async (data) => {
-    const result = await api.teams.create(data);
-    setTeams((prev) => [result.team, ...prev]);
-    return result.team;
-  };
-
-  const updateTeam = async (identifier, data) => {
-    const result = await api.teams.update(identifier, data);
-    setTeams((prev) => prev.map((t) => (t._id === result.team._id ? result.team : t)));
-    return result.team;
-  };
-
-  const deleteTeam = async (identifier) => {
-    await api.teams.remove(identifier);
-    setTeams((prev) => prev.filter((t) => t._id !== identifier && t.key !== identifier));
-  };
-
-  const addMembers = async (identifier, userIds) => {
-    const result = await api.teams.addMembers(identifier, userIds);
-    setTeams((prev) => prev.map((t) => (t._id === result.team._id ? result.team : t)));
-    return result.team;
-  };
-
-  const removeMember = async (identifier, userId) => {
-    const result = await api.teams.removeMember(identifier, userId);
-    setTeams((prev) => prev.map((t) => (t._id === result.team._id ? result.team : t)));
-    return result.team;
-  };
-
   return (
     <TeamsContext.Provider
       value={{
         teams,
         loading,
-        refetch: fetchTeams,
-        createTeam,
-        updateTeam,
-        deleteTeam,
-        addMembers,
-        removeMember,
       }}
     >
       {children}

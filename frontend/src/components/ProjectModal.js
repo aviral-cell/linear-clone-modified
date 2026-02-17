@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, ChevronDown, FolderKanban } from '../icons';
 import { api } from '../services/api';
-import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectProperties from './ProjectProperties';
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   IconBadge,
   IconButton,
   Input,
+  TeamDisplay,
   Textarea,
 } from './ui';
 
@@ -170,44 +170,21 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
                       className={`border-transparent bg-transparent px-0 py-0 text-sm text-text-secondary hover:opacity-80 hover:bg-transparent ${showTeamMenu ? '!border-accent' : ''}`}
                       onClick={() => setShowTeamMenu((prev) => !prev)}
                     >
-                      {(() => {
-                        const { IconComponent, colorClass, icon } =
-                          getTeamIconDisplay(selectedTeamObj);
-                        return (
-                          <IconBadge size="md" className={colorClass}>
-                            {IconComponent ? (
-                              <IconComponent className="w-3 h-3" />
-                            ) : (
-                              <span className="text-xs">{icon}</span>
-                            )}
-                          </IconBadge>
-                        );
-                      })()}
-                      <span>{selectedTeamObj.key}</span>
+                      <TeamDisplay team={selectedTeamObj} size="md" label={selectedTeamObj.key} />
                       <ChevronDown className="w-4 h-4 text-text-tertiary" />
                     </FieldTrigger>
                   }
                 >
-                  {teams.map((team) => {
-                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
-                    return (
-                      <DropdownMenuItem
-                        key={team._id}
-                        onClick={() => handleTeamSelect(team._id)}
-                        selected={selectedTeamObj._id === team._id}
-                        className="flex items-center gap-2"
-                      >
-                        <IconBadge size="md" className={colorClass}>
-                          {IconComponent ? (
-                            <IconComponent className="w-3 h-3" />
-                          ) : (
-                            <span className="text-xs">{icon}</span>
-                          )}
-                        </IconBadge>
-                        <span>{team.name}</span>
-                      </DropdownMenuItem>
-                    );
-                  })}
+                  {teams.map((team) => (
+                    <DropdownMenuItem
+                      key={team._id}
+                      onClick={() => handleTeamSelect(team._id)}
+                      selected={selectedTeamObj._id === team._id}
+                      className="flex items-center gap-2"
+                    >
+                      <TeamDisplay team={team} size="md" label={team.name} />
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenu>
                 <span className="text-text-tertiary">›</span>
                 <span className="text-sm text-text-primary font-medium">
