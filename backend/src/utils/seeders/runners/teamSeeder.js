@@ -6,18 +6,13 @@ export async function seedTeams(users) {
 
   const admin = users.find((u) => u.role === 'admin') || users[0];
   const nonAdmins = users.filter((u) => u._id.toString() !== admin._id.toString());
+  const membersPerTeam = Math.ceil(nonAdmins.length / teamsData.length);
   const insertedTeams = [];
 
   for (let i = 0; i < teamsData.length; i++) {
-    const start = (i * 2) % nonAdmins.length;
-    const memberIds = [admin._id];
-
-    for (let j = 0; j < Math.min(4, nonAdmins.length); j++) {
-      const idx = (start + j) % nonAdmins.length;
-      if (!memberIds.some((id) => id.toString() === nonAdmins[idx]._id.toString())) {
-        memberIds.push(nonAdmins[idx]._id);
-      }
-    }
+    const start = i * membersPerTeam;
+    const slice = nonAdmins.slice(start, start + membersPerTeam);
+    const memberIds = [admin._id, ...slice.map((u) => u._id)];
 
     const team = new Team({
       ...teamsData[i],

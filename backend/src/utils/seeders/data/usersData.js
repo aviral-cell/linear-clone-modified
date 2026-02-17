@@ -51,5 +51,40 @@ export async function getUsersData() {
       name: 'Dakota Wells',
       password,
     },
+    {
+      email: 'sam@workflow.dev',
+      name: 'Sam Nguyen',
+      password,
+    },
+    {
+      email: 'reese@workflow.dev',
+      name: 'Reese Thompson',
+      password,
+    },
+    {
+      email: 'harper@workflow.dev',
+      name: 'Harper Kim',
+      password,
+    },
+    {
+      email: 'skyler@workflow.dev',
+      name: 'Skyler Patel',
+      password,
+    },
+    {
+      email: 'drew@workflow.dev',
+      name: 'Drew Sullivan',
+      password,
+    },
+    {
+      email: 'emery@workflow.dev',
+      name: 'Emery Costa',
+      password,
+    },
+    {
+      email: 'finley@workflow.dev',
+      name: 'Finley Nakamura',
+      password,
+    },
   ];
 }

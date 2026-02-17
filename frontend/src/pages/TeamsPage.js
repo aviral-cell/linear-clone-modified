@@ -6,7 +6,7 @@ import { DataTable, TeamDisplay } from '../components/ui';
 import { Users } from '../icons';
 
 const TABLE_GRID_CLASS =
-  'grid-cols-[18px_minmax(200px,2fr)_minmax(90px,auto)_minmax(80px,auto)_minmax(90px,auto)_12px]';
+  'grid-cols-[18px_minmax(200px,2fr)_minmax(90px,auto)_minmax(90px,auto)_12px]';
 
 const formatDate = (date) => {
   if (!date) return '-';
@@ -62,15 +62,6 @@ const TeamsPage = () => {
                   <span className="flex items-center gap-1.5 text-table-cell font-normal text-text-secondary">
                     <Users className="w-3.5 h-3.5 text-text-tertiary" />
                     {team.members?.length || 0}
-                  </span>
-                ),
-              },
-              {
-                key: 'issues',
-                label: 'Issues',
-                render: (team) => (
-                  <span className="text-table-cell font-normal text-text-secondary">
-                    {team.issueCount ?? 0}
                   </span>
                 ),
               },
