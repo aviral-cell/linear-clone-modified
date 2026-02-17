@@ -9,6 +9,7 @@ const Header = memo(function Header({
   team,
   issueKey,
   projectName,
+  suffix,
   onTeamClick,
   menu,
   actions,
@@ -41,6 +42,7 @@ const Header = memo(function Header({
             team={team}
             issueKey={issueKey}
             projectName={projectName}
+            suffix={suffix}
             onTeamClick={onTeamClick}
             menu={menu}
           />

@@ -24,7 +24,7 @@ export const listProjects = async (filters = {}) => {
   const projects = await Project.find(query)
     .populate({
       path: 'team',
-      select: 'name key icon',
+      select: 'name key icon color',
       populate: {
         path: 'members',
         select: 'name email avatar',
@@ -84,7 +84,7 @@ export const createProject = async (fields, userId) => {
 
   await project.save();
   await project.populate([
-    { path: 'team', select: 'name key icon' },
+    { path: 'team', select: 'name key icon color' },
     { path: 'lead', select: 'name email avatar' },
     { path: 'members', select: 'name email avatar' },
     { path: 'creator', select: 'name email avatar' },
@@ -100,7 +100,7 @@ export const getProjectByIdentifier = async (identifier) => {
   }
 
   await project.populate([
-    { path: 'team', select: 'name key icon' },
+    { path: 'team', select: 'name key icon color' },
     { path: 'lead', select: 'name email avatar' },
     { path: 'members', select: 'name email avatar' },
     { path: 'creator', select: 'name email avatar' },

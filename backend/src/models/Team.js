@@ -18,6 +18,10 @@ const teamSchema = new mongoose.Schema(
       type: String,
       default: '📦',
     },
+    color: {
+      type: String,
+      default: 'bg-gray-600',
+    },
     description: {
       type: String,
       default: '',

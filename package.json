@@ -9,7 +9,7 @@
     "frontend": "cd frontend && npm start",
     "prestart": "bash setup.sh",
     "start": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "seed": "cd backend && node utils/seed.js",
+    "seed": "cd backend && npm run seed",
     "test:task1": "cd backend && npm run test:task1",
     "test:task2": "cd backend && npm run test:task2",
     "test:task3": "cd backend && npm run test:task3",

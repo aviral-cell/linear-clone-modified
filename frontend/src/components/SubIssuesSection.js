@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Circle } from '../icons';
 import { getAvatarColor } from '../utils';
-import { getTeamIconDisplay } from '../utils/teamIcons';
 import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants';
 import { api } from '../services/api';
 import { cn } from '../utils/cn';
@@ -15,6 +14,7 @@ import {
   FieldTrigger,
   IconButton,
   Input,
+  TeamDisplay,
   Textarea,
 } from './ui';
 import IssueCard from './IssueCard';
@@ -120,19 +120,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
 
                 <div className="flex items-center flex-wrap gap-3">
                   <div className="px-3 py-1.5 bg-background-tertiary rounded-md text-sm text-text-secondary flex items-center gap-2">
-                    {(() => {
-                      const { IconComponent, icon } = getTeamIconDisplay(issue.team);
-                      return (
-                        <div className="w-4 h-4 flex items-center justify-center text-text-secondary flex-shrink-0">
-                          {IconComponent ? (
-                            <IconComponent className="w-4 h-4" />
-                          ) : (
-                            <span>{icon}</span>
-                          )}
-                        </div>
-                      );
-                    })()}
-                    <span>{issue.team.key}</span>
+                    <TeamDisplay team={issue.team} size="sm" label={issue.team.key} />
                   </div>
 
                   <DropdownMenu

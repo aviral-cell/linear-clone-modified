@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { getAvatarColor } from '../utils';
-import { getTeamIconDisplay } from '../utils/teamIcons';
 import ProjectModal from '../components/ProjectModal';
 import Header from '../components/Header';
 import {
@@ -13,6 +12,7 @@ import {
   IconBadge,
   LoadingScreen,
   TabNavigation,
+  TeamDisplay,
 } from '../components/ui';
 import { Plus, FolderKanban } from '../icons';
 import { useTeams } from '../hooks';
@@ -293,43 +293,13 @@ const ProjectsPage = () => {
                         key: 'team',
                         label: 'Team',
                         render: (project) =>
-                          project.team ? (
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              {typeof project.team === 'object'
-                                ? (() => {
-                                    const { IconComponent, colorClass, icon } = getTeamIconDisplay(
-                                      project.team
-                                    );
-                                    return (
-                                      <IconBadge
-                                        size="md"
-                                        className={colorClass}
-                                        title={project.team.name || 'Team'}
-                                      >
-                                        {IconComponent ? (
-                                          <IconComponent className="w-3 h-3" />
-                                        ) : (
-                                          <span className="text-xs">{icon}</span>
-                                        )}
-                                      </IconBadge>
-                                    );
-                                  })()
-                                : null}
-                              <span
-                                className="text-table-cell font-normal text-text-secondary truncate"
-                                title={
-                                  typeof project.team === 'object' && project.team.name
-                                    ? project.team.name
-                                    : 'Team'
-                                }
-                              >
-                                {typeof project.team === 'object' && project.team.name
-                                  ? project.team.name
-                                  : typeof project.team === 'object' && project.team.key
-                                    ? project.team.key
-                                    : '-'}
-                              </span>
-                            </div>
+                          project.team && typeof project.team === 'object' ? (
+                            <TeamDisplay
+                              team={project.team}
+                              size="md"
+                              label={project.team.name || project.team.key || '-'}
+                              labelClassName="text-table-cell font-normal text-text-secondary truncate"
+                            />
                           ) : (
                             <span className="text-table-cell font-normal text-text-tertiary">
                               -

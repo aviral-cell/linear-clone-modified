@@ -38,7 +38,7 @@ const handleTeamUpdate = async (project, updates, userId) => {
 
   if (oldTeamId !== newTeamId) {
     project.team = updates.teamId;
-    await project.populate('team', 'name key icon');
+    await project.populate('team', 'name key icon color');
     await createProjectActivity(project._id, userId, 'updated_team', null, project.team);
   }
 };
@@ -137,7 +137,7 @@ export const updateProjectWithTracking = async (project, updates, userId) => {
   await project.save();
 
   await project.populate([
-    { path: 'team', select: 'name key icon' },
+    { path: 'team', select: 'name key icon color' },
     { path: 'lead', select: 'name email avatar' },
     { path: 'members', select: 'name email avatar' },
     { path: 'creator', select: 'name email avatar' },

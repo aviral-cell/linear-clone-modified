@@ -2,9 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarColor } from '../utils';
-import { getTeamIconDisplay } from '../utils/teamIcons';
-import { Avatar, Button, IconBadge, IconButton } from './ui';
-import { Zap, ChevronDown, ChevronRight, List, LogOut, FolderKanban, Shield } from '../icons';
+import { Avatar, Button, IconBadge, IconButton, TeamDisplay } from './ui';
+import {
+  Zap,
+  ChevronDown,
+  ChevronRight,
+  List,
+  LogOut,
+  FolderKanban,
+  Shield,
+  User,
+  Users,
+} from '../icons';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar = ({ teams, isCollapsed, onToggle }) => {
@@ -26,6 +35,9 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     issuesFilter;
   const isMyIssuesPage = location.pathname.startsWith('/my-issues');
   const isAdminLogsPage = location.pathname === '/admin/logs';
+  const isAdminTeamsPage =
+    location.pathname.startsWith('/admin/teams') || location.pathname.startsWith('/admin/team/');
+  const isAdminMembersPage = location.pathname === '/admin/members';
   const [isTeamsSectionExpanded, setIsTeamsSectionExpanded] = useState(true);
   const [expandedTeams, setExpandedTeams] = useState(() => {
     const initial = {};
@@ -107,6 +119,20 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
 
   const handleAdminLogsClick = () => {
     navigate('/admin/logs');
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
+  const handleAdminTeamsClick = () => {
+    navigate('/admin/teams');
+    if (isMobile) {
+      closeSidebar();
+    }
+  };
+
+  const handleAdminMembersClick = () => {
+    navigate('/admin/members');
     if (isMobile) {
       closeSidebar();
     }
@@ -200,8 +226,6 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
           >
             <div className={isCollapsed ? 'ml-0 mt-0.5' : 'ml-2 mt-0.5 space-y-0.5'}>
               {teams.map((team) => {
-                const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
-
                 return (
                   <div key={team._id}>
                     <Button
@@ -220,16 +244,11 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                       }`}
                       title={team.name}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <IconBadge size="lg" className={colorClass}>
-                          {IconComponent ? (
-                            <IconComponent className="w-4 h-4" />
-                          ) : (
-                            <span className="text-sm">{icon}</span>
-                          )}
-                        </IconBadge>
-                        {!isCollapsed && <span>{team.name}</span>}
-                      </div>
+                      <TeamDisplay
+                        team={team}
+                        size="lg"
+                        label={!isCollapsed ? team.name : undefined}
+                      />
                       {!isCollapsed &&
                         (expandedTeams[team._id] ? (
                           <ChevronDown className="w-4 h-4 flex-shrink-0" />
@@ -291,6 +310,38 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
                 Admin
               </span>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAdminTeamsClick}
+              className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
+              } ${
+                isAdminTeamsPage
+                  ? 'text-text-primary bg-background-tertiary rounded-md'
+                  : 'text-text-secondary'
+              }`}
+              title="Teams"
+            >
+              <Users className="w-4 h-4 flex-shrink-0" />
+              {!isCollapsed && <span>Teams</span>}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAdminMembersClick}
+              className={`w-full py-2 hover:bg-background-hover flex items-center gap-3 text-sm transition-colors ${
+                isCollapsed ? 'justify-center px-2' : 'justify-start px-6'
+              } ${
+                isAdminMembersPage
+                  ? 'text-text-primary bg-background-tertiary rounded-md'
+                  : 'text-text-secondary'
+              }`}
+              title="Members"
+            >
+              <User className="w-4 h-4 flex-shrink-0" />
+              {!isCollapsed && <span>Members</span>}
+            </Button>
             <Button
               variant="ghost"
               size="sm"

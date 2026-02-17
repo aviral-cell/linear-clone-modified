@@ -3,7 +3,6 @@ import { ChevronDown, User, Users, CalendarClock, CalendarCheck2 } from '../icon
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getAvatarColor } from '../utils';
-import { getTeamIconDisplay } from '../utils/teamIcons';
 import { projectStatusOptions, priorityOptions } from '../constants';
 import {
   Avatar,
@@ -13,6 +12,7 @@ import {
   FieldTrigger,
   PopoverPortal,
   PropertyField,
+  TeamDisplay,
 } from './ui';
 import { cn } from '../utils/cn';
 
@@ -123,21 +123,7 @@ const ProjectProperties = ({
 
   const renderTeamContent = () => {
     if (project?.team) {
-      const { IconComponent, colorClass, icon } = getTeamIconDisplay(project.team);
-      return (
-        <>
-          <div
-            className={`w-4 h-4 ${colorClass} rounded-md flex items-center justify-center text-white flex-shrink-0`}
-          >
-            {IconComponent ? (
-              <IconComponent className="w-3 h-3" />
-            ) : (
-              <span className="text-xs">{icon}</span>
-            )}
-          </div>
-          <span>{project.team.name}</span>
-        </>
-      );
+      return <TeamDisplay team={project.team} size="sm" label={project.team.name} />;
     }
     return (
       <>
@@ -474,7 +460,6 @@ const ProjectProperties = ({
             }
           >
             {teams.map((team) => {
-              const { IconComponent, colorClass, icon } = getTeamIconDisplay(team);
               const isCurrent = project?.team?._id === team._id;
               return (
                 <DropdownMenuItem
@@ -485,16 +470,7 @@ const ProjectProperties = ({
                     setShowTeamMenu(false);
                   }}
                 >
-                  <div
-                    className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md text-white ${colorClass}`}
-                  >
-                    {IconComponent ? (
-                      <IconComponent className="h-3 w-3" />
-                    ) : (
-                      <span className="text-xs">{icon}</span>
-                    )}
-                  </div>
-                  <span>{team.name}</span>
+                  <TeamDisplay team={team} size="md" label={team.name} />
                 </DropdownMenuItem>
               );
             })}
