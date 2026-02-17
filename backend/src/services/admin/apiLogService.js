@@ -114,4 +114,3 @@ export const getLogById = async (logId) => {
 
   return log;
 };
-

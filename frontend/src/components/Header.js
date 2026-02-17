@@ -47,9 +47,7 @@ const Header = memo(function Header({
         </div>
       </div>
 
-      {actions && (
-        <div className="flex flex-shrink-0 items-center gap-1.5">{actions}</div>
-      )}
+      {actions && <div className="flex flex-shrink-0 items-center gap-1.5">{actions}</div>}
     </header>
   );
 });
