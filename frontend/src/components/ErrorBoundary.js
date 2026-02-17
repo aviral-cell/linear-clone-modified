@@ -1,10 +1,6 @@
 import React from 'react';
 import { Button } from './ui';
 
-/**
- * Error Boundary Component
- * Catches JavaScript errors anywhere in the child component tree and displays a fallback UI
- */
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -99,9 +95,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-/**
- * Higher-order component to wrap components with error boundary
- */
 export const withErrorBoundary = (Component, fallback = null) => {
   const WrappedComponent = (props) => (
     <ErrorBoundary fallback={fallback}>

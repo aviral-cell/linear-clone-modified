@@ -10,6 +10,7 @@ import IssueProperties from '../components/IssueProperties';
 import Header from '../components/Header';
 import {
   Button,
+  ConfirmDialog,
   DetailPanel,
   DropdownMenu,
   DropdownMenuItem,
@@ -17,7 +18,7 @@ import {
   EditableTitle,
   LoadingScreen,
 } from '../components/ui';
-import { Bell, BellOff, Ellipsis, PanelRight, PanelRightClose } from '../icons';
+import { Bell, BellOff, Ellipsis, PanelRight, PanelRightClose, Trash2 } from '../icons';
 import { issueStatusIcons } from '../constants';
 import { useIssue, useUsers } from '../hooks';
 import toast from 'react-hot-toast';
@@ -45,6 +46,7 @@ const IssueDetailPage = () => {
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -112,28 +114,24 @@ const IssueDetailPage = () => {
   }, []);
 
   const fetchComments = useCallback(async () => {
-    if (!issue?._id) return;
+    if (!issue?.identifier) return;
     try {
-      const data = await api.comments.getByIssue(issue._id);
+      const data = await api.comments.getByIssue(issue.identifier);
       setComments(data.comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
-  }, [issue?._id]);
+  }, [issue?.identifier]);
 
-  const fetchActivities = useCallback(
-    async (issueId = null) => {
-      try {
-        const targetIssueId = issueId || issue?._id;
-        if (!targetIssueId) return;
-        const data = await api.issueActivities.getByIssue(targetIssueId);
-        setActivities(data.activities);
-      } catch (error) {
-        console.error('Error fetching activities:', error);
-      }
-    },
-    [issue?._id]
-  );
+  const fetchActivities = useCallback(async () => {
+    if (!issue?.identifier) return;
+    try {
+      const data = await api.issueActivities.getByIssue(issue.identifier);
+      setActivities(data.activities);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  }, [issue?.identifier]);
 
   useEffect(() => {
     if (issue) {
@@ -155,7 +153,7 @@ const IssueDetailPage = () => {
 
       const data = await api.issues.update(identifier, updates);
       toast.success('Issue updated');
-      await fetchActivities(data.issue._id);
+      await fetchActivities();
       await refetch();
     } catch (error) {
       console.error('Error updating issue:', error);
@@ -169,7 +167,7 @@ const IssueDetailPage = () => {
   const handleAddComment = async (content) => {
     setCommentLoading(true);
     try {
-      await api.comments.create(issue._id, content);
+      await api.comments.create(issue.identifier, content);
       fetchComments();
       fetchActivities();
       toast.success('Comment added');
@@ -189,6 +187,16 @@ const IssueDetailPage = () => {
     } catch (error) {
       console.error('Error toggling subscription:', error);
       toast.error('Failed to update subscription');
+    }
+  };
+
+  const handleDeleteIssue = async () => {
+    try {
+      await api.issues.delete(identifier);
+      toast.success('Issue deleted');
+      navigate(`/team/${issue.team.key}/all`);
+    } catch (error) {
+      toast.error('Failed to delete issue');
     }
   };
 
@@ -234,6 +242,15 @@ const IssueDetailPage = () => {
                   <Bell className="h-4 w-4 text-text-secondary" />
                 )}
                 {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setShowDeleteConfirm(true);
+                  setOptionsOpen(false);
+                }}
+              >
+                <Trash2 className="h-4 w-4 text-text-secondary" />
+                Delete issue
               </DropdownMenuItem>
             </DropdownMenu>
           }
@@ -350,6 +367,7 @@ const IssueDetailPage = () => {
             />
 
             <CommentsSection
+              identifier={identifier}
               comments={comments}
               onEditComment={fetchComments}
               onDeleteComment={() => {
@@ -376,6 +394,15 @@ const IssueDetailPage = () => {
           />
         </DetailPanel>
       </div>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteIssue}
+        title="Delete issue"
+        message="This will permanently delete this issue and all its sub-issues, including their comments and activities. This action cannot be undone."
+        confirmLabel="Delete"
+      />
     </div>
   );
 };

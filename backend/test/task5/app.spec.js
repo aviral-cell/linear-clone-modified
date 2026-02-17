@@ -1,12 +1,12 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import app from '../../app.js';
-import connectDatabase from '../../config/database.js';
-import User from '../../models/User.js';
-import Team from '../../models/Team.js';
-import Issue from '../../models/Issue.js';
-import { generateToken } from '../../utils/auth.js';
+import app from '../../src/app.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import Team from '../../src/models/Team.js';
+import Issue from '../../src/models/Issue.js';
+import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -30,7 +30,7 @@ describe('Issue Subscribe Functionality Testing', function () {
     await connectDatabase();
 
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name;
-    if (dbName && !dbName.includes('Test')) {
+    if (dbName && !dbName.includes('test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
 

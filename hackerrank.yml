@@ -2,14 +2,16 @@ version: 1.0
 configuration:
     has_webserver: true
     readonly_paths:
-        - backend/test/*
-        - backend/config/database.js
+        - backend/test/**
+        - backend/src/config/database.js
+        - backend/src/utils/seeders/**
+        - backend/src/utils/seed.js
         - setup.sh
     ide_config:
         default_open_files:
-            - backend/app.js
+            - backend/src/app.js
             - frontend/src/App.js
         project_menu:
             run: npm start
-            install: npm run prestart
+            install: bash setup.sh && cd backend && node src/utils/seed.js
             test: echo "No test command configured"

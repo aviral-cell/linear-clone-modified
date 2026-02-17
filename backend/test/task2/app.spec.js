@@ -1,13 +1,13 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import app from '../../app.js';
-import connectDatabase from '../../config/database.js';
-import User from '../../models/User.js';
-import Team from '../../models/Team.js';
-import Issue from '../../models/Issue.js';
-import IssueActivity from '../../models/IssueActivity.js';
-import { generateToken } from '../../utils/auth.js';
+import app from '../../src/app.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import Team from '../../src/models/Team.js';
+import Issue from '../../src/models/Issue.js';
+import IssueActivity from '../../src/models/IssueActivity.js';
+import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -29,7 +29,7 @@ describe('Activity Tracker - Create and Update Issues', function () {
     await connectDatabase();
 
     const dbName = mongoose.connection.db?.databaseName;
-    if (dbName && !dbName.includes('Test')) {
+    if (dbName && !dbName.includes('test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
 
@@ -320,7 +320,7 @@ describe('Activity Tracker - Create and Update Issues', function () {
 
     const res = await chai
       .request(app)
-      .get(`/api/activities/issue/${issue._id}`)
+      .get(`/api/issues/${issue.identifier}/activities`)
       .set('Authorization', `Bearer ${userToken}`);
 
     expect(res).to.have.status(200);

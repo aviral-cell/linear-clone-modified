@@ -1,7 +1,3 @@
-/**
- * Constants – centralized exports for issue, project, priority, and update status.
- */
-
 export { issueStatusIcons, issueStatusOptions, issueStatusConfig } from './issueStatus';
 
 export { projectStatusIcons, projectStatusOptions } from './projectStatus';

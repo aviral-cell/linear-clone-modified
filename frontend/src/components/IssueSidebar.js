@@ -39,6 +39,7 @@ const IssueSidebar = ({ issue, users, projects = [], parentIssues = [], onUpdate
             {formatDate(issue.createdAt, { relative: true })}
           </div>
         </div>
+
       </div>
     </div>
   );

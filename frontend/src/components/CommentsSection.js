@@ -5,7 +5,7 @@ import { api } from '../services/api';
 import { Avatar, Button, Card, IconButton, Textarea } from './ui';
 import toast from 'react-hot-toast';
 
-const CommentsSection = ({ comments, onEditComment, onDeleteComment }) => {
+const CommentsSection = ({ identifier, comments, onEditComment, onDeleteComment }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState('');
 
@@ -21,7 +21,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment }) => {
     }
 
     try {
-      await api.comments.update(commentId, editContent);
+      await api.comments.update(identifier, commentId, editContent);
       toast.success('Comment updated');
       onEditComment();
       setEditingCommentId(null);
@@ -39,7 +39,7 @@ const CommentsSection = ({ comments, onEditComment, onDeleteComment }) => {
 
   const handleDeleteClick = async (commentId) => {
     try {
-      await api.comments.delete(commentId);
+      await api.comments.delete(identifier, commentId);
       toast.success('Comment deleted');
       onDeleteComment();
     } catch (error) {

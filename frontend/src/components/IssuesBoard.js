@@ -52,7 +52,8 @@ const IssuesBoard = ({
           params.set('creator', advancedFilters.creator.join(','));
         }
         const queryString = params.toString();
-        const url = `/api/issues/team/${team._id}${queryString ? `?${queryString}` : ''}`;
+        const teamParam = `teamId=${team._id}`;
+        const url = `/api/issues?${teamParam}${queryString ? `&${queryString}` : ''}`;
         data = await api.get(url);
       }
 

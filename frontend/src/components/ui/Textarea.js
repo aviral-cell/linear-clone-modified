@@ -17,11 +17,6 @@ const minHeightStyles = {
   none: '',
 };
 
-/**
- * Textarea primitive. Transparent background; use for inline editing and comments.
- * @param {'sm'|'base'} [size='sm']
- * @param {'summary'|'card'|'comment'|'description'|'none'} [minHeight='none'] - semantic min-height
- */
 function Textarea({ size = 'sm', minHeight = 'none', className, ...props }) {
   return (
     <textarea

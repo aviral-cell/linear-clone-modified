@@ -1,14 +1,14 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import app from '../../app.js';
-import connectDatabase from '../../config/database.js';
-import User from '../../models/User.js';
-import Team from '../../models/Team.js';
-import Issue from '../../models/Issue.js';
-import Comment from '../../models/Comment.js';
-import IssueActivity from '../../models/IssueActivity.js';
-import { generateToken } from '../../utils/auth.js';
+import app from '../../src/app.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import Team from '../../src/models/Team.js';
+import Issue from '../../src/models/Issue.js';
+import Comment from '../../src/models/Comment.js';
+import IssueActivity from '../../src/models/IssueActivity.js';
+import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -31,7 +31,7 @@ describe('Issue Comments Functionality Testing', () => {
     await connectDatabase();
 
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name;
-    if (dbName && !dbName.includes('Test')) {
+    if (dbName && !dbName.includes('test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
 
@@ -110,7 +110,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const resAsOwner = await chai
       .request(app)
-      .get(`/api/comments/issue/${issue._id}`)
+      .get(`/api/issues/${issue.identifier}/comments`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
     expect(resAsOwner).to.have.status(200);
@@ -135,7 +135,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const resAsOtherUser = await chai
       .request(app)
-      .get(`/api/comments/issue/${issue._id}`)
+      .get(`/api/issues/${issue.identifier}/comments`)
       .set('Authorization', `Bearer ${otherToken}`);
 
     expect(resAsOtherUser).to.have.status(200);
@@ -171,7 +171,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const res = await chai
       .request(app)
-      .put(`/api/comments/${comment1._id}`)
+      .put(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
       .set('Authorization', `Bearer ${ownerToken}`)
       .send({ content: 'Updated comment' });
 
@@ -195,7 +195,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const res = await chai
       .request(app)
-      .put(`/api/comments/${comment1._id}`)
+      .put(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
       .set('Authorization', `Bearer ${otherToken}`)
       .send({ content: 'Updated comment' });
 
@@ -213,7 +213,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const res = await chai
       .request(app)
-      .delete(`/api/comments/${comment1._id}`)
+      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
       .set('Authorization', `Bearer ${ownerToken}`);
 
     expect(res).to.have.status(200);
@@ -233,7 +233,7 @@ describe('Issue Comments Functionality Testing', () => {
 
     const res = await chai
       .request(app)
-      .delete(`/api/comments/${comment1._id}`)
+      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
       .set('Authorization', `Bearer ${otherToken}`);
 
     expect(res).to.have.status(403);
@@ -253,12 +253,14 @@ describe('Issue Comments Functionality Testing', () => {
 
     const updateRes = await chai
       .request(app)
-      .put(`/api/comments/${comment1._id}`)
+      .put(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
       .send({ content: 'Updated comment' });
 
     expect(updateRes).to.have.status(401);
 
-    const deleteRes = await chai.request(app).delete(`/api/comments/${comment1._id}`);
+    const deleteRes = await chai
+      .request(app)
+      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`);
 
     expect(deleteRes).to.have.status(401);
 

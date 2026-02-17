@@ -11,10 +11,6 @@ const sizeStyles = {
 const baseStyles =
   'rounded-full flex items-center justify-center text-white font-medium flex-shrink-0';
 
-/**
- * Avatar primitive. Use for user/team avatars; pass bg color via className or getAvatarColor().
- * @param {'sm'|'md'|'lg'|'xl'} [size='md']
- */
 const Avatar = memo(function Avatar({ size = 'md', className, children, ...props }) {
   return (
     <div className={cn(baseStyles, sizeStyles[size], className)} role="img" {...props}>

@@ -8,10 +8,7 @@
   box-sizing: border-box;
 }
 
-/* Rounded convention: rounded-md for cards, dropdowns, buttons; rounded-lg for modals and large empty states; rounded-xl for login card. */
-/* Remaining global component classes (layout only): modal-*, overlay-backdrop, dropdown-panel*, sidebar-content*, filter-bar*, page-content, activity-list. Prefer UI primitives (Button, Card, Input, etc.) for components. */
 @layer components {
-  /* Page container patterns */
   .page-container {
     @apply w-full mx-auto px-4 md:px-6 lg:px-8;
   }
@@ -28,7 +25,6 @@
     @apply page-container max-w-none;
   }
 
-  /* Modal and overlay patterns */
   .modal-backdrop {
     @apply fixed inset-0 bg-black/60 flex items-center justify-center z-modal p-4;
   }
@@ -41,11 +37,9 @@
   .overlay-backdrop {
     @apply fixed inset-0 bg-black/50 z-overlay transition-opacity duration-normal;
   }
-  /* Dropdown panels — use design tokens: z-dropdown, min-w-dropdown-* */
   .dropdown-panel {
     @apply absolute top-full left-0 mt-1 bg-background-secondary border border-border rounded-md shadow-lg z-dropdown;
   }
-  /* Portaled dropdown (fixed position, rendered in body) — avoids clipping by sidebar/modal/overflow */
   .dropdown-panel-portaled {
     @apply z-dropdown;
     animation: dropdown-open 0.15s ease-out;
@@ -69,7 +63,6 @@
   .dropdown-panel-alt {
     @apply mt-2 bg-background-tertiary;
   }
-  /* Modal header/footer */
   .modal-header {
     @apply sticky top-0 z-sticky border-b border-border px-6 py-4 flex items-center justify-between;
   }
@@ -85,7 +78,6 @@
   .modal-footer-primary {
     @apply bg-background;
   }
-  /* Sidebars, filter bar, activity, detail panel */
   .sidebar-content {
     @apply w-full h-full p-6;
   }
@@ -108,7 +100,6 @@
     @apply mt-2 mb-4 pl-4 border-l border-border space-y-2;
   }
 
-  /* Responsive visibility helpers */
   .mobile-only {
     @apply block md:hidden;
   }
@@ -122,7 +113,6 @@
     @apply block lg:hidden;
   }
 
-  /* Semantic spacing - stack (vertical) */
   .stack-tight {
     @apply space-y-1;
   }
@@ -139,7 +129,6 @@
     @apply space-y-6;
   }
 
-  /* Semantic spacing - inline (horizontal) */
   .inline-tight {
     @apply space-x-1;
   }
@@ -153,7 +142,6 @@
     @apply space-x-4;
   }
 
-  /* Semantic spacing - gap variants */
   .gap-tight {
     @apply gap-1;
   }
@@ -170,7 +158,6 @@
     @apply gap-6;
   }
 
-  /* Semantic spacing - padding variants */
   .padding-compact {
     @apply p-2;
   }
@@ -235,7 +222,6 @@ code {
   background: theme('colors.border.hover');
 }
 
-/* Restrict transitions to interactive/UI elements to avoid cost on every element */
 button,
 a,
 [role='button'],
@@ -263,7 +249,6 @@ a {
   display: none;
 }
 
-/* React-datepicker dark theme — uses CSS variables for theme consistency */
 .react-datepicker-custom.react-datepicker,
 .react-datepicker.react-datepicker-custom {
   background-color: var(--color-background-secondary) !important;
@@ -412,10 +397,3 @@ a {
   border-top-color: var(--color-border) !important;
   color: var(--color-text-primary) !important;
 }
-
-/* Design system conventions — see frontend/DESIGN_SYSTEM.md for full reference. */
-/* Spacing: px-4 md:px-6 main content; py-4 sections, py-6 larger blocks. Gap: gap-1 tight; gap-1.5 inline; gap-2 default; gap-3 list/footer; gap-4 section. */
-/* Hover: toolbar/header = hover:bg-background-secondary; dropdown = hover:bg-background-tertiary; list/pill = hover:bg-background-hover. */
-/* Transitions: duration-fast (150ms) buttons/tabs; duration-normal (300ms) modals/panels. Z-index: z-sticky, z-overlay, z-modal, z-dropdown. */
-/* Typography: text-xs labels/meta; text-sm body secondary; text-base body primary; text-2xl page title; text-3xl hero. */
-/* Cursor: cursor-pointer clickable; cursor-text editable; cursor-not-allowed disabled. */
