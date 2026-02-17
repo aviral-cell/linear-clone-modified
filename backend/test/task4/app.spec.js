@@ -30,7 +30,7 @@ describe('Advanced Issue Filters Functionality Testing', function () {
     await connectDatabase();
 
     const dbName = mongoose.connection.db?.databaseName || mongoose.connection.name;
-    if (dbName && !dbName.includes('Test')) {
+    if (dbName && !dbName.includes('test')) {
       throw new Error(`Not connected to test database! Connected to: ${dbName}`);
     }
 

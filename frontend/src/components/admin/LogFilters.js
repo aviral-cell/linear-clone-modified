@@ -154,7 +154,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
 
           <div className="border-t border-border my-1" />
 
-
           <div className="relative">
             <button
               onClick={() => toggleSubmenu('dateRange')}
@@ -191,7 +190,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
             )}
           </div>
 
-
           <div className="relative">
             <button
               onClick={() => toggleSubmenu('method')}
@@ -227,7 +225,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
               </div>
             )}
           </div>
-
 
           <div className="relative">
             <button
@@ -297,7 +294,6 @@ const LogFilters = ({ onApplyFilters, onClearFilters }) => {
           </button>
 
           <div className="border-t border-border my-1" />
-
 
           <div className="px-3 py-2 flex gap-2">
             <Button size="sm" onClick={handleApply} className="flex-1">
