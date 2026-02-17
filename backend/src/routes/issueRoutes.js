@@ -6,7 +6,6 @@ import {
   getIssueByIdentifier,
   updateIssue,
   deleteIssue,
-  getMyIssues,
   getValidParents,
   toggleSubscribe,
   getIssueActivities,

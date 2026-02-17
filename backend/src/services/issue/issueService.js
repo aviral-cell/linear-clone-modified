@@ -1,5 +1,5 @@
 import Issue from '../../models/Issue.js';
-import Comment from '../models/Comment.js';
+import Comment from '../../models/Comment.js';
 import IssueActivity from '../../models/IssueActivity.js';
 import Team from '../../models/Team.js';
 import {
@@ -220,6 +220,25 @@ export const updateIssue = async (identifier, updates, userId) => {
   }
 
   return issue;
+};
+
+export const deleteIssue = async (identifier) => {
+  const issue = await Issue.findOne({ identifier });
+  if (!issue) {
+    throw new NotFoundError('Issue not found');
+  }
+
+  const descendantIds = await getDescendants(issue._id);
+  const allIds = [issue._id, ...descendantIds];
+
+  await Comment.deleteMany({ issue: { $in: allIds } });
+  await IssueActivity.deleteMany({ issue: { $in: allIds } });
+  await Issue.deleteMany({ _id: { $in: allIds } });
+
+  return {
+    message: 'Issue deleted successfully',
+    deletedCount: allIds.length,
+  };
 };
 
 export const getValidParents = async (identifier) => {
