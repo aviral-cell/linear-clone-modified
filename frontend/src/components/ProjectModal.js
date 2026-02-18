@@ -140,6 +140,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
         teamId,
         creatorId: creatorId || undefined,
         leadId: leadId || undefined,
+        memberIds: selectedMembers.length > 0 ? selectedMembers : undefined,
         startDate: startDate ? startDate.toISOString() : undefined,
         targetDate: targetDate ? targetDate.toISOString() : undefined,
       };
