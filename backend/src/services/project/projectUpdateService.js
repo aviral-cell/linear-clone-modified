@@ -4,11 +4,24 @@ import { generateProjectIdentifier } from '../../utils/projectUtils.js';
 const handleMemberUpdate = async (project, updates, userId) => {
   if (updates.memberIds === undefined) return;
 
+  const memberIds = [...(updates.memberIds || [])];
+
+  if (updates.leadId !== undefined) {
+    if (updates.leadId && !memberIds.includes(updates.leadId)) {
+      memberIds.push(updates.leadId);
+    }
+  } else if (project.lead) {
+    const leadId = (project.lead._id || project.lead).toString();
+    if (!memberIds.includes(leadId)) {
+      memberIds.push(leadId);
+    }
+  }
+
   const oldMemberIds = (project.members || []).map((m) => m.toString()).sort();
-  const newMemberIds = (updates.memberIds || []).map((id) => id.toString()).sort();
+  const newMemberIds = (memberIds || []).map((id) => id.toString()).sort();
 
   if (JSON.stringify(oldMemberIds) !== JSON.stringify(newMemberIds)) {
-    project.members = updates.memberIds;
+    project.members = memberIds;
     await createProjectActivity(project._id, userId, 'updated_members', oldMemberIds, newMemberIds);
   }
 };
@@ -23,6 +36,12 @@ const handleLeadUpdate = async (project, updates, userId) => {
     project.lead = updates.leadId;
     await project.populate('lead', 'name email avatar');
     if (newLeadId) {
+      if (updates.memberIds === undefined) {
+        const currentMemberIds = (project.members || []).map((m) => m.toString());
+        if (!currentMemberIds.includes(newLeadId)) {
+          project.members = [...project.members, updates.leadId];
+        }
+      }
       await createProjectActivity(project._id, userId, 'updated_lead', null, project.lead);
     } else {
       await createProjectActivity(project._id, userId, 'cleared_lead', oldLeadId, null);
@@ -76,8 +95,8 @@ const handleFieldUpdate = async (project, field, newValue, userId, actionTypes) 
 };
 
 export const updateProjectWithTracking = async (project, updates, userId) => {
-  await handleMemberUpdate(project, updates, userId);
   await handleLeadUpdate(project, updates, userId);
+  await handleMemberUpdate(project, updates, userId);
   await handleTeamUpdate(project, updates, userId);
 
   const { memberIds, leadId, teamId, ...otherUpdates } = updates;

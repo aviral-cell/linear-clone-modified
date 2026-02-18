@@ -67,6 +67,11 @@ export const createProject = async (fields, userId) => {
     throw new BadRequestError('Name and team are required');
   }
 
+  const members = [...(memberIds || [])];
+  if (leadId && !members.includes(leadId)) {
+    members.push(leadId);
+  }
+
   const project = new Project({
     name,
     identifier: generateProjectIdentifier(name),
@@ -76,7 +81,7 @@ export const createProject = async (fields, userId) => {
     priority,
     team: teamId,
     lead: leadId,
-    members: memberIds,
+    members,
     startDate,
     targetDate,
     creator: creatorId || userId,

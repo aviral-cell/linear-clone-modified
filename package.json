@@ -16,7 +16,8 @@
     "test:task4": "cd backend && npm run test:task4",
     "test:task5": "cd backend && npm run test:task5",
     "test:task6": "cd backend && npm run test:task6",
-    "test:task7": "cd backend && npm run test:task7"
+    "test:task7": "cd backend && npm run test:task7",
+    "test:task8": "cd backend && npm run test:task8"
   },
   "dependencies": {
     "concurrently": "9.2.1"

@@ -16,7 +16,8 @@
     "test:task4": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task4.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task4/*.js --exit",
     "test:task5": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task5.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task5/*.js --exit",
     "test:task6": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task6.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task6/*.js --exit",
-    "test:task7": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task7.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task7/*.js --exit"
+    "test:task7": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task7.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task7/*.js --exit",
+    "test:task8": "cross-env NODE_ENV=test PORT=8081 MOCHA_FILE=../output/task8.xml mocha --reporter mocha-multi-reporters --reporter-options configFile=mocha-reporters.json test/task8/*.js --exit"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
