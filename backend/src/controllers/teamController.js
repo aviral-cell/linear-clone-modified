@@ -6,13 +6,13 @@ export const getAllTeams = async (req, res) => {
 };
 
 export const getTeamByIdentifier = async (req, res) => {
-  const identifier = req.params.identifier
+  const identifier = req.params.identifier;
   const team = await teamService.getTeamByIdentifier(identifier);
   res.json({ team });
 };
 
 export const getTeamMembers = async (req, res) => {
-  const identifier = req.params.identifier
+  const identifier = req.params.identifier;
   const members = await teamService.getTeamMembers(identifier);
   res.json({ members });
 };
