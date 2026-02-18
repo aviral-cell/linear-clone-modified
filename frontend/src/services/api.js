@@ -98,6 +98,7 @@ class ApiService {
   teams = {
     getAll: () => this.get('/api/teams'),
     getByIdentifier: (identifier) => this.get(`/api/teams/${identifier}`),
+    getMembers: (identifier) => this.get(`/api/teams/${identifier}/members`),
   };
 
   users = {

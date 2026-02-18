@@ -33,7 +33,7 @@ const ProjectDetailPage = () => {
   const navigate = useNavigate();
   const { projectIdentifier, tab } = useParams();
   const [teams, setTeams] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [project, setProject] = useState(null);
   const [updates, setUpdates] = useState([]);
   const [pendingActivities, setPendingActivities] = useState([]);
@@ -133,9 +133,8 @@ const ProjectDetailPage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [teamsData, usersData] = await Promise.all([api.teams.getAll(), api.users.getAll()]);
+        const teamsData = await api.teams.getAll();
         setTeams(teamsData.teams);
-        setUsers(usersData.users);
       } catch (error) {
         console.error('Error fetching initial data:', error);
       }
@@ -143,6 +142,19 @@ const ProjectDetailPage = () => {
 
     fetchInitialData();
   }, []);
+
+  useEffect(() => {
+    if (!project?.team?._id) return;
+    const fetchTeamMembers = async () => {
+      try {
+        const data = await api.teams.getMembers(project.team._id);
+        setTeamMembers(data.members);
+      } catch (error) {
+        console.error('Error fetching team members:', error);
+      }
+    };
+    fetchTeamMembers();
+  }, [project?.team?._id]);
 
   const fetchProject = React.useCallback(async () => {
     if (!projectIdentifier) return;
@@ -221,7 +233,7 @@ const ProjectDetailPage = () => {
         setProject((prev) => ({ ...prev, priority: updates.priority }));
       }
       if (updates.leadId !== undefined) {
-        const lead = updates.leadId ? users.find((u) => u._id === updates.leadId) : null;
+        const lead = updates.leadId ? teamMembers.find((u) => u._id === updates.leadId) : null;
         setProject((prev) => ({ ...prev, lead: lead || null }));
       }
       if (updates.teamId !== undefined) {
@@ -236,13 +248,16 @@ const ProjectDetailPage = () => {
       }
       if (updates.memberIds !== undefined) {
         const updatedMembers = updates.memberIds
-          .map((id) => users.find((u) => u._id === id))
+          .map((id) => teamMembers.find((u) => u._id === id))
           .filter(Boolean);
         setProject((prev) => ({ ...prev, members: updatedMembers }));
       }
 
       const data = await api.projects.update(project.identifier, updates);
       setProject((prev) => ({ ...prev, ...data.project }));
+      if (data.project.members) {
+        setSelectedMembers(data.project.members.map((m) => m._id || m));
+      }
       setActivitiesRefreshTrigger((prev) => prev + 1);
       toast.success('Project updated');
       if (data.project.identifier && data.project.identifier !== projectIdentifier) {
@@ -306,7 +321,6 @@ const ProjectDetailPage = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="bg-background">
           <Header
-            fallbackText={project.name}
             team={project.team}
             projectName={project.name}
             onTeamClick={() => {
@@ -402,12 +416,12 @@ const ProjectDetailPage = () => {
                     </SectionTitle>
                     <ProjectProperties
                       project={project}
-                      users={users}
+                      users={teamMembers}
                       teams={teams}
                       onUpdate={handleUpdateProject}
                       disabled={saving}
                       variant="horizontal"
-                      showTeam={true}
+                      showTeam={false}
                       showStartDate={true}
                       showTargetDate={true}
                       showStatus={true}
@@ -472,7 +486,7 @@ const ProjectDetailPage = () => {
                       onPostUpdate={handleCreateUpdate}
                       showPostButton={true}
                     />
-                    <ActivityList activities={pendingActivities} users={users} />
+                    <ActivityList activities={pendingActivities} users={teamMembers} />
                   </div>
 
                   {updates.length === 0 ? (
@@ -494,7 +508,7 @@ const ProjectDetailPage = () => {
                             />
                             <ActivityList
                               activities={update.activities}
-                              users={users}
+                              users={teamMembers}
                               updateStatus={update.status}
                             />
                           </div>
@@ -547,7 +561,7 @@ const ProjectDetailPage = () => {
           >
             <ProjectSidebar
               project={project}
-              users={users}
+              users={teamMembers}
               teams={teams}
               onUpdate={handleUpdateProject}
               selectedMembers={selectedMembers}

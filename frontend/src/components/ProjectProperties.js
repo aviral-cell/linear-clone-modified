@@ -80,6 +80,8 @@ const ProjectProperties = ({
     if (onUpdate) await onUpdate({ targetDate: date.toISOString() });
   };
 
+  const activeMemberCount = selectedMembers.filter((id) => users.some((u) => u._id === id)).length;
+
   const toggleMember = (userId) => {
     if (onMembersChange) {
       const newMembers = selectedMembers.includes(userId)
@@ -300,8 +302,8 @@ const ProjectProperties = ({
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-text-tertiary" />
                   <span>
-                    {selectedMembers.length > 0
-                      ? `${selectedMembers.length} member${selectedMembers.length > 1 ? 's' : ''}`
+                    {activeMemberCount > 0
+                      ? `${activeMemberCount} member${activeMemberCount > 1 ? 's' : ''}`
                       : 'No members'}
                   </span>
                 </div>

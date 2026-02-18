@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, ChevronDown, FolderKanban } from '../icons';
 import { api } from '../services/api';
 import ProjectProperties from './ProjectProperties';
@@ -25,24 +25,27 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   const [leadId, setLeadId] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [targetDate, setTargetDate] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showTeamMenu, setShowTeamMenu] = useState(false);
-  useEffect(() => {
-    if (!isOpen) return;
 
-    const fetchUsers = async () => {
+  useEffect(() => {
+    if (!teamId) {
+      setTeamMembers([]);
+      return;
+    }
+    const fetchTeamMembers = async () => {
       try {
-        const data = await api.users.getAll();
-        setUsers(data.users);
+        const data = await api.teams.getMembers(teamId);
+        setTeamMembers(data.members);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching team members:', error);
+        setTeamMembers([]);
       }
     };
-
-    fetchUsers();
-  }, [isOpen]);
+    fetchTeamMembers();
+  }, [teamId]);
 
   useEffect(() => {
     if (initialProject) {
@@ -78,8 +81,8 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
   if (!isOpen) return null;
 
   const selectedTeamObj = teams.find((t) => t._id === teamId) || selectedTeam;
-  const selectedCreator = users.find((u) => u._id === creatorId);
-  const selectedLead = users.find((u) => u._id === leadId);
+  const selectedCreator = teamMembers.find((u) => u._id === creatorId);
+  const selectedLead = teamMembers.find((u) => u._id === leadId);
 
   const tempProject = {
     status,
@@ -115,8 +118,10 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
     }
   };
 
-  const handleTeamSelect = (teamId) => {
-    setTeamId(teamId);
+  const handleTeamSelect = (newTeamId) => {
+    setTeamId(newTeamId);
+    setLeadId('');
+    setSelectedMembers([]);
     setShowTeamMenu(false);
   };
 
@@ -235,7 +240,7 @@ const ProjectModal = ({ isOpen, onClose, teams, initialProject, onSuccess, selec
 
             <ProjectProperties
               project={tempProject}
-              users={users}
+              users={teamMembers}
               teams={teams}
               onUpdate={handlePropertyUpdate}
               disabled={loading}
