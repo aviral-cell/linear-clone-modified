@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Issue Activity Tracker Testing', function () {
+describe('Task 2: Issue Activity Tracker Testing', function () {
   this.timeout(10000);
 
   let user;

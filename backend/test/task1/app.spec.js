@@ -17,7 +17,7 @@ const cleanupModels = async (models = [User, Team, Issue, Comment, IssueActivity
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Comments Access Control Testing', () => {
+describe('Task 1: Comments Access Control Testing', () => {
   let ownerUser;
   let otherUser;
   let ownerToken;
@@ -165,30 +165,6 @@ describe('Comments Access Control Testing', () => {
 
   // --- Update Comment ---
 
-  it('should update a comment successfully when user is owner', async () => {
-    comment1 = new Comment({
-      issue: issue._id,
-      user: ownerUser._id,
-      content: 'Original comment',
-    });
-    await comment1.save();
-
-    const res = await chai
-      .request(app)
-      .put(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
-      .set('Authorization', `Bearer ${ownerToken}`)
-      .send({ content: 'Updated comment' });
-
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('comment');
-    expect(res.body.comment).to.have.property('content', 'Updated comment');
-    expect(res.body.comment).to.have.property('isEdited', true);
-
-    const commentAfterUpdate = await Comment.findById(comment1._id);
-    expect(commentAfterUpdate.isEdited).to.be.true;
-    expect(commentAfterUpdate.content).to.equal('Updated comment');
-  });
-
   it('should return 403 when non-owner tries to update comment', async () => {
     comment1 = new Comment({
       issue: issue._id,
@@ -209,26 +185,6 @@ describe('Comments Access Control Testing', () => {
 
   // --- Delete Comment ---
 
-  it('should delete a comment successfully when user is owner', async () => {
-    comment1 = new Comment({
-      issue: issue._id,
-      user: ownerUser._id,
-      content: 'Comment to delete',
-    });
-    await comment1.save();
-
-    const res = await chai
-      .request(app)
-      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
-      .set('Authorization', `Bearer ${ownerToken}`);
-
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('message', 'Comment deleted successfully');
-
-    const deletedComment = await Comment.findById(comment1._id);
-    expect(deletedComment).to.be.null;
-  });
-
   it('should return 403 when non-owner tries to delete comment', async () => {
     comment1 = new Comment({
       issue: issue._id,
@@ -247,6 +203,43 @@ describe('Comments Access Control Testing', () => {
 
     const existingComment = await Comment.findById(comment1._id);
     expect(existingComment).to.exist;
+  });
+
+  // --- Update and Delete Comment (Owner) ---
+
+  it('should update and delete a comment successfully when user is owner', async () => {
+    comment1 = new Comment({
+      issue: issue._id,
+      user: ownerUser._id,
+      content: 'Original comment',
+    });
+    await comment1.save();
+
+    const updateRes = await chai
+      .request(app)
+      .put(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .send({ content: 'Updated comment' });
+
+    expect(updateRes).to.have.status(200);
+    expect(updateRes.body).to.have.property('comment');
+    expect(updateRes.body.comment).to.have.property('content', 'Updated comment');
+    expect(updateRes.body.comment).to.have.property('isEdited', true);
+
+    const commentAfterUpdate = await Comment.findById(comment1._id);
+    expect(commentAfterUpdate.isEdited).to.be.true;
+    expect(commentAfterUpdate.content).to.equal('Updated comment');
+
+    const deleteRes = await chai
+      .request(app)
+      .delete(`/api/issues/${issue.identifier}/comments/${comment1._id}`)
+      .set('Authorization', `Bearer ${ownerToken}`);
+
+    expect(deleteRes).to.have.status(200);
+    expect(deleteRes.body).to.have.property('message', 'Comment deleted successfully');
+
+    const deletedComment = await Comment.findById(comment1._id);
+    expect(deletedComment).to.be.null;
   });
 
   // --- Authentication ---

@@ -14,7 +14,7 @@ const cleanupModels = async (models = [User, ApiLog]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('API Logger Testing', function () {
+describe('Task 6: API Logger Testing', function () {
   this.timeout(15000);
 
   let adminUser;
