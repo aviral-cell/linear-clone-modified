@@ -17,7 +17,7 @@ const cleanupModels = async (models = [User, Team, Issue, Comment, IssueActivity
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Issue Comments Functionality Testing', () => {
+describe('Comments Access Control Testing', () => {
   let ownerUser;
   let otherUser;
   let ownerToken;
@@ -82,6 +82,8 @@ describe('Issue Comments Functionality Testing', () => {
     await cleanupModels();
     await mongoose.connection.close();
   });
+
+  // --- Ownership ---
 
   it('should return isOwner field correctly for all comments', async () => {
     const comments = [
@@ -161,6 +163,8 @@ describe('Issue Comments Functionality Testing', () => {
     });
   });
 
+  // --- Update Comment ---
+
   it('should update a comment successfully when user is owner', async () => {
     comment1 = new Comment({
       issue: issue._id,
@@ -203,6 +207,8 @@ describe('Issue Comments Functionality Testing', () => {
     expect(res.body).to.have.property('message', 'Not authorized');
   });
 
+  // --- Delete Comment ---
+
   it('should delete a comment successfully when user is owner', async () => {
     comment1 = new Comment({
       issue: issue._id,
@@ -242,6 +248,8 @@ describe('Issue Comments Functionality Testing', () => {
     const existingComment = await Comment.findById(comment1._id);
     expect(existingComment).to.exist;
   });
+
+  // --- Authentication ---
 
   it('should return 401 when update and delete are called without authentication', async () => {
     comment1 = new Comment({

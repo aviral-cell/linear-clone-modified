@@ -17,7 +17,7 @@ const cleanupModels = async (models = [User, Team, Issue, Comment, IssueActivity
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Delete Issue Functionality Testing', function () {
+describe('Delete Issue Testing', function () {
   this.timeout(15000);
 
   let user;
@@ -65,6 +65,8 @@ describe('Delete Issue Functionality Testing', function () {
     await mongoose.connection.close();
   });
 
+  // --- Standalone Delete ---
+
   it('should delete a standalone issue and return deletedCount of 1', async () => {
     const issue = new Issue({
       identifier: 'DEL-1',
@@ -88,6 +90,8 @@ describe('Delete Issue Functionality Testing', function () {
     const found = await Issue.findOne({ identifier: 'DEL-1' });
     expect(found).to.be.null;
   });
+
+  // --- Cascade Delete ---
 
   it('should cascade delete sub-issues when parent is deleted', async () => {
     const parent = new Issue({
@@ -218,6 +222,8 @@ describe('Delete Issue Functionality Testing', function () {
     expect(found.title).to.equal('Unrelated Issue');
   });
 
+  // --- Error Handling ---
+
   it('should return 404 when deleting a non-existent issue', async () => {
     const res = await chai
       .request(app)
@@ -246,6 +252,8 @@ describe('Delete Issue Functionality Testing', function () {
     const found = await Issue.findOne({ identifier: 'DEL-9' });
     expect(found).to.not.be.null;
   });
+
+  // --- Selective Delete ---
 
   it('should only delete the child sub-issue when targeting it, not the parent', async () => {
     const parent = new Issue({

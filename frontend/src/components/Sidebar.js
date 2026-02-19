@@ -148,7 +148,8 @@ const Sidebar = ({ teams, isCollapsed, onToggle }) => {
     `}
     >
       <div
-        className={`h-14 px-4 md:px-6 border-b border-border flex items-center ${isCollapsed ? 'px-4 justify-center' : 'justify-start'}`}
+        onClick={() => navigate('/')}
+        className={`h-14 px-4 md:px-6 border-b border-border flex items-center cursor-pointer ${isCollapsed ? 'px-4 justify-center' : 'justify-start'}`}
       >
         <div
           className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5 justify-start'}`}

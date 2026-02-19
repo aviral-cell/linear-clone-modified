@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Project, ProjectActivity]) =>
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Project Lead Auto-Add to Members', function () {
+describe('Project Lead Auto-Add to Members Testing', function () {
   this.timeout(15000);
 
   let alice, bob, charlie;

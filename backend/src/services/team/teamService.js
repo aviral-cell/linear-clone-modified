@@ -17,7 +17,7 @@ const findTeamByIdentifier = async (identifier) => {
 };
 
 export const getAllTeams = async () => {
-  return Team.find().populate('members', MEMBER_FIELDS).sort({ createdAt: -1 });
+  return Team.find().populate('members', MEMBER_FIELDS).sort({ name: 1 });
 };
 
 export const getTeamByIdentifier = async (identifier) => {

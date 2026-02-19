@@ -85,6 +85,6 @@ const projectSchema = new mongoose.Schema(
 
 projectSchema.index({ team: 1, status: 1 });
 projectSchema.index({ creator: 1, status: 1 });
-projectSchema.index({ identifier: 1 });
+
 
 export default mongoose.model('Project', projectSchema);

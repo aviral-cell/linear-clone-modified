@@ -14,7 +14,7 @@ const cleanupModels = async (models = [User, ApiLog]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('API Logger Functionality Testing', function () {
+describe('API Logger Testing', function () {
   this.timeout(15000);
 
   let adminUser;
@@ -64,6 +64,8 @@ describe('API Logger Functionality Testing', function () {
     await mongoose.connection.close();
   });
 
+  // --- Access Control ---
+
   it('should enforce admin-only access for all log endpoints', async () => {
     const resAdmin = await chai
       .request(app)
@@ -87,6 +89,8 @@ describe('API Logger Functionality Testing', function () {
     expect(resNoAuth).to.have.status(401);
   });
 
+  // --- Automatic Logging ---
+
   it('should create API logs automatically for requests', async () => {
     await ApiLog.deleteMany({});
 
@@ -104,6 +108,8 @@ describe('API Logger Functionality Testing', function () {
     expect(logEntry).to.have.property('responseTime');
     expect(logEntry).to.have.property('timestamp');
   });
+
+  // --- Pagination ---
 
   it('should fetch all logs with correct pagination', async () => {
     const logsData = [
@@ -177,6 +183,8 @@ describe('API Logger Functionality Testing', function () {
     expect(resPaginated.body.pagination).to.have.property('hasPrevPage', false);
   });
 
+  // --- Single Log Retrieval ---
+
   it('should fetch single log by ID and handle errors correctly', async () => {
     const log = await ApiLog.create({
       method: 'GET',
@@ -217,6 +225,8 @@ describe('API Logger Functionality Testing', function () {
     expect(resInvalid.body).to.have.property('message', 'Invalid log ID format');
   });
 
+  // --- Filter by Method ---
+
   it('should filter logs by HTTP method', async () => {
     const logsData = [
       { method: 'POST', path: '/api/test1', statusCode: 201, responseTime: 60 },
@@ -241,6 +251,8 @@ describe('API Logger Functionality Testing', function () {
       expect(log.method).to.equal('POST');
     });
   });
+
+  // --- Filter by Status Code ---
 
   it('should filter logs by status code ranges and exact values', async () => {
     const logsData = [
@@ -299,6 +311,8 @@ describe('API Logger Functionality Testing', function () {
     expect(resExact.body.logs[0].statusCode).to.equal(404);
   });
 
+  // --- Filter by Date Range ---
+
   it('should filter logs by date range', async () => {
     const logsData = [
       {
@@ -351,6 +365,8 @@ describe('API Logger Functionality Testing', function () {
     });
   });
 
+  // --- Filter by User ---
+
   it('should filter logs by user ID', async () => {
     const logsData = [
       {
@@ -392,6 +408,8 @@ describe('API Logger Functionality Testing', function () {
       expect(log.userId).to.equal(adminUser._id.toString());
     });
   });
+
+  // --- Filter by Flags ---
 
   it('should filter logs by isSlow and isError flags', async () => {
     const logsData = [
@@ -454,6 +472,8 @@ describe('API Logger Functionality Testing', function () {
     });
   });
 
+  // --- Search ---
+
   it('should search logs by path, user email, and IP address', async () => {
     const logsData = [
       {
@@ -497,6 +517,8 @@ describe('API Logger Functionality Testing', function () {
     expect(matchingLog.path).to.include('users');
     expect(matchingLog.userEmail).to.equal('specific@example.com');
   });
+
+  // --- Combined Filters ---
 
   it('should apply multiple filters simultaneously', async () => {
     const logsData = [
@@ -542,6 +564,8 @@ describe('API Logger Functionality Testing', function () {
     });
     expect(res.body.logs[0].userId).to.equal(adminUser._id.toString());
   });
+
+  // --- Sorting ---
 
   it('should sort logs by timestamp and responseTime with correct order', async () => {
     const logsData = [
