@@ -204,11 +204,6 @@ export const updateIssue = async (identifier, updates, userId) => {
     });
   });
 
-  Object.assign(issue, updates);
-  await issue.save();
-
-  await issue.populate(ISSUE_POPULATE_DETAIL);
-
   for (const change of changes) {
     const activity = new IssueActivity({
       issue: issue._id,
@@ -218,6 +213,10 @@ export const updateIssue = async (identifier, updates, userId) => {
     });
     await activity.save();
   }
+
+  Object.assign(issue, updates);
+  await issue.save();
+  await issue.populate(ISSUE_POPULATE_DETAIL);
 
   return issue;
 };
