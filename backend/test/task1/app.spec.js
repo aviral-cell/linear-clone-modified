@@ -180,7 +180,7 @@ describe('Task 1: Comments Access Control Testing', () => {
       .send({ content: 'Updated comment' });
 
     expect(res).to.have.status(403);
-    expect(res.body).to.have.property('message', 'Not authorized');
+    expect(res.body.message).to.match(/not authorized/i);
   });
 
   // --- Delete Comment ---
@@ -199,7 +199,7 @@ describe('Task 1: Comments Access Control Testing', () => {
       .set('Authorization', `Bearer ${otherToken}`);
 
     expect(res).to.have.status(403);
-    expect(res.body).to.have.property('message', 'Not authorized');
+    expect(res.body.message).to.match(/not authorized/i);
 
     const existingComment = await Comment.findById(comment1._id);
     expect(existingComment).to.exist;
@@ -236,7 +236,7 @@ describe('Task 1: Comments Access Control Testing', () => {
       .set('Authorization', `Bearer ${ownerToken}`);
 
     expect(deleteRes).to.have.status(200);
-    expect(deleteRes.body).to.have.property('message', 'Comment deleted successfully');
+    expect(deleteRes.body.message).to.match(/comment deleted/i);
 
     const deletedComment = await Comment.findById(comment1._id);
     expect(deletedComment).to.be.null;

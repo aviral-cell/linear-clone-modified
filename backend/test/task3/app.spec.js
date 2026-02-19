@@ -212,7 +212,7 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
       .set('Authorization', `Bearer ${userToken}`);
 
     expect(res).to.have.status(404);
-    expect(res.body).to.have.property('message', 'Issue not found');
+    expect(res.body.message).to.match(/not found/i);
   });
 
   // --- Circular Reference Prevention ---

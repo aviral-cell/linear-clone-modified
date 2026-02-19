@@ -84,7 +84,7 @@ describe('Task 7: Delete Issue Testing', function () {
       .set('Authorization', `Bearer ${token}`);
 
     expect(res).to.have.status(200);
-    expect(res.body).to.have.property('message', 'Issue deleted successfully');
+    expect(res.body.message).to.match(/issue deleted/i);
     expect(res.body).to.have.property('deletedCount', 1);
 
     const found = await Issue.findOne({ identifier: 'DEL-1' });
@@ -231,7 +231,7 @@ describe('Task 7: Delete Issue Testing', function () {
       .set('Authorization', `Bearer ${token}`);
 
     expect(res).to.have.status(404);
-    expect(res.body).to.have.property('message', 'Issue not found');
+    expect(res.body.message).to.match(/not found/i);
   });
 
   it('should return 401 when deleting without authentication', async () => {

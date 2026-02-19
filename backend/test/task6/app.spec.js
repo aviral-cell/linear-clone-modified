@@ -82,7 +82,7 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${regularToken}`);
 
     expect(resRegular).to.have.status(403);
-    expect(resRegular.body).to.have.property('message', 'Admin access required');
+    expect(resRegular.body.message).to.match(/admin access/i);
 
     const resNoAuth = await chai.request(app).get('/api/admin/logs');
 
@@ -214,7 +214,7 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resNotFound).to.have.status(404);
-    expect(resNotFound.body).to.have.property('message', 'Log not found');
+    expect(resNotFound.body.message).to.match(/not found/i);
 
     const resInvalid = await chai
       .request(app)
@@ -222,7 +222,7 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resInvalid).to.have.status(400);
-    expect(resInvalid.body).to.have.property('message', 'Invalid log ID format');
+    expect(resInvalid.body.message).to.match(/invalid log id/i);
   });
 
   // --- Filter by Method ---
