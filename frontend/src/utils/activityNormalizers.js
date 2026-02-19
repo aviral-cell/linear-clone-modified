@@ -81,7 +81,7 @@ const buildIssueActivityMessage = (action, changes, options = {}) => {
   const { users = [], projects = [], parentIssues = [] } = options;
   const actionText = toDisplayAction(action);
 
-  const simpleActions = ['updated_description', 'updated_title', 'added_comment'];
+  const simpleActions = ['updated_description', 'updated_title', 'added_comment', 'updated_comment', 'deleted_comment'];
   if (simpleActions.some((a) => action.includes(a))) {
     return actionText;
   }
