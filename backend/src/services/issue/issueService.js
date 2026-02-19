@@ -5,7 +5,6 @@ import Team from '../../models/Team.js';
 import {
   validateParentChange,
   getValidParentCandidates,
-  getDescendants,
   getDepth,
   getMaxSubtreeDepth,
   MAX_DEPTH,
@@ -225,7 +224,7 @@ export const deleteIssue = async (identifier) => {
     throw new NotFoundError('Issue not found');
   }
 
-  const descendantIds = await getDescendants(issue._id);
+  const descendantIds = await getDescendantsForDelete(issue._id);
   const allIds = [issue._id, ...descendantIds];
 
   await Comment.deleteMany({ issue: { $in: allIds } });
@@ -236,6 +235,29 @@ export const deleteIssue = async (identifier) => {
     message: 'Issue deleted successfully',
     deletedCount: allIds.length,
   };
+};
+
+const getDescendantsForDelete = async (issueId, visited = new Set()) => {
+  if (visited.has(issueId.toString())) {
+    return [];
+  }
+  visited.add(issueId.toString());
+
+  const children = await Issue.find({ parent: issueId }).select('_id');
+
+  if (children.length === 0) {
+    return [];
+  }
+
+  const descendants = [];
+
+  for (const child of children) {
+    descendants.push(child._id);
+    const childDescendants = await getDescendantsForDelete(child._id, visited);
+    descendants.push(...childDescendants);
+  }
+
+  return descendants;
 };
 
 export const getValidParents = async (identifier) => {
