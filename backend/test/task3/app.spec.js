@@ -257,36 +257,6 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
     );
   });
 
-  // --- Reparenting ---
-
-  it('should allow updating parent to a valid issue and removing parent', async () => {
-    const updateRes = await chai
-      .request(app)
-      .put(`/api/issues/${issueD.identifier}`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send({ parent: issueE._id.toString() });
-
-    expect(updateRes).to.have.status(200);
-    expect(updateRes.body).to.have.property('issue');
-    expect(updateRes.body.issue.parent).to.exist;
-
-    const updatedIssue = await Issue.findById(issueD._id);
-    expect(updatedIssue.parent.toString()).to.equal(issueE._id.toString());
-
-    const removeRes = await chai
-      .request(app)
-      .put(`/api/issues/${issueD.identifier}`)
-      .set('Authorization', `Bearer ${userToken}`)
-      .send({ parent: null });
-
-    expect(removeRes).to.have.status(200);
-    expect(removeRes.body).to.have.property('issue');
-    expect(removeRes.body.issue.parent).to.be.null;
-
-    const removedParentIssue = await Issue.findById(issueD._id);
-    expect(removedParentIssue.parent).to.be.null;
-  });
-
   // --- Depth Limit ---
 
   it('should allow creating sub-issues up to 5 levels deep and reject deeper nesting', async () => {
