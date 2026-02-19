@@ -7,17 +7,16 @@ import { cn } from '../utils/cn';
 import { LayoutList, LayoutPanelLeft, UserPlus, FileText, Bell } from '../icons';
 
 const MyIssuesPage = () => {
-  const [filter, setFilter] = useState('assigned');
-  const [viewMode, setViewMode] = useState('columns');
-  const [issuesRefreshTrigger] = useState(0);
   const { issuesFilter } = useParams();
   const navigate = useNavigate();
+  const [filter, setFilter] = useState(issuesFilter || 'assigned');
+  const [viewMode, setViewMode] = useState('columns');
+  const [issuesRefreshTrigger] = useState(0);
 
   useEffect(() => {
     if (issuesFilter) {
       setFilter(issuesFilter);
     } else {
-      setFilter('assigned');
       navigate('/my-issues/assigned', { replace: true });
     }
   }, [issuesFilter, navigate]);

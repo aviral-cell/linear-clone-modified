@@ -60,7 +60,7 @@ const IssuesBoard = ({
       setIssues(data.issues);
     } catch (error) {
       console.error('Error fetching issues:', error);
-      toast.error('Failed to fetch issues');
+      setIssues([]);
     } finally {
       setLoading(false);
     }

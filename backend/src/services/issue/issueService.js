@@ -22,9 +22,7 @@ export const getMyIssues = async (userId, filter) => {
   } else if (filter === 'subscribed') {
     query = { subscribers: userId };
   } else {
-    query = {
-      $or: [{ creator: userId }, { assignee: userId }],
-    };
+    throw new BadRequestError('Filter is required');
   }
 
   const issues = await Issue.find(query).populate(ISSUE_POPULATE).sort({ createdAt: -1 });
