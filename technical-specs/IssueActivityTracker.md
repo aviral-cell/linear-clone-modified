@@ -203,14 +203,14 @@ Error Responses:
 
 ---
 
-**3. GET /api/activities/issue/:issueId**
+**3. GET /api/issues/:identifier/activities**
 
 Purpose: Retrieve all activity records for a specific issue, sorted by creation date (newest first)
 
 Auth: Required (Bearer token)
 
 Path Parameters:
-- `issueId` (required): The ID of the issue
+- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
 
 Success Response (200):
 
