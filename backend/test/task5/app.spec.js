@@ -15,7 +15,7 @@ const cleanupModels = async (models = [User, Team, Issue]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Issue Subscribe Functionality Testing', function () {
+describe('Issue Subscribe Testing', function () {
   this.timeout(15000);
 
   let userA;
@@ -84,6 +84,8 @@ describe('Issue Subscribe Functionality Testing', function () {
     await mongoose.connection.close();
   });
 
+  // --- Toggle Subscribe ---
+
   it('should subscribe a user to an issue and unsubscribe on second toggle', async () => {
     const subscribeRes = await chai
       .request(app)
@@ -108,6 +110,8 @@ describe('Issue Subscribe Functionality Testing', function () {
     const issueAfterUnsubscribe = await Issue.findById(issue._id);
     expect(issueAfterUnsubscribe.subscribers).to.have.lengthOf(0);
   });
+
+  // --- Multi-User Subscribe ---
 
   it('should allow multiple users to subscribe independently', async () => {
     const resA = await chai
@@ -146,6 +150,8 @@ describe('Issue Subscribe Functionality Testing', function () {
     expect(issueAfter.subscribers[0].toString()).to.equal(userB._id.toString());
   });
 
+  // --- Error Handling ---
+
   it('should return 404 when toggling subscribe on a non-existent issue', async () => {
     const res = await chai
       .request(app)
@@ -155,6 +161,8 @@ describe('Issue Subscribe Functionality Testing', function () {
     expect(res).to.have.status(404);
     expect(res.body).to.have.property('message', 'Issue not found');
   });
+
+  // --- Issue Detail Response ---
 
   it('should return isSubscribed boolean in issue details response', async () => {
     const detailBefore = await chai
@@ -188,6 +196,8 @@ describe('Issue Subscribe Functionality Testing', function () {
     expect(detailAsUserB).to.have.status(200);
     expect(detailAsUserB.body).to.have.property('isSubscribed', false);
   });
+
+  // --- My Issues Filter ---
 
   it('should return subscribed issues via my-issues API with subscribed filter', async () => {
     const issue2 = new Issue({

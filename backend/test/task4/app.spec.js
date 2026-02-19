@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Advanced Issue Filters Functionality Testing', function () {
+describe('Advanced Issue Filters Testing', function () {
   this.timeout(15000);
 
   let userA;
@@ -138,6 +138,8 @@ describe('Advanced Issue Filters Functionality Testing', function () {
     await mongoose.connection.close();
   });
 
+  // --- Single Filter ---
+
   it('should filter issues by single and multiple comma-separated status values', async () => {
     const singleRes = await chai
       .request(app)
@@ -245,6 +247,8 @@ describe('Advanced Issue Filters Functionality Testing', function () {
     expect(identifiers).to.include.members(['FLT-2', 'FLT-5']);
   });
 
+  // --- Combined Filters ---
+
   it('should apply multiple filters simultaneously and return empty array when no match', async () => {
     const combinedRes = await chai
       .request(app)
@@ -268,6 +272,8 @@ describe('Advanced Issue Filters Functionality Testing', function () {
     expect(emptyRes).to.have.status(200);
     expect(emptyRes.body.issues).to.be.an('array').with.lengthOf(0);
   });
+
+  // --- No Filters ---
 
   it('should return all team issues with populated fields when no filters are applied', async () => {
     const res = await chai

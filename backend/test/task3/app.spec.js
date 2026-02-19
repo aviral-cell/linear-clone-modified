@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', function () {
+describe('Sub Issue Hierarchy Testing', function () {
   this.timeout(15000);
 
   let user;
@@ -144,6 +144,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     await mongoose.connection.close();
   });
 
+  // --- Valid Parent Candidates ---
+
   it('should return valid parent candidates excluding self and all descendants', async () => {
     const res = await chai
       .request(app)
@@ -201,6 +203,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     expect(validIdentifiers).to.not.include('TEST-5');
   });
 
+  // --- Error Handling ---
+
   it('should return 404 for non-existent issue identifier', async () => {
     const res = await chai
       .request(app)
@@ -210,6 +214,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     expect(res).to.have.status(404);
     expect(res.body).to.have.property('message', 'Issue not found');
   });
+
+  // --- Circular Reference Prevention ---
 
   it('should reject setting an issue as its own parent (self-parenting)', async () => {
     const res = await chai
@@ -251,6 +257,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     );
   });
 
+  // --- Reparenting ---
+
   it('should allow updating parent to a valid issue and removing parent', async () => {
     const updateRes = await chai
       .request(app)
@@ -278,6 +286,8 @@ describe('Sub-Issue Hierarchy - N-Level Deep & Circular Reference Prevention', f
     const removedParentIssue = await Issue.findById(issueD._id);
     expect(removedParentIssue.parent).to.be.null;
   });
+
+  // --- Depth Limit ---
 
   it('should allow creating sub-issues up to 5 levels deep and reject deeper nesting', async () => {
     const createRes = await chai

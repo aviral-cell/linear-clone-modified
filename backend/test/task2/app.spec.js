@@ -16,7 +16,7 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
-describe('Activity Tracker - Create and Update Issues', function () {
+describe('Issue Activity Tracker Testing', function () {
   this.timeout(10000);
 
   let user;
@@ -75,6 +75,8 @@ describe('Activity Tracker - Create and Update Issues', function () {
     await mongoose.connection.close();
   });
 
+  // --- Create Issue Activity ---
+
   it('should create an activity with action "created" when an issue is created', async () => {
     const issueData = {
       title: 'Test Issue',
@@ -106,6 +108,8 @@ describe('Activity Tracker - Create and Update Issues', function () {
     expect(activities[0].issue.toString()).to.equal(createdIssue._id.toString());
     expect(activities[0].changes?.field).to.be.undefined;
   });
+
+  // --- Update Field Activities ---
 
   it('should create activities with action "updated_title" and "updated_description" when issue title and description are updated', async () => {
     await Issue.findByIdAndUpdate(issue._id, {
@@ -246,6 +250,8 @@ describe('Activity Tracker - Create and Update Issues', function () {
     expect(activities[0].user.toString()).to.equal(user._id.toString());
   });
 
+  // --- Multiple Field Updates ---
+
   it('should create multiple activities when multiple fields are updated simultaneously', async () => {
     await Issue.findByIdAndUpdate(issue._id, {
       title: 'Original Title',
@@ -297,6 +303,8 @@ describe('Activity Tracker - Create and Update Issues', function () {
     expect(titleActivity.changes).to.have.property('newValue', 'Updated Title');
   });
 
+  // --- Activity Ordering ---
+
   it('should return activities ordered by latest even when activities are created at the same time', async () => {
     const activity1 = new IssueActivity({
       issue: issue._id,
@@ -332,6 +340,8 @@ describe('Activity Tracker - Create and Update Issues', function () {
     expect(actions[0]).to.equal('updated_priority');
     expect(actions[1]).to.equal('updated_status');
   });
+
+  // --- No-Change Handling ---
 
   it('should create an activity for a changed field but not when updated to the same value', async () => {
     await Issue.findByIdAndUpdate(issue._id, { status: 'todo' });
