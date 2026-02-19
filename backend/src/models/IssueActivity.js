@@ -23,6 +23,7 @@ const issueActivitySchema = new mongoose.Schema(
         'updated_title',
         'updated_description',
         'added_comment',
+        'updated_comment',
         'deleted_comment',
         'added_label',
         'removed_label',

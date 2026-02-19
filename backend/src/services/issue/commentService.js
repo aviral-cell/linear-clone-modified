@@ -74,6 +74,13 @@ export const updateComment = async (commentId, content, userId) => {
   await comment.save();
   await comment.populate('user', 'name email avatar');
 
+  const activity = new IssueActivity({
+    issue: comment.issue,
+    user: userId,
+    action: 'updated_comment',
+  });
+  await activity.save();
+
   return comment;
 };
 
