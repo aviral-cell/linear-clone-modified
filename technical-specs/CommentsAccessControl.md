@@ -8,14 +8,14 @@ Currently, the comments functionality has some missing features and authorizatio
 
 ## Expected API Behavior
 
-**1. GET /api/comments/issue/:issueId**
+**1. GET /api/issues/:identifier/comments**
 
 Purpose: Retrieve all comments for a specific issue with ownership information
 
 Auth: Required (Bearer token)
 
 Path Parameters:
-- `issueId` (required): The ID of the issue
+- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
 
 Success Response (200):
 
@@ -50,13 +50,14 @@ Error Responses:
 - 500 - Server error
 ---
 
-**2. PUT /api/comments/:id**
+**2. PUT /api/issues/:identifier/comments/:id**
 
 Purpose: Update an existing comment's content
 
 Auth: Required (Bearer token)
 
 Path Parameters:
+- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
 - `id` (required): The ID of the comment to update
 
 Request Body:
@@ -118,13 +119,14 @@ Error Responses:
 - 500 - Server error
 ---
 
-**3. DELETE /api/comments/:id**
+**3. DELETE /api/issues/:identifier/comments/:id**
 
 Purpose: Delete a comment
 
 Auth: Required (Bearer token)
 
 Path Parameters:
+- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
 - `id` (required): The ID of the comment to delete
 
 Success Response (200):

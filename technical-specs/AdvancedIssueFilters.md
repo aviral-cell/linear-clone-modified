@@ -8,16 +8,14 @@ Currently, the team issues endpoint returns all issues for a team without any fi
 
 ## Expected API Behavior
 
-**1. GET /api/issues/team/:teamId**
+**1. GET /api/issues**
 
-Purpose: Retrieve issues for a specific team with optional filtering by multiple criteria
+Purpose: Retrieve issues with optional filtering by team and multiple criteria
 
 Auth: Required (Bearer token)
 
-Path Parameters:
-- `teamId` (required): The ID of the team
-
 Query Parameters (all optional):
+- `teamId` (string): Filter by team ID
 - `status` (string): Filter by issue status. Supports single value or comma-separated multiple values
 - `priority` (string): Filter by issue priority. Supports single value or comma-separated multiple values
 - `assignee` (string): Filter by assignee user ID
