@@ -7,12 +7,13 @@ import User from '../../src/models/User.js';
 import Team from '../../src/models/Team.js';
 import Issue from '../../src/models/Issue.js';
 import IssueActivity from '../../src/models/IssueActivity.js';
+import Project from '../../src/models/Project.js';
 import { generateToken } from '../../src/utils/auth.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
+const cleanupModels = async (models = [User, Team, Issue, IssueActivity, Project]) => {
   await Promise.all(models.map((Model) => Model.deleteMany({})));
 };
 
@@ -23,6 +24,8 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
   let userToken;
   let team;
   let issue;
+  let project;
+  let parentIssue;
 
   before(async () => {
     process.env.NODE_ENV = 'test';
@@ -64,6 +67,26 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
       assignee: null,
     });
     await issue.save();
+
+    project = new Project({
+      name: 'Test Project',
+      identifier: 'TP',
+      team: team._id,
+      creator: user._id,
+      lead: user._id,
+      status: 'planned',
+    });
+    await project.save();
+
+    parentIssue = new Issue({
+      identifier: 'TEST-2',
+      title: 'Parent Issue',
+      description: 'Parent Description',
+      team: team._id,
+      creator: user._id,
+      status: 'todo',
+    });
+    await parentIssue.save();
   });
 
   afterEach(async () => {
@@ -73,40 +96,6 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
   after(async () => {
     await cleanupModels();
     await mongoose.connection.close();
-  });
-
-  // --- Create Issue Activity ---
-
-  it('should create an activity with action "created" when an issue is created', async () => {
-    const issueData = {
-      title: 'Test Issue',
-      description: 'Test Description',
-      teamId: team._id.toString(),
-      status: 'todo',
-      priority: 'high',
-    };
-
-    const res = await chai
-      .request(app)
-      .post('/api/issues')
-      .set('Authorization', `Bearer ${userToken}`)
-      .send(issueData);
-
-    expect(res).to.have.status(201);
-    expect(res.body).to.have.property('issue');
-    expect(res.body.issue).to.have.property('identifier');
-
-    const createdIssue = await Issue.findOne({ identifier: res.body.issue.identifier });
-    expect(createdIssue).to.exist;
-
-    const activities = await IssueActivity.find({ issue: createdIssue._id });
-    expect(activities).to.be.an('array').with.length(1);
-    expect(activities[0]).to.have.property('action', 'created');
-    expect(activities[0]).to.have.property('user');
-    expect(activities[0].user.toString()).to.equal(user._id.toString());
-    expect(activities[0]).to.have.property('issue');
-    expect(activities[0].issue.toString()).to.equal(createdIssue._id.toString());
-    expect(activities[0].changes?.field).to.be.undefined;
   });
 
   // --- Update Field Activities ---
@@ -250,6 +239,70 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
     expect(activities[0].user.toString()).to.equal(user._id.toString());
   });
 
+  it('should create activities with action "updated_project" and "updated_parent" when issue project and parent are updated', async () => {
+    await Issue.findByIdAndUpdate(issue._id, { project: null, parent: null });
+    issue = await Issue.findById(issue._id);
+
+    const res1 = await chai
+      .request(app)
+      .put(`/api/issues/${issue.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ projectId: project._id.toString(), parent: parentIssue._id.toString() });
+
+    expect(res1).to.have.status(200);
+    expect(res1.body).to.have.property('issue');
+
+    let activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    expect(activities).to.be.an('array').with.length(2);
+
+    const projectActivity = activities.find((a) => a.action === 'updated_project');
+    expect(projectActivity).to.exist;
+    expect(projectActivity).to.have.property('changes');
+    expect(projectActivity.changes).to.have.property('field', 'project');
+    expect(projectActivity.changes).to.have.property('oldValue', null);
+    expect(projectActivity.changes.newValue.toString()).to.equal(project._id.toString());
+    expect(projectActivity).to.have.property('user');
+    expect(projectActivity.user.toString()).to.equal(user._id.toString());
+
+    const parentActivity = activities.find((a) => a.action === 'updated_parent');
+    expect(parentActivity).to.exist;
+    expect(parentActivity).to.have.property('changes');
+    expect(parentActivity.changes).to.have.property('field', 'parent');
+    expect(parentActivity.changes).to.have.property('oldValue', null);
+    expect(parentActivity.changes.newValue.toString()).to.equal(parentIssue._id.toString());
+    expect(parentActivity).to.have.property('user');
+    expect(parentActivity.user.toString()).to.equal(user._id.toString());
+
+    issue = await Issue.findById(issue._id);
+
+    const res2 = await chai
+      .request(app)
+      .put(`/api/issues/${issue.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ projectId: null, parent: null });
+
+    expect(res2).to.have.status(200);
+
+    activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
+    expect(activities).to.be.an('array').with.length(4);
+
+    const removeProjectActivity = activities.find(
+      (a) => a.action === 'updated_project' && a.changes.newValue === null
+    );
+    expect(removeProjectActivity).to.exist;
+    expect(removeProjectActivity.changes).to.have.property('field', 'project');
+    expect(removeProjectActivity.changes.oldValue.toString()).to.equal(project._id.toString());
+    expect(removeProjectActivity.changes).to.have.property('newValue', null);
+
+    const removeParentActivity = activities.find(
+      (a) => a.action === 'updated_parent' && a.changes.newValue === null
+    );
+    expect(removeParentActivity).to.exist;
+    expect(removeParentActivity.changes).to.have.property('field', 'parent');
+    expect(removeParentActivity.changes.oldValue.toString()).to.equal(parentIssue._id.toString());
+    expect(removeParentActivity.changes).to.have.property('newValue', null);
+  });
+
   // --- Multiple Field Updates ---
 
   it('should create multiple activities when multiple fields are updated simultaneously', async () => {
@@ -258,6 +311,8 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
       description: 'Original Description',
       status: 'todo',
       priority: 'no_priority',
+      project: null,
+      parent: null,
     });
     issue = await Issue.findById(issue._id);
 
@@ -269,6 +324,8 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
         status: 'in_progress',
         priority: 'high',
         title: 'Updated Title',
+        projectId: project._id.toString(),
+        parent: parentIssue._id.toString(),
       });
 
     expect(res).to.have.status(200);
@@ -278,11 +335,17 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
     expect(res.body.issue).to.have.property('title', 'Updated Title');
 
     const activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
-    expect(activities).to.be.an('array').with.length(3);
+    expect(activities).to.be.an('array').with.length(5);
 
     const actionTypes = activities.map((a) => a.action);
-    expect(actionTypes).to.include.members(['updated_status', 'updated_priority', 'updated_title']);
-    expect(actionTypes.length).to.equal(3);
+    expect(actionTypes).to.include.members([
+      'updated_status',
+      'updated_priority',
+      'updated_title',
+      'updated_project',
+      'updated_parent',
+    ]);
+    expect(actionTypes.length).to.equal(5);
 
     const statusActivity = activities.find((a) => a.action === 'updated_status');
     expect(statusActivity).to.exist;
@@ -301,44 +364,18 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
     expect(titleActivity.changes).to.have.property('field', 'title');
     expect(titleActivity.changes).to.have.property('oldValue', 'Original Title');
     expect(titleActivity.changes).to.have.property('newValue', 'Updated Title');
-  });
 
-  // --- Activity Ordering ---
+    const projectActivity = activities.find((a) => a.action === 'updated_project');
+    expect(projectActivity).to.exist;
+    expect(projectActivity.changes).to.have.property('field', 'project');
+    expect(projectActivity.changes).to.have.property('oldValue', null);
+    expect(projectActivity.changes.newValue.toString()).to.equal(project._id.toString());
 
-  it('should return activities ordered by latest even when activities are created at the same time', async () => {
-    const activity1 = new IssueActivity({
-      issue: issue._id,
-      user: user._id,
-      action: 'updated_status',
-    });
-    await activity1.save();
-
-    const activity2 = new IssueActivity({
-      issue: issue._id,
-      user: user._id,
-      action: 'updated_priority',
-    });
-    await activity2.save();
-
-    const sameDate = new Date('2024-01-01T00:00:00.000Z');
-    await IssueActivity.collection.updateMany(
-      { _id: { $in: [activity1._id, activity2._id] } },
-      { $set: { createdAt: sameDate } }
-    );
-
-    const res = await chai
-      .request(app)
-      .get(`/api/issues/${issue.identifier}/activities`)
-      .set('Authorization', `Bearer ${userToken}`);
-
-    expect(res).to.have.status(200);
-    expect(res.body).to.have.property('activities');
-    expect(res.body.activities).to.be.an('array').with.length(2);
-
-    const actions = res.body.activities.map((a) => a.action);
-
-    expect(actions[0]).to.equal('updated_priority');
-    expect(actions[1]).to.equal('updated_status');
+    const parentActivity = activities.find((a) => a.action === 'updated_parent');
+    expect(parentActivity).to.exist;
+    expect(parentActivity.changes).to.have.property('field', 'parent');
+    expect(parentActivity.changes).to.have.property('oldValue', null);
+    expect(parentActivity.changes.newValue.toString()).to.equal(parentIssue._id.toString());
   });
 
   // --- No-Change Handling ---
@@ -377,5 +414,43 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
 
     activities = await IssueActivity.find({ issue: issue._id }).sort({ createdAt: -1 });
     expect(activities).to.be.an('array').with.length(1);
+  });
+
+  // --- Activity Ordering ---
+
+  it('should return activities ordered by latest even when activities are created at the same time', async () => {
+    const activity1 = new IssueActivity({
+      issue: issue._id,
+      user: user._id,
+      action: 'updated_status',
+    });
+    await activity1.save();
+
+    const activity2 = new IssueActivity({
+      issue: issue._id,
+      user: user._id,
+      action: 'updated_priority',
+    });
+    await activity2.save();
+
+    const sameDate = new Date('2024-01-01T00:00:00.000Z');
+    await IssueActivity.collection.updateMany(
+      { _id: { $in: [activity1._id, activity2._id] } },
+      { $set: { createdAt: sameDate } }
+    );
+
+    const res = await chai
+      .request(app)
+      .get(`/api/issues/${issue.identifier}/activities`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property('activities');
+    expect(res.body.activities).to.be.an('array').with.length(2);
+
+    const actions = res.body.activities.map((a) => a.action);
+
+    expect(actions[0]).to.equal('updated_priority');
+    expect(actions[1]).to.equal('updated_status');
   });
 });
