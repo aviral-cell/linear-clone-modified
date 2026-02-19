@@ -28,8 +28,10 @@ const CreateIssueModal = ({
   const [priority, setPriority] = useState('no_priority');
   const [assignee, setAssignee] = useState('');
   const [projectId, setProjectId] = useState('');
+  const [parent, setParent] = useState(null);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [parentIssues, setParentIssues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState(teamsProp);
   const [selectedTeamId, setSelectedTeamId] = useState('');
@@ -50,6 +52,7 @@ const CreateIssueModal = ({
     if (teamId) {
       setSelectedTeamId(teamId);
       fetchProjects(teamId);
+      fetchParentIssues(teamId);
       if (project?._id) {
         setProjectId(project._id);
       }
@@ -57,6 +60,7 @@ const CreateIssueModal = ({
       const firstTeamId = teams[0]._id;
       setSelectedTeamId(firstTeamId);
       fetchProjects(firstTeamId);
+      fetchParentIssues(firstTeamId);
     }
   }, [isOpen, team?._id, project?._id, project?.team?._id, initialStatus, teams]);
 
@@ -91,11 +95,22 @@ const CreateIssueModal = ({
     }
   };
 
+  const fetchParentIssues = async (teamId) => {
+    try {
+      const data = await api.issues.getByTeam(teamId);
+      setParentIssues(data.issues || []);
+    } catch (error) {
+      console.error('Error fetching parent issues:', error);
+    }
+  };
+
   const handleTeamSelect = (teamId) => {
     setSelectedTeamId(teamId);
     setShowTeamMenu(false);
     fetchProjects(teamId);
+    fetchParentIssues(teamId);
     setProjectId('');
+    setParent(null);
   };
 
   const handleSubmit = async (e) => {
@@ -112,6 +127,7 @@ const CreateIssueModal = ({
         status,
         priority,
         assignee: assignee || undefined,
+        parent: parent || undefined,
       });
 
       setTitle('');
@@ -120,6 +136,7 @@ const CreateIssueModal = ({
       setPriority('no_priority');
       setAssignee('');
       setProjectId('');
+      setParent(null);
       onSuccess();
       onClose();
     } catch (error) {
@@ -138,6 +155,7 @@ const CreateIssueModal = ({
     priority,
     assignee: assignee ? users.find((u) => u._id === assignee) : null,
     project: projectId ? projects.find((p) => p._id === projectId) : null,
+    parent: parent ? parentIssues.find((i) => i._id === parent) : null,
   };
 
   const handlePropertyUpdate = (updates) => {
@@ -148,6 +166,9 @@ const CreateIssueModal = ({
     }
     if (updates.projectId !== undefined) {
       setProjectId(updates.projectId || '');
+    }
+    if (updates.parent !== undefined) {
+      setParent(updates.parent || null);
     }
   };
 
@@ -227,6 +248,8 @@ const CreateIssueModal = ({
                 showPriority={true}
                 showAssignee={true}
                 showProject={true}
+                showParent={true}
+                parentIssues={parentIssues}
               />
             </div>
 
