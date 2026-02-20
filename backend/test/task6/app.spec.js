@@ -167,7 +167,7 @@ describe('Task 6: API Logger Testing', function () {
     expect(res.body).to.have.property('pagination');
     expect(res.body.pagination).to.have.property('page', 1);
     expect(res.body.pagination).to.have.property('limit', 50);
-    expect(res.body.pagination.totalLogs).to.be.at.least(4);
+    expect(res.body.pagination.totalLogs).to.equal(4);
 
     const resPaginated = await chai
       .request(app)
@@ -178,7 +178,7 @@ describe('Task 6: API Logger Testing', function () {
     expect(resPaginated.body.logs).to.have.length(2);
     expect(resPaginated.body.pagination).to.have.property('page', 1);
     expect(resPaginated.body.pagination).to.have.property('limit', 2);
-    expect(resPaginated.body.pagination.totalLogs).to.be.at.least(4);
+    expect(resPaginated.body.pagination.totalLogs).to.equal(4);
     expect(resPaginated.body.pagination).to.have.property('hasNextPage', true);
     expect(resPaginated.body.pagination).to.have.property('hasPrevPage', false);
   });
@@ -243,13 +243,13 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res).to.have.status(200);
-    expect(res.body.logs.length).to.be.at.least(2);
+    expect(res.body.logs).to.have.length(2);
 
     const postLogs = res.body.logs.filter((log) => log.method === 'POST');
-    expect(postLogs.length).to.be.at.least(2);
-    postLogs.forEach((log) => {
-      expect(log.method).to.equal('POST');
-    });
+    expect(postLogs).to.have.length(2);
+
+    const paths = postLogs.map((log) => log.path).sort();
+    expect(paths).to.deep.equal(['/api/test1', '/api/test4']);
   });
 
   // --- Filter by Status Code ---
@@ -600,7 +600,7 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resDefault).to.have.status(200);
-    expect(resDefault.body.logs.length).to.be.at.least(3);
+    expect(resDefault.body.logs).to.have.length(3);
 
     const timestamps = resDefault.body.logs.map((log) => new Date(log.timestamp).getTime());
     for (let i = 0; i < timestamps.length - 1; i++) {
@@ -613,7 +613,7 @@ describe('Task 6: API Logger Testing', function () {
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(resResponseTime).to.have.status(200);
-    expect(resResponseTime.body.logs.length).to.be.at.least(3);
+    expect(resResponseTime.body.logs).to.have.length(3);
 
     const responseTimes = resResponseTime.body.logs.map((log) => log.responseTime);
     for (let i = 0; i < responseTimes.length - 1; i++) {

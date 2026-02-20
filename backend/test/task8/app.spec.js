@@ -95,7 +95,7 @@ describe('Task 8: Project Lead Auto-Add to Members Testing', function () {
   });
 
   it('should not duplicate lead in members when creating a project with lead already in memberIds', async () => {
-    const res = await chai
+    const autoAddRes = await chai
       .request(app)
       .post('/api/projects')
       .set('Authorization', `Bearer ${aliceToken}`)
@@ -103,12 +103,27 @@ describe('Task 8: Project Lead Auto-Add to Members Testing', function () {
         name: 'Project Gamma',
         teamId: team._id.toString(),
         leadId: bob._id.toString(),
+        memberIds: [alice._id.toString()],
+      });
+
+    expect(autoAddRes).to.have.status(201);
+    const autoAddMembers = autoAddRes.body.project.members.map((m) => m._id);
+    expect(autoAddMembers).to.include(bob._id.toString());
+
+    const dupRes = await chai
+      .request(app)
+      .post('/api/projects')
+      .set('Authorization', `Bearer ${aliceToken}`)
+      .send({
+        name: 'Project Gamma Dup',
+        teamId: team._id.toString(),
+        leadId: bob._id.toString(),
         memberIds: [alice._id.toString(), bob._id.toString()],
       });
 
-    expect(res).to.have.status(201);
-    const memberIds = res.body.project.members.map((m) => m._id);
-    const bobCount = memberIds.filter((id) => id === bob._id.toString()).length;
+    expect(dupRes).to.have.status(201);
+    const dupMembers = dupRes.body.project.members.map((m) => m._id);
+    const bobCount = dupMembers.filter((id) => id === bob._id.toString()).length;
     expect(bobCount).to.equal(1);
   });
 
@@ -158,24 +173,43 @@ describe('Task 8: Project Lead Auto-Add to Members Testing', function () {
   });
 
   it('should not duplicate lead when updating leadId and lead is already a member', async () => {
-    const project = new Project({
+    const autoAddProject = new Project({
+      name: 'Lead Auto Add',
+      identifier: 'lead-auto-add',
+      team: team._id,
+      creator: alice._id,
+      members: [alice._id],
+    });
+    await autoAddProject.save();
+
+    const autoAddRes = await chai
+      .request(app)
+      .put(`/api/projects/${autoAddProject.identifier}`)
+      .set('Authorization', `Bearer ${aliceToken}`)
+      .send({ leadId: bob._id.toString() });
+
+    expect(autoAddRes).to.have.status(200);
+    const autoAddMembers = autoAddRes.body.project.members.map((m) => m._id);
+    expect(autoAddMembers).to.include(bob._id.toString());
+
+    const dupProject = new Project({
       name: 'Lead Already Member',
       identifier: 'lead-already-member',
       team: team._id,
       creator: alice._id,
       members: [alice._id, bob._id],
     });
-    await project.save();
+    await dupProject.save();
 
-    const res = await chai
+    const dupRes = await chai
       .request(app)
-      .put(`/api/projects/${project.identifier}`)
+      .put(`/api/projects/${dupProject.identifier}`)
       .set('Authorization', `Bearer ${aliceToken}`)
       .send({ leadId: bob._id.toString() });
 
-    expect(res).to.have.status(200);
-    const memberIds = res.body.project.members.map((m) => m._id);
-    const bobCount = memberIds.filter((id) => id === bob._id.toString()).length;
+    expect(dupRes).to.have.status(200);
+    const dupMembers = dupRes.body.project.members.map((m) => m._id);
+    const bobCount = dupMembers.filter((id) => id === bob._id.toString()).length;
     expect(bobCount).to.equal(1);
   });
 

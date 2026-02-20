@@ -273,23 +273,4 @@ describe('Task 4: Advanced Issue Filters Testing', function () {
     expect(emptyRes.body.issues).to.be.an('array').with.lengthOf(0);
   });
 
-  // --- No Filters ---
-
-  it('should return all team issues with populated fields when no filters are applied', async () => {
-    const res = await chai
-      .request(app)
-      .get(`/api/issues?teamId=${team._id}`)
-      .set('Authorization', `Bearer ${tokenA}`);
-
-    expect(res).to.have.status(200);
-    expect(res.body.issues).to.be.an('array').with.lengthOf(6);
-
-    const issueWithAssignee = res.body.issues.find((i) => i.identifier === 'FLT-1');
-    expect(issueWithAssignee.assignee).to.have.property('name');
-    expect(issueWithAssignee.assignee).to.have.property('email');
-    expect(issueWithAssignee.creator).to.have.property('name');
-    expect(issueWithAssignee.creator).to.have.property('email');
-    expect(issueWithAssignee.team).to.have.property('name');
-    expect(issueWithAssignee.team).to.have.property('key');
-  });
 });

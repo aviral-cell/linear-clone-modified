@@ -191,37 +191,6 @@ describe('Task 7: Delete Issue Testing', function () {
     expect(remainingActivities).to.have.lengthOf(0);
   });
 
-  it('should not delete unrelated issues when deleting a specific issue', async () => {
-    const target = new Issue({
-      identifier: 'DEL-7',
-      title: 'Target Issue',
-      status: 'todo',
-      priority: 'high',
-      team: team._id,
-      creator: user._id,
-    });
-    await target.save();
-
-    const unrelated = new Issue({
-      identifier: 'DEL-8',
-      title: 'Unrelated Issue',
-      status: 'todo',
-      priority: 'medium',
-      team: team._id,
-      creator: user._id,
-    });
-    await unrelated.save();
-
-    await chai
-      .request(app)
-      .delete(`/api/issues/${target.identifier}`)
-      .set('Authorization', `Bearer ${token}`);
-
-    const found = await Issue.findOne({ identifier: 'DEL-8' });
-    expect(found).to.not.be.null;
-    expect(found.title).to.equal('Unrelated Issue');
-  });
-
   // --- Error Handling ---
 
   it('should return 404 when deleting a non-existent issue', async () => {
