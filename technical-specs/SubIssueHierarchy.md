@@ -1,37 +1,34 @@
-# Workflow (MERN): Sub-Issue Hierarchy
+# Workflow (MERN): Sub Issue Hierarchy
 
 ## Overview
 
-Workflow is a project management platform where teams can manage issues, track progress, and collaborate. The sub-issue hierarchy feature allows issues to be organized in parent-child relationships, enabling teams to break down large issues into smaller, more manageable sub-issues.
-
-The hierarchy supports nesting up to 5 levels deep and enforces strict validation rules to prevent circular references, self-parenting, and cross-team parent assignments. A dedicated endpoint provides valid parent candidates for any given issue, making it easy for the UI to present only valid options.
+Workflow is a project management platform where teams can manage issues, track progress, and collaborate. The application supports a sub-issue hierarchy where issues can be organized in parent-child relationships, with a valid-parents endpoint and hierarchy validation on create and update. However, there are bugs in the hierarchy validation — circular references, self-parenting, cross-team assignments, and depth limit violations are not being properly rejected. Your task is to fix these validation issues so that the hierarchy enforces a maximum depth of 5 levels and correctly prevents invalid parent assignments.
 
 ## Expected API Behavior
 
-**1. GET /api/issues/:identifier/valid-parents**
+All endpoints require Bearer token authentication. Unauthenticated requests return 401.
 
-Purpose: Retrieve all issues that can be set as a valid parent for the given issue
+**1. GET /api/issues/:identifier/valid-parents** — Modify
 
-Auth: Required (Bearer token)
+Retrieve all issues that can be set as a valid parent for the given issue.
 
-Path Parameters:
-- `identifier` (required): The identifier of the issue (e.g., "TEST-1")
+Path: `:identifier` — issue identifier (e.g., "TEST-1")
 
 Success Response (200):
 
 ```json
 {
-   "validParents": [
-      {
-         "_id": "issue_id",
-         "identifier": "TEST-5",
-         "title": "Issue Title",
-         "status": "todo",
-         "priority": "high",
-         "team": "team_id",
-         "parent": null
-      }
-   ]
+  "validParents": [
+    {
+      "_id": "issue_id",
+      "identifier": "TEST-5",
+      "title": "Issue Title",
+      "status": "todo",
+      "priority": "high",
+      "team": "team_id",
+      "parent": null
+    }
+  ]
 }
 ```
 
@@ -41,34 +38,15 @@ Success Response (200):
 - Excludes issues from different teams (parent must be in the same team)
 - Excludes issues where assigning them as parent would exceed the maximum nesting depth of 5 levels
 
-Error Responses:
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Issue not found:
-  ```json
-  {
-     "message": "Issue not found"
-  }
-  ```
-- 500 - Server error
+- 404 — `"Issue not found"` — when issue identifier does not exist
+
 ---
 
-**2. POST /api/issues**
+**2. POST /api/issues** — Modify
 
-Purpose: Create a new issue, optionally as a sub-issue of an existing parent
+Create a new issue, optionally as a sub-issue of an existing parent.
 
-Auth: Required (Bearer token)
-
-Request Body:
-
-```json
-{
-   "title": "Sub-Issue Title",
-   "description": "Sub-Issue Description",
-   "status": "todo",
-   "teamId": "team_id",
-   "parent": "parent_issue_id"
-}
-```
+Request body includes optional `parent` field with a parent issue ID.
 
 **Hierarchy Validation on Create:**
 - If `parent` is provided, the parent issue must exist
@@ -79,92 +57,61 @@ Success Response (201):
 
 ```json
 {
-   "issue": {
-      "_id": "issue_id",
-      "identifier": "TEST-6",
-      "title": "Sub-Issue Title",
-      "parent": "parent_issue_id",
-      "team": {
-         "_id": "team_id",
-         "name": "Team Name",
-         "key": "TEST"
-      }
-   }
+  "issue": {
+    "_id": "issue_id",
+    "identifier": "TEST-6",
+    "title": "Sub-Issue Title",
+    "parent": "parent_issue_id",
+    "team": { "_id": "team_id", "name": "Team Name", "key": "TEST" }
+  }
 }
 ```
 
-Error Responses:
-- 400 - Validation errors:
-  - `"Title and team are required"` - Missing required fields
-  - `"Parent issue not found"` - Invalid parent issue ID
-  - Message containing `"nested"` - Maximum nesting depth exceeded
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Team not found
-- 500 - Server error
+- 400 — `"Title and team are required"` — when required fields are missing
+- 400 — `"Parent issue not found"` — when parent issue ID is invalid
+- 400 — message containing `"nested"` — when maximum nesting depth would be exceeded
+
 ---
 
-**3. PUT /api/issues/:identifier**
+**3. PUT /api/issues/:identifier** — Modify
 
-Purpose: Update an existing issue's parent, supporting reparenting and unparenting
+Update an existing issue's parent, supporting reparenting and unparenting.
 
-Auth: Required (Bearer token)
+Path: `:identifier` — issue identifier (e.g., "TEST-1")
 
-Path Parameters:
-- `identifier` (required): The identifier of the issue (e.g., "TEST-1")
-
-Request Body (parent field):
-
-```json
-{
-   "parent": "new_parent_issue_id"
-}
-```
-
-To remove a parent (make the issue a root issue):
-
-```json
-{
-   "parent": null
-}
-```
+Set `parent` to a new issue ID to reparent, or `null` to make it a root issue.
 
 **Hierarchy Validation on Update:**
-- Cannot set an issue as its own parent (self-parenting). Error message contains `"own parent"`
-- Cannot set a direct child as parent (direct circular reference). Error message contains `"circular"` or `"descendant"`
-- Cannot set an indirect descendant as parent (deep circular reference). Error message contains `"circular"` or `"descendant"`
-- The resulting hierarchy depth must not exceed the maximum depth of 5 levels
+- Cannot set an issue as its own parent. Error message contains `"own parent"`
+- Cannot set a descendant (direct or indirect) as parent. Error message contains `"circular"` or `"descendant"`
+- The resulting hierarchy depth must not exceed 5 levels. Error message contains `"nested"`
 - Setting `parent` to `null` removes the parent relationship (always valid)
 
 Success Response (200):
 
 ```json
 {
-   "issue": {
-      "_id": "issue_id",
-      "identifier": "TEST-4",
-      "title": "Issue Title",
-      "parent": "new_parent_issue_id"
-   }
+  "issue": {
+    "_id": "issue_id",
+    "identifier": "TEST-4",
+    "title": "Issue Title",
+    "parent": "new_parent_issue_id"
+  }
 }
 ```
 
-Error Responses:
-- 400 - Validation errors:
-  - Message containing `"own parent"` - Self-parenting attempt
-  - Message containing `"circular"` or `"descendant"` - Circular reference detected
-  - Message containing `"nested"` - Maximum depth exceeded
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Issue not found
-- 500 - Server error
+- 400 — message containing `"own parent"` — when self-parenting is attempted
+- 400 — message containing `"circular"` or `"descendant"` — when circular reference is detected
+- 400 — message containing `"nested"` — when maximum depth would be exceeded
+- 404 — `"Issue not found"` — when issue identifier does not exist
+
 ---
 
 ## Additional Information
 
-- The maximum nesting depth is 5 levels (root issue at depth 1, deepest child at depth 5)
-- Depth is calculated by traversing the parent chain up to the root
-- Subtree depth is calculated by traversing all children recursively
-- When validating a parent change, the system checks that the parent's depth plus the issue's subtree depth plus 1 does not exceed the maximum depth
-- Valid parent candidates are filtered to only include issues from the same team as the target issue
-- To manually reset the database, stop the running server and then restart it
-- The code repository may intentionally contain other issues that are unrelated to this specific task. Please focus only on the described task requirements and address bugs or errors directly associated with them
-- If you're using Run and Debug mode in the IDE, the frontend server may start before the backend (including database seeding) is ready. In that case, the frontend might not display any data. Please reload the preview once the backend setup is complete
+- The maximum nesting depth is 5 levels (root issue at depth 1, deepest child at depth 5).
+- When validating a parent change, both the ancestor chain depth and the subtree depth of the issue are considered to ensure the total does not exceed 5.
+- Valid parent candidates are filtered to only include issues from the same team as the target issue.
+- To manually reset the database, stop the running server and then restart it.
+- The code repository may intentionally contain other issues that are unrelated to this specific task. Focus only on the described task requirements.
+- If using Run and Debug mode, reload the preview once the backend setup is complete.

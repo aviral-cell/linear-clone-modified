@@ -2,273 +2,123 @@
 
 ## Overview
 
-Workflow is a project management platform where teams can manage issues, track progress, and collaborate. The activity tracker feature automatically records all changes made to issues, providing a complete audit trail of issue lifecycle events including creation, status changes, priority updates, assignee changes, and content modifications.
-
-The activity tracker automatically creates activity records whenever an issue is created or updated, allowing team members to see the complete history of changes made to any issue over time.
+Workflow is a project management platform where teams can manage issues, track progress, and collaborate. The application includes an activity tracking system that records changes made to issues, providing an audit trail of lifecycle events. However, there are bugs in the activity tracker — activities are not being created correctly for issue creation and field updates, and the activities endpoint does not return results in the expected order. Your task is to fix these issues so that activities are properly recorded and retrieved.
 
 ## Expected API Behavior
 
-**1. POST /api/issues**
+All endpoints require Bearer token authentication. Unauthenticated requests return 401.
 
-Purpose: Create a new issue and automatically record a "created" activity
+**1. POST /api/issues** — Modify
 
-Auth: Required (Bearer token)
+Create a new issue and automatically record a "created" activity.
 
-Request Body:
-
-```json
-{
-   "title": "Issue Title",
-   "description": "Issue Description",
-   "status": "todo",
-   "priority": "high",
-   "teamId": "team_id",
-   "assignee": "user_id",
-   "parentIssue": "parent_issue_id",
-   "labels": ["label1", "label2"]
-}
-```
+When an issue is successfully created, an activity record is automatically created with `action: "created"`, the issue ID, and the authenticated user's ID. The `changes` field is not set for "created" actions.
 
 Success Response (201):
 
 ```json
 {
-   "issue": {
-      "_id": "issue_id",
-      "identifier": "TEAM-1",
-      "title": "Issue Title",
-      "description": "Issue Description",
-      "status": "todo",
-      "priority": "high",
-      "team": {
-         "_id": "team_id",
-         "name": "Team Name",
-         "key": "TEAM",
-         "icon": "icon_url"
-      },
-      "assignee": {
-         "_id": "user_id",
-         "name": "User Name",
-         "email": "user@email.com",
-         "avatar": "avatar_url"
-      },
-      "creator": {
-         "_id": "creator_id",
-         "name": "Creator Name",
-         "email": "creator@email.com",
-         "avatar": "avatar_url"
-      },
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-   }
+  "issue": {
+    "_id": "issue_id",
+    "identifier": "TEAM-1",
+    "title": "Issue Title",
+    "description": "Issue Description",
+    "status": "todo",
+    "priority": "high",
+    "team": { "_id": "team_id", "name": "Team Name", "key": "TEAM", "icon": "icon_url" },
+    "assignee": { "_id": "user_id", "name": "User Name", "email": "user@email.com", "avatar": "avatar_url" },
+    "creator": { "_id": "creator_id", "name": "Creator Name", "email": "creator@email.com", "avatar": "avatar_url" },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
 }
 ```
 
-**Activity Creation:**
-- When an issue is successfully created, an activity record must be automatically created with:
-  - `action`: `"created"`
-  - `issue`: The ID of the newly created issue
-  - `user`: The ID of the authenticated user who created the issue
-  - `changes`: Should be `undefined` or empty (not set) for "created" actions
-
-Error Responses:
-- 400 - Validation errors:
-  - `"Title and team are required"` - Missing required fields
-  - `"Parent issue not found"` - Invalid parent issue ID
-  - `"Sub-issues cannot have another sub-issue"` - Invalid hierarchy
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Team not found:
-  ```json
-  {
-     "message": "Team not found"
-  }
-  ```
-- 500 - Server error
+- 400 — `"Title and team are required"` — when required fields are missing
+- 404 — `"Team not found"` — when team ID does not exist
 
 ---
 
-**2. PUT /api/issues/:identifier**
+**2. PUT /api/issues/:identifier** — Modify
 
-Purpose: Update an existing issue and automatically record activities for each changed field
+Update an existing issue and automatically record activities for each changed field.
 
-Auth: Required (Bearer token)
-
-Path Parameters:
-- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
-
-Request Body (all fields optional):
-
-```json
-{
-   "title": "Updated Title",
-   "description": "Updated Description",
-   "status": "in_progress",
-   "priority": "high",
-   "assignee": "user_id"
-}
-```
-
-Success Response (200):
-
-```json
-{
-   "issue": {
-      "_id": "issue_id",
-      "identifier": "TEAM-1",
-      "title": "Updated Title",
-      "description": "Updated Description",
-      "status": "in_progress",
-      "priority": "high",
-      "team": {
-         "_id": "team_id",
-         "name": "Team Name",
-         "key": "TEAM",
-         "icon": "icon_url"
-      },
-      "assignee": {
-         "_id": "user_id",
-         "name": "User Name",
-         "email": "user@email.com",
-         "avatar": "avatar_url"
-      },
-      "creator": {
-         "_id": "creator_id",
-         "name": "Creator Name",
-         "email": "creator@email.com",
-         "avatar": "avatar_url"
-      },
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-   }
-}
-```
+Path: `:identifier` — issue identifier (e.g., "TEAM-1")
 
 **Tracked Fields:**
-- `status` → Creates activity with `action: "updated_status"`
-- `priority` → Creates activity with `action: "updated_priority"`
-- `assignee` → Creates activity with `action: "updated_assignee"`
-- `title` → Creates activity with `action: "updated_title"`
-- `description` → Creates activity with `action: "updated_description"`
-
-**Activity Structure for Updates:**
+- `title` → `action: "updated_title"`
+- `description` → `action: "updated_description"`
+- `status` → `action: "updated_status"`
+- `priority` → `action: "updated_priority"`
+- `assignee` → `action: "updated_assignee"`
+- `project` → `action: "updated_project"`
+- `parent` → `action: "updated_parent"`
 
 For each changed field, an activity record is created with:
-- `action`: `"updated_{field}"` (e.g., `"updated_status"`, `"updated_priority"`)
-- `issue`: The ID of the updated issue
-- `user`: The ID of the authenticated user who made the change
-- `changes`: An object containing:
-  - `field`: The name of the field that changed (e.g., `"status"`, `"priority"`)
-  - `oldValue`: The previous value of the field
-  - `newValue`: The new value of the field
+- `action`: `"updated_{field}"`
+- `issue`: the issue ID
+- `user`: the authenticated user's ID
+- `changes`: `{ field, oldValue, newValue }`
 
-**Important Behaviors:**
-- If a field is updated to the same value it already has, **no activity is created** for that field
-- If multiple fields are updated simultaneously, **separate activity records are created** for each changed field
-- Activities are created **after** the issue is successfully updated
-
-**Example Scenarios:**
-
-1. **Single Field Update:**
-   - Request: `{ "status": "in_progress" }`
-   - Current status: `"todo"`
-   - Result: One activity created with `action: "updated_status"`, `changes: { field: "status", oldValue: "todo", newValue: "in_progress" }`
-
-2. **Multiple Fields Update:**
-   - Request: `{ "status": "in_progress", "priority": "high", "title": "New Title" }`
-   - Current values: `status: "todo"`, `priority: "no_priority"`, `title: "Old Title"`
-   - Result: Three separate activities created:
-     - `action: "updated_status"`, `changes: { field: "status", oldValue: "todo", newValue: "in_progress" }`
-     - `action: "updated_priority"`, `changes: { field: "priority", oldValue: "no_priority", newValue: "high" }`
-     - `action: "updated_title"`, `changes: { field: "title", oldValue: "Old Title", newValue: "New Title" }`
-
-3. **No Change (Same Value):**
-   - Request: `{ "status": "todo" }`
-   - Current status: `"todo"`
-   - Result: **No activity created** (value unchanged)
-
-4. **Partial Update:**
-   - Request: `{ "status": "in_progress", "priority": "high" }`
-   - Current values: `status: "todo"`, `priority: "high"`
-   - Result: One activity created only for status change (priority unchanged)
-
-Error Responses:
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Issue not found:
-  ```json
-  {
-     "message": "Issue not found"
-  }
-  ```
-- 500 - Server error
-
----
-
-**3. GET /api/issues/:identifier/activities**
-
-Purpose: Retrieve all activity records for a specific issue, sorted by creation date (newest first)
-
-Auth: Required (Bearer token)
-
-Path Parameters:
-- `identifier` (required): The identifier of the issue (e.g., "TEAM-1")
+If a field is updated to the same value it already has, no activity is created for that field. If multiple fields are updated simultaneously, separate activity records are created for each changed field.
 
 Success Response (200):
 
 ```json
 {
-   "activities": [
-      {
-         "_id": "activity_id",
-         "issue": "issue_id",
-         "user": {
-            "_id": "user_id",
-            "name": "User Name",
-            "email": "user@email.com",
-            "avatar": "avatar_url"
-         },
-         "action": "updated_status",
-         "changes": {
-            "field": "status",
-            "oldValue": "todo",
-            "newValue": "in_progress"
-         },
-         "createdAt": "2024-01-01T00:00:00.000Z",
-         "updatedAt": "2024-01-01T00:00:00.000Z"
-      },
-      {
-         "_id": "activity_id_2",
-         "issue": "issue_id",
-         "user": {
-            "_id": "creator_id",
-            "name": "Creator Name",
-            "email": "creator@email.com",
-            "avatar": "avatar_url"
-         },
-         "action": "created",
-         "createdAt": "2024-01-01T00:00:00.000Z",
-         "updatedAt": "2024-01-01T00:00:00.000Z"
-      }
-   ]
+  "issue": {
+    "_id": "issue_id",
+    "identifier": "TEAM-1",
+    "title": "Updated Title",
+    "status": "in_progress",
+    "priority": "high",
+    "team": { "_id": "team_id", "name": "Team Name", "key": "TEAM", "icon": "icon_url" },
+    "assignee": { "_id": "user_id", "name": "User Name", "email": "user@email.com", "avatar": "avatar_url" },
+    "creator": { "_id": "creator_id", "name": "Creator Name", "email": "creator@email.com", "avatar": "avatar_url" },
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
 }
 ```
 
-**Response Details:**
-- Activities are sorted by `createdAt` in descending order (newest first)
-- The `user` field is populated with user details (name, email, avatar)
-- For "created" actions, the `changes` field may be `undefined` or empty
-- For update actions, the `changes` field contains the field name and old/new values
+- 404 — `"Issue not found"` — when issue identifier does not exist
 
-Error Responses:
-- 401 - Unauthorized (missing or invalid token)
-- 500 - Server error
+---
+
+**3. GET /api/issues/:identifier/activities** — Modify
+
+Retrieve all activity records for a specific issue.
+
+Path: `:identifier` — issue identifier (e.g., "TEAM-1")
+
+Activities are returned in descending order, with the most recent activities first. When multiple activities share the same creation timestamp, the most recently inserted activity appears first.
+
+Success Response (200):
+
+```json
+{
+  "activities": [
+    {
+      "_id": "activity_id",
+      "issue": "issue_id",
+      "user": { "_id": "user_id", "name": "User Name", "email": "user@email.com", "avatar": "avatar_url" },
+      "action": "updated_status",
+      "changes": { "field": "status", "oldValue": "todo", "newValue": "in_progress" },
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+The `user` field is populated with name, email, and avatar. For "created" actions, the `changes` field is not present. For update actions, `changes` contains the field name, old value, and new value.
+
 ---
 
 ## Additional Information
 
-- Activities are automatically created and cannot be manually created or modified through the API
-- Activities are permanent records and should not be deleted when issues are updated
-- Note that there are other activity types (`added_comment`, `deleted_comment`, `added_label`, `removed_label`) are handled by other features and are not part of this task.
-- To manually reset the database, stop the running server and then restart it
-- The code repository may intentionally contain other issues that are unrelated to this specific task. Please focus only on the described task requirements and address bugs or errors directly associated with them
-- If you're using Run and Debug mode in the IDE, the frontend server may start before the backend (including database seeding) is ready. In that case, the frontend might not display any data. Please reload the preview once the backend setup is complete
-
+- Activities are automatically created and cannot be manually created or modified through the API.
+- Other activity types (`added_comment`, `updated_commnent`, `deleted_comment`, `added_label`, `removed_label`) are handled by other features and are not part of this task.
+- To manually reset the database, stop the running server and then restart it.
+- The code repository may intentionally contain other issues that are unrelated to this specific task. Focus only on the described task requirements.
+- If using Run and Debug mode, reload the preview once the backend setup is complete.

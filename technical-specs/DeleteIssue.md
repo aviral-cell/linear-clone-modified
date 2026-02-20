@@ -1,4 +1,4 @@
-# Workflow (MERN): Delete Issue with Cascade Deletion
+# Workflow (MERN): Delete Issue
 
 ## Overview
 
@@ -8,14 +8,13 @@ Currently, there is no ability to delete issues. Your task is to implement a del
 
 ## Expected API Behavior
 
-**1. DELETE /api/issues/:identifier**
+All endpoints require Bearer token authentication. Unauthenticated requests return 401.
 
-Purpose: Delete an issue and all its descendants, including associated comments and activities
+**1. DELETE /api/issues/:identifier** — New
 
-Auth: Required (Bearer token)
+Delete an issue and all its descendants, including associated comments and activities.
 
-Path Parameters:
-- `identifier` (required): The identifier of the issue (e.g., "DEL-1")
+Path: `:identifier` — issue identifier (e.g., "DEL-1")
 
 **Cascade Deletion Behavior:**
 - Recursively finds all descendant issues (children, grandchildren, etc.) of the target issue
@@ -28,8 +27,8 @@ Success Response (200):
 
 ```json
 {
-   "message": "Issue deleted successfully",
-   "deletedCount": 3
+  "message": "Issue deleted successfully",
+  "deletedCount": 3
 }
 ```
 
@@ -39,21 +38,13 @@ The `deletedCount` reflects the total number of issues deleted (the target issue
 - Deleting a child issue does not affect its parent or sibling issues
 - Only the targeted issue and its sub-tree are removed
 
-Error Responses:
-- 401 - Unauthorized (missing or invalid token)
-- 404 - Issue not found:
-  ```json
-  {
-     "message": "Issue not found"
-  }
-  ```
-- 500 - Server error
+- 404 — `"Issue not found"` — when issue identifier does not exist
+
 ---
 
 ## Additional Information
 
-- The cascade deletion must use the `getDescendants` helper from `issueHierarchy.js` to recursively collect all descendant issue IDs before deletion
-- Comments and IssueActivity records referencing any of the deleted issues must be removed
-- To manually reset the database, stop the running server and then restart it
-- The code repository may intentionally contain other issues that are unrelated to this specific task. Please focus only on the described task requirements and address bugs or errors directly associated with them
-- If you're using Run and Debug mode in the IDE, the frontend server may start before the backend (including database seeding) is ready. In that case, the frontend might not display any data. Please reload the preview once the backend setup is complete
+- Comments and activity records referencing any of the deleted issues are removed as part of the cascade.
+- To manually reset the database, stop the running server and then restart it.
+- The code repository may intentionally contain other issues that are unrelated to this specific task. Focus only on the described task requirements.
+- If using Run and Debug mode, reload the preview once the backend setup is complete.
