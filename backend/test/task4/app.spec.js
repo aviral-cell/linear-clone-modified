@@ -272,5 +272,4 @@ describe('Task 4: Advanced Issue Filters Testing', function () {
     expect(emptyRes).to.have.status(200);
     expect(emptyRes.body.issues).to.be.an('array').with.lengthOf(0);
   });
-
 });
