@@ -42,7 +42,7 @@ export async function seed() {
     console.log('Data seeding completed successfully!');
     console.log('=================================');
     console.log('\nLogin credentials:');
-    console.log('Email: alex@workflow.dev');
+    console.log('Email: alice@workflow.dev');
     console.log('Password: Password@123');
     console.log('=================================\n');
   } catch (error) {

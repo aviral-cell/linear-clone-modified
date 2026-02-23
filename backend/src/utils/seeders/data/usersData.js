@@ -6,6 +6,11 @@ export async function getUsersData() {
 
   return [
     {
+      email: 'alice@workflow.dev',
+      name: 'Alice Martin',
+      password,
+    },
+    {
       email: 'alex@workflow.dev',
       name: 'Alex Rivers',
       password,
