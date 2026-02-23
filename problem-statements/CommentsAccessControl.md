@@ -36,4 +36,6 @@ The UI for comments is already fully implemented and works correctly — it reli
 - When a comment is successfully edited by its owner, an "edited" tag should appear on the comment card and this status should persist.
 - Editing and deleting comments should require authentication. Unauthenticated attempts should be rejected.
 
+**Tip:** If you run out of seeded comments while testing, you can either run `npm run seed` to reset the database with initial data, or log in as `jordan@workflow.dev` (Password@123) and add new comments to any issue — then switch back to Alice to verify ownership behavior across different users.
+
 **Note:** Make sure to review the `technical-specs/CommentsAccessControl.md` file carefully to understand all the specifications.
