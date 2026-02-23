@@ -3,9 +3,34 @@ import IssueActivity from '../../../models/IssueActivity.js';
 import { issuesData } from '../data/issuesData.js';
 import { getSubIssuesData } from '../data/subIssuesData.js';
 
+const isHighEffort = (issue) => {
+  const isHighPriority = issue.priority === 'urgent' || issue.priority === 'high';
+  const isInProgress = issue.status === 'in_progress' || issue.status === 'in_review';
+  const title = issue.title.toLowerCase();
+  const isComplexIssue =
+    title.includes('authentication') ||
+    title.includes('database') ||
+    title.includes('schema') ||
+    title.includes('ci/cd') ||
+    title.includes('pipeline') ||
+    title.includes('security') ||
+    title.includes('audit') ||
+    title.includes('design system') ||
+    title.includes('mobile') ||
+    title.includes('campaign') ||
+    title.includes('launch') ||
+    title.includes('roadmap');
+
+  return (isHighPriority || isInProgress) && isComplexIssue;
+};
+
 export async function seedIssues(teams, users, projects, creator) {
   console.log('Seeding issues...');
   const insertedIssues = [];
+  const teamCounters = {};
+  let subIssueCount = 0;
+  let parentCount = 0;
+  const MAX_PARENTS = 8;
 
   const teamProjectMap = {};
   projects.forEach((project) => {
@@ -23,10 +48,12 @@ export async function seedIssues(teams, users, projects, creator) {
       continue;
     }
 
-    const count = insertedIssues.filter((i) => i.team.toString() === team._id.toString()).length;
-    const identifier = `${team.key}-${count + 1}`;
+    const teamId = team._id.toString();
+    if (!teamCounters[teamId]) teamCounters[teamId] = 0;
+    teamCounters[teamId]++;
+    const identifier = `${team.key}-${teamCounters[teamId]}`;
 
-    const teamProjects = teamProjectMap[team._id.toString()] || [];
+    const teamProjects = teamProjectMap[teamId] || [];
 
     let assignedProject = null;
 
@@ -65,63 +92,33 @@ export async function seedIssues(teams, users, projects, creator) {
       action: 'created',
     });
     await activity.save();
-  }
 
-  const highEffortIssues = insertedIssues.filter((issue) => {
-    const isHighPriority = issue.priority === 'urgent' || issue.priority === 'high';
-    const isInProgress = issue.status === 'in_progress' || issue.status === 'in_review';
-    const title = issue.title.toLowerCase();
-    const isComplexIssue =
-      title.includes('authentication') ||
-      title.includes('database') ||
-      title.includes('schema') ||
-      title.includes('ci/cd') ||
-      title.includes('pipeline') ||
-      title.includes('security') ||
-      title.includes('audit') ||
-      title.includes('design system') ||
-      title.includes('mobile') ||
-      title.includes('campaign') ||
-      title.includes('launch') ||
-      title.includes('roadmap');
+    if (parentCount < MAX_PARENTS && isHighEffort(issue)) {
+      parentCount++;
+      const subIssues = getSubIssuesData(issue, team, users);
 
-    return (isHighPriority || isInProgress) && isComplexIssue;
-  });
+      for (const subIssueData of subIssues) {
+        teamCounters[teamId]++;
+        subIssueData.identifier = `${team.key}-${teamCounters[teamId]}`;
+        subIssueData.project = issue.project || null;
 
-  let subIssueCount = 0;
-  for (const parentIssue of highEffortIssues.slice(0, 8)) {
-    const team = teams.find((t) => t._id.toString() === parentIssue.team.toString());
+        const subIssue = new Issue(subIssueData);
+        await subIssue.save();
+        insertedIssues.push(subIssue);
+        subIssueCount++;
 
-    if (!team) continue;
-
-    const subIssuesData = getSubIssuesData(parentIssue, team, users);
-
-    for (const subIssueData of subIssuesData) {
-      const currentCount = insertedIssues.filter(
-        (i) => i.team.toString() === parentIssue.team.toString()
-      ).length;
-      subIssueData.identifier = `${team.key}-${currentCount + 1}`;
-
-      subIssueData.project = parentIssue.project || null;
-
-      const subIssue = new Issue(subIssueData);
-      await subIssue.save();
-      insertedIssues.push(subIssue);
-      subIssueCount++;
-
-      const activity = new IssueActivity({
-        issue: subIssue._id,
-        user: creator._id,
-        action: 'created',
-      });
-      await activity.save();
+        const subActivity = new IssueActivity({
+          issue: subIssue._id,
+          user: creator._id,
+          action: 'created',
+        });
+        await subActivity.save();
+      }
     }
   }
 
   if (subIssueCount > 0) {
-    console.log(
-      `  → Created ${subIssueCount} sub-issues across ${highEffortIssues.slice(0, 8).length} parent issues`
-    );
+    console.log(`  → Created ${subIssueCount} sub-issues across ${parentCount} parent issues`);
   }
 
   console.log(`✓ Issues seeded successfully (${insertedIssues.length} issues)`);

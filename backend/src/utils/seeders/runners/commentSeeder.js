@@ -1,16 +1,25 @@
 import Comment from '../../../models/Comment.js';
 import { getCommentsData } from '../data/commentsData.js';
 
-export async function seedComments(issues, users, targetIssueIdentifier = 'ENG-4') {
-  console.log('Seeding comments...');
-  const issueWithComments = issues.find((i) => i.identifier === targetIssueIdentifier);
+const TARGET_IDENTIFIERS = ['DES-1', 'DES-5', 'DES-14'];
 
-  if (!issueWithComments) {
-    console.log(`Issue ${targetIssueIdentifier} not found, skipping comments`);
+export async function seedComments(issues, users) {
+  console.log('Seeding comments...');
+
+  const issueMap = {};
+  for (const identifier of TARGET_IDENTIFIERS) {
+    const issue = issues.find((i) => i.identifier === identifier);
+    if (issue) {
+      issueMap[identifier] = issue._id;
+    }
+  }
+
+  if (Object.keys(issueMap).length === 0) {
+    console.log('No target issues found, skipping comments');
     return [];
   }
 
-  const commentsData = getCommentsData(issueWithComments._id, users);
+  const commentsData = getCommentsData(issueMap, users);
   const insertedComments = await Comment.insertMany(commentsData);
 
   console.log(`✓ Comments seeded successfully (${insertedComments.length} comments)`);
