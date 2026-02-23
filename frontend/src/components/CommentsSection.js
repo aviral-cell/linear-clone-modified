@@ -28,7 +28,9 @@ const CommentsSection = ({ identifier, comments, onEditComment, onDeleteComment 
       setEditContent('');
     } catch (error) {
       console.error('Error updating comment:', error);
-      toast.error('Failed to update comment');
+      toast.error(
+        error.status === 403 ? 'Not authorized to edit this comment' : 'Failed to update comment'
+      );
     }
   };
 
@@ -44,7 +46,9 @@ const CommentsSection = ({ identifier, comments, onEditComment, onDeleteComment 
       onDeleteComment();
     } catch (error) {
       console.error('Error deleting comment:', error);
-      toast.error('Failed to delete comment');
+      toast.error(
+        error.status === 403 ? 'Not authorized to delete this comment' : 'Failed to delete comment'
+      );
     }
   };
 

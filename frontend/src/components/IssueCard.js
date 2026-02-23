@@ -63,7 +63,9 @@ const IssueCard = memo(
               </div>
 
               <div className="flex items-center gap-1.5 min-w-0">
-                {PriorityIcon && <PriorityIcon className={`w-3.5 h-3.5 flex-shrink-0 ${priorityColor}`} />}
+                {PriorityIcon && (
+                  <PriorityIcon className={`w-3.5 h-3.5 flex-shrink-0 ${priorityColor}`} />
+                )}
                 <span className="text-xs text-text-tertiary flex-shrink-0">{priorityLabel}</span>
                 <Link2 className="w-3.5 h-3.5 flex-shrink-0 text-text-tertiary ml-1.5" />
                 <span className="text-xs font-mono text-text-tertiary">

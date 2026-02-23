@@ -13,7 +13,6 @@ export const adminApi = {
   getLogById: (logId) => {
     return api.get(`/api/admin/logs/${logId}`);
   },
-
 };
 
 export default adminApi;
