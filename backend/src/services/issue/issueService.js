@@ -154,18 +154,9 @@ export const updateIssue = async (identifier, updates, userId) => {
   if (updates.parent !== undefined) {
     const parentId = updates.parent === null ? null : updates.parent;
     if (parentId) {
-      const parent = await Issue.findById(parentId);
-      if (!parent) {
-        throw new NotFoundError('Parent issue not found');
-      }
-
       const validation = await validateParentChange(issue._id, parentId);
       if (!validation.valid) {
         throw new BadRequestError(validation.reason);
-      }
-
-      if (parent.team.toString() !== issue.team.toString()) {
-        throw new BadRequestError('Parent must be in the same team');
       }
 
       const parentDepth = await getDepth(parentId);

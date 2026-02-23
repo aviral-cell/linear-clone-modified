@@ -59,6 +59,22 @@ export const validateParentChange = async (issueId, newParentId) => {
     };
   }
 
+  const [issue, parent] = await Promise.all([
+    Issue.findById(issueId).select('team'),
+    Issue.findById(newParentId).select('team'),
+  ]);
+
+  if (!parent) {
+    return { valid: false, reason: 'Parent issue not found' };
+  }
+
+  if (issue && parent && issue.team.toString() !== parent.team.toString()) {
+    return {
+      valid: false,
+      reason: 'Parent must be in the same team',
+    };
+  }
+
   const descendants = await getDescendants(issueId);
 
   const isDescendant = descendants.some(

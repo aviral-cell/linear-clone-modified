@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ChevronDown } from '../icons';
 import { api } from '../services/api';
+import toast from 'react-hot-toast';
 import IssueProperties from './IssueProperties';
 import {
   Button,
@@ -140,7 +141,7 @@ const CreateIssueModal = ({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error creating issue:', error);
+      toast.error(error.message || 'Failed to create issue');
     } finally {
       setLoading(false);
     }

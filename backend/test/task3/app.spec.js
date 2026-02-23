@@ -257,6 +257,20 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
     );
   });
 
+  // --- Cross-Team Parent Prevention ---
+
+  it('should reject setting a parent from a different team', async () => {
+    const res = await chai
+      .request(app)
+      .put(`/api/issues/${issueA.identifier}`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ parent: issueF._id.toString() });
+
+    expect(res).to.have.status(400);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message.toLowerCase()).to.include('same team');
+  });
+
   // --- Depth Limit ---
 
   it('should allow creating sub-issues up to 5 levels deep and reject deeper nesting', async () => {

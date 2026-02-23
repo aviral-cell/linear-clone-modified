@@ -156,9 +156,8 @@ const IssueDetailPage = () => {
       await fetchActivities();
       await refetch();
     } catch (error) {
-      console.error('Error updating issue:', error);
       await refetch();
-      toast.error('Failed to update issue');
+      toast.error(error.message || 'Failed to update issue');
     } finally {
       setSaving(false);
     }
