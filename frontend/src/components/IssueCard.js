@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { FolderKanban } from '../icons';
+import { FolderKanban, Link2 } from '../icons';
 import { Avatar } from './ui';
 import { getAvatarColor } from '../utils';
 
@@ -15,9 +15,6 @@ const IssueCard = memo(
     priorityLabel,
     showProject = false,
   }) {
-    const identifier = issue.parent
-      ? issue.parent.identifier || issue.identifier
-      : issue.identifier;
     const isSubIssue = Boolean(issue.parent);
 
     if (variant === 'compact') {
@@ -49,7 +46,7 @@ const IssueCard = memo(
             <>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                  {issue.parent?.identifier || 'N/A'} › {issue.parent?.title || 'Parent Issue'}
+                  {issue.identifier} › {issue.parent?.title}
                 </span>
                 {issue.assignee && (
                   <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
@@ -65,16 +62,20 @@ const IssueCard = memo(
                 <p className="text-sm text-text-primary line-clamp-2 flex-1">{issue.title}</p>
               </div>
 
-              <div className="flex items-center gap-1.5">
-                {PriorityIcon && <PriorityIcon className={`w-3.5 h-3.5 ${priorityColor}`} />}
-                <span className="text-xs text-text-tertiary">{priorityLabel}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                {PriorityIcon && <PriorityIcon className={`w-3.5 h-3.5 flex-shrink-0 ${priorityColor}`} />}
+                <span className="text-xs text-text-tertiary flex-shrink-0">{priorityLabel}</span>
+                <Link2 className="w-3.5 h-3.5 flex-shrink-0 text-text-tertiary ml-1.5" />
+                <span className="text-xs font-mono text-text-tertiary">
+                  {issue.parent?.identifier}
+                </span>
               </div>
             </>
           ) : (
             <>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="min-w-0 flex-1 truncate text-xs font-mono text-text-tertiary">
-                  {identifier}
+                  {issue.identifier}
                 </span>
                 {issue.assignee && (
                   <Avatar size="md" className={getAvatarColor(issue.assignee._id)}>
@@ -107,7 +108,7 @@ const IssueCard = memo(
       >
         {PriorityIcon && <PriorityIcon className={`w-3.5 h-3.5 flex-shrink-0 ${priorityColor}`} />}
         <span className="w-14 md:w-20 text-xs font-mono text-text-tertiary flex-shrink-0 truncate">
-          {identifier}
+          {issue.identifier}
         </span>
         <span className="flex-1 text-text-primary truncate ml-1">{issue.title}</span>
         {showProject && issue.project && (
@@ -131,6 +132,7 @@ const IssueCard = memo(
       prevProps.issue.status === nextProps.issue.status &&
       prevProps.issue.priority === nextProps.issue.priority &&
       prevProps.issue.assignee?._id === nextProps.issue.assignee?._id &&
+      prevProps.issue.parent?._id === nextProps.issue.parent?._id &&
       prevProps.variant === nextProps.variant &&
       prevProps.showProject === nextProps.showProject
     );

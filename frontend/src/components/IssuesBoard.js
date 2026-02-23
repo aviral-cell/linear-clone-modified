@@ -79,7 +79,14 @@ const IssuesBoard = ({
     return ['backlog', 'todo', 'in_progress', 'in_review', 'done', 'cancelled', 'duplicate'];
   };
 
-  const getIssuesByStatus = (status) => issues.filter((issue) => issue.status === status);
+  const getIssuesByStatus = (status) =>
+    issues
+      .filter((issue) => issue.status === status)
+      .sort((a, b) => {
+        const numA = parseInt(a.identifier.split('-')[1], 10);
+        const numB = parseInt(b.identifier.split('-')[1], 10);
+        return numA - numB;
+      });
 
   const handleIssueClick = (issue) => {
     navigate(`/issue/${issue.identifier}`);
