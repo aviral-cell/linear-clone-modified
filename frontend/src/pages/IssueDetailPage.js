@@ -370,10 +370,7 @@ const IssueDetailPage = () => {
               identifier={identifier}
               comments={comments}
               onEditComment={fetchComments}
-              onDeleteComment={() => {
-                fetchComments();
-                fetchActivities();
-              }}
+              onDeleteComment={fetchComments}
             />
 
             <CommentInput onSubmit={handleAddComment} loading={commentLoading} />
