@@ -23,9 +23,8 @@ The UI for managing sub-issue hierarchies is already fully implemented and relie
 2. Create a hierarchy of issues: A → B → C → D (four levels deep) and a standalone issue E, all in the same team. Also create an issue F in a different team.
 3. Open issue A and look at the parent selector — observe that A itself appears as a valid parent option, and issue F from the other team also appears.
 4. Open issue A and attempt to set it as its own parent — observe that the operation succeeds when it should be rejected.
-5. Attempt to set issue D (a deep descendant of A) as A's parent — observe that the operation succeeds instead of being rejected as a circular reference.
-6. Attempt to create a sub-issue under D (5th level) — this should succeed. Then attempt to create another level under that (6th level) — observe that the depth limit is not correctly enforced.
-7. Navigate to a non-existent issue identifier and request its valid parents — observe that no error is returned.
+5. Attempt to create a sub-issue under D (5th level) — this should succeed. Then attempt to create another level under that (6th level) — observe that the depth limit is not correctly enforced.
+6. Navigate to a non-existent issue identifier and request its valid parents — observe that no error is returned.
 
 ## Expected Behavior
 
