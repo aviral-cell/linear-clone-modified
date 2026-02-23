@@ -20,11 +20,13 @@ The UI for comments is already fully implemented and works correctly — it reli
 1. Log in using credentials:
    - Email: alice@workflow.dev
    - Password: Password@123
-2. Navigate to an issue that has comments from multiple team members.
-3. Observe that the edit and delete buttons appear on all comments, including those written by other users — they should only appear on your own comments.
-4. Click edit on a comment written by another user — observe that the update succeeds when it should be restricted.
-5. Click delete on a comment written by another user — observe that the deletion succeeds when it should be restricted.
-6. Edit one of your own comments and observe that no "edited" tag appears on the comment card afterward.
+2. Select the **Design** team from the sidebar. This team has issues with comments from multiple users.
+3. Open **DES-1** ("Create design system components") — this issue has comments from Alice, Taylor, and Casey.
+4. Observe that the edit and delete buttons appear on all comments, including those written by Taylor and Casey — they should only appear on Alice's own comments.
+5. Click edit on a comment written by Taylor or Casey — observe that the update succeeds when it should be restricted.
+6. Click delete on a comment written by Taylor or Casey — observe that the deletion succeeds when it should be restricted.
+7. Edit one of Alice's own comments and observe that no "edited" tag appears on the comment card afterward.
+8. You can also check **DES-5** and **DES-14** for additional comment threads to verify your fix works across multiple issues.
 
 ## Expected Behavior
 
