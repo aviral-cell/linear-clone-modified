@@ -4,6 +4,7 @@ import { Plus, Circle } from '../icons';
 import { getAvatarColor } from '../utils';
 import { issueStatusIcons, issueStatusOptions, priorityOptions } from '../constants';
 import { api } from '../services/api';
+import toast from 'react-hot-toast';
 import { cn } from '../utils/cn';
 import {
   Avatar,
@@ -61,8 +62,7 @@ const SubIssuesSection = ({ issue, subIssues, onCreateSubIssue, users = [] }) =>
       setShowForm(false);
       onCreateSubIssue();
     } catch (error) {
-      console.error('Error creating sub-issue:', error);
-      alert(error.message || 'Failed to create sub-issue');
+      toast.error(error.message || 'Failed to create sub-issue');
     } finally {
       setLoading(false);
     }

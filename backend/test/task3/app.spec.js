@@ -203,6 +203,36 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
     expect(validIdentifiers).to.not.include('TEST-5');
   });
 
+  it('should only list valid parents that respect maximum nesting depth', async () => {
+    const issueG = new Issue({
+      identifier: 'TEST-6',
+      title: 'Issue G (Child of D - 5th level)',
+      team: team._id,
+      creator: user._id,
+      status: 'todo',
+      parent: issueD._id,
+    });
+    await issueG.save();
+
+    const res1 = await chai
+      .request(app)
+      .get(`/api/issues/${issueE.identifier}/valid-parents`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(res1).to.have.status(200);
+    const identifiers1 = res1.body.validParents.map((p) => p.identifier);
+    expect(identifiers1).to.include('TEST-4');
+    expect(identifiers1).to.not.include('TEST-6');
+
+    const res2 = await chai
+      .request(app)
+      .get(`/api/issues/${issueA.identifier}/valid-parents`)
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(res2).to.have.status(200);
+    expect(res2.body.validParents).to.be.an('array').that.is.empty;
+  });
+
   // --- Error Handling ---
 
   it('should return 404 for non-existent issue identifier', async () => {
