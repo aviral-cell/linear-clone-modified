@@ -13,5 +13,5 @@ configuration:
             - frontend/src/App.js
         project_menu:
             run: npm start
-            install: bash setup.sh && cd backend && node src/utils/seed.js
+            install: npm run prestart
             test: echo "No test command configured"
