@@ -1,5 +1,4 @@
 import Issue from '../../models/Issue.js';
-import Comment from '../../models/Comment.js';
 import IssueActivity from '../../models/IssueActivity.js';
 import Team from '../../models/Team.js';
 import {
@@ -207,48 +206,6 @@ export const updateIssue = async (identifier, updates, userId) => {
   await issue.populate(ISSUE_POPULATE_DETAIL);
 
   return issue;
-};
-
-export const deleteIssue = async (identifier) => {
-  const issue = await Issue.findOne({ identifier });
-  if (!issue) {
-    throw new NotFoundError('Issue not found');
-  }
-
-  const descendantIds = await getDescendantsForDelete(issue._id);
-  const allIds = [issue._id, ...descendantIds];
-
-  await Comment.deleteMany({ issue: { $in: allIds } });
-  await IssueActivity.deleteMany({ issue: { $in: allIds } });
-  await Issue.deleteMany({ _id: { $in: allIds } });
-
-  return {
-    message: 'Issue deleted successfully',
-    deletedCount: allIds.length,
-  };
-};
-
-const getDescendantsForDelete = async (issueId, visited = new Set()) => {
-  if (visited.has(issueId.toString())) {
-    return [];
-  }
-  visited.add(issueId.toString());
-
-  const children = await Issue.find({ parent: issueId }).select('_id');
-
-  if (children.length === 0) {
-    return [];
-  }
-
-  const descendants = [];
-
-  for (const child of children) {
-    descendants.push(child._id);
-    const childDescendants = await getDescendantsForDelete(child._id, visited);
-    descendants.push(...childDescendants);
-  }
-
-  return descendants;
 };
 
 export const getValidParents = async (identifier) => {

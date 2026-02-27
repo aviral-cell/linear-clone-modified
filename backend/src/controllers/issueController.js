@@ -38,12 +38,6 @@ export const updateIssue = async (req, res) => {
   res.json({ issue });
 };
 
-export const deleteIssue = async (req, res) => {
-  const { identifier } = req.params;
-  const result = await issueService.deleteIssue(identifier);
-  res.json(result);
-};
-
 export const getValidParents = async (req, res) => {
   const { identifier } = req.params;
   const validParents = await issueService.getValidParents(identifier);
