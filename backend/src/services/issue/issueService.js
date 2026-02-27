@@ -167,28 +167,27 @@ export const updateIssue = async (identifier, updates, userId) => {
     }
   }
 
+  Object.assign(issue, updates);
+  await issue.save();
+  await issue.populate(ISSUE_POPULATE_DETAIL);
+
   const changes = [];
   const fieldsToTrack = [
     'status',
     'priority',
     'assignee',
-    'title',
-    'description',
     'project',
     'parent',
   ];
 
   fieldsToTrack.forEach((field) => {
-    if (updates[field] === undefined) {
-      return;
-    }
-    if (String(issue[field]) === String(updates[field])) {
+    if (updates[field] === undefined || updates[field] === null) {
       return;
     }
     changes.push({
       field,
-      oldValue: issue[field],
-      newValue: updates[field],
+      oldValue: updates[field],
+      newValue: issue[field],
     });
   });
 
@@ -201,10 +200,6 @@ export const updateIssue = async (identifier, updates, userId) => {
     });
     await activity.save();
   }
-
-  Object.assign(issue, updates);
-  await issue.save();
-  await issue.populate(ISSUE_POPULATE_DETAIL);
 
   return issue;
 };
