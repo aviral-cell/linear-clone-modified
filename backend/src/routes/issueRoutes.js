@@ -29,7 +29,7 @@ router.post('/:identifier/subscribe', authenticate, toggleSubscribe);
 router.get('/:identifier/activities', authenticate, getIssueActivities);
 router.get('/:identifier/comments', authenticate, getCommentsByIssue);
 router.post('/:identifier/comments', authenticate, createComment);
-router.put('/:identifier/comments/:id', authenticate, updateComment);
-router.delete('/:identifier/comments/:id', authenticate, deleteComment);
+router.put('/:identifier/comments/:id', updateComment);
+router.delete('/:identifier/comments/:id', deleteComment);
 
 export default router;

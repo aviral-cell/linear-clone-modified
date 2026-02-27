@@ -65,8 +65,7 @@ export const getIssueActivities = async (req, res) => {
 
 export const getCommentsByIssue = async (req, res) => {
   const { identifier } = req.params;
-  const userId = req.user?._id;
-  const comments = await commentService.getCommentsByIssue(identifier, userId);
+  const comments = await commentService.getCommentsByIssue(identifier);
   res.json({ comments });
 };
 
@@ -81,14 +80,12 @@ export const createComment = async (req, res) => {
 export const updateComment = async (req, res) => {
   const commentId = req.params.id;
   const { content } = req.body;
-  const userId = req.user._id;
-  const comment = await commentService.updateComment(commentId, content, userId);
+  const comment = await commentService.updateComment(commentId, content);
   res.json({ comment });
 };
 
 export const deleteComment = async (req, res) => {
   const commentId = req.params.id;
-  const userId = req.user._id;
-  await commentService.deleteComment(commentId, userId);
+  await commentService.deleteComment(commentId);
   res.json({ message: 'Comment deleted successfully' });
 };
