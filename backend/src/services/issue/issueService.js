@@ -18,8 +18,6 @@ export const getMyIssues = async (userId, filter) => {
     query = { creator: userId };
   } else if (filter === 'assigned') {
     query = { assignee: userId };
-  } else if (filter === 'subscribed') {
-    query = { subscribers: userId };
   } else {
     throw new BadRequestError('Filter is required');
   }
@@ -99,7 +97,7 @@ export const createIssue = async (fields, userId) => {
   return issue;
 };
 
-export const getIssueByIdentifier = async (identifier, userId) => {
+export const getIssueByIdentifier = async (identifier) => {
   const issue = await Issue.findOne({ identifier }).populate(ISSUE_POPULATE_DETAIL);
 
   if (!issue) {
@@ -111,9 +109,7 @@ export const getIssueByIdentifier = async (identifier, userId) => {
     .populate('creator', 'name email avatar')
     .sort({ createdAt: -1 });
 
-  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === userId.toString());
-
-  return { issue, subIssues, isSubscribed };
+  return { issue, subIssues };
 };
 
 export const updateIssue = async (identifier, updates, userId) => {
@@ -228,23 +224,4 @@ export const getValidParents = async (identifier) => {
   const validParents = await getValidParentCandidates(issue?._id);
 
   return validParents;
-};
-
-export const toggleSubscribe = async (identifier, userId) => {
-  const issue = await Issue.findOne({ identifier });
-  if (!issue) {
-    throw new NotFoundError('Issue not found');
-  }
-
-  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === userId.toString());
-
-  if (isSubscribed) {
-    issue.subscribers.pull(userId);
-  } else {
-    issue.subscribers.push(userId);
-  }
-
-  await issue.save();
-
-  return { subscribed: !isSubscribed };
 };

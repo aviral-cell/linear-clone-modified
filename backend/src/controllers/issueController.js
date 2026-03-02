@@ -25,8 +25,7 @@ export const createIssue = async (req, res) => {
 
 export const getIssueByIdentifier = async (req, res) => {
   const { identifier } = req.params;
-  const userId = req.user._id;
-  const result = await issueService.getIssueByIdentifier(identifier, userId);
+  const result = await issueService.getIssueByIdentifier(identifier);
   res.json(result);
 };
 
@@ -48,13 +47,6 @@ export const getValidParents = async (req, res) => {
   const { identifier } = req.params;
   const validParents = await issueService.getValidParents(identifier);
   res.json({ validParents });
-};
-
-export const toggleSubscribe = async (req, res) => {
-  const { identifier } = req.params;
-  const userId = req.user._id;
-  const result = await issueService.toggleSubscribe(identifier, userId);
-  res.json(result);
 };
 
 export const getIssueActivities = async (req, res) => {
