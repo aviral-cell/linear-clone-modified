@@ -5,7 +5,6 @@ import {
   createIssue,
   getIssueByIdentifier,
   updateIssue,
-  deleteIssue,
   getValidParents,
   getIssueActivities,
   getCommentsByIssue,
@@ -22,7 +21,6 @@ router.get('/', authenticate, getIssues);
 router.post('/', authenticate, createIssue);
 router.get('/:identifier', authenticate, getIssueByIdentifier);
 router.put('/:identifier', authenticate, updateIssue);
-router.delete('/:identifier', authenticate, deleteIssue);
 router.get('/:identifier/valid-parents', authenticate, getValidParents);
 router.get('/:identifier/activities', authenticate, getIssueActivities);
 router.get('/:identifier/comments', authenticate, getCommentsByIssue);
