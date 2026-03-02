@@ -1,4 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = https://github.com/ProblemSetters/coderepo-react-workflow.git
-	branch = solution-prod

@@ -1,0 +1,72 @@
+import React from 'react';
+import { formatDateTime, formatDateShort } from '../utils';
+import { ACTIVITY_LAYOUT, ACTIVITY_DATE_FORMAT } from '../constants';
+import { ActivityDot } from './ui';
+
+const ActivityRow = ({ item, layout = ACTIVITY_LAYOUT.TIMELINE, size = 'medium' }) => {
+  const { user, message, icon, createdAt, dateFormat } = item;
+
+  const formattedDate =
+    dateFormat === ACTIVITY_DATE_FORMAT.RELATIVE
+      ? formatDateTime(createdAt, { relative: true })
+      : formatDateShort(createdAt);
+
+  const renderIcon = () => {
+    if (icon.type === 'avatar') {
+      return (
+        <ActivityDot className={icon.avatarColor}>
+          <span className="text-xs font-medium text-white">{icon.initial}</span>
+        </ActivityDot>
+      );
+    }
+
+    const IconComponent = icon.Icon;
+
+    if (layout === ACTIVITY_LAYOUT.TIMELINE) {
+      return (
+        <ActivityDot>
+          <IconComponent className={`w-4 h-4 ${icon.color}`} />
+        </ActivityDot>
+      );
+    }
+
+    const iconSize = size === 'small' ? 'w-3 h-3' : 'w-4 h-4';
+    const containerSize = size === 'small' ? 'w-3 h-3' : 'w-4 h-4';
+
+    return (
+      <div className={`${containerSize} ${icon.color} flex-shrink-0 mt-0.5`}>
+        <IconComponent className={iconSize} />
+      </div>
+    );
+  };
+
+  if (layout === ACTIVITY_LAYOUT.TIMELINE) {
+    return (
+      <div className="flex items-start gap-3 relative pl-0">
+        {renderIcon()}
+        <div className="flex-1 pt-0.5 ml-8">
+          <p className="text-sm text-text-secondary">
+            <span className="text-text-primary font-medium">{user.name}</span> {message}
+          </p>
+          <p className="text-xs text-text-tertiary mt-0.5">{formattedDate}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const usernameClasses = size === 'small' ? 'text-text-primary' : 'text-text-primary font-medium';
+
+  return (
+    <div className="flex items-start gap-2">
+      {renderIcon()}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-text-secondary">
+          <span className={usernameClasses}>{user?.name || 'Unknown'}</span> {message}
+          <span className="text-text-tertiary"> · {formattedDate}</span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default ActivityRow;
