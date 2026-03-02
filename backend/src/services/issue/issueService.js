@@ -30,34 +30,10 @@ export const getMyIssues = async (userId, filter) => {
 };
 
 export const getIssues = async (filters = {}) => {
-  const { teamId, status, priority, assignee, creator, parent } = filters;
+  const { teamId } = filters;
 
   const query = {};
   if (teamId) query.team = teamId;
-
-  if (status) {
-    const statuses = status.split(',');
-    query.status = statuses.length > 1 ? { $in: statuses } : status;
-  }
-
-  if (priority) {
-    const priorities = priority.split(',');
-    query.priority = priorities.length > 1 ? { $in: priorities } : priority;
-  }
-
-  if (assignee) {
-    const assignees = assignee.split(',');
-    query.assignee = assignees.length > 1 ? { $in: assignees } : assignee;
-  }
-
-  if (creator) {
-    const creators = creator.split(',');
-    query.creator = creators.length > 1 ? { $in: creators } : creator;
-  }
-
-  if (parent !== undefined) {
-    query.parent = parent === 'null' ? null : parent;
-  }
 
   const issues = await Issue.find(query).populate(ISSUE_POPULATE).sort({ createdAt: -1 });
 
