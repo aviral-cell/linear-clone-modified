@@ -248,11 +248,8 @@ const getDescendantsForDelete = async (issueId, visited = new Set()) => {
 
 export const getValidParents = async (identifier) => {
   const issue = await Issue.findOne({ identifier });
-  if (!issue) {
-    throw new NotFoundError('Issue not found');
-  }
 
-  const validParents = await getValidParentCandidates(issue._id);
+  const validParents = await getValidParentCandidates(issue?._id);
 
   return validParents;
 };
