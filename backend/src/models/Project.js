@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-export const PROJECT_STATUSES = ['backlog', 'planned', 'in_progress', 'completed', 'cancelled'];
+const PROJECT_STATUSES = ['backlog', 'planned', 'in_progress', 'completed', 'cancelled'];
 
-export const PROJECT_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
+const PROJECT_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
 
 const projectSchema = new mongoose.Schema(
   {

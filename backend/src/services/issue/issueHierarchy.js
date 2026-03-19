@@ -3,7 +3,7 @@ import Issue from '../../models/Issue.js';
 export const MAX_DEPTH = 5;
 
 export const getDepth = async (issueId) => {
-  let depth = 0;
+  let depth = 1;
   let currentId = issueId;
 
   while (currentId) {
@@ -28,7 +28,7 @@ export const getMaxSubtreeDepth = async (issueId) => {
   return maxDepth;
 };
 
-export const getDescendants = async (issueId, visited = new Set()) => {
+const getDescendants = async (issueId, visited = new Set()) => {
   if (visited.has(issueId.toString())) {
     return [];
   }
@@ -45,14 +45,14 @@ export const getDescendants = async (issueId, visited = new Set()) => {
   for (const child of children) {
     descendants.push(child._id);
     const childDescendants = await getDescendants(child._id, visited);
-    descendants.concat(childDescendants);
+    descendants.push(...childDescendants);
   }
 
   return descendants;
 };
 
 export const validateParentChange = async (issueId, newParentId) => {
-  if (issueId === newParentId) {
+  if (issueId.toString() === newParentId.toString()) {
     return {
       valid: false,
       reason: 'Issue cannot be its own parent',
@@ -68,7 +68,7 @@ export const validateParentChange = async (issueId, newParentId) => {
     return { valid: false, reason: 'Parent issue not found' };
   }
 
-  if (issue && parent && issue.team == parent.team) {
+  if (issue && parent && issue.team.toString() !== parent.team.toString()) {
     return {
       valid: false,
       reason: 'Parent must be in the same team',
@@ -77,7 +77,9 @@ export const validateParentChange = async (issueId, newParentId) => {
 
   const descendants = await getDescendants(issueId);
 
-  const isDescendant = descendants.some((descendantId) => descendantId === newParentId);
+  const isDescendant = descendants.some(
+    (descendantId) => descendantId.toString() === newParentId.toString()
+  );
 
   if (isDescendant) {
     return {
@@ -97,10 +99,11 @@ export const getValidParentCandidates = async (issueId) => {
   }
 
   const descendants = await getDescendants(issueId);
-  const excludeIds = [...descendants];
+  const excludeIds = [issueId, ...descendants];
 
   const candidates = await Issue.find({
     _id: { $nin: excludeIds },
+    team: issue.team,
   })
     .populate('parent', 'identifier title')
     .populate('assignee', 'name email avatar')

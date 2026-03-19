@@ -9,6 +9,7 @@ import teamRoutes from './routes/teamRoutes.js';
 import issueRoutes from './routes/issueRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import apiLogRoutes from './routes/apiLogRoutes.js';
+import { apiLogger } from './middleware/apiLogger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(apiLogger);
 
 app.get('/', (req, res) => {
   res.send('Backend is running');

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export const ISSUE_STATUSES = [
+const ISSUE_STATUSES = [
   'backlog',
   'todo',
   'in_progress',
@@ -10,7 +10,7 @@ export const ISSUE_STATUSES = [
   'duplicate',
 ];
 
-export const ISSUE_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
+const ISSUE_PRIORITIES = ['no_priority', 'urgent', 'high', 'medium', 'low'];
 
 const issueSchema = new mongoose.Schema(
   {

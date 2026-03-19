@@ -10,6 +10,7 @@ export const getIssueActivities = async (identifier) => {
 
   const activities = await IssueActivity.find({ issue: issue._id })
     .populate('user', 'name email avatar')
+    .sort({ createdAt: -1, _id: -1 });
 
   return activities;
 };

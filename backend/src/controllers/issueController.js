@@ -10,8 +10,8 @@ export const getMyIssues = async (req, res) => {
 };
 
 export const getIssues = async (req, res) => {
-  const { teamId } = req.query;
-  const filters = { teamId };
+  const { teamId, status, priority, assignee, creator, parent } = req.query;
+  const filters = { teamId, status, priority, assignee, creator, parent };
   const issues = await issueService.getIssues(filters);
   res.json({ issues });
 };
@@ -25,7 +25,8 @@ export const createIssue = async (req, res) => {
 
 export const getIssueByIdentifier = async (req, res) => {
   const { identifier } = req.params;
-  const result = await issueService.getIssueByIdentifier(identifier);
+  const userId = req.user._id;
+  const result = await issueService.getIssueByIdentifier(identifier, userId);
   res.json(result);
 };
 
@@ -37,10 +38,23 @@ export const updateIssue = async (req, res) => {
   res.json({ issue });
 };
 
+export const deleteIssue = async (req, res) => {
+  const { identifier } = req.params;
+  const result = await issueService.deleteIssue(identifier);
+  res.json(result);
+};
+
 export const getValidParents = async (req, res) => {
   const { identifier } = req.params;
   const validParents = await issueService.getValidParents(identifier);
   res.json({ validParents });
+};
+
+export const toggleSubscribe = async (req, res) => {
+  const { identifier } = req.params;
+  const userId = req.user._id;
+  const result = await issueService.toggleSubscribe(identifier, userId);
+  res.json(result);
 };
 
 export const getIssueActivities = async (req, res) => {
@@ -51,7 +65,8 @@ export const getIssueActivities = async (req, res) => {
 
 export const getCommentsByIssue = async (req, res) => {
   const { identifier } = req.params;
-  const comments = await commentService.getCommentsByIssue(identifier);
+  const userId = req.user?._id;
+  const comments = await commentService.getCommentsByIssue(identifier, userId);
   res.json({ comments });
 };
 
@@ -66,12 +81,14 @@ export const createComment = async (req, res) => {
 export const updateComment = async (req, res) => {
   const commentId = req.params.id;
   const { content } = req.body;
-  const comment = await commentService.updateComment(commentId, content);
+  const userId = req.user._id;
+  const comment = await commentService.updateComment(commentId, content, userId);
   res.json({ comment });
 };
 
 export const deleteComment = async (req, res) => {
   const commentId = req.params.id;
-  await commentService.deleteComment(commentId);
+  const userId = req.user._id;
+  await commentService.deleteComment(commentId, userId);
   res.json({ message: 'Comment deleted successfully' });
 };

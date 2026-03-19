@@ -1,7 +1,7 @@
 import Comment from '../../models/Comment.js';
 import Issue from '../../models/Issue.js';
 import IssueActivity from '../../models/IssueActivity.js';
-import { BadRequestError, NotFoundError } from '../../utils/appError.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '../../utils/appError.js';
 
 const findIssueByIdentifier = async (identifier) => {
   const issue = await Issue.findOne({ identifier });
@@ -11,16 +11,17 @@ const findIssueByIdentifier = async (identifier) => {
   return issue;
 };
 
-export const getCommentsByIssue = async (identifier) => {
+export const getCommentsByIssue = async (identifier, userId) => {
   const issue = await findIssueByIdentifier(identifier);
 
   const comments = await Comment.find({ issue: issue._id })
     .populate('user', 'name email avatar')
     .sort({ createdAt: 1 });
 
+  const currentUserId = userId?.toString();
   const commentsWithOwner = comments.map((comment) => {
     const commentObj = comment.toObject();
-    commentObj.isOwner = comment.user._id;
+    commentObj.isOwner = currentUserId && comment.user._id.toString() === currentUserId;
     return commentObj;
   });
 
@@ -53,7 +54,7 @@ export const createComment = async (identifier, content, userId) => {
   return comment;
 };
 
-export const updateComment = async (commentId, content) => {
+export const updateComment = async (commentId, content, userId) => {
   if (!content || !content.trim()) {
     throw new BadRequestError('Content is required');
   }
@@ -63,7 +64,12 @@ export const updateComment = async (commentId, content) => {
     throw new NotFoundError('Comment not found');
   }
 
+  if (comment.user.toString() !== userId.toString()) {
+    throw new ForbiddenError('Not authorized');
+  }
+
   comment.content = content.trim();
+  comment.isEdited = true;
 
   await comment.save();
   await comment.populate('user', 'name email avatar');
@@ -71,10 +77,14 @@ export const updateComment = async (commentId, content) => {
   return comment;
 };
 
-export const deleteComment = async (commentId) => {
+export const deleteComment = async (commentId, userId) => {
   const comment = await Comment.findById(commentId);
   if (!comment) {
     throw new NotFoundError('Comment not found');
+  }
+
+  if (comment.user.toString() !== userId.toString()) {
+    throw new ForbiddenError('Not authorized');
   }
 
   await comment.deleteOne();

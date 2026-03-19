@@ -1,4 +1,4 @@
-export const SENSITIVE_FIELDS = [
+const SENSITIVE_FIELDS = [
   'password',
   'token',
   'apiKey',
@@ -9,7 +9,7 @@ export const SENSITIVE_FIELDS = [
   'refreshToken',
   'confirmPassword',
 ];
-export const MAX_BODY_SIZE = 10 * 1024;
+const MAX_BODY_SIZE = 10 * 1024;
 export const SLOW_THRESHOLD = 1000;
 
 export const sanitizeObject = (obj) => {

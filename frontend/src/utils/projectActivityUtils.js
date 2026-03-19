@@ -13,8 +13,6 @@ import {
 } from '../icons';
 import { projectStatusIcons, priorityIcons } from '../constants';
 
-export { projectStatusIcons, priorityIcons };
-
 const formatStatusLabel = (status) => {
   const statusMap = {
     backlog: 'Backlog',

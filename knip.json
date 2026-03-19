@@ -1,24 +1,12 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
-    ".": {
-      "entry": ["vitest.config.frontend.ts"],
-      "project": ["vitest.*.ts", "scripts/**/*.mjs", "scripts/**/*.sh"]
-    },
     "frontend": {
-      "entry": [
-        "../candidate-contracts/candidate-frontend-contract.js",
-        "test/**/*"
-      ],
+      "entry": ["test/**/*"],
       "project": ["src/**/*.{js,jsx}", "test/**/*"]
     },
     "backend": {
-      "entry": [
-        "src/app.js",
-        "src/server.js",
-        "../candidate-contracts/candidate-backend-contract.js",
-        "test/**/*.js"
-      ],
+      "entry": ["src/app.js", "src/server.js", "test/**/*.js"],
       "project": ["src/**/*.js", "test/**/*.js"],
       "ignoreFiles": [
         "src/services/admin/index.js",
@@ -30,15 +18,5 @@
       ]
     }
   },
-  "ignoreDependencies": [
-    "@testing-library/jest-dom",
-    "@testing-library/react",
-    "@testing-library/user-event",
-    "@vitest/coverage-v8",
-    "concurrently",
-    "eslint",
-    "jest-junit",
-    "jsdom",
-    "typescript-eslint"
-  ]
+  "ignoreDependencies": ["jest-junit"]
 }

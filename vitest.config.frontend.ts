@@ -23,7 +23,7 @@ export default defineConfig({
   test: {
     name: 'frontend',
     include: ['frontend/__tests__/**/*.{test,spec}.{js,jsx}'],
-    environment: 'jsdom',
+    environment: 'happy-dom',
     globals: true,
     setupFiles: [
       path.resolve(__dirname, 'frontend/test/setup.ts'),
@@ -32,9 +32,10 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     passWithNoTests: true,
+    fileParallelism: false,
     pool: 'threads',
     poolOptions: {
-      threads: { singleThread: false },
+      threads: { singleThread: true },
     },
     coverage: {
       provider: 'v8',

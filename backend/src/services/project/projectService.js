@@ -68,6 +68,9 @@ export const createProject = async (fields, userId) => {
   }
 
   const members = [...(memberIds || [])];
+  if (leadId && !members.includes(leadId)) {
+    members.push(leadId);
+  }
 
   const project = new Project({
     name,

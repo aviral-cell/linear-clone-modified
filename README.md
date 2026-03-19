@@ -36,22 +36,11 @@ From the repo root:
 
 ## Quality model
 
-`main` is the candidate branch. Its quality checks ignore the task solution surface by comparing `frontend/src` and `backend/src` against the solution repo at:
+This branch runs strict whole-repo checks:
 
-`/Users/aviralsrivastava/Desktop/Sanity-Pipeline/linear-solution/coderepo-mern-linear-clone`
-
-Override that location with `LINEAR_SOLUTION_REPO` if needed.
-
-Candidate-facing exports are also pinned through:
-
-- `candidate-contracts/candidate-backend-contract.js`
-- `candidate-contracts/candidate-frontend-contract.js`
-
-Run the strict whole-repo variants with:
-
-- `bun run lint:strict`
-- `bun run typecheck:strict`
-- `bun run unused:check:strict`
+- `bun run lint`
+- `bun run typecheck`
+- `bun run unused:check`
 
 ## Clean reinstall
 

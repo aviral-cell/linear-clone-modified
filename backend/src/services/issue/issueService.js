@@ -1,4 +1,5 @@
 import Issue from '../../models/Issue.js';
+import Comment from '../../models/Comment.js';
 import IssueActivity from '../../models/IssueActivity.js';
 import Team from '../../models/Team.js';
 import {
@@ -17,6 +18,8 @@ export const getMyIssues = async (userId, filter) => {
     query = { creator: userId };
   } else if (filter === 'assigned') {
     query = { assignee: userId };
+  } else if (filter === 'subscribed') {
+    query = { subscribers: userId };
   } else {
     throw new BadRequestError('Filter is required');
   }
@@ -27,10 +30,34 @@ export const getMyIssues = async (userId, filter) => {
 };
 
 export const getIssues = async (filters = {}) => {
-  const { teamId } = filters;
+  const { teamId, status, priority, assignee, creator, parent } = filters;
 
   const query = {};
   if (teamId) query.team = teamId;
+
+  if (status) {
+    const statuses = status.split(',');
+    query.status = statuses.length > 1 ? { $in: statuses } : status;
+  }
+
+  if (priority) {
+    const priorities = priority.split(',');
+    query.priority = priorities.length > 1 ? { $in: priorities } : priority;
+  }
+
+  if (assignee) {
+    const assignees = assignee.split(',');
+    query.assignee = assignees.length > 1 ? { $in: assignees } : assignee;
+  }
+
+  if (creator) {
+    const creators = creator.split(',');
+    query.creator = creators.length > 1 ? { $in: creators } : creator;
+  }
+
+  if (parent !== undefined) {
+    query.parent = parent === 'null' ? null : parent;
+  }
 
   const issues = await Issue.find(query).populate(ISSUE_POPULATE).sort({ createdAt: -1 });
 
@@ -96,7 +123,7 @@ export const createIssue = async (fields, userId) => {
   return issue;
 };
 
-export const getIssueByIdentifier = async (identifier) => {
+export const getIssueByIdentifier = async (identifier, userId) => {
   const issue = await Issue.findOne({ identifier }).populate(ISSUE_POPULATE_DETAIL);
 
   if (!issue) {
@@ -108,7 +135,9 @@ export const getIssueByIdentifier = async (identifier) => {
     .populate('creator', 'name email avatar')
     .sort({ createdAt: -1 });
 
-  return { issue, subIssues };
+  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === userId.toString());
+
+  return { issue, subIssues, isSubscribed };
 };
 
 export const updateIssue = async (identifier, updates, userId) => {
@@ -138,27 +167,28 @@ export const updateIssue = async (identifier, updates, userId) => {
     }
   }
 
-  Object.assign(issue, updates);
-  await issue.save();
-  await issue.populate(ISSUE_POPULATE_DETAIL);
-
   const changes = [];
   const fieldsToTrack = [
     'status',
     'priority',
     'assignee',
+    'title',
+    'description',
     'project',
     'parent',
   ];
 
   fieldsToTrack.forEach((field) => {
-    if (updates[field] === undefined || updates[field] === null) {
+    if (updates[field] === undefined) {
+      return;
+    }
+    if (String(issue[field]) === String(updates[field])) {
       return;
     }
     changes.push({
       field,
-      oldValue: updates[field],
-      newValue: issue[field],
+      oldValue: issue[field],
+      newValue: updates[field],
     });
   });
 
@@ -172,13 +202,81 @@ export const updateIssue = async (identifier, updates, userId) => {
     await activity.save();
   }
 
+  Object.assign(issue, updates);
+  await issue.save();
+  await issue.populate(ISSUE_POPULATE_DETAIL);
+
   return issue;
+};
+
+export const deleteIssue = async (identifier) => {
+  const issue = await Issue.findOne({ identifier });
+  if (!issue) {
+    throw new NotFoundError('Issue not found');
+  }
+
+  const descendantIds = await getDescendantsForDelete(issue._id);
+  const allIds = [issue._id, ...descendantIds];
+
+  await Comment.deleteMany({ issue: { $in: allIds } });
+  await IssueActivity.deleteMany({ issue: { $in: allIds } });
+  await Issue.deleteMany({ _id: { $in: allIds } });
+
+  return {
+    message: 'Issue deleted successfully',
+    deletedCount: allIds.length,
+  };
+};
+
+const getDescendantsForDelete = async (issueId, visited = new Set()) => {
+  if (visited.has(issueId.toString())) {
+    return [];
+  }
+  visited.add(issueId.toString());
+
+  const children = await Issue.find({ parent: issueId }).select('_id');
+
+  if (children.length === 0) {
+    return [];
+  }
+
+  const descendants = [];
+
+  for (const child of children) {
+    descendants.push(child._id);
+    const childDescendants = await getDescendantsForDelete(child._id, visited);
+    descendants.push(...childDescendants);
+  }
+
+  return descendants;
 };
 
 export const getValidParents = async (identifier) => {
   const issue = await Issue.findOne({ identifier });
+  if (!issue) {
+    throw new NotFoundError('Issue not found');
+  }
 
-  const validParents = await getValidParentCandidates(issue?._id);
+  const validParents = await getValidParentCandidates(issue._id);
 
   return validParents;
+};
+
+export const toggleSubscribe = async (identifier, userId) => {
+  const issue = await Issue.findOne({ identifier });
+  if (!issue) {
+    throw new NotFoundError('Issue not found');
+  }
+
+  const isSubscribed = issue.subscribers.some((sub) => sub.toString() === userId.toString());
+
+  if (isSubscribed) {
+    issue.subscribers.pull(userId);
+  } else {
+    issue.subscribers.push(userId);
+  }
+
+  await issue.save();
+
+  return { subscribed: !isSubscribed };
 };
