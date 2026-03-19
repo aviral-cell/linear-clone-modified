@@ -1,21 +1,17 @@
-# Feature: Advance Issue Filters
+# Feature: Advanced Issue Filters
 
 `Easy`
 
 ## Overview
 
-**Skills:** Node.js (Basic)
-**Recommended Duration:** 25 Minutes
+**Skills:** Node.js (Intermediate)
+**Recommended Duration:** 30 Minutes
 
-Workflow is a project management platform where teams create and manage issues, track progress, and collaborate. The issues list page includes filter controls for narrowing down issues by various criteria such as status, priority, assignee, and more.
+Workflow is a project management platform similar to Linear where teams create and manage issues, track progress, and collaborate. The issues list page includes filter controls for narrowing down issues by various criteria such as status, priority, assignee, and more.
 
 Currently, the filter UI is fully implemented on the frontend, but the backend does not process any filter parameters. Regardless of which filters a user selects, the issues list always returns every issue in the team. Adding server-side filtering is essential for teams with large backlogs to quickly find relevant issues.
 
 You need to build the backend filtering logic for the team issues listing endpoint.
-
-![Issue filters UI](images/filters-1-filter-ui.png)
-
-**Note:** The code repository may intentionally contain other issues that are unrelated to this specific task. Focus only on the described task requirements.
 
 ## Product Requirements
 
@@ -32,10 +28,8 @@ You need to build the backend filtering logic for the team issues listing endpoi
 ## Steps to Test Functionality
 
 1. Log in using credentials:
-   ```
-   Email: alice@workflow.dev
-   Password: Password@123
-   ```
+   - Email: alice@workflow.dev
+   - Password: Password@123
 2. Navigate to a team's issues list that contains issues with various statuses, priorities, and assignees.
 3. Use the status filter to select "Todo" — verify that only issues with "Todo" status are shown.
 4. Select multiple statuses (e.g., "In Progress" and "Done") — verify that issues matching either status are shown.
