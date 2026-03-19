@@ -4,7 +4,7 @@ const generateBaseURL = () => {
   return `${currentProtocol}//${currentHost.replace('8000', '8080')}`;
 };
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(message, status, code = null) {
     super(message);
     this.name = 'ApiError';
@@ -166,5 +166,3 @@ class ApiService {
 }
 
 export const api = new ApiService();
-
-export const baseURL = generateBaseURL();
