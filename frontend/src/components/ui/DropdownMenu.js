@@ -11,15 +11,6 @@ const PADDING_VIEWPORT = 16;
 const PADDING_VIEWPORT_MOBILE = 20;
 const MOBILE_BREAKPOINT = 640;
 
-export function getDropdownPanelClasses(isVertical, options = {}) {
-  const { minWidth = 'min-w-dropdown-md', align = 'left' } = options;
-  if (isVertical) {
-    return cn('dropdown-panel', minWidth);
-  }
-  const alignment = align === 'right' ? 'right-0 left-auto' : 'left-0';
-  return cn('dropdown-panel', alignment, minWidth, 'max-w-dropdown-viewport');
-}
-
 const ESTIMATED_PANEL_WIDTH = 200;
 
 function getPanelPlacement(triggerRect, align, panelWidth = ESTIMATED_PANEL_WIDTH, options = {}) {

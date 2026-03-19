@@ -38,5 +38,3 @@ export const useAdminLogs = (initialParams = {}) => {
 
   return { logs, pagination, loading, error, refetch: fetchLogs };
 };
-
-export default useAdminLogs;

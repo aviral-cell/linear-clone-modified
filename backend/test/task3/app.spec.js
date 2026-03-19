@@ -17,8 +17,6 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
 };
 
 describe('Task 3: Sub Issue Hierarchy Testing', function () {
-  this.timeout(15000);
-
   let user;
   let userToken;
   let team;
@@ -31,7 +29,7 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
   let issueE;
   let issueF;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -139,7 +137,7 @@ describe('Task 3: Sub Issue Hierarchy Testing', function () {
     await issueF.save();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

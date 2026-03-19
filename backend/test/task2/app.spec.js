@@ -18,8 +18,6 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity, Project
 };
 
 describe('Task 2: Issue Activity Tracker Testing', function () {
-  this.timeout(10000);
-
   let user;
   let userToken;
   let team;
@@ -27,7 +25,7 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
   let project;
   let parentIssue;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -93,7 +91,7 @@ describe('Task 2: Issue Activity Tracker Testing', function () {
     await IssueActivity.deleteMany({});
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

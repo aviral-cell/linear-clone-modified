@@ -26,7 +26,7 @@ describe('Task 1: Comments Access Control Testing', () => {
   let issue;
   let comment1;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -78,7 +78,7 @@ describe('Task 1: Comments Access Control Testing', () => {
     await cleanupModels([Comment, IssueActivity]);
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

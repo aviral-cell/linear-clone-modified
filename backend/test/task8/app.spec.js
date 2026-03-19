@@ -17,13 +17,11 @@ const cleanupModels = async (models = [User, Team, Project, ProjectActivity]) =>
 };
 
 describe('Task 8: Project Lead Auto-Add to Members Testing', function () {
-  this.timeout(15000);
-
   let alice, bob, charlie;
   let aliceToken;
   let team;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -57,7 +55,7 @@ describe('Task 8: Project Lead Auto-Add to Members Testing', function () {
     await ProjectActivity.deleteMany({});
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

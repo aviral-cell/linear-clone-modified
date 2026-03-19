@@ -17,15 +17,13 @@ const cleanupModels = async (models = [User, Team, Issue, IssueActivity]) => {
 };
 
 describe('Task 4: Advanced Issue Filters Testing', function () {
-  this.timeout(15000);
-
   let userA;
   let userB;
   let tokenA;
   let team;
   let parentIssue;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -133,7 +131,7 @@ describe('Task 4: Advanced Issue Filters Testing', function () {
     await Issue.insertMany(issues);
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

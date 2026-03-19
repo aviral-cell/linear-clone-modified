@@ -1,4 +1,4 @@
-export function getTeamSpecificProjects(teamKey, teamName) {
+function getTeamSpecificProjects(teamKey, teamName) {
   const projectTemplates = {
     ENG: [
       {

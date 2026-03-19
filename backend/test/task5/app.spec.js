@@ -16,8 +16,6 @@ const cleanupModels = async (models = [User, Team, Issue]) => {
 };
 
 describe('Task 5: Issue Subscribe Testing', function () {
-  this.timeout(15000);
-
   let userA;
   let userB;
   let tokenA;
@@ -25,7 +23,7 @@ describe('Task 5: Issue Subscribe Testing', function () {
   let team;
   let issue;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -79,7 +77,7 @@ describe('Task 5: Issue Subscribe Testing', function () {
     await issue.save();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

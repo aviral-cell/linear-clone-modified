@@ -15,18 +15,4 @@ export {
   getUpdateStatusConfig,
   updateStatusIndicatorIcons,
 } from './updateStatus';
-
-export const ACTIVITY_LAYOUT = {
-  TIMELINE: 'timeline',
-  LIST: 'list',
-};
-
-export const ACTIVITY_DATE_FORMAT = {
-  RELATIVE: 'relative',
-  ABSOLUTE: 'absolute',
-};
-
-export const ACTIVITY_LIST_VARIANT = {
-  SIDEBAR: 'sidebar',
-  UPDATES: 'updates',
-};
+export { ACTIVITY_LAYOUT, ACTIVITY_DATE_FORMAT, ACTIVITY_LIST_VARIANT } from './activity';

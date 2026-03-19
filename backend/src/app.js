@@ -3,7 +3,6 @@ import cors from 'cors';
 import 'express-async-errors';
 import dotenv from 'dotenv';
 
-import connectDatabase from './config/database.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
@@ -14,7 +13,6 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.use(express.json());
@@ -32,16 +30,5 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/admin/logs', apiLogRoutes);
 
 app.use(errorHandler);
-
-if (process.env.NODE_ENV !== 'test') {
-  connectDatabase().catch((err) => {
-    console.error('Database connection failed:', err);
-    process.exit(1);
-  });
-
-  app.listen(PORT, () => {
-    console.log(`Backend server running on port: ${PORT}`);
-  });
-}
 
 export default app;

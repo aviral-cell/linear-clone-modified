@@ -18,13 +18,11 @@ const cleanupModels = async (models = [User, Team, Issue, Comment, IssueActivity
 };
 
 describe('Task 7: Delete Issue Testing', function () {
-  this.timeout(15000);
-
   let user;
   let token;
   let team;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -60,7 +58,7 @@ describe('Task 7: Delete Issue Testing', function () {
     await IssueActivity.deleteMany({});
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

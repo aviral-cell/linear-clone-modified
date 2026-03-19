@@ -95,16 +95,4 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export const withErrorBoundary = (Component, fallback = null) => {
-  const WrappedComponent = (props) => (
-    <ErrorBoundary fallback={fallback}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
-
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name || 'Component'})`;
-
-  return WrappedComponent;
-};
-
 export default ErrorBoundary;

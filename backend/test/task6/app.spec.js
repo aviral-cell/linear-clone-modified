@@ -15,14 +15,12 @@ const cleanupModels = async (models = [User, ApiLog]) => {
 };
 
 describe('Task 6: API Logger Testing', function () {
-  this.timeout(15000);
-
   let adminUser;
   let regularUser;
   let adminToken;
   let regularToken;
 
-  before(async () => {
+  beforeAll(async () => {
     process.env.NODE_ENV = 'test';
     await connectDatabase();
 
@@ -59,7 +57,7 @@ describe('Task 6: API Logger Testing', function () {
     await ApiLog.deleteMany({});
   });
 
-  after(async () => {
+  afterAll(async () => {
     await cleanupModels();
     await mongoose.connection.close();
   });

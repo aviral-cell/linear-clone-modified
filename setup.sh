@@ -1,40 +1,67 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo "Setting up Workflow..."
+set -u
 
-# Start MongoDB if not already running
-echo "Checking MongoDB status..."
-if pgrep mongod > /dev/null; then
-  echo "MongoDB is already running"
-else
-  echo "Starting MongoDB..."
-  mongod --config /etc/mongod.conf --fork > /dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    echo "MongoDB started successfully"
-  else
-    echo "Warning: Could not start MongoDB. Please ensure MongoDB is installed and configured."
+MODE="${1:---seed}"
+
+ensure_mongo_running() {
+  echo "Checking MongoDB status..."
+  if pgrep mongod >/dev/null 2>&1; then
+    echo "MongoDB is already running"
+    return 0
   fi
-fi
 
-# Install root dependencies
-echo "Installing root dependencies..."
-npm install
+  if ! command -v mongod >/dev/null 2>&1; then
+    echo "Warning: mongod is not installed; skipping MongoDB startup"
+    return 1
+  fi
 
-# Install backend dependencies
-echo "Installing backend dependencies..."
-cd backend
-npm install
-cd ..
+  echo "Starting MongoDB..."
+  mongod --config /etc/mongod.conf --fork >/dev/null 2>&1
+  if pgrep mongod >/dev/null 2>&1; then
+    echo "MongoDB started successfully"
+    return 0
+  fi
 
-# Install frontend dependencies
-echo "Installing frontend dependencies..."
-cd frontend
-npm install
-cd ..
+  echo "Warning: Could not start MongoDB automatically"
+  return 1
+}
 
-echo "Setup complete!"
-echo ""
-echo "To start the application, run:"
-echo "  npm start"
-echo ""
+install_dependencies() {
+  echo "Installing workspace dependencies with Bun..."
+  bun install
+}
 
+seed_database() {
+  if ! ensure_mongo_running; then
+    echo "Skipping seed because MongoDB is unavailable"
+    return 0
+  fi
+
+  echo "Seeding database..."
+  (cd backend && bun run seed)
+}
+
+case "$MODE" in
+  --seed)
+    install_dependencies
+    seed_database
+    ;;
+  --ensure-seeded)
+    if [ -d node_modules ] && [ -d backend/node_modules ] && [ -d frontend/node_modules ]; then
+      echo "Dependencies already installed"
+    else
+      install_dependencies
+    fi
+    seed_database
+    ;;
+  --start)
+    ensure_mongo_running || true
+    ;;
+  *)
+    echo "Usage: $0 [--seed|--ensure-seeded|--start]" >&2
+    exit 1
+    ;;
+esac
+
+echo "Setup complete"

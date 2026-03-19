@@ -168,5 +168,3 @@ class ApiService {
 export const api = new ApiService();
 
 export const baseURL = generateBaseURL();
-
-export default api;

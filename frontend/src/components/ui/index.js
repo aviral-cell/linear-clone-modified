@@ -1,7 +1,6 @@
 export { default as Button } from './Button';
 export { default as Input } from './Input';
 export { default as Card } from './Card';
-export { default as Badge } from './Badge';
 export { default as Label } from './Label';
 export { default as Textarea } from './Textarea';
 export { default as Avatar } from './Avatar';
@@ -14,7 +13,6 @@ export { default as TeamDisplay } from './TeamDisplay';
 export { default as FieldTrigger } from './FieldTrigger';
 export { default as PropertyField } from './PropertyField';
 export { default as DropdownMenu, PopoverPortal } from './DropdownMenu';
-export { getDropdownPanelClasses } from './DropdownMenu';
 export { default as DropdownMenuItem } from './DropdownMenuItem';
 export { default as Spinner } from './Spinner';
 export { default as DataTable } from './DataTable';
