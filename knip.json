@@ -18,5 +18,5 @@
       ]
     }
   },
-  "ignoreDependencies": ["jest-junit"]
+  "ignoreDependencies": ["jest-junit", "tailwindcss"]
 }

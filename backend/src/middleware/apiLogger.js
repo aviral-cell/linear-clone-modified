@@ -41,7 +41,7 @@ export const apiLogger = (req, res, next) => {
     const responseTime = Date.now() - startTime;
     const statusCode = res.statusCode;
 
-    setImmediate(async () => {
+    void (async () => {
       try {
         const logData = {
           timestamp: new Date(),
@@ -66,7 +66,7 @@ export const apiLogger = (req, res, next) => {
 
         await ApiLog.create(logData);
       } catch {}
-    });
+    })();
   });
 
   next();
