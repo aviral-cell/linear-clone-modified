@@ -37,7 +37,7 @@ function App() {
       <AuthProvider>
         <TeamsProvider>
           <SidebarProvider>
-            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <Router>
               <Toaster
                 position="bottom-right"
                 toastOptions={{
