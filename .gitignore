@@ -53,6 +53,7 @@ frontend/.env
 # Build
 build/
 dist/
+.cache/
 
 wip/
 docs/
