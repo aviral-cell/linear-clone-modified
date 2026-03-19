@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import 'express-async-errors';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/authRoutes.js';
