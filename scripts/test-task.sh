@@ -11,30 +11,39 @@ fi
 
 backend_path="backend/test/${task}"
 frontend_path="frontend/__tests__/${task}"
-ran_any=false
 commands=()
 names=()
+has_backend=false
+has_frontend=false
 
 if [[ -d "$backend_path" ]]; then
-  ran_any=true
+  has_backend=true
   commands+=("cd backend && NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --runInBand --runTestsByPath test/${task}/app.spec.js --passWithNoTests")
   names+=("backend")
 fi
 
 if [[ -d "$frontend_path" ]]; then
-  ran_any=true
+  has_frontend=true
   commands+=("vitest run --project frontend ${frontend_path}/")
   names+=("frontend")
 fi
 
-if [[ "$ran_any" == false ]]; then
+if [[ "$has_backend" == false && "$has_frontend" == false ]]; then
   echo "No tests found for ${task}" >&2
   exit 1
 fi
 
-if [[ "${#commands[@]}" -eq 1 ]]; then
-  bash -lc "${commands[0]}"
-  exit $?
+if [[ "$has_backend" == true && "$has_frontend" == false ]]; then
+  cd backend || exit 1
+  exec env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest \
+    --config jest.config.cjs \
+    --runInBand \
+    --runTestsByPath "test/${task}/app.spec.js" \
+    --passWithNoTests
+fi
+
+if [[ "$has_frontend" == true && "$has_backend" == false ]]; then
+  exec vitest run --project frontend "${frontend_path}/"
 fi
 
 name_list="$(IFS=,; echo "${names[*]}")"
