@@ -12,10 +12,10 @@
     "test:db": "node scripts/test-db-connection.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "NODE_OPTIONS=--experimental-vm-modules bunx jest --config jest.config.cjs --runInBand --passWithNoTests",
-    "test:junit": "NODE_OPTIONS=--experimental-vm-modules bunx jest --config jest.config.cjs --runInBand --reporters=default --reporters=jest-junit --passWithNoTests",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules bunx jest --config jest.config.cjs --watch --passWithNoTests",
-    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules bunx jest --config jest.config.cjs --runInBand --coverage --passWithNoTests"
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --runInBand --passWithNoTests",
+    "test:junit": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --runInBand --reporters=default --reporters=jest-junit --passWithNoTests",
+    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --watch --passWithNoTests",
+    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --runInBand --coverage --passWithNoTests"
   },
   "dependencies": {
     "bcrypt": "6.0.0",
