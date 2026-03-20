@@ -22,11 +22,11 @@ Method: cold install was measured from empty `node_modules` in temporary repo co
 
 | Metric | Optimised Solution | Actual Solution |
 | --- | ---: | ---: |
-| Cold install | `2.64s` | `10.64s` |
-| Backend task benchmark, task 3 (`1` suite / `3` tests) | `1.24s` | `1.09s` |
-| Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.85s` |
-| Backend dev refresh | `303ms` | `3133ms` |
-| Frontend HMR | `450ms` | `1562ms` |
+| Cold install | `2.15s` | `11.27s` |
+| Backend task benchmark, task 3 (`1` suite / `3` tests) | `1.17s` | `1.17s` |
+| Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
+| Backend dev refresh | `304ms` | `3034ms` |
+| Frontend HMR | `547ms` | `382ms` |
 
 ## Measured Averages
 
@@ -35,8 +35,8 @@ This section compares `Optimised Solution` and `Actual Solution`.
 ### 1. Installer
 
 ```text
-Optimised Solution   2.64 s | ███████
-Actual Solution     10.64 s | ████████████████████████████
+Optimised Solution   2.15 s | █████
+Actual Solution     11.27 s | ████████████████████████████
 ```
 
 What this means in simple words:
@@ -47,21 +47,21 @@ What this means in simple words:
 ### 2. Backend Task Benchmark: Task 3 (`1` suite / `3` tests)
 
 ```text
-Optimised Solution  1.24 s | ███████████
-Actual Solution     1.09 s | ██████████
+Optimised Solution  1.17 s | ██████████
+Actual Solution     1.17 s | ██████████
 ```
 
 What this means:
 
 - This comparison uses the stable backend sub-issue hierarchy task.
-- `Actual Solution` is slightly faster on this narrow task path.
-- The likely reason is simple: the older Mocha task script has less runner overhead than the stricter Jest harness for this very small suite.
+- This comparison uses the optimized direct-Jest task runner path.
+- The two repos are effectively tied on this narrow task path in the current measurement.
 
 ### 3. Frontend Dummy Benchmark (`1` suite / `1` test)
 
 ```text
 Optimised Solution  0.69 s | ████████
-Actual Solution     0.85 s | ██████████
+Actual Solution     0.86 s | ██████████
 ```
 
 What this means:
@@ -74,8 +74,8 @@ What this means:
 This is really restart-on-save, not true backend HMR.
 
 ```text
-Optimised Solution   303 ms | ███
-Actual Solution     3133 ms | ███████████████████████████████
+Optimised Solution   304 ms | ███
+Actual Solution     3034 ms | ███████████████████████████████
 ```
 
 What this means:
@@ -87,14 +87,15 @@ What this means:
 ### 5. Frontend HMR
 
 ```text
-Optimised Solution   450 ms | ████████
-Actual Solution     1562 ms | ███████████████████████████
+Optimised Solution   547 ms | ██████████████
+Actual Solution     382 ms | ██████████
 ```
 
 What this means:
 
-- Frontend refresh is clearly faster in `Optimised Solution`.
-- The Vite + Tailwind 4 path gives a noticeably faster visible update loop than the older CRA path.
+- Frontend HMR is the noisiest measurement in this report.
+- In this run, `Actual Solution` refreshed slightly faster than `Optimised Solution`.
+- The more stable wins in this repo are install, backend task targeting, frontend test startup, and backend save-and-refresh.
 
 ## Before vs Now
 
@@ -171,7 +172,7 @@ Frontend work was mostly about keeping the modern Vite path while cleaning up th
 - the Workflow theme colors were restored in the Tailwind 4 setup
 - the Vite dev server now allows VM `.internal` hosts
 
-Frontend HMR is now clearly faster. The bigger frontend story was test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
+Frontend HMR is still fast in practice, but it is the most variable benchmark in this report. The bigger frontend story was test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
 
 ### Backend Test Changes
 
@@ -184,7 +185,7 @@ The backend test setup changed in meaningful ways.
 - root test entry points are clearer
 - task-level backend runs are still supported
 
-In easy words: backend tests became more targeted and easier to run from the root repo, even though one narrow Mocha task path is still slightly faster in the benchmark.
+In easy words: backend tests became more targeted and easier to run from the root repo, and the optimized task runner now brings the representative task path roughly in line with the actual solution.
 
 ### Frontend Test Changes
 
@@ -336,7 +337,7 @@ Compared with `Actual Solution`, `Optimised Solution` is clearly ahead on most o
 - cold install is much faster
 - the dummy frontend test benchmark is faster
 - backend save-and-refresh time is dramatically faster
-- frontend HMR is also much faster
-- one narrow backend task benchmark is slightly slower because the stricter Jest harness adds more runner overhead than the older Mocha task path
+- the representative backend task benchmark is now effectively tied
+- frontend HMR is more variable, and this measurement favored the actual solution
 
 At the repo level, the important result is that install, lockfile handling, backend dev, backend build, frontend build, test targeting, dependency pinning, and dependency hygiene are all in a cleaner state than the older npm-first setup. The repo is easier to reason about, faster in most of the day-to-day loops that matter, and has better signal from quality checks.
