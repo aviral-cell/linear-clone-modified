@@ -54,6 +54,9 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 }
 
@@ -129,12 +132,6 @@
   .max-w-container-wide {
     max-width: 1280px;
   }
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 .page-container {
