@@ -8,6 +8,7 @@ export default [
       '**/coverage/**',
       '**/node_modules/**',
       '**/__mocks__/**',
+      '**/*.timestamp-*.mjs',
       'output/**/*.xml',
     ],
   },
