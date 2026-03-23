@@ -4,18 +4,18 @@
 
 | Area | Older state | New state |
 | --- | --- | --- |
-| Package manager | npm-first repo | Bun-first repo with Bun declared in `packageManager` and `engines` |
-| Install flow | setup, install, and seed work were mixed together | install, start, env bootstrap, and seed responsibilities are clearer |
-| Lockfile | npm lockfile story with range-based manifests | `bun.lock` is the main dependency contract and manifests are pinned |
+| Package manager | `npm` | `Bun` |
+| Install flow | `prestart + setup.sh + npm install + seed` | `postinstall + prestart + setup.sh modes` |
+| Lockfile | `package-lock.json` | `bun.lock` |
 | Backend dev loop | `nodemon --delay 2500ms --exec babel-node` | `bun --watch` |
-| Backend build | no dedicated backend build artifact path | `bun build` output then Bun runtime |
-| Frontend build | CRA/react-scripts build path | Vite build path |
-| Backend tests | Mocha + Chai task scripts | Jest with focused backend behavior matching |
-| Frontend tests | no dedicated frontend test runner | dedicated Vitest path |
-| Task test runs | backend task scripts only | backend task scripts stay intact and frontend test flow is isolated |
-| Quality checks | no root lint, typecheck, or unused-code contract | better signal from Knip, lint, and typecheck |
-| Dependency upgrades | older package versions across the stack | upgraded core tooling and app dependencies |
-| Dependency lock | npm lockfile style story | Bun-first lockfile story with `bun.lock` |
+| Backend build | `no build script` | `bun build + bun` |
+| Frontend build | `react-scripts` | `Vite` |
+| Backend tests | `Mocha + Chai` | `Jest` |
+| Frontend tests | `none` | `Vitest` |
+| Task test runs | `backend-only npm task scripts` | `Melodio-style task dispatcher` |
+| Quality checks | `none` | `lint-solution-diff + typecheck-solution-diff + knip-solution-baseline` |
+| Dependency upgrades | `npm + react-scripts + Mocha + Tailwind 3` | `Bun + Vite + Vitest + Jest + Tailwind 4` |
+| Dependency lock | `package-lock.json` | `bun.lock` |
 
 ## Benchmark Snapshot
 
@@ -117,18 +117,19 @@ What this means:
 
 | Topic | Older state | Optimised Question | Result |
 | --- | --- | --- | --- |
-| Package manager | npm-first | Bun-first | clearer install and run contract |
-| Lockfile | `package-lock.json` style flow with version ranges | `bun.lock` is the main lockfile and manifests are pinned | dependency resolution is more predictable |
-| Install flow | setup script reinstalled everything and startup mixed in more work | Bun install flow with clearer ownership | less surprise during setup |
-| Start flow | `prestart` ran a broad setup script and backend `prestart` reinstalled and re-seeded | lighter startup path with explicit `--start` checks | faster normal app startup |
+| Package manager | `npm` | `Bun` | clearer install and run contract |
+| Lockfile | `package-lock.json` | `bun.lock` | dependency resolution is more predictable |
+| Install flow | `prestart + setup.sh + npm install + seed` | `postinstall + prestart + setup.sh modes` | less surprise during setup |
+| Start flow | `prestart + setup.sh` | `prestart + setup.sh --start` | faster normal app startup |
 | Backend dev | `nodemon --delay 2500ms --exec babel-node src/app.js` | `bun --watch src/server.js` | much faster save-and-refresh loop |
-| Backend build | no dedicated backend build artifact | `bun build` then Bun runtime | simpler backend toolchain |
-| Frontend build | CRA build path | Vite build path | cleaner frontend tooling |
-| Frontend tests | no dedicated frontend runner | dedicated Vitest path | cleaner frontend test ownership |
-| Backend tests | Mocha task scripts | Jest behavior test path | simpler root test targeting |
-| Task tests | backend-only task scripts | backend task scripts plus isolated frontend Vitest flow | better test ownership without adding fake frontend tasks |
-| Unused dependency checks | no root unused-dependency gate | cleaner Knip output | better tooling signal |
-| Dependency upgrades | older versions across tooling and app packages | upgraded package set | better alignment with the current stack |
+| Backend build | `no build script` | `bun build + bun` | simpler backend toolchain |
+| Frontend build | `react-scripts` | `Vite` | cleaner frontend tooling |
+| Frontend tests | `none` | `Vitest` | cleaner frontend test ownership |
+| Backend tests | `Mocha + Chai` | `Jest` | simpler root test targeting |
+| Task tests | `backend-only npm task scripts` | `Melodio-style task dispatcher` | better test ownership without adding fake frontend tasks |
+| Quality checks | `none` | `lint-solution-diff + typecheck-solution-diff + knip-solution-baseline` | broader quality coverage |
+| Unused dependency checks | `none` | `Knip` | unused dependency checks added |
+| Dependency upgrades | `npm + react-scripts + Mocha + Tailwind 3` | `Bun + Vite + Vitest + Jest + Tailwind 4` | better alignment with the current stack |
 
 ## What Changed
 
