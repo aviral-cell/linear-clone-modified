@@ -22,7 +22,7 @@ Method: the current numbers are being updated with VM measurements as they arriv
 
 | Metric | Optimised Solution | Actual Solution |
 | --- | ---: | ---: |
-| Cold install | `19s` | `68s` |
+| Cold install | `5.5s` | `17s` |
 | Backend task benchmark, task 3 (`1` suite / `3` tests) | `1.17s` | `1.17s` |
 | Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
 | Backend dev refresh | `304ms` | `3034ms` |
@@ -35,15 +35,15 @@ This section compares `Optimised Solution` and `Actual Solution`.
 ### 1. Installer
 
 ```text
-Optimised Solution    19 s | ████████
-Actual Solution       68 s | ████████████████████████████
+Optimised Solution   5.5 s | █████████
+Actual Solution      17.0 s | ████████████████████████████
 ```
 
 What this means in simple words:
 
 - The cold install path is much faster in `Optimised Solution` on the VM as well.
 - `Actual Solution` is slower on install because it still pays the older npm workspace install cost.
-- On the current VM measurement, `Optimised Solution` is about `3.6x` faster.
+- On the current VM measurement, `Optimised Solution` is about `3.1x` faster.
 
 ### 2. Backend Task Benchmark: Task 3 (`1` suite / `3` tests)
 
