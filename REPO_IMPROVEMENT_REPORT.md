@@ -18,11 +18,12 @@
 
 ## Benchmark Snapshot
 
-Method: the current numbers are being updated with VM measurements as they arrive. Cold install was measured from empty `node_modules` in the VM. Task timings are warm timings after one warm-up run. The frontend benchmark uses a temporary dummy test because this repo has no frontend task tests. Backend refresh and frontend refresh were measured by editing a temp-copy source file and waiting for the dev server to serve the updated result.
+Method: the current numbers are being updated with VM measurements as they arrive. Cold install was measured from empty `node_modules` in the VM. Cold build was measured separately on the VM. Task timings are warm timings after one warm-up run. The frontend benchmark uses a temporary dummy test because this repo has no frontend task tests. Backend refresh and frontend refresh were measured by editing a temp-copy source file and waiting for the dev server to serve the updated result.
 
 | Metric | Optimised Solution | Actual Solution |
 | --- | ---: | ---: |
-| Cold install | `5.5s` | `17s` |
+| Cold install | `19s` | `68s` |
+| Cold build | `5.5s` | `17s` |
 | Backend task benchmark, task 3 (`1` suite / `3` tests) | `1.17s` | `1.17s` |
 | Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
 | Backend dev refresh | `304ms` | `3034ms` |
@@ -35,17 +36,30 @@ This section compares `Optimised Solution` and `Actual Solution`.
 ### 1. Installer
 
 ```text
-Optimised Solution   5.5 s | █████████
-Actual Solution      17.0 s | ████████████████████████████
+Optimised Solution    19 s | ████████
+Actual Solution       68 s | ████████████████████████████
 ```
 
 What this means in simple words:
 
 - The cold install path is much faster in `Optimised Solution` on the VM as well.
 - `Actual Solution` is slower on install because it still pays the older npm workspace install cost.
-- On the current VM measurement, `Optimised Solution` is about `3.1x` faster.
+- On the current VM measurement, `Optimised Solution` is about `3.6x` faster.
 
-### 2. Backend Task Benchmark: Task 3 (`1` suite / `3` tests)
+### 2. Cold Build
+
+```text
+Optimised Solution   5.5 s | █████████
+Actual Solution      17.0 s | ████████████████████████████
+```
+
+What this means:
+
+- The optimized repo also keeps a clear VM build advantage.
+- This reflects the Vite + Bun build path compared to the older actual solution stack.
+- On the current VM measurement, `Optimised Solution` is about `3.1x` faster on cold build.
+
+### 3. Backend Task Benchmark: Task 3 (`1` suite / `3` tests)
 
 ```text
 Optimised Solution  1.17 s | ██████████
@@ -58,7 +72,7 @@ What this means:
 - This comparison uses the optimized direct-Jest task runner path.
 - The two repos are effectively tied on this narrow task path in the current measurement.
 
-### 3. Frontend Dummy Benchmark (`1` suite / `1` test)
+### 4. Frontend Dummy Benchmark (`1` suite / `1` test)
 
 ```text
 Optimised Solution  0.69 s | ████████
@@ -70,7 +84,7 @@ What this means:
 - This repo does not have frontend candidate tasks, so the comparison uses a temporary dummy frontend test.
 - `Optimised Solution` is faster than `Actual Solution` on this frontend test path.
 
-### 4. Backend HMR / Refresh Time
+### 5. Backend HMR / Refresh Time
 
 This is really restart-on-save, not true backend HMR.
 
@@ -85,7 +99,7 @@ What this means:
 - Moving away from `nodemon --delay 2500ms --exec babel-node` removed most of the waiting after each save.
 - `Optimised Solution` is dramatically faster than `Actual Solution` for backend save-and-refresh.
 
-### 5. Frontend HMR
+### 6. Frontend HMR
 
 ```text
 Optimised Solution   547 ms | ██████████████
