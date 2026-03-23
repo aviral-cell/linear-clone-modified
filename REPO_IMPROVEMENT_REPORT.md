@@ -109,7 +109,7 @@ Actual Solution      469 ms | ████████████████�
 
 What this means:
 
-- The local repeated-run frontend update path strongly favors `Optimised Solution`.
+- The frontend update path strongly favors `Optimised Solution`.
 - Vite pushes warm source updates much faster than the older CRA dev-server flow in this repo.
 - The more stable wins in this repo are install, build, backend task targeting, frontend test startup, backend save-and-refresh, and frontend HMR.
 
@@ -188,7 +188,7 @@ Frontend work was mostly about keeping the modern Vite path while cleaning up th
 - the Workflow theme colors were restored in the Tailwind 4 setup
 - the Vite dev server now allows VM `.internal` hosts
 
-Frontend HMR is now also a clear win in the local repeated-run measurement. The bigger frontend story was still test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
+Frontend HMR is now also a clear win in the current measurement. The bigger frontend story was still test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
 
 ### Backend Test Changes
 
@@ -354,6 +354,6 @@ Compared with `Actual Solution`, `Optimised Solution` is clearly ahead on most o
 - the dummy frontend test benchmark is faster
 - backend save-and-refresh time is dramatically faster
 - the representative backend task benchmark is faster
-- frontend HMR is also faster in the local repeated-run measurement
+- frontend HMR is also faster in the current measurement
 
 At the repo level, the important result is that install, lockfile handling, backend dev, backend build, frontend build, test targeting, dependency pinning, and dependency hygiene are all in a cleaner state than the older npm-first setup. The repo is easier to reason about, faster in most of the day-to-day loops that matter, and has better signal from quality checks.
