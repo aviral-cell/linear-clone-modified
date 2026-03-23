@@ -24,7 +24,7 @@ Method: the current numbers are being updated with VM measurements as they arriv
 | --- | ---: | ---: |
 | Cold install | `19s` | `68s` |
 | Cold build | `5.5s` | `17s` |
-| Backend task benchmark, task 3 (`1` suite / `3` tests) | `1.17s` | `1.17s` |
+| Backend task benchmark, task 1 (`1` suite / `5` tests) | `2.04s` | `2.3s` |
 | Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
 | Backend dev refresh | `304ms` | `3034ms` |
 | Frontend HMR | `547ms` | `382ms` |
@@ -59,18 +59,18 @@ What this means:
 - This reflects the Vite + Bun build path compared to the older actual solution stack.
 - On the current VM measurement, `Optimised Solution` is about `3.1x` faster on cold build.
 
-### 3. Backend Task Benchmark: Task 3 (`1` suite / `3` tests)
+### 3. Backend Task Benchmark: Task 1 (`1` suite / `5` tests)
 
 ```text
-Optimised Solution  1.17 s | ██████████
-Actual Solution     1.17 s | ██████████
+Optimised Solution  2.04 s | ████████████████████████
+Actual Solution     2.30 s | ███████████████████████████
 ```
 
 What this means:
 
-- This comparison uses the stable backend sub-issue hierarchy task.
+- This comparison uses the VM task 1 backend suite, which has `1` suite and `5` tests.
 - This comparison uses the optimized direct-Jest task runner path.
-- The two repos are effectively tied on this narrow task path in the current measurement.
+- `Optimised Solution` is faster than `Actual Solution` on this backend task path.
 
 ### 4. Frontend Dummy Benchmark (`1` suite / `1` test)
 
