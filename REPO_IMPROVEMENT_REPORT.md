@@ -9,6 +9,7 @@
 | Lockfile | npm lockfile story with range-based manifests | `bun.lock` is the main dependency contract and manifests are pinned |
 | Backend dev loop | `nodemon --delay 2500ms --exec babel-node` | `bun --watch` |
 | Backend build | no dedicated backend build artifact path | `bun build` output then Bun runtime |
+| Frontend build | CRA/react-scripts build path | Vite build path |
 | Backend tests | Mocha + Chai task scripts | Jest with focused backend behavior matching |
 | Frontend tests | no dedicated frontend test runner | dedicated Vitest path |
 | Task test runs | backend task scripts only | backend task scripts stay intact and frontend test flow is isolated |
