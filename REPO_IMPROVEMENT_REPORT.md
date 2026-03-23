@@ -57,7 +57,7 @@ Actual Solution      17.0 s | ████████████████�
 What this means:
 
 - The optimized repo also keeps a clear VM build advantage.
-- This reflects the Vite + Bun build path compared to the older actual solution stack.
+- This reflects the Vite frontend build path and Bun-backed build flow compared to the older actual solution stack.
 - On the current VM measurement, `Optimised Solution` is about `3.1x` faster on cold build.
 
 ### 3. Backend Task Benchmark: Task 1 (`1` suite / `5` tests)
@@ -182,6 +182,7 @@ The practical result is simple:
 Frontend work was mostly about keeping the modern Vite path while cleaning up the supporting stack.
 
 - CRA was replaced with Vite
+- frontend build moved from `react-scripts build` to the Vite build path
 - frontend tests were split into a dedicated Vitest path
 - Vitest was tuned for VM-friendly runs with `happy-dom`, `fileParallelism: false`, and a single thread
 - Tailwind moved to v4
@@ -351,6 +352,7 @@ Along with the tooling work, a small amount of code-side cleanup was also done.
 Compared with `Actual Solution`, `Optimised Solution` is clearly ahead on most of the tooling and workflow benchmarks in this report.
 
 - cold install is much faster
+- cold build is much faster
 - the dummy frontend test benchmark is faster
 - backend save-and-refresh time is dramatically faster
 - the representative backend task benchmark is faster
