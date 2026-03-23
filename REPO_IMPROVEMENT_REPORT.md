@@ -19,7 +19,7 @@
 
 ## Benchmark Snapshot
 
-Method: the current numbers are being updated with VM measurements as they arrive. Cold install was measured from empty `node_modules` in the VM. Cold build was measured separately on the VM. Task timings are warm timings after one warm-up run. The frontend benchmark uses a temporary dummy test because this repo has no frontend task tests. Backend refresh and frontend refresh were measured by editing a temp-copy source file and waiting for the dev server to serve the updated result.
+Method: the current numbers are being updated with VM and local measurements as they arrive. Cold install was measured from empty `node_modules` in the VM. Cold build was measured separately on the VM. The backend task benchmark is also a VM measurement. The frontend benchmark uses a temporary dummy test because this repo has no frontend task tests. Backend refresh and frontend refresh were measured locally as repeated warm updates on temp-copy source files, waiting for each dev server to serve the updated result, and reporting the median.
 
 | Metric | Optimised Solution | Actual Solution |
 | --- | ---: | ---: |
@@ -27,8 +27,8 @@ Method: the current numbers are being updated with VM measurements as they arriv
 | Cold build | `5.5s` | `17s` |
 | Backend task benchmark, task 1 (`1` suite / `5` tests) | `2.04s` | `2.3s` |
 | Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
-| Backend dev refresh | `304ms` | `3034ms` |
-| Frontend HMR | `547ms` | `382ms` |
+| Backend dev refresh | `277ms` | `3088ms` |
+| Frontend HMR | `13ms` | `469ms` |
 
 ## Measured Averages
 
@@ -90,28 +90,28 @@ What this means:
 This is really restart-on-save, not true backend HMR.
 
 ```text
-Optimised Solution   304 ms | ███
-Actual Solution     3034 ms | ███████████████████████████████
+Optimised Solution   277 ms | ███
+Actual Solution     3088 ms | ███████████████████████████████
 ```
 
 What this means:
 
 - The big backend speed win is real.
 - Moving away from `nodemon --delay 2500ms --exec babel-node` removed most of the waiting after each save.
-- `Optimised Solution` is dramatically faster than `Actual Solution` for backend save-and-refresh.
+- In the local repeated-run measurement, `Optimised Solution` is about `11x` faster than `Actual Solution` for backend save-and-refresh.
 
 ### 6. Frontend HMR
 
 ```text
-Optimised Solution   547 ms | ██████████████
-Actual Solution     382 ms | ██████████
+Optimised Solution    13 ms | █
+Actual Solution      469 ms | ███████████████████████████████
 ```
 
 What this means:
 
-- Frontend HMR is the noisiest measurement in this report.
-- In this run, `Actual Solution` refreshed slightly faster than `Optimised Solution`.
-- The more stable wins in this repo are install, backend task targeting, frontend test startup, and backend save-and-refresh.
+- The local repeated-run frontend update path strongly favors `Optimised Solution`.
+- Vite pushes warm source updates much faster than the older CRA dev-server flow in this repo.
+- The more stable wins in this repo are install, build, backend task targeting, frontend test startup, backend save-and-refresh, and frontend HMR.
 
 ## Before vs Now
 
@@ -188,7 +188,7 @@ Frontend work was mostly about keeping the modern Vite path while cleaning up th
 - the Workflow theme colors were restored in the Tailwind 4 setup
 - the Vite dev server now allows VM `.internal` hosts
 
-Frontend HMR is still fast in practice, but it is the most variable benchmark in this report. The bigger frontend story was test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
+Frontend HMR is now also a clear win in the local repeated-run measurement. The bigger frontend story was still test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
 
 ### Backend Test Changes
 
@@ -201,7 +201,7 @@ The backend test setup changed in meaningful ways.
 - root test entry points are clearer
 - task-level backend runs are still supported
 
-In easy words: backend tests became more targeted and easier to run from the root repo, and the optimized task runner now brings the representative task path roughly in line with the actual solution.
+In easy words: backend tests became more targeted and easier to run from the root repo, and the optimized task runner now beats the actual solution on the current VM task benchmark.
 
 ### Frontend Test Changes
 
@@ -353,7 +353,7 @@ Compared with `Actual Solution`, `Optimised Solution` is clearly ahead on most o
 - cold install is much faster
 - the dummy frontend test benchmark is faster
 - backend save-and-refresh time is dramatically faster
-- the representative backend task benchmark is now effectively tied
-- frontend HMR is more variable, and this measurement favored the actual solution
+- the representative backend task benchmark is faster
+- frontend HMR is also faster in the local repeated-run measurement
 
 At the repo level, the important result is that install, lockfile handling, backend dev, backend build, frontend build, test targeting, dependency pinning, and dependency hygiene are all in a cleaner state than the older npm-first setup. The repo is easier to reason about, faster in most of the day-to-day loops that matter, and has better signal from quality checks.
