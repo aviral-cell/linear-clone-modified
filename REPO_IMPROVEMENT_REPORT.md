@@ -2,144 +2,44 @@
 
 ## Highlights
 
-| Area | Older state | New state |
-| --- | --- | --- |
-| Package manager | `npm` | `Bun` |
-| Install flow | `prestart + setup.sh + npm install + seed` | `postinstall + prestart + setup.sh modes` |
-| Lockfile | `package-lock.json` | `bun.lock` |
-| Backend dev loop | `nodemon --delay 2500ms --exec babel-node` | `bun --watch` |
-| Backend build | `no build script` | `bun build + bun` |
-| Frontend build | `react-scripts` | `Vite` |
-| Backend tests | `Mocha + Chai` | `Jest` |
-| Frontend tests | `none` | `Vitest` |
-| Task test runs | `backend-only npm task scripts` | `Melodio-style task dispatcher` |
-| Quality checks | `none` | `lint-solution-diff + typecheck-solution-diff + knip-solution-baseline` |
-| Dependency upgrades | `npm + react-scripts + Mocha + Tailwind 3` | `Bun + Vite + Vitest + Jest + Tailwind 4` |
-| Dependency lock | `package-lock.json` | `bun.lock` |
+| Area | Older state | New state | Result |
+| --- | --- | --- | --- |
+| Package manager | `npm` | `Bun` | Package install and run flow is faster and simpler. |
+| Install flow | `prestart + setup.sh + npm install + seed` | `postinstall + prestart + setup.sh modes` | Install is faster and app start no longer waits on install work. |
+| Start flow | `prestart + setup.sh` | `prestart + setup.sh --start` | Starting the app is lighter and faster. |
+| Dependency lock | `package-lock.json` | `bun.lock` | Dependency installs are easier to trust. |
+| Backend dev loop | `nodemon --delay 2500ms --exec babel-node` | `bun --watch` | Backend code changes show up much faster. |
+| Backend build | `no build script` | `bun build + bun` | Backend build is faster and the run flow is simpler. |
+| Frontend build | `react-scripts` | `Vite` | Frontend build is faster and the tooling path is cleaner. |
+| Backend tests | `Mocha + Chai` | `Jest` | Backend tests run from a single Jest path. |
+| Frontend tests | `none` | `Vitest` | Frontend tests have a faster dedicated path. |
+| Task test runs | `backend-only npm task scripts` | `Melodio-style task dispatcher` | Task test feedback comes back faster and can support frontend task suites later. |
+| Quality checks | `none` | `lint-solution-diff + typecheck-solution-diff + knip-solution-baseline` | Code issues are caught in more places. |
+| Unused dependency checks | `none` | `Knip` | Unused packages are easier to spot. |
+| Dependency upgrades | `npm + react-scripts + Mocha + Tailwind 3` | `Bun + Vite + Vitest + Jest + Tailwind 4` | The overall tool setup is faster and more up to date. |
 
 ## Benchmark Snapshot
 
-Method: the current numbers are being updated with VM and local measurements as they arrive. Cold install was measured from empty `node_modules` in the VM. Cold build was measured separately on the VM. The backend task benchmark is also a VM measurement. The frontend benchmark uses a temporary dummy test because this repo has no frontend task tests. Backend refresh and frontend refresh were measured locally as repeated warm updates on temp-copy source files, waiting for each dev server to serve the updated result, and reporting the median.
+Method: cold install, cold build, and backend task timings below use the VM measurements. Backend refresh and frontend HMR use the current measured comparison that was captured for this report. This repo has no frontend candidate task suite, so the frontend test row uses a temporary dummy frontend test.
 
-| Metric | Optimised Solution | Actual Solution |
+| Metric | Current Repo | New Repo |
 | --- | ---: | ---: |
-| Cold install | `19s` | `68s` |
-| Cold build | `5.5s` | `17s` |
-| Backend task benchmark, task 1 (`1` suite / `5` tests) | `2.04s` | `2.3s` |
-| Frontend dummy benchmark (`1` suite / `1` test) | `0.69s` | `0.86s` |
-| Backend dev refresh | `277ms` | `3088ms` |
-| Frontend HMR | `13ms` | `469ms` |
+| Cold install | `68s` | `19s` (`3.6x faster`) |
+| Cold build | `17s` | `5.5s` (`3.1x faster`) |
+| Backend tests, task 1 (`1` suite / `5` tests) | `2.3s` | `2.04s` (`1.1x faster`) |
+| Frontend tests, dummy (`1` suite / `1` test) | `0.86s` | `0.69s` (`1.2x faster`) |
+| Backend dev refresh | `3088ms` | `277ms` (`11.1x faster`) |
+| Frontend HMR | `469ms` | `13ms` (`36.1x faster`) |
 
-## Measured Averages
+## Combined Bar Graph
 
-This section compares `Optimised Solution` and `Actual Solution`.
-
-### 1. Installer
-
-```text
-Optimised Solution    19 s | ████████
-Actual Solution       68 s | ████████████████████████████
-```
-
-What this means in simple words:
-
-- The cold install path is much faster in `Optimised Solution` on the VM as well.
-- `Actual Solution` is slower on install because it still pays the older npm workspace install cost.
-- On the current VM measurement, `Optimised Solution` is about `3.6x` faster.
-
-### 2. Cold Build
-
-```text
-Optimised Solution   5.5 s | █████████
-Actual Solution      17.0 s | ████████████████████████████
-```
-
-What this means:
-
-- The optimized repo also keeps a clear VM build advantage.
-- This reflects the Vite frontend build path and Bun-backed build flow compared to the older actual solution stack.
-- On the current VM measurement, `Optimised Solution` is about `3.1x` faster on cold build.
-
-### 3. Backend Task Benchmark: Task 1 (`1` suite / `5` tests)
-
-```text
-Optimised Solution  2.04 s | ████████████████████████
-Actual Solution     2.30 s | ███████████████████████████
-```
-
-What this means:
-
-- This comparison uses the VM task 1 backend suite, which has `1` suite and `5` tests.
-- This comparison uses the optimized direct-Jest task runner path.
-- `Optimised Solution` is faster than `Actual Solution` on this backend task path.
-
-### 4. Frontend Dummy Benchmark (`1` suite / `1` test)
-
-```text
-Optimised Solution  0.69 s | ████████
-Actual Solution     0.86 s | ██████████
-```
-
-What this means:
-
-- This repo does not have frontend candidate tasks, so the comparison uses a temporary dummy frontend test.
-- `Optimised Solution` is faster than `Actual Solution` on this frontend test path.
-
-### 5. Backend HMR / Refresh Time
-
-This is really restart-on-save, not true backend HMR.
-
-```text
-Optimised Solution   277 ms | ███
-Actual Solution     3088 ms | ███████████████████████████████
-```
-
-What this means:
-
-- The big backend speed win is real.
-- Moving away from `nodemon --delay 2500ms --exec babel-node` removed most of the waiting after each save.
-- In the local repeated-run measurement, `Optimised Solution` is about `11x` faster than `Actual Solution` for backend save-and-refresh.
-
-### 6. Frontend HMR
-
-```text
-Optimised Solution    13 ms | █
-Actual Solution      469 ms | ███████████████████████████████
-```
-
-What this means:
-
-- The frontend update path strongly favors `Optimised Solution`.
-- Vite pushes warm source updates much faster than the older CRA dev-server flow in this repo.
-- The more stable wins in this repo are install, build, backend task targeting, frontend test startup, backend save-and-refresh, and frontend HMR.
-
-## Before vs Now
-
-| Topic | Older state | Optimised Question | Result |
-| --- | --- | --- | --- |
-| Package manager | `npm` | `Bun` | clearer install and run contract |
-| Lockfile | `package-lock.json` | `bun.lock` | dependency resolution is more predictable |
-| Install flow | `prestart + setup.sh + npm install + seed` | `postinstall + prestart + setup.sh modes` | less surprise during setup |
-| Start flow | `prestart + setup.sh` | `prestart + setup.sh --start` | faster normal app startup |
-| Backend dev | `nodemon --delay 2500ms --exec babel-node src/app.js` | `bun --watch src/server.js` | much faster save-and-refresh loop |
-| Backend build | `no build script` | `bun build + bun` | simpler backend toolchain |
-| Frontend build | `react-scripts` | `Vite` | cleaner frontend tooling |
-| Frontend tests | `none` | `Vitest` | cleaner frontend test ownership |
-| Backend tests | `Mocha + Chai` | `Jest` | simpler root test targeting |
-| Task tests | `backend-only npm task scripts` | `Melodio-style task dispatcher` | better test ownership without adding fake frontend tasks |
-| Quality checks | `none` | `lint-solution-diff + typecheck-solution-diff + knip-solution-baseline` | broader quality coverage |
-| Unused dependency checks | `none` | `Knip` | unused dependency checks added |
-| Dependency upgrades | `npm + react-scripts + Mocha + Tailwind 3` | `Bun + Vite + Vitest + Jest + Tailwind 4` | better alignment with the current stack |
+![Combined Benchmark Comparison](benchmark-comparison.svg)
 
 ## What Changed
 
 ### Installer, Startup, and Seed Flow
 
-The repo used to blur setup work and normal app startup more heavily.
-
-What changed exactly:
-
-- old root `prestart` ran `bash setup.sh`
+- old root start path: `prestart` ran `bash setup.sh`
 - old `setup.sh` always did all of this together:
   - Mongo check/start
   - root `npm install`
@@ -147,11 +47,8 @@ What changed exactly:
   - frontend `npm install`
 - old backend `prestart` then did `npm install && node src/utils/seed.js`
 - old root `start` launched frontend and backend through npm scripts
-
-The new flow splits those responsibilities:
-
-- Bun is the declared package manager
-- `bun.lock` is the dependency source of truth
+- Bun is now the declared package manager
+- `bun.lock` is now the dependency source of truth
 - `postinstall` runs `bash setup.sh --ensure-seeded`
 - `prestart` runs `bash setup.sh --start`
 - `setup.sh --start` only does Mongo and env-file checks
@@ -160,68 +57,41 @@ The new flow splits those responsibilities:
 - build-related checks use `bun install --frozen-lockfile --ignore-scripts`
 - root `start` launches frontend and backend through Bun scripts instead of npm workspace calls
 
-This makes install and run behavior more predictable.
-
 ### Backend Tooling
 
-Backend changes were some of the most important improvements.
-
 - dev refresh moved from `nodemon + babel-node` to Bun watch mode
-- backend build moved from no dedicated build output to `bun build`
-- backend runtime also stayed aligned with Bun
-- the backend entry was split into `app.js` and `server.js`
-- `express-async-errors` was removed because Express 5 handles async middleware errors cleanly
-
-The practical result is simple:
-
-- much faster save-and-refresh time
-- fewer moving parts in backend local development
-- a simpler backend toolchain overall
+- backend build moved from no build script to `bun build`
+- backend runtime now stays on Bun
+- backend startup was split into `app.js` and `server.js`
+- `express-async-errors` was removed because Express 5 handles async middleware errors directly
 
 ### Frontend Tooling
 
-Frontend work was mostly about keeping the modern Vite path while cleaning up the supporting stack.
-
-- CRA was replaced with Vite
 - frontend build moved from `react-scripts build` to the Vite build path
 - frontend tests were split into a dedicated Vitest path
 - Vitest was tuned for VM-friendly runs with `happy-dom`, `fileParallelism: false`, and a single thread
-- Tailwind moved to v4
+- Tailwind moved from v3 to v4
 - the Workflow theme colors were restored in the Tailwind 4 setup
 - the Vite dev server now allows VM `.internal` hosts
 
-Frontend HMR is now also a clear win in the current measurement. The bigger frontend story was still test tooling, Tailwind 4 alignment, and keeping the styling stack stable without changing page layout.
-
 ### Backend Test Changes
 
-The backend test setup changed in meaningful ways.
-
-- older backend task tests used Mocha, Chai, Chai HTTP, and XML reporter wiring
+- older backend task tests used `Mocha + Chai + Chai HTTP`
 - backend tests now use Jest
 - tests run with `NODE_ENV=test`
 - worker count is controlled with `maxWorkers: 1`
 - root test entry points are clearer
-- task-level backend runs are still supported
-
-In easy words: backend tests became more targeted and easier to run from the root repo, and the optimized task runner now beats the actual solution on the current VM task benchmark.
+- task-level backend runs are still supported through the shared dispatcher
 
 ### Frontend Test Changes
 
-Frontend testing was separated cleanly from backend testing.
-
 - the older repo had no dedicated frontend test runner
 - frontend package tests now use Vitest
-- the Vitest config is optimized for VM runs
 - frontend tests can run through root scripts without borrowing backend tooling
-
-One honest note:
-
-- this repo has no frontend candidate tasks
+- this repo still has no real frontend candidate task suite
 - the frontend benchmark in this report therefore uses a temporary dummy test instead of a task suite
 
 ### Lint, Typecheck, and Unused Dependency Checks
-
-Quality checks are clearer now.
 
 - lint flow is explicit
 - typecheck flow is explicit
@@ -230,9 +100,7 @@ Quality checks are clearer now.
 - stale ignore rules were reduced
 - manifests were pinned so dependency drift is easier to spot
 
-This matters because it improves trust in the tooling output. A clean report now means more than it did earlier.
-
-There is also one important branch difference here:
+Branch difference:
 
 | Check | Optimised Question | Optimised Solution |
 | --- | --- | --- |
@@ -240,21 +108,14 @@ There is also one important branch difference here:
 | Typecheck | runs through `typecheck-solution-diff.mjs`, which is solution-aware | runs direct frontend and backend `tsc --noEmit` |
 | Unused dependency check | runs through `knip-solution-baseline.mjs`, which is solution-aware and uses candidate contracts | runs direct `knip` |
 
-In easy words:
-
-- `Optimised Question` uses wrapper scripts so the quality checks stay aware of the expected question-vs-solution baseline.
-- `Optimised Solution` uses the stricter direct tool commands.
-- the backend candidate contract exists on `main`
-- the frontend candidate contract is intentionally empty on `main` because there are no frontend tasks in this repo
+`Optimised Question` uses wrapper scripts. `Optimised Solution` runs the direct tools.
 
 ## Dependency Lock Story
-
-This part is important because it affects every install.
 
 Older state:
 
 - npm-driven install story
-- lockfile behavior was npm-first
+- `package-lock.json` was the normal lockfile shape
 - manifests still used `^` version ranges
 - package manager choice was less explicit
 
@@ -266,27 +127,21 @@ Current state:
 - manifests were pinned and `^` / `~` were removed
 - build-related flows check lockfile consistency
 
-Practical result:
-
-- installs are more repeatable
-- package manager expectations are clearer
-- dependency resolution is easier to reason about
-
 ## Dependency Upgrades
 
 ### Root-Level Tooling
 
-| Package / Tool | Older state | Optimised Question |
+| Package / Tool | Older state | New Repo |
 | --- | --- | --- |
-| package manager contract | npm-based | Bun-based |
-| root frontend test tooling | none | Vitest added |
-| lint tooling | not part of the old baseline | ESLint + `typescript-eslint` + `globals` |
-| unused dependency tooling | not part of the old baseline | Knip added |
-| lockfile | npm-style | `bun.lock` |
+| package manager contract | `npm` | `Bun` |
+| root frontend test tooling | `none` | `Vitest` |
+| lint tooling | `none` | `ESLint + typescript-eslint + globals` |
+| unused dependency tooling | `none` | `Knip` |
+| lockfile | `package-lock.json` | `bun.lock` |
 
 ### Backend Packages
 
-| Package | Older version | Optimised Question version |
+| Package | Older version | New Repo version |
 | --- | --- | --- |
 | `bcrypt` | `^6.0.0` | `6.0.0` |
 | `dotenv` | `^16.0.3` | `16.6.1` |
@@ -303,7 +158,7 @@ Backend dependency cleanup also included:
 
 ### Frontend Packages
 
-| Package | Older version | Optimised Question version |
+| Package | Older version | New Repo version |
 | --- | --- | --- |
 | `tailwindcss` | `^3.4.17` | `4.2.1` |
 | `@tailwindcss/postcss` | not in old setup | `4.2.1` |
@@ -313,13 +168,11 @@ Backend dependency cleanup also included:
 | `react` | `18.2.0` | `19.2.4` |
 | `react-dom` | `18.2.0` | `19.2.4` |
 | `react-router-dom` | `^6.11.1` | `7.13.1` |
-| frontend test runner | none | Vitest |
+| frontend test runner | `none` | `Vitest` |
 
 ### Dependency Cleanup
 
-Not all dependency work was about upgrades. Some of it was cleanup.
-
-- npm-first root install scripts were removed from the active path
+- duplicate root package declarations were removed
 - frontend-owned and backend-owned packages were kept in the right workspace
 - manifests were pinned instead of using `^` and `~`
 - Knip ignore rules were cleaned up
@@ -327,19 +180,13 @@ Not all dependency work was about upgrades. Some of it was cleanup.
 
 ## Styling and Library Upgrade Work
 
-The frontend styling stack was brought back into a healthier state.
-
 - Tailwind was upgraded to v4
 - the Workflow color palette was restored
 - the theme setup was aligned with what the app expects
 - Vite host allowlisting was aligned for VM access
 - the Tailwind 4 cascade issue was fixed by moving the global reset into `@layer base`
 
-This was important because it fixed the gap between the intended design system and the actual generated classes without changing the app layout.
-
 ## Small Code-Side Cleanup
-
-Along with the tooling work, a small amount of code-side cleanup was also done.
 
 - script entry points were simplified so install, start, seed, build, and test responsibilities are easier to follow
 - backend startup was split cleanly into app boot and server boot
@@ -350,13 +197,13 @@ Along with the tooling work, a small amount of code-side cleanup was also done.
 
 ## Final Summary
 
-Compared with `Actual Solution`, `Optimised Solution` is clearly ahead on most of the tooling and workflow benchmarks in this report.
+Compared with `Current Repo`, `New Repo` is clearly ahead on most of the tooling and workflow benchmarks in this report.
 
 - cold install is much faster
 - cold build is much faster
+- the backend task benchmark is faster
 - the dummy frontend test benchmark is faster
 - backend save-and-refresh time is dramatically faster
-- the representative backend task benchmark is faster
-- frontend HMR is also faster in the current measurement
+- frontend HMR is also faster on the measured comparison
 
-At the repo level, the important result is that install, lockfile handling, backend dev, backend build, frontend build, test targeting, dependency pinning, and dependency hygiene are all in a cleaner state than the older npm-first setup. The repo is easier to reason about, faster in most of the day-to-day loops that matter, and has better signal from quality checks.
+At the repo level, install, lockfile handling, backend dev, backend build, frontend build, test targeting, and dependency hygiene are all in a cleaner state than the older setup.
